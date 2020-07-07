@@ -10,6 +10,12 @@ public class ManualXRControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        List<InputDevice> deviceList = new List<InputDevice>();
+        InputDevices.GetDevices(deviceList);
+
+        Debug.Log(deviceList);
+        Debug.Log(deviceList.Capacity);
+
         if (isHardwarePresent())
         {
             Debug.Log("XR Hardware Present. Attempting XR initialization ...");
