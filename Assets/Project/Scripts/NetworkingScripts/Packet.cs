@@ -10,9 +10,9 @@ using UnityEngine;
 /// </summary>
 public enum ServerPackets
 {
-    welcome = 1,
-    pingResponseTCP,
-    pingResponseUDP
+    welcome = 1,        // welcome message sent in reply to client's tcp connection
+    pingResponseTCP,    // server response to client's pingTCP
+    pingResponseUDP,    // server response to client's pingUDP
 }
 
 /// <summary>
@@ -20,9 +20,9 @@ public enum ServerPackets
 /// </summary>
 public enum ClientPackets
 {
-    welcomeReceived = 1,
-    pingTCP,
-    pingUDP
+    welcomeReceived = 1,// client's in response to server's welcome packet
+    pingTCP,            // ping message to the server via TCP
+    pingUDP,            // ping message to the server via UDP
 }
 
 

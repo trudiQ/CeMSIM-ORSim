@@ -41,10 +41,10 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void ConnectOnClick()
     {
-        Debug.Log("Click Connect");
-
         // connect to the server via TCP
+        serverMsgField.text = "Connecting to Server";
         Client.instance.ConnectedToServer();
+        
     }
 
     /// <summary>
@@ -52,12 +52,14 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void SendViaTCPOnClick()
     {
-        Debug.Log("Click Send Via TCP");
+        string _msg = clientMsgField.text;
+        ClientSend.SendTCPPing(_msg);
     }
 
     public void SendViaUDPOnClick()
     {
-        Debug.Log("Click Send Via UDP");
+        string _msg = clientMsgField.text;
+        ClientSend.SendUDPPing(_msg);
     }
 
 }

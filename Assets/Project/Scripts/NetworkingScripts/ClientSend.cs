@@ -27,9 +27,30 @@ public class ClientSend : MonoBehaviour
         using (Packet _packet = new Packet((int)ClientPackets.welcomeReceived))
         {
             _packet.Write(Client.instance.myId);
-            _packet.Write("This is a welcome message from Client");
+            _packet.Write("This is a welcome reply from Client");
 
             SendTCPData(_packet);
+        }
+    }
+
+    public static void SendTCPPing(string _msg = "")
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.pingTCP))
+        {
+            _packet.Write(_msg);
+
+            SendTCPData(_packet);
+        }
+    }
+
+    public static void SendUDPPing(string _msg = "")
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.pingUDP))
+        {
+            _packet.Write(Client.instance.myId);
+            _packet.Write(_msg);
+
+            SendUDPData(_packet);
         }
     }
 

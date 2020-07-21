@@ -53,12 +53,7 @@ public class Client : MonoBehaviour
         tcp.Connect();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    
 
     /// <summary>
     /// The UDP class used by the client.
@@ -335,6 +330,8 @@ public class Client : MonoBehaviour
     {
         packetHandlers = new Dictionary<int, PacketHandler>() {
             { (int)ServerPackets.welcome, ClientHandle.Welcome },
+            { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
+            { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
         };
 
         Debug.Log("Client Data Initialization Complete.");
