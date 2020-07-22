@@ -334,7 +334,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
             { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
             { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition},
-            { (int)ServerPackets.PlayerRotation, ClientHandle.PlayerRotation},
+            { (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation},
 
         };
 
