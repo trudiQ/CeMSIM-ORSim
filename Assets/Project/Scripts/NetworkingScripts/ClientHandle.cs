@@ -49,4 +49,45 @@ public class ClientHandle : MonoBehaviour
         UIManager.instance.serverMsgField.text = "UDP:" + _msg;
     }
 
+    /// <summary>
+    /// Handle the server's instruction of spawning a player
+    /// </summary>
+    /// <param name="_packet"></param>
+    public static void SpawnPlayer(Packet _packet)
+    {
+        int _id = _packet.ReadInt32();
+        string _username = _packet.ReadString();
+        Vector3 _position = _packet.ReadVector3();
+        Quaternion _rotation = _packet.ReadQuaternion();
+
+        Debug.Log($"Spawn Player");
+        // spawn the player
+        GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
+
+    }
+
+    public static void PlayerPosition(Packet _packet)
+    {
+        int _id = _packet.ReadInt32();
+        Vector3 _position = _packet.ReadVector3();
+
+
+        Debug.Log($"Player {_id} position to {_position}");
+
+        // update corresponding player's position
+        GameManager.players[_id].transform.position = _position;
+
+    }
+
+    public static void PlayerRotation(Packet _packet)
+    {
+        int _id = _packet.ReadInt32();
+        Quaternion _rotation = _packet.ReadQuaternion();
+
+        // update corresponding player's position
+        GameManager.players[_id].transform.rotation = _rotation;
+
+        Debug.Log($"Player {_id} rotation to {_rotation}");
+
+    }
 }

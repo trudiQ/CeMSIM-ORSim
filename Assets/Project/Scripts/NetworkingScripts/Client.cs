@@ -332,6 +332,10 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.welcome, ClientHandle.Welcome },
             { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
             { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
+            { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
+            { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition},
+            { (int)ServerPackets.PlayerRotation, ClientHandle.PlayerRotation},
+
         };
 
         Debug.Log("Client Data Initialization Complete.");

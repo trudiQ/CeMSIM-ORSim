@@ -62,4 +62,16 @@ public class UIManager : MonoBehaviour
         ClientSend.SendUDPPing(_msg);
     }
 
+    public void EnterOROnClick()
+    {
+        // disable the manu and request to enter the OR
+        networkPanel.SetActive(false);
+
+        // we use Player + id to temporarily represent the player username
+        string _username = "Player" + Client.instance.myId.ToString(); 
+
+        ClientSend.SendSpawnRequest(_username);
+
+    }
+
 }

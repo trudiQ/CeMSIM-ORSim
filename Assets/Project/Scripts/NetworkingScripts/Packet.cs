@@ -13,6 +13,9 @@ public enum ServerPackets
     welcome = 1,        // welcome message sent in reply to client's tcp connection
     pingResponseTCP,    // server response to client's pingTCP
     pingResponseUDP,    // server response to client's pingUDP
+    spawnPlayer,        // the spawn of a player (also a reply to spawn request)
+    playerPosition,     // update of player position
+    PlayerRotation,     // update of player rotation
 }
 
 /// <summary>
@@ -23,6 +26,8 @@ public enum ClientPackets
     welcomeReceived = 1,// client's in response to server's welcome packet
     pingTCP,            // ping message to the server via TCP
     pingUDP,            // ping message to the server via UDP
+    spawnRequest,       // player request to enter
+    playerMovement,     // client's control operations on the movement of the player
 }
 
 
