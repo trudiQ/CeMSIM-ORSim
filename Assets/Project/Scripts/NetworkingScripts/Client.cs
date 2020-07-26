@@ -18,6 +18,7 @@ public class Client : MonoBehaviour
     public TCP tcp;
     public UDP udp;
 
+    private bool isConnected = false;
     // data structures dealing with packet fragments due to TCP streaming
     private delegate void PacketHandler(Packet _packet);
     private static Dictionary<int, PacketHandler> packetHandlers;
@@ -39,11 +40,17 @@ public class Client : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         //initialize TCP and UDP connections
         tcp = new TCP();
         udp = new UDP();
+    }
+
+    private void OnApplicationQuit()
+    {
+        // disconnect all network connections when quit the game
+        Disconnect();
     }
 
 
@@ -51,6 +58,7 @@ public class Client : MonoBehaviour
     {
         InitializeClientData();
         tcp.Connect();
+        isConnected = true;
     }
 
     
@@ -133,6 +141,7 @@ public class Client : MonoBehaviour
                 if (_data.Length < 4)
                 {
                     // discard the packet
+                    instance.Disconnect();
                     return;
                 }
 
@@ -145,6 +154,7 @@ public class Client : MonoBehaviour
             {
                 Debug.Log($"UDP socket encountered an error and is diconnected. Exception {_e}");
                 // disconnect
+                Disconnect();
             }
         }
 
@@ -166,6 +176,13 @@ public class Client : MonoBehaviour
             });
 
 
+        }
+
+        private void Disconnect()
+        {
+            instance.Disconnect();
+            endPoint = null;
+            socket = null;
         }
 
     }
@@ -219,7 +236,7 @@ public class Client : MonoBehaviour
                 // disconnect if no response
                 if (_byteLength <= 0)
                 {
-                    // disconnect
+                    instance.Disconnect();
                     return;
                 }
                 // start to process the data
@@ -237,7 +254,7 @@ public class Client : MonoBehaviour
             catch (Exception e)
             {
                 Debug.Log($"Server exception {e}");
-
+                Disconnect();
                 // disconnect
             }
         }
@@ -324,6 +341,20 @@ public class Client : MonoBehaviour
             }
             return false;
         }
+
+        /// <summary>
+        /// Disconnect tcp connection and free resources.
+        /// </summary>
+        /// <returns></returns>
+        private void Disconnect()
+        {
+            instance.Disconnect();
+
+            stream = null;
+            receivedData = null;
+            receiveBuffer = null;
+            socket = null;
+        }
     }
 
     private static void InitializeClientData()
@@ -340,5 +371,17 @@ public class Client : MonoBehaviour
 
         Debug.Log("Client Data Initialization Complete.");
 
+    }
+
+    private void Disconnect()
+    {
+        if (isConnected)
+        {
+            isConnected = false;
+            tcp.socket.Close();
+            udp.socket.Close();
+
+            Debug.Log("Disconnect from server.");
+        }
     }
 }
