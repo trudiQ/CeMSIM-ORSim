@@ -53,11 +53,13 @@ public class CameraControl : MonoBehaviour
             transform.RotateAround(Camera.transform.position, Vector3.up, x * CameraSpeed);
             transform.RotateAround(Camera.transform.position, Vector3.left, y * CameraSpeed);
         }
+        /*
         //If R is pressed, camera resets to original position
         if (Input.GetKey(KeyCode.R))
         {
-            Camera.transform.position = new Vector3(-1.6f, .95f, 2.1f);
-            Camera.transform.rotation = Quaternion.Euler(20, 90, 0);
+            Camera.transform.position = new Vector3(-1.6f, .87f, 2.1f);
+            Camera.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
+        */
     }
 }
