@@ -1,9 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityScript.Steps;
 
-public class Tool : SelectTool
+public class Tool : SelectTool //inherits SelectTool class
 {
     public float speed;
     public float AngularSpeed;
@@ -15,12 +15,12 @@ public class Tool : SelectTool
 
     void Start()
     {
-        m_tool = this.GetComponent<Rigidbody>();
+        m_tool = this.GetComponent<Rigidbody>(); //references rigidbody component of selected tool
     }
 
     void Update()
     {
-        Enabler();
+        Enabler(); //checks for selected tools in each frame
     }
 
     void FixedUpdate()
@@ -35,24 +35,27 @@ public class Tool : SelectTool
 
     public void TranslationalInput()
     {
+        //Sets WASD as the directional keys for moving an object forward, back, left, and right
         x = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
         z = Input.GetAxis("Vertical") * speed * Time.deltaTime;
         angle = AngularSpeed * Time.deltaTime;
 
+        //Sets Q & E as the directional keys for moving an object up and down
         if (Input.GetKey(KeyCode.Q))
         {
-            y = speed * Time.deltaTime; //Pressing Q increases y force
+            y = speed * Time.deltaTime;
         }
         else if (Input.GetKey(KeyCode.E))
         {
-            y = -speed * Time.deltaTime; //Pressing E increases -y force
+            y = -speed * Time.deltaTime;
         }
         else
         {
             y = 0;
         }
 
-        movement = new Vector3(-x, y, -z);
+        //Directional key variable updates the parameters of an object in 3-dimensions
+        movement = new Vector3(x, y, z);
     }
 
     public void RotationalInput()
@@ -88,7 +91,7 @@ public class Tool : SelectTool
         }
     }
 
-    public void Enabler()
+    public void Enabler() //Allows translation and rotation of selected tool
     {
         if (Enable == true)
         {

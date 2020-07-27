@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -17,11 +18,12 @@ public class SelectTool : MonoBehaviour
     }
     void FixedUpdate()
     {
-        RunChildren();
+        RunChildren(); //checks if linear stapler component is selected in each frame
     }
 
     public void ClickAndCount()
     {
+        //Sets enable to true and prints name of selected tool when mouse left-clicked
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
@@ -37,6 +39,7 @@ public class SelectTool : MonoBehaviour
                 }
             }
         }
+        //Sets enable to false, prints name of deselected tool when mouse right-clicked, gives camera option
         else if (Input.GetMouseButtonDown(1))
         {
             RaycastHit hit;
@@ -52,6 +55,7 @@ public class SelectTool : MonoBehaviour
                 }
             }
         }
+        //If escape button is pressed, all tool movement is disabled and camera is enabled
         else if (Input.GetKey(KeyCode.Escape))
         {
             Enable = false;
@@ -63,8 +67,8 @@ public class SelectTool : MonoBehaviour
         }
     }
 
-    public void RunChildren()
-    {
+    public void RunChildren() //Enables consecutive selection of linear stapler components
+    { 
         Tools[] children = new Tools[transform.childCount];
         for (int i = 0; i < transform.childCount; i++)
         {
