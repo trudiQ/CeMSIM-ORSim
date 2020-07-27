@@ -31,7 +31,7 @@ public class SelectTool : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, 1000.0f))
             {
-                if (hit.transform)
+                if (hit.transform && hit.transform.gameObject.GetComponent<Tool>())
                 {
                     hit.transform.gameObject.GetComponent<Tool>().Enable = true;
                     print(hit.transform.gameObject.name + " selected; Main Camera disabled.");
@@ -47,7 +47,7 @@ public class SelectTool : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, 1000.0f))
             {
-                if (hit.transform)
+                if (hit.transform && hit.transform.gameObject.GetComponent<Tool>())
                 {
                     hit.transform.gameObject.GetComponent<Tool>().Enable = false;
                     print(hit.transform.gameObject.name + " deselected; Press 'Esc' to enable Main Camera only.");

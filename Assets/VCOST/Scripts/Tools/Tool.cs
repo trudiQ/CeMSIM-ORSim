@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityScript.Steps;
 
-public class Tool : SelectTool //inherits SelectTool class
+public class Tool : MonoBehaviour //inherits SelectTool class
 {
     public float speed;
     public float AngularSpeed;
+    public bool Enable;
 
     private Vector3 movement;
     private float x, y, z;
