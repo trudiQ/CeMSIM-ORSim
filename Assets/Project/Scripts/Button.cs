@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class ButtonTrigger : XRBaseInteractable
+public class Button : XRBaseInteractable
 {
     public UnityEvent OnPress = null;
 

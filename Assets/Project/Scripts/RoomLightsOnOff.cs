@@ -9,11 +9,23 @@ public class RoomLightsOnOff : MonoBehaviour
 {
     public Volume postProcessingVolume;
 
+    public GameObject ceilingAreaLights;
+    public GameObject ceilingPointLights;
+
+    public MeshRenderer ceilingLightsMesh;
+    public MeshRenderer surgicalLight01;
+    public MeshRenderer surgicalLight02;
+
+    public Material ceilingLightsOnMaterial;
+    public Material ceilingLightsOffMaterial;
+    public Material surgicalLightsOnMaterial;
+    public Material surgicalLightsOffMaterial;
+
+
     Vignette vignetteLayer = null;
     ColorAdjustments colorAdjustmentLayer = null;
 
     private bool isLightsOn;
-
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +56,9 @@ public class RoomLightsOnOff : MonoBehaviour
         vignetteLayer.rounded.value = false;
         colorAdjustmentLayer.saturation.value = 0f;
         Debug.Log("Lights Off");
+        ceilingAreaLights.SetActive(true);
+        ceilingPointLights.SetActive(true);
+        ceilingLightsMesh.material = ceilingLightsOnMaterial;
     }
 
     private void RoomLightsOff()
@@ -53,6 +68,11 @@ public class RoomLightsOnOff : MonoBehaviour
         vignetteLayer.rounded.value = true;
         colorAdjustmentLayer.saturation.value = -100f;
         Debug.Log("Lights Off");
+        ceilingAreaLights.SetActive(false);
+        ceilingPointLights.SetActive(false);
+        ceilingLightsMesh.material = ceilingLightsOffMaterial;
+        surgicalLight01.materials[7] = surgicalLightsOffMaterial;
+        surgicalLight02.materials[6] = surgicalLightsOffMaterial;
     }
 
     public void SwitchActivation()
