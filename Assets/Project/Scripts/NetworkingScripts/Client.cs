@@ -379,7 +379,8 @@ public class Client : MonoBehaviour
         {
             isConnected = false;
             tcp.socket.Close();
-            udp.socket.Close();
+            if(udp.socket != null)
+                udp.socket.Close();
 
             Debug.Log("Disconnect from server.");
         }
