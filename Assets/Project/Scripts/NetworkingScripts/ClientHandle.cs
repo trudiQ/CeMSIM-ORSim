@@ -60,7 +60,7 @@ public class ClientHandle : MonoBehaviour
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
 
-        Debug.Log($"Spawn Player");
+        Debug.Log($"Spawn Player {_id} at {_position}");
         // spawn the player
         GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
 
@@ -75,7 +75,14 @@ public class ClientHandle : MonoBehaviour
         Debug.Log($"Player {_id} position to {_position}");
 
         // update corresponding player's position
-        GameManager.players[_id].transform.position = _position;
+        if (GameManager.players.ContainsKey(_id))
+        {
+            GameManager.players[_id].transform.position = _position;
+        }
+        else
+        {
+            Debug.Log($"Player {_id} has not been created yet");
+        }
 
     }
 
@@ -84,10 +91,16 @@ public class ClientHandle : MonoBehaviour
         int _id = _packet.ReadInt32();
         Quaternion _rotation = _packet.ReadQuaternion();
 
-        // update corresponding player's position
-        GameManager.players[_id].transform.rotation = _rotation;
-
         Debug.Log($"Player {_id} rotation to {_rotation}");
 
+        // update corresponding player's position
+        if (GameManager.players.ContainsKey(_id))
+        {
+            GameManager.players[_id].transform.rotation = _rotation;
+        }
+        else
+        {
+            Debug.Log($"Player {_id} has not been created yet");
+        }
     }
 }
