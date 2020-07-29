@@ -66,6 +66,10 @@ public class ClientHandle : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Update a player's position.
+    /// </summary>
+    /// <param name="_packet"></param>
     public static void PlayerPosition(Packet _packet)
     {
         int _id = _packet.ReadInt32();
@@ -86,6 +90,10 @@ public class ClientHandle : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Update a player's rotation.
+    /// </summary>
+    /// <param name="_packet"></param>
     public static void PlayerRotation(Packet _packet)
     {
         int _id = _packet.ReadInt32();
@@ -102,5 +110,21 @@ public class ClientHandle : MonoBehaviour
         {
             Debug.Log($"Player {_id} has not been created yet");
         }
+    }
+
+    /// <summary>
+    /// Despawn (destroy) a player instructed by the packet.
+    /// This process is tentative because it depends whether we need to store
+    /// the player's history record.
+    /// </summary>
+    /// <param name="_packet"></param>
+    public static void PlayerDisconnected(Packet _packet)
+    {
+        int _id = _packet.ReadInt32();
+
+        // destroy the player's gameObject from the scene
+        Destroy(GameManager.players[_id].gameObject);
+        // remove the value in the player dictionary
+        GameManager.players.Remove(_id);
     }
 }

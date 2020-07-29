@@ -16,6 +16,7 @@ public enum ServerPackets
     spawnPlayer,        // the spawn of a player (also a reply to spawn request)
     playerPosition,     // update of player position
     playerRotation,     // update of player rotation
+    playerDisconnected, // inform player the disconnection of another player
 }
 
 /// <summary>
