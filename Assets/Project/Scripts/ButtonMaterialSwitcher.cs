@@ -21,7 +21,9 @@ public class ButtonMaterialSwitcher : MonoBehaviour
 
     private void OnDestroy()
     {
+        //If interactor interact then switch the material of object to selected material
         interactable.onHoverEnter.RemoveListener(SetSelectMaterial);
+        //If interactor exit then switch the material of object to its original material
         interactable.onHoverExit.RemoveListener(SetOriginalMaterial);
     }
 

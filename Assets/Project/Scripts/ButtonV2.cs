@@ -21,31 +21,31 @@ public class ButtonV2 : MonoBehaviour
     public UnityEvent onButtonUp;
 
     AudioSource audioSource;
-
-    // Start is called before the first frame update
+     
+    // Start is called before the first frame update 
     void Start()
     {
         XRDirectInteractors = new List<XRDirectInteractor>();
         joint = GetComponent<SpringJoint>();
 
-        // Start with button up top / popped up
+        // Start with button up top / popped up 
         transform.localPosition = new Vector3(transform.localPosition.x, MaxLocalY, transform.localPosition.z);
 
         audioSource = GetComponent<AudioSource>();
     }
 
-    // These have been hard coded for hand speed
+    // These have been hard coded for hand speed 
     float ButtonSpeed = 15f;
     float SpringForce = 1500f;
 
-    // Update is called once per frame
+    // Update is called once per frame 
     void Update()
     {
         Vector3 buttonDownPosition = new Vector3(transform.localPosition.x, MinLocalY, transform.localPosition.z);
         Vector3 buttonUpPosition = new Vector3(transform.localPosition.x, MaxLocalY, transform.localPosition.z);
         bool XRDirectInteractorInButton = false;
 
-        // Find a valid grabber to push down
+        // Find a valid grabber to push down 
         foreach (var XRDI in XRDirectInteractors)
         {
             if (!XRDI.GetComponent<GrabStatus>().isCurrentGrab)
@@ -57,7 +57,7 @@ public class ButtonV2 : MonoBehaviour
 
         if (XRDirectInteractorInButton)
         {
-            float speed = ButtonSpeed; //;framesInGrabber < 3 ? 5f : ButtonSpeed;
+            float speed = ButtonSpeed; //;framesInGrabber < 3 ? 5f : ButtonSpeed; 
             transform.localPosition = Vector3.Lerp(transform.localPosition, buttonDownPosition, speed * Time.deltaTime);
             joint.spring = 0;
         }
@@ -83,7 +83,7 @@ public class ButtonV2 : MonoBehaviour
             clickingDown = true;
             OnButtonDown();
         }
-        // Click Up?
+        // Click Up? 
         float buttonUpDistance = buttonUpPosition.y - transform.localPosition.y;
         if (buttonUpDistance <= ClickTolerance && clickingDown)
         {
@@ -92,35 +92,35 @@ public class ButtonV2 : MonoBehaviour
         }
     }
 
-    // Callback for ButtonDown
+    // Callback for ButtonDown 
     public virtual void OnButtonDown()
     {
 
-        // Play sound
+        // Play sound 
         if (audioSource && ButtonClick)
         {
             audioSource.clip = ButtonClick;
             audioSource.Play();
         }
 
-        // Call event
+        // Call event 
         if (onButtonDown != null)
         {
             onButtonDown.Invoke();
         }
     }
 
-    // Callback for ButtonDown
+    // Callback for ButtonDown 
     public virtual void OnButtonUp()
     {
-        // Play sound
+        // Play sound 
         if (audioSource && ButtonClickUp)
         {
             audioSource.clip = ButtonClickUp;
             audioSource.Play();
         }
 
-        // Call event
+        // Call event 
         if (onButtonUp != null)
         {
             onButtonUp.Invoke();

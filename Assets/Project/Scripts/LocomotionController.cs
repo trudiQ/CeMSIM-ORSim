@@ -13,6 +13,7 @@ public class LocomotionController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //To display teleportation reticle
         if (leftTeleportRay)
         {
             leftTeleportRay.gameObject.SetActive(CheckIfActivated(leftTeleportRay));

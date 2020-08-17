@@ -690,7 +690,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 550088926936607358}
-  m_LocalRotation: {x: -0.5000001, y: 0.49999994, z: 0.4999999, w: 0.5000001}
+  m_LocalRotation: {x: -0.5, y: 0.50000006, z: 0.50000006, w: 0.5}
   m_LocalPosition: {x: -1.2958108, y: 0.80320215, z: 0.049320936}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -769,7 +769,7 @@ Transform:
   - {fileID: 8458544421617483689}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: 90.00001}
 --- !u!1 &749236003048775091
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,6 +781,7 @@ GameObject:
   - component: {fileID: 4423736071780540944}
   - component: {fileID: 8533130486991036995}
   - component: {fileID: 6699933534626890019}
+  - component: {fileID: 7063548408144560457}
   m_Layer: 0
   m_Name: side support
   m_TagString: Untagged
@@ -849,6 +850,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &7063548408144560457
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749236003048775091}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.32775217, y: 0.17115413, z: 0.4444354}
+  m_Center: {x: 0.0000005095252, y: -0.00000041411053, z: -0.048414808}
 --- !u!1 &763537840508922714
 GameObject:
   m_ObjectHideFlags: 0
@@ -4651,6 +4665,7 @@ GameObject:
   - component: {fileID: 4573274038096861338}
   - component: {fileID: 8958484970155641715}
   - component: {fileID: 4627586109265900487}
+  - component: {fileID: 4238868098177967055}
   m_Layer: 0
   m_Name: anesthesia main body
   m_TagString: Untagged
@@ -4719,6 +4734,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &4238868098177967055
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5643256568344508406}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.85765934, y: 0.6126751, z: 1.5366565}
+  m_Center: {x: 0.00034105685, y: -0.04950357, z: 0.067454115}
 --- !u!1 &5721722689745703513
 GameObject:
   m_ObjectHideFlags: 0
@@ -7495,6 +7523,7 @@ GameObject:
   - component: {fileID: 8041077649389175188}
   - component: {fileID: 5764740666155043724}
   - component: {fileID: 3419179834931282050}
+  - component: {fileID: 1639806466576289433}
   m_Layer: 0
   m_Name: monitor01_body01a
   m_TagString: Untagged
@@ -7563,3 +7592,16 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &1639806466576289433
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9145135051354802677}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.39617094, y: 0.3223746, z: 0.06583834}
+  m_Center: {x: 0.0000007610124, y: -0.0067572105, z: 0.0015783964}

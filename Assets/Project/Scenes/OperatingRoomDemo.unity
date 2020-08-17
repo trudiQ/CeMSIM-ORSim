@@ -3274,6 +3274,48 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0.15
   m_ShadowAngle: 0
+--- !u!114 &825464251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &922421530
 GameObject:
   m_ObjectHideFlags: 0
@@ -5786,48 +5828,6 @@ Transform:
   m_Father: {fileID: 505617245}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1380615371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &1403031425
 GameObject:
   m_ObjectHideFlags: 0
@@ -10814,14 +10814,6 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 1723346066}
-    - target: {fileID: 688140071, guid: 9f8d57207961cb645b659a35ab4962f1, type: 3}
-      propertyPath: m_ConnectedAnchor.y
-      value: 2.5222018
-      objectReference: {fileID: 0}
-    - target: {fileID: 688140071, guid: 9f8d57207961cb645b659a35ab4962f1, type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: 0.35634017
-      objectReference: {fileID: 0}
     - target: {fileID: 5004959203513272724, guid: 9f8d57207961cb645b659a35ab4962f1,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10876,21 +10868,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5290446480210746194, guid: 9f8d57207961cb645b659a35ab4962f1,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.x
-      value: -1.8104404
-      objectReference: {fileID: 0}
-    - target: {fileID: 5290446480210746194, guid: 9f8d57207961cb645b659a35ab4962f1,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: -2.1989038
-      objectReference: {fileID: 0}
-    - target: {fileID: 5290446480210746194, guid: 9f8d57207961cb645b659a35ab4962f1,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.y
-      value: 2.7877798
       objectReference: {fileID: 0}
     - target: {fileID: 6271163380950954872, guid: 9f8d57207961cb645b659a35ab4962f1,
         type: 3}
@@ -10973,25 +10950,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82beef8dad1a96541b8ec963bff90271, type: 3}
---- !u!1 &376319546385558714 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1886457045494735266, guid: f9b3e72b2ddef1842a7cd844afcf88fa,
-    type: 3}
-  m_PrefabInstance: {fileID: 2240257218277002520}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &376319546385558715
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 376319546385558714}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.014294091, y: 0.014076968, z: 1.8179995}
-  m_Center: {x: -0.00000045380762, y: 0.000000019277916, z: 0.9089997}
 --- !u!1001 &2077176172738705806
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12850,25 +12808,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9b3e72b2ddef1842a7cd844afcf88fa, type: 3}
---- !u!1 &2986628566350875324 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7651989500346182902, guid: 54ca818584c11be47b6ed0f167ab1550,
-    type: 3}
-  m_PrefabInstance: {fileID: 4846982829290546762}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &2986628566350875325
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2986628566350875324}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.091765344, y: 0.089375824, z: 0.050779928}
-  m_Center: {x: 0.000000001862645, y: 0.000000016763805, z: 0.000000030733645}
 --- !u!23 &3377587136069244703 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 3373199096606928143, guid: 9f8d57207961cb645b659a35ab4962f1,
@@ -12979,44 +12918,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c16187c9ea5c2a843864ea29086499de, type: 3}
---- !u!1 &3678730147418661578 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3178282972064198610, guid: f9b3e72b2ddef1842a7cd844afcf88fa,
-    type: 3}
-  m_PrefabInstance: {fileID: 2240257218277002520}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &3678730147418661579
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3678730147418661578}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.7891125, y: 0.792566, z: 0.1435226}
-  m_Center: {x: 0.014634038, y: -0.0123932315, z: -0.021982633}
---- !u!1 &4238868098177967054 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5643256568344508406, guid: a820fc174f5240a46a866bc668bbdf64,
-    type: 3}
-  m_PrefabInstance: {fileID: 8395734315856712760}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &4238868098177967055
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4238868098177967054}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.85765934, y: 0.6126751, z: 1.5366565}
-  m_Center: {x: 0.00034105685, y: -0.04950357, z: 0.067454115}
 --- !u!1001 &4495154945294313319
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13176,25 +13077,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b705da6300e5ec942b8f629b5226cf48, type: 3}
---- !u!1 &4527486937923512342 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4315210362775599429, guid: 82beef8dad1a96541b8ec963bff90271,
-    type: 3}
-  m_PrefabInstance: {fileID: 375603718884954451}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &4527486937923512343
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4527486937923512342}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.41577148, y: 0.4595242, z: 0.73185986}
-  m_Center: {x: 0.00000046917387, y: 0.12925787, z: 0.37536588}
 --- !u!1001 &4846982829290546762
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13411,25 +13293,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebdfe7229b6a86d4d8814f14eacc1bc0, type: 3}
---- !u!1 &5135900666441506837 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3120846495420133559, guid: ebdfe7229b6a86d4d8814f14eacc1bc0,
-    type: 3}
-  m_PrefabInstance: {fileID: 5135900666441506836}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &5135900666441506838
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5135900666441506837}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.5398981, y: 0.467971, z: 0.8762358}
-  m_Center: {x: -0.000000074505785, y: -0.0000011846427, z: 0.00000037252912}
 --- !u!1001 &6241213072118640144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13907,25 +13770,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a16fdc41eca38aa47a5df4e6ba38274f, type: 3}
---- !u!1 &7787973666221364765 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8287343337239698181, guid: f9b3e72b2ddef1842a7cd844afcf88fa,
-    type: 3}
-  m_PrefabInstance: {fileID: 2240257218277002520}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &7787973666221364766
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7787973666221364765}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.01705029, y: 0.016791282, z: 1.0406231}
-  m_Center: {x: -0.00000046365506, y: 0.00000003605596, z: 0.5203115}
 --- !u!1001 &8213627874333267695
 PrefabInstance:
   m_ObjectHideFlags: 0

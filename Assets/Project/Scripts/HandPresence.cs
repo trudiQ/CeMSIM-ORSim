@@ -25,6 +25,7 @@ public class HandPresence : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //To ensure hand presence is instantiated correctly
         if (!targetDevice.isValid)
         {
             TryInitialize();
@@ -58,6 +59,7 @@ public class HandPresence : MonoBehaviour
 
         if (devices.Count > 0)
         {
+            //find target models by referencing controller name
             targetDevice = devices[0];
             GameObject prefab = controllerPrefabs.Find(controller => controller.name == targetDevice.name);
             if (prefab)
@@ -77,6 +79,7 @@ public class HandPresence : MonoBehaviour
 
     void UpdateHandAnimation()
     {
+        //If models have animation then play corresponding animation
         if (targetDevice.TryGetFeatureValue(CommonUsages.trigger, out float triggerValue))
         {
             handAnimator.SetFloat("Trigger", triggerValue);

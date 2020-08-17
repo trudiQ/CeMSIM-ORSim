@@ -38,6 +38,7 @@ public class SurgicalLightsControl : MonoBehaviour
 
     private void SurgicalLightsOn()
     {
+        //Switch materials to indicate lights on
         Material[] mats01 = surgicalLight01.materials;
         Material[] mats02 = surgicalLight02.materials;
 
@@ -47,12 +48,14 @@ public class SurgicalLightsControl : MonoBehaviour
         surgicalLight01.materials = mats01;
         surgicalLight02.materials = mats02;
 
+        //Activate spot light to illuminate
         surgicalSpotLightIllumination01.SetActive(true);
         surgicalSpotLightIllumination02.SetActive(true);
     }
 
     private void SurgicalLightsOff()
     {
+        //Switch materials to indicate lights off
         Material[] mats01 = surgicalLight01.materials;
         Material[] mats02 = surgicalLight02.materials;
 
@@ -62,6 +65,7 @@ public class SurgicalLightsControl : MonoBehaviour
         surgicalLight01.materials = mats01;
         surgicalLight02.materials = mats02;
 
+        //Disable spot light
         surgicalSpotLightIllumination01.SetActive(false);
         surgicalSpotLightIllumination02.SetActive(false);
 
@@ -69,6 +73,7 @@ public class SurgicalLightsControl : MonoBehaviour
 
     public void ButtonPushedDown()
     {
+        //Switch bool state
         isSurgicalLightsOn = !isSurgicalLightsOn;
     }
 }

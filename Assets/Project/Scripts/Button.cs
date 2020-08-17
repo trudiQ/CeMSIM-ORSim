@@ -53,6 +53,7 @@ public class Button : XRBaseInteractable
 
     public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase)
     {
+        //If the gameobject detect an interactor exists and it tries to interact, then dynamically to change the height of button with the movement of interactor
         if (hoverInteractor)
         {
             float newHandHeight = GetLocalYPosition(hoverInteractor.transform.position);
@@ -75,6 +76,7 @@ public class Button : XRBaseInteractable
 
     private void SetYPosition(float position)
     {
+        //Get the new position in the range of yMin and yMax
         Vector3 newPosition = transform.localPosition;
         newPosition.y = Mathf.Clamp(position, yMin, yMax);
         transform.localPosition = newPosition;
@@ -82,6 +84,7 @@ public class Button : XRBaseInteractable
 
     private void CheckPress()
     {
+        //If the button reaches a specific depth then trigger event
         bool inPosition = InPosition();
 
         if (inPosition && inPosition != previousPress)

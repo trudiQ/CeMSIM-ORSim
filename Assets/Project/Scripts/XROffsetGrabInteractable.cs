@@ -24,6 +24,7 @@ public class XROffsetGrabInteractable : XRGrabInteractable
 
     protected override void OnSelectEnter(XRBaseInteractor interactor)
     {
+        //Align direct interactor with target object
         if (interactor is XRDirectInteractor)
         {
             attachTransform.position = interactor.transform.position;

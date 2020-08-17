@@ -1,9 +1,8 @@
-﻿using BNG;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BNG {
     /// <summary>
     /// Lock joints in place to help with physics handling and parent scaling
     /// </summary>
@@ -36,6 +35,7 @@ namespace BNG {
         }
 
         void lockPosition() {
+            //Freeze some DOFs to prevent button from moving around
             if (LockXPosition || LockYPosition || LockZPosition) {
                 currentPosition = transform.localPosition;
                 transform.localPosition = new Vector3(LockXPosition ? initialPosition.x : currentPosition.x, LockYPosition ? initialPosition.y : currentPosition.y, LockZPosition ? initialPosition.z : currentPosition.z);
@@ -60,5 +60,4 @@ namespace BNG {
             lockPosition();
         }
     }
-}
 

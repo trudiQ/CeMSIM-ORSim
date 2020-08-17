@@ -51,6 +51,7 @@ public class RoomLightsOnOff : MonoBehaviour
 
     private void RoomLightsOn()
     {
+        //Change visual by using post-processing and switching materials
         vignetteLayer.intensity.value = 0.3f;
         vignetteLayer.smoothness.value = 0.2f;
         vignetteLayer.rounded.value = false;
