@@ -59,7 +59,7 @@ public class RoomLightsOnOff : MonoBehaviour
         Debug.Log("Lights Off");
         ceilingAreaLights.SetActive(true);
         ceilingPointLights.SetActive(true);
-        ceilingLightsMesh.material = ceilingLightsOnMaterial;
+        //ceilingLightsMesh.material = ceilingLightsOnMaterial;
     }
 
     private void RoomLightsOff()
@@ -71,9 +71,9 @@ public class RoomLightsOnOff : MonoBehaviour
         Debug.Log("Lights Off");
         ceilingAreaLights.SetActive(false);
         ceilingPointLights.SetActive(false);
-        ceilingLightsMesh.material = ceilingLightsOffMaterial;
-        surgicalLight01.materials[7] = surgicalLightsOffMaterial;
-        surgicalLight02.materials[6] = surgicalLightsOffMaterial;
+        //ceilingLightsMesh.material = ceilingLightsOffMaterial;
+        //surgicalLight01.materials[7] = surgicalLightsOffMaterial;
+        //surgicalLight02.materials[6] = surgicalLightsOffMaterial;
     }
 
     public void SwitchActivation()
