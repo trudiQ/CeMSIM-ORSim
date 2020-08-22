@@ -49,6 +49,15 @@ namespace CEMSIM
                         isPlayerControllerEnabled = true;
                         break;
                     }
+                    else if (device.name == "Oculus Rift S")
+                    {
+                        Debug.Log($"Headset Detected: {device.name}. Activating Oculus Character and Camera");
+                        Instantiate(XRInteractionPrefab);
+                        Instantiate(XRPlayerPrefab);
+                        isPlayerControllerEnabled = true;
+                        break;
+                    }
+
                 }
                 
                 if(!isPlayerControllerEnabled)
