@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.iOS;
 using UnityEngine.XR;
 
 public class HandPresence : MonoBehaviour
