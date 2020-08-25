@@ -9,12 +9,24 @@ namespace CEMSIM
 {
     public class XRManager : MonoBehaviour
     {
-        [Header("Player Camera and Control Prefab")]
-        public GameObject XRPlayerPrefab;
-        public GameObject XRInteractionPrefab;
+        [Header("Player XR Rig")]
+        public GameObject XRPlayerRig;
 
-        public GameObject steamPlayerPrefab;
-        public GameObject steamInteractionPrefab;
+        [Header("XR Components")]
+        public GameObject LeftHandController;
+        public GameObject RightHandController;
+        public GameObject LeftTeleportRay;
+        public GameObject RightTeleportRay;
+
+        [Header("Steam Components")]
+        public GameObject VRObjects;
+        public GameObject FallbackObjects;
+        public GameObject HeadCollider;
+        public GameObject Teleporting;
+
+        [Header("Teleport Areas")]
+        public GameObject XRTeleportationObject;
+        public GameObject SteamTeleportationObject;
 
         //Private Variables
         private List<InputDevice> deviceList;
@@ -36,24 +48,39 @@ namespace CEMSIM
                     if (device.name == "OpenVR Headset(vive_cosmos)")
                     {
                         Debug.Log($"Headset Detected: {device.name}. Activating SteamVR Character and Camera");
-                        Instantiate(steamInteractionPrefab);
-                        Instantiate(steamPlayerPrefab);
+
+                        VRObjects.SetActive(true);
+                        Teleporting.SetActive(true);
+
+                        SteamTeleportationObject.SetActive(true);
                         isPlayerControllerEnabled = true;
                         break;
                     }
                     else if (device.name == "Oculus Rift")
                     {
                         Debug.Log($"Headset Detected: {device.name}. Activating Oculus Character and Camera");
-                        Instantiate(XRInteractionPrefab);
-                        Instantiate(XRPlayerPrefab);
+
+                        XRPlayerRig.GetComponent<Valve.VR.InteractionSystem.Player>().enabled = false;
+                        LeftHandController.SetActive(true);
+                        RightHandController.SetActive(true);
+                        LeftTeleportRay.SetActive(true);
+                        RightTeleportRay.SetActive(true);
+
+                        XRTeleportationObject.SetActive(true);
                         isPlayerControllerEnabled = true;
                         break;
                     }
                     else if (device.name == "Oculus Rift S")
                     {
                         Debug.Log($"Headset Detected: {device.name}. Activating Oculus Character and Camera");
-                        Instantiate(XRInteractionPrefab);
-                        Instantiate(XRPlayerPrefab);
+
+                        XRPlayerRig.GetComponent<Valve.VR.InteractionSystem.Player>().enabled = false;
+                        LeftHandController.SetActive(true);
+                        RightHandController.SetActive(true);
+                        LeftTeleportRay.SetActive(true);
+                        RightTeleportRay.SetActive(true);
+
+                        XRTeleportationObject.SetActive(true);
                         isPlayerControllerEnabled = true;
                         break;
                     }
