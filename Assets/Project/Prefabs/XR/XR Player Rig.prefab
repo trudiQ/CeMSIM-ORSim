@@ -33,7 +33,7 @@ Transform:
   m_Children:
   - {fileID: 1405721868864866019}
   m_Father: {fileID: 1405721870761314965}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1405721868795459474
 MonoBehaviour:
@@ -757,7 +757,7 @@ Transform:
   m_Children:
   - {fileID: 1405721870844150058}
   m_Father: {fileID: 1405721870761314965}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1405721869259542563
 MonoBehaviour:
@@ -1607,12 +1607,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18d97988ede7d3648aef4ca72973e4a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  inputSource: 4
+  speed: 1
+  inputSource: 0
   gravity: -9.81
   groundLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
   additionalHeight: 0.2
 --- !u!143 &1405721869494886948
 CharacterController:
@@ -1652,9 +1652,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a30427658c984494fa778397c8fa78b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftTeleportRay: {fileID: 1405721868795459474}
-  rightTeleportRay: {fileID: 1405721869259542563}
-  teleportActivationButton: 2
+  leftTeleportRay: {fileID: 0}
+  rightTeleportRay: {fileID: 0}
+  teleportActivationButton: 0
   activationThreshold: 0.1
 --- !u!114 &1405721869494886975
 MonoBehaviour:
@@ -2646,8 +2646,8 @@ Transform:
   - {fileID: 1405721870828548009}
   - {fileID: 1405721870105697823}
   - {fileID: 1405721869345400134}
-  - {fileID: 1405721869259542591}
   - {fileID: 1405721868795459478}
+  - {fileID: 1405721869259542591}
   - {fileID: 1405721870319889483}
   - {fileID: 1405721869733508854}
   - {fileID: 1405721869385867219}
