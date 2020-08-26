@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12809429, g: 0.15871584, b: 0.21006814, a: 1}
+  m_IndirectSpecularColor: {r: 0.12812278, g: 0.1586746, b: 0.20989361, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5404,48 +5404,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1405721870624433582}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1458050975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &1503861270
 GameObject:
   m_ObjectHideFlags: 0
@@ -6193,7 +6151,7 @@ MonoBehaviour:
     influence:
       m_EditorAdvancedModeBlendDistancePositive: {x: 1, y: 1, z: 1}
       m_EditorAdvancedModeBlendDistanceNegative: {x: 1, y: 1, z: 1}
-      m_EditorSimplifiedModeBlendDistance: 1
+      m_EditorSimplifiedModeBlendDistance: 0
       m_EditorAdvancedModeBlendNormalDistancePositive: {x: 0, y: 0, z: 0}
       m_EditorAdvancedModeBlendNormalDistanceNegative: {x: 0, y: 0, z: 0}
       m_EditorSimplifiedModeBlendNormalDistance: 0
@@ -6205,8 +6163,8 @@ MonoBehaviour:
       m_ObsoleteOffset: {x: 0, y: 0, z: 0}
       m_Shape: 0
       m_BoxSize: {x: 10.45, y: 5.52, z: 10.97}
-      m_BoxBlendDistancePositive: {x: 1, y: 1, z: 1}
-      m_BoxBlendDistanceNegative: {x: 1, y: 1, z: 1}
+      m_BoxBlendDistancePositive: {x: 0, y: 0, z: 0}
+      m_BoxBlendDistanceNegative: {x: 0, y: 0, z: 0}
       m_BoxBlendNormalDistancePositive: {x: 0, y: 0, z: 0}
       m_BoxBlendNormalDistanceNegative: {x: 0, y: 0, z: 0}
       m_BoxSideFadePositive: {x: 1, y: 1, z: 1}
@@ -7060,6 +7018,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1405721870624433582}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1830556220 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1405721868795459474, guid: 2736bf464f3dfb34bb98437d24f1533e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1405721870624433582}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830556215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae26e19cd956134bbdf3c6f65bf393a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1837378267
 GameObject:
   m_ObjectHideFlags: 0
@@ -7864,6 +7834,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1405721870624433582}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1906816401 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1405721869259542563, guid: 2736bf464f3dfb34bb98437d24f1533e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1405721870624433582}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906816396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae26e19cd956134bbdf3c6f65bf393a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!21 &1914783207
 Material:
   serializedVersion: 6
@@ -8446,6 +8428,48 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0.15
   m_ShadowAngle: 0
+--- !u!114 &1957435372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &1960448287
 GameObject:
   m_ObjectHideFlags: 0
@@ -9340,6 +9364,26 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 1723346066}
+    - target: {fileID: 1405721869494886949, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: inputSource
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869494886950, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: leftTeleportRay
+      value: 
+      objectReference: {fileID: 1830556220}
+    - target: {fileID: 1405721869494886950, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: rightTeleportRay
+      value: 
+      objectReference: {fileID: 1906816401}
+    - target: {fileID: 1405721869494886950, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: teleportActivationButton
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1405721869494886953, guid: 2736bf464f3dfb34bb98437d24f1533e,
         type: 3}
       propertyPath: m_Name
@@ -9409,6 +9453,61 @@ PrefabInstance:
         type: 3}
       propertyPath: otherHand
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548004, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_AllowDynamicResolution
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: antialiasing
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: customRenderingSettings
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: SMAAQuality
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: dithering
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: stopNaNs
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: fullscreenPassthrough
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: taaSharpenStrength
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: allowDynamicResolution
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: renderingPathCustomFrameSettingsOverrideMask.mask.data1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870828548006, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_RenderingPathCustomFrameSettings.bitDatas.data1
+      value: 70297877217133
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2736bf464f3dfb34bb98437d24f1533e, type: 3}
