@@ -11,7 +11,7 @@ namespace CEMSIM
             public class Constants
             {
                 // Network Configuration
-                public const int TCP_PORT = 54322;
+                public const int TCP_PORT = 54321;
                 public const int CONCURRENT_CLIENTS = 40;
 
                 // Server Update Rate

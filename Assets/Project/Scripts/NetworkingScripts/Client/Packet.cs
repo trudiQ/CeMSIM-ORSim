@@ -34,7 +34,6 @@ namespace CEMSIM
                 pingUDP,            // ping message to the server via UDP
                 spawnRequest,       // player request to enter
                 playerMovement,     // client's control operations on the movement of the player
-                playerVRMovement,   // client's control operation on the movement of the player (VR)
             }
 
 

@@ -25,7 +25,6 @@ namespace CEMSIM
                     if (_action == null)
                     {
                         Debug.Log("No action to execute on main thread");
-                        NetworkOverlayMenu.Instance.Log("No action to execute on main thread");
                         return;
                     }
 
