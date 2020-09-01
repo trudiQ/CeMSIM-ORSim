@@ -32,7 +32,7 @@ namespace CEMSIM
                     using (Packet _packet = new Packet((int)ClientPackets.welcomeReceived))
                     {
                         _packet.Write(Client.instance.myId);
-                        _packet.Write("This is a welcome reply from Client");
+                        _packet.Write(Client.instance.myUsername);
 
                         SendTCPData(_packet);
                     }

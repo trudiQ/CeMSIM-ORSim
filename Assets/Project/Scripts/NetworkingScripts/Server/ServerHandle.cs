@@ -16,11 +16,13 @@ namespace CEMSIM
                     string _username = _packet.ReadString();
 
                     Debug.Log($"Client {Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} connects successfully and whose username is {_username}");
+                    NetworkOverlayMenu.Instance.Log($"Client {Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} connects successfully and whose username is {_username}");
 
                     // check whether the packet is from the client
                     if (_clientIdCheck != _fromClient)
                     {
                         Debug.LogWarning($"Client {_fromClient} has assumed with client id {_clientIdCheck} with username {_username}");
+                        NetworkOverlayMenu.Instance.Log($"Warning: Client {_fromClient} has assumed with client id {_clientIdCheck} with username {_username}");
                         return;
                     }
 
@@ -33,11 +35,13 @@ namespace CEMSIM
                     string _msg = _packet.ReadString();
 
                     Debug.Log($"Client {Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} sends a UDP ping with msg {_msg}");
+                    NetworkOverlayMenu.Instance.Log($"Client {Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} sends a UDP ping with msg {_msg}");
 
                     // check whether the packet is from the client
                     if (_clientIdCheck != _fromClient)
                     {
                         Debug.Log($"Client {_fromClient} has assumed with client id {_clientIdCheck} ");
+                        NetworkOverlayMenu.Instance.Log($"Client {_fromClient} has assumed with client id {_clientIdCheck} ");
                         return;
                     }
 
@@ -54,6 +58,7 @@ namespace CEMSIM
                     string _msg = _packet.ReadString();
 
                     Debug.Log($"Client {Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} sends a TCP ping with msg {_msg}");
+                    NetworkOverlayMenu.Instance.Log($"Client {Server.clients[_fromClient].tcp.socket.Client.RemoteEndPoint} sends a TCP ping with msg {_msg}");
 
 
                     // Create response
@@ -73,6 +78,7 @@ namespace CEMSIM
                     string _username = _packet.ReadString();
 
                     Debug.Log($"client{_fromClient}: Spawn player.");
+                    NetworkOverlayMenu.Instance.Log($"client{_fromClient}: Spawn player.");
 
                     // send back the packet with necessary inforamation about player locations
                     Server.clients[_fromClient].SendIntoGame(_username);

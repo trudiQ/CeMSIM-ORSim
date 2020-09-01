@@ -29,6 +29,7 @@ namespace CEMSIM
                     port = _port;
 
                     Debug.Log($"Server initializing...");
+                    NetworkOverlayMenu.Instance.Log($"Server initializing...");
 
                     InitializeServerData();
 
@@ -43,6 +44,7 @@ namespace CEMSIM
                     udpListener.BeginReceive(UDPReceiveCallback, null);
 
                     Debug.Log($"Server is listening on port {_port}");
+                    NetworkOverlayMenu.Instance.Log($"Server is listening on port {_port}");
 
                 }
 
@@ -59,6 +61,7 @@ namespace CEMSIM
                     tcpListener.BeginAcceptTcpClient(new AsyncCallback(TCPConnectCallback), null);
 
                     Debug.Log($"Connection request from ip:{_tcpClient.Client.RemoteEndPoint}");
+                    NetworkOverlayMenu.Instance.Log($"Connection request from ip:{_tcpClient.Client.RemoteEndPoint}");
 
 
                     // find which position is available to the user.
@@ -75,6 +78,7 @@ namespace CEMSIM
 
                     // reach here means all positions are occupied
                     Debug.LogWarning($"{_tcpClient.Client.RemoteEndPoint} failed to connect. Server fully occupied");
+                    NetworkOverlayMenu.Instance.Log($"Warning: {_tcpClient.Client.RemoteEndPoint} failed to connect. Server fully occupied");
                 }
 
                 /// <summary>
@@ -110,6 +114,7 @@ namespace CEMSIM
                             if (_clientId == 0 || _clientId >= maxPlayers) // invalid client id.
                             {
                                 Debug.LogWarning("Invalid user id");
+                                NetworkOverlayMenu.Instance.Log("Warning: Invalid user id");
                                 return;
                             }
 
@@ -131,6 +136,7 @@ namespace CEMSIM
                     catch (Exception _e)
                     {
                         Debug.LogWarning($"UDPReceiveCallback malfunctioning with exception {_e}");
+                        NetworkOverlayMenu.Instance.Log($"Warning: UDPReceiveCallback malfunctioning with exception {_e}");
                     }
                 }
 
@@ -143,6 +149,7 @@ namespace CEMSIM
                     catch (Exception _e)
                     {
                         Debug.LogWarning($"Cannot send UDP packet. Exception {_e}");
+                        NetworkOverlayMenu.Instance.Log($"Warning: Cannot send UDP packet. Exception {_e}");
                     }
                 }
 
@@ -164,6 +171,7 @@ namespace CEMSIM
                     };
 
                     Debug.Log("Initialized Server Data");
+                    NetworkOverlayMenu.Instance.Log("Initialized Server Data");
                 }
 
                 /// <summary>

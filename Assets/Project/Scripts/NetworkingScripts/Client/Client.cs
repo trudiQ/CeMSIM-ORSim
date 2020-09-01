@@ -21,6 +21,7 @@ namespace CEMSIM
                 public int port = Constants.SERVER_PORT;
 
                 public int myId = 0;
+                public string myUsername = "DEFAULT_USERNAME";
                 public TCP tcp;
                 public UDP udp;
 
