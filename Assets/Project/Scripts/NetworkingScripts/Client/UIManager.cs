@@ -76,7 +76,10 @@ namespace CEMSIM
                     // we use Player + id to temporarily represent the player username
                     string _username = "Player" + Client.instance.myId.ToString();
 
-                    ClientSend.SendSpawnRequest(_username);
+                    //TO DO: The Network Demo scene only works in desktop mode at the moment. 
+                    //Add feature for entering in VR or desktop mode
+                    ClientSend.SendSpawnRequest(_username, false);
+                    //ClientSend.SendSpawnRequest(_username);
 
                 }
 

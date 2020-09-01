@@ -32,7 +32,7 @@ namespace CEMSIM
                     using (Packet _packet = new Packet((int)ClientPackets.welcomeReceived))
                     {
                         _packet.Write(Client.instance.myId);
-                        _packet.Write("This is a welcome reply from Client");
+                        _packet.Write($"This is a welcome reply from Client {Client.instance.myId}");
 
                         SendTCPData(_packet);
                     }
@@ -59,12 +59,15 @@ namespace CEMSIM
                     }
                 }
 
-                public static void SendSpawnRequest(string _username)
+                public static void SendSpawnRequest(string _username, bool _vrEnabled)
+                //public static void SendSpawnRequest(string _username)
                 {
                     using (Packet _packet = new Packet((int)ClientPackets.spawnRequest))
                     {
                         _packet.Write(_username);
+                        _packet.Write(_vrEnabled);
 
+                        Debug.Log("Sending Delay Spawn Request");
                         SendTCPData(_packet);
                     }
                 }
@@ -84,6 +87,16 @@ namespace CEMSIM
                         }
                         _packet.Write(GameManager.players[Client.instance.myId].transform.rotation);
 
+                        SendUDPData(_packet);
+                    }
+                }
+
+                public static void PlayerVRMovement(Vector3 _position, Quaternion _rotation)
+                {
+                    using (Packet _packet = new Packet((int)ClientPackets.playerMovement))
+                    {
+                        _packet.Write(_position);
+                        _packet.Write(_rotation);
 
                         SendUDPData(_packet);
                     }

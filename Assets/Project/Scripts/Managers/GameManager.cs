@@ -15,6 +15,7 @@ namespace CEMSIM
                 // store all information about all players in game
                 public static Dictionary<int, PlayerManager> players = new Dictionary<int, PlayerManager>();
 
+                public GameObject localPlayerVR;
                 public GameObject localPlayerPrefab;
                 public GameObject playerPrefab;
 
@@ -46,7 +47,14 @@ namespace CEMSIM
                     if (_id == Client.instance.myId)
                     {
                         // create player for client
-                        _player = Instantiate(localPlayerPrefab, _position, _rotation);
+                        if(localPlayerVR!=null)
+                        {
+                            _player = localPlayerVR;
+                        }
+                        else
+                        {
+                            _player = Instantiate(localPlayerPrefab, _position, _rotation);
+                        }                      
                     }
                     else
                     {

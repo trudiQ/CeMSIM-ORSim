@@ -21,6 +21,8 @@ namespace CEMSIM
                 public int port = Constants.SERVER_PORT;
 
                 public int myId = 0;
+
+                public bool ConnectOnStart = false;
                 public TCP tcp;
                 public UDP udp;
 
@@ -51,6 +53,25 @@ namespace CEMSIM
                     //initialize TCP and UDP connections
                     tcp = new TCP();
                     udp = new UDP();
+
+                    if(ConnectOnStart)
+                    {
+                        Client.instance.ConnectedToServer();
+
+                        //Delays the Spawn request to ensure the client is connected
+                        StartCoroutine(DelaySpawnRequest());
+
+                    }
+                }
+
+                IEnumerator DelaySpawnRequest()
+                {
+                    yield return new WaitForSeconds(5f);
+                    string _username = "Player" + Client.instance.myId.ToString();
+
+                    //TO DO: ConnectOnStart is used for VR mode at the moment. 
+                    //Add feature for entering in VR or desktop mode
+                    ClientSend.SendSpawnRequest(_username, true);
                 }
 
                 private void OnApplicationQuit()

@@ -66,6 +66,7 @@ namespace CEMSIM
 
                         // send welcome message
                         Debug.Log($"Sending welcome packet to client {id}");
+                        NetworkOverlayMenu.Instance.Log($"Sending welcome packet to client {id}");
                         ServerSend.Welcome(id, $"Welcome. You are connected to server. Your client id is {id}");
                     }
 
@@ -82,6 +83,7 @@ namespace CEMSIM
                         catch (Exception e)
                         {
                             Debug.Log($"Error sending packet to client {id} via TCP. Exception {e}");
+                            NetworkOverlayMenu.Instance.Log($"Error sending packet to client {id} via TCP. Exception {e}");
                         }
                     }
 
@@ -113,6 +115,7 @@ namespace CEMSIM
                         catch (Exception e)
                         {
                             Debug.Log($"Server exception {e}");
+                            NetworkOverlayMenu.Instance.Log($"Server exception {e}");
                             Server.clients[id].Disconnect();
                             // disconnect
                         }
@@ -153,6 +156,7 @@ namespace CEMSIM
                                     int _packetId = _packet.ReadInt32();
 
                                     Debug.Log($"Receive a packet with id {_packetId} from client {id}");
+                                    NetworkOverlayMenu.Instance.Log($"Receive a packet with id {_packetId} from client {id}");
                                     // call proper handling function based on packet id
                                     Server.packetHandlers[_packetId](id, _packet);
                                 }
@@ -240,11 +244,15 @@ namespace CEMSIM
                 }
 
                 // Spawn the player 
-                public void SendIntoGame(string _playerName)
+                public void SendIntoGame(string _playerName, bool _vrEnabled)
                 {
                     Debug.Log($"Send player {id}: {_playerName} into game");
+                    NetworkOverlayMenu.Instance.Log($"Send player {id}: {_playerName} into game");
                     //player = new Player(id, _playerName, new Vector3(0, 0, 0));
-                    player = NetworkManager.instance.InstantiatePlayer();
+                    if(_vrEnabled)
+                        player = NetworkManager.instance.InstantiatePlayerVR();
+                    else
+                        player = NetworkManager.instance.InstantiatePlayerDesktop();
                     player.Initialize(id, _playerName);
 
                     // 1. inform all other players the creation of current player
@@ -274,6 +282,7 @@ namespace CEMSIM
                 private void Disconnect()
                 {
                     Debug.Log($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
+                    NetworkOverlayMenu.Instance.Log($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
 
                     ThreadManager.ExecuteOnMainThread(() =>
                     {

@@ -7,10 +7,15 @@ using UnityEngine.Rendering.HighDefinition;
 
 public class RoomLightsOnOff : MonoBehaviour
 {
-    public Volume postProcessingVolume;
+    [Header("Light Control")]
+    public bool isLightsOn;
 
+    [Header("Light Game Objects")]
     public GameObject ceilingAreaLights;
     public GameObject ceilingPointLights;
+
+    [Header("Rendering")]
+    public Volume postProcessingVolume;
 
     public MeshRenderer ceilingLightsMesh;
     public MeshRenderer surgicalLight01;
@@ -21,16 +26,13 @@ public class RoomLightsOnOff : MonoBehaviour
     public Material surgicalLightsOnMaterial;
     public Material surgicalLightsOffMaterial;
 
-
     Vignette vignetteLayer = null;
     ColorAdjustments colorAdjustmentLayer = null;
-
-    private bool isLightsOn;
 
     // Start is called before the first frame update
     void Start()
     {
-        isLightsOn = false;
+        //isLightsOn = false;
 
         postProcessingVolume.profile.TryGet(out vignetteLayer);
         postProcessingVolume.profile.TryGet(out colorAdjustmentLayer);
@@ -56,7 +58,7 @@ public class RoomLightsOnOff : MonoBehaviour
         vignetteLayer.smoothness.value = 0.2f;
         vignetteLayer.rounded.value = false;
         colorAdjustmentLayer.saturation.value = 0f;
-        Debug.Log("Lights Off");
+        //Debug.Log("Lights Off");
         ceilingAreaLights.SetActive(true);
         ceilingPointLights.SetActive(true);
         //ceilingLightsMesh.material = ceilingLightsOnMaterial;
@@ -68,7 +70,7 @@ public class RoomLightsOnOff : MonoBehaviour
         vignetteLayer.smoothness.value = 1.00f;
         vignetteLayer.rounded.value = true;
         colorAdjustmentLayer.saturation.value = -100f;
-        Debug.Log("Lights Off");
+        //Debug.Log("Lights Off");
         ceilingAreaLights.SetActive(false);
         ceilingPointLights.SetActive(false);
         //ceilingLightsMesh.material = ceilingLightsOffMaterial;
