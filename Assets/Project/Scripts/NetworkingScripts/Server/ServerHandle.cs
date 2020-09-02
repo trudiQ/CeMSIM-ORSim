@@ -89,7 +89,7 @@ namespace CEMSIM
                 /// </summary>
                 /// <param name="_fromClient"></param>
                 /// <param name="_packet"></param>
-                public static void PlayerMovement(int _fromClient, Packet _packet)
+                public static void PlayerDesktopMovement(int _fromClient, Packet _packet)
                 {
                     bool[] _inputs = new bool[_packet.ReadInt32()];
                     for (int i = 0; i < _inputs.Length; i++)
@@ -100,8 +100,8 @@ namespace CEMSIM
                     Quaternion _rotation = _packet.ReadQuaternion();
 
                     //Debug.Log($"client{_fromClient}: move packet received.");
-
-                    Server.clients[_fromClient].player.SetInput(_inputs, _rotation);
+                    PlayerDesktop fromPlayer = (PlayerDesktop)Server.clients[_fromClient].player;
+                    fromPlayer.SetInput(_inputs, _rotation);
                 }
             }
         }

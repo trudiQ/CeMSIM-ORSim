@@ -13,6 +13,8 @@ namespace CEMSIM
                 public static NetworkManager instance;
                 public GameObject playerPrefab; // associate to a player
 
+                public GameObject playersContainer;
+
 
                 private void Awake()
                 {
@@ -55,7 +57,7 @@ namespace CEMSIM
                 public Player InstantiatePlayer()
                 {
                     // initialize a player at the initial location and return the reference
-                    return Instantiate(playerPrefab, new Vector3(0f, 0.2f, 0f), Quaternion.identity).GetComponent<Player>();
+                    return Instantiate(playerPrefab, new Vector3(0f, 0.2f, 0f), Quaternion.identity, playersContainer.transform).GetComponent<Player>();
                 }
             }
         }
