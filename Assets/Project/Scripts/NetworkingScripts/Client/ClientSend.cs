@@ -59,11 +59,12 @@ namespace CEMSIM
                     }
                 }
 
-                public static void SendSpawnRequest(string _username)
+                public static void SendSpawnRequest(string _username, bool _vrEnabled)
                 {
                     using (Packet _packet = new Packet((int)ClientPackets.spawnRequest))
                     {
                         _packet.Write(_username);
+                        _packet.Write(_vrEnabled);
 
                         SendTCPData(_packet);
                     }
@@ -73,9 +74,9 @@ namespace CEMSIM
                 /// Send out player's movement
                 /// </summary>
                 /// <param name="_inputs"></param>
-                public static void PlayerMovement(bool[] _inputs)
+                public static void PlayerDesktopMovement(bool[] _inputs)
                 {
-                    using (Packet _packet = new Packet((int)ClientPackets.playerMovement))
+                    using (Packet _packet = new Packet((int)ClientPackets.playerDesktopMovement))
                     {
                         _packet.Write(_inputs.Length);
                         foreach (bool _input in _inputs)
@@ -84,8 +85,29 @@ namespace CEMSIM
                         }
                         _packet.Write(GameManager.players[Client.instance.myId].transform.rotation);
 
-
                         SendUDPData(_packet);
+                    }
+                }
+
+                /// <summary>
+                /// Send out player's movement
+                /// </summary>
+                /// <param name="_inputs"></param>
+                public static void PlayerVRMovement()
+                {
+                    if (GameManager.players.ContainsKey(Client.instance.myId))
+                    {
+                        using (Packet _packet = new Packet((int)ClientPackets.playerVRMovement))
+                        {
+                            _packet.Write(GameManager.players[Client.instance.myId].GetComponent<PlayerVRController>().VRCamera.position);
+                            _packet.Write(GameManager.players[Client.instance.myId].GetComponent<PlayerVRController>().VRCamera.rotation);
+
+                            SendUDPData(_packet);
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Warning: Client ID does not exist or has not been added yet");
                     }
                 }
                 #endregion

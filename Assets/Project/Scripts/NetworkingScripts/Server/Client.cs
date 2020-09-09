@@ -244,12 +244,15 @@ namespace CEMSIM
                 }
 
                 // Spawn the player 
-                public void SendIntoGame(string _playerName)
+                public void SendIntoGame(string _playerName, bool _vr)
                 {
                     Debug.Log($"Send player {id}: {_playerName} into game");
                     NetworkOverlayMenu.Instance.Log($"Send player {id}: {_playerName} into game");
 
-                    player = NetworkManager.instance.InstantiatePlayer();
+                    if(_vr)
+                        player = NetworkManager.instance.InstantiatePlayerVR();
+                    else
+                        player = NetworkManager.instance.InstantiatePlayerDesktop();
                     player.Initialize(id, _playerName);
 
                     // 1. inform all other players the creation of current player

@@ -180,7 +180,11 @@ namespace CEMSIM
                         _packet.Write(_player.id);
                         _packet.Write(_player.transform.position);
 
-                        MulticastUDPData(_packet);
+                        //Do not update VR player position based on server
+                        if (_player is PlayerVR)
+                            MulticastExceptOneUDPData(_player.id, _packet);
+                        else
+                            MulticastUDPData(_packet);
                     }
                 }
 

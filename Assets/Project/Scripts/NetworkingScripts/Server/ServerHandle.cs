@@ -76,12 +76,13 @@ namespace CEMSIM
                 public static void SpawnRequest(int _fromClient, Packet _packet)
                 {
                     string _username = _packet.ReadString();
+                    bool _vr = _packet.ReadBool();
 
                     Debug.Log($"client{_fromClient}: Spawn player.");
                     NetworkOverlayMenu.Instance.Log($"client{_fromClient}: Spawn player.");
 
                     // send back the packet with necessary inforamation about player locations
-                    Server.clients[_fromClient].SendIntoGame(_username);
+                    Server.clients[_fromClient].SendIntoGame(_username, _vr);
                 }
 
                 /// <summary>
@@ -102,6 +103,21 @@ namespace CEMSIM
                     //Debug.Log($"client{_fromClient}: move packet received.");
                     PlayerDesktop fromPlayer = (PlayerDesktop)Server.clients[_fromClient].player;
                     fromPlayer.SetInput(_inputs, _rotation);
+                }
+
+                /// <summary>
+                /// Handle the VR position and orientation
+                /// </summary>
+                /// <param name="_fromClient"></param>
+                /// <param name="_packet"></param>
+                public static void PlayerVRMovement(int _fromClient, Packet _packet)
+                {
+                    Vector3 _position = _packet.ReadVector3();
+                    Quaternion _rotation = _packet.ReadQuaternion();
+
+                    //Debug.Log($"client{_fromClient}: move packet received.");
+                    PlayerVR fromPlayer = (PlayerVR)Server.clients[_fromClient].player;
+                    fromPlayer.SetPosition(_position, _rotation);
                 }
             }
         }

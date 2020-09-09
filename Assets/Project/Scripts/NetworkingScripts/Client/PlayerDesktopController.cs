@@ -8,7 +8,7 @@ namespace CEMSIM
     {
         namespace Client
         {
-            public class PlayerController : MonoBehaviour
+            public class PlayerDesktopController : MonoBehaviour
             {
                 private void FixedUpdate()
                 {
@@ -29,7 +29,7 @@ namespace CEMSIM
                         Input.GetKey(KeyCode.Space), // for jump
                     };
 
-                    ClientSend.PlayerMovement(_inputs);
+                    ClientSend.PlayerDesktopMovement(_inputs);
                 }
             }
         }

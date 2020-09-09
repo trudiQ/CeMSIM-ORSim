@@ -24,6 +24,9 @@ namespace CEMSIM
                 public InputField clientMsgField;   // for player to type message for the server
                 public InputField serverMsgField;   // for display server responses.
 
+                //To Do: Create UI for identifying if user is entering using VR or desktop
+                public bool vREnabled;
+
                 private void Awake()
                 {
                     if (instance == null)
@@ -76,7 +79,8 @@ namespace CEMSIM
                     // we use Player + id to temporarily represent the player username
                     string _username = "Player" + Client.instance.myId.ToString();
 
-                    ClientSend.SendSpawnRequest(_username);
+                    //TO DO: Allow user to set 
+                    ClientSend.SendSpawnRequest(_username, GameManager.instance.localPlayerVR.activeInHierarchy);
 
                 }
 

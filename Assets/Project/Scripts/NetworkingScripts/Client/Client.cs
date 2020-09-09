@@ -52,6 +52,28 @@ namespace CEMSIM
                     //initialize TCP and UDP connections
                     tcp = new TCP();
                     udp = new UDP();
+
+                    if(GameManager.instance.localPlayerVR.activeInHierarchy)
+                    {
+                        // disable the manu and request to enter the OR
+                        UIManager.instance.networkPanel.SetActive(false);
+                        Client.instance.ConnectedToServer();
+
+                        //Delays the Spawn request to ensure the client is connected
+                        StartCoroutine(DelaySpawnRequest());
+                    }
+                }
+
+
+                IEnumerator DelaySpawnRequest()
+                {
+                    yield return new WaitForSeconds(5f);
+                    string _username = "Player" + Client.instance.myId.ToString();
+
+                    //TO DO: ConnectOnStart is used for VR mode at the moment. 
+                    //Add feature for entering in VR or desktop mode
+                    ClientSend.SendSpawnRequest(_username, true);
+                    GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
                 }
 
                 private void OnApplicationQuit()

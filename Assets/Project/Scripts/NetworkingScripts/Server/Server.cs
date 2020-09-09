@@ -168,6 +168,7 @@ namespace CEMSIM
                         { (int)ClientPackets.pingUDP, ServerHandle.PingUDP},
                         { (int)ClientPackets.spawnRequest, ServerHandle.SpawnRequest},
                         { (int)ClientPackets.playerDesktopMovement, ServerHandle.PlayerDesktopMovement},
+                        { (int)ClientPackets.playerVRMovement, ServerHandle.PlayerVRMovement},
                     };
 
                     Debug.Log("Initialized Server Data");
