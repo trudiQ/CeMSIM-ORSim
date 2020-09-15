@@ -102,7 +102,13 @@ namespace CEMSIM
 
                     public UDP()
                     {
-                        endPoint = new IPEndPoint(IPAddress.Parse(instance.ip), instance.port);
+                        IPAddress _ip;
+                        if (!System.Net.IPAddress.TryParse(instance.ip, out _ip))
+                        {
+                            // ip is actually a hostname
+                            _ip = Dns.GetHostAddresses(instance.ip)[0];
+                        }
+                        endPoint = new IPEndPoint(_ip, instance.port);
                     }
 
                     /// <summary>

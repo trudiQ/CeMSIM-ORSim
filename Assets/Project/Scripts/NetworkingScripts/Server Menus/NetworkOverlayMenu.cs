@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using CEMSIM.Network.Server;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,7 +33,11 @@ namespace CEMSIM
             {
                 _log = _log + "\n" + outputString;               
             }
-            debugTextOutput.GetComponent<Text>().text = _log;
+            ThreadManager.ExecuteOnMainThread(() =>
+            {
+                debugTextOutput.GetComponent<Text>().text = _log;
+            });
+            
 
         }
     }
