@@ -25,7 +25,7 @@ namespace CEMSIM
                 public TCP tcp;
                 public UDP udp;
 
-                private bool isConnected = false;
+                public bool isConnected = false;
                 // data structures dealing with packet fragments due to TCP streaming
                 private delegate void PacketHandler(Packet _packet);
                 private static Dictionary<int, PacketHandler> packetHandlers;
@@ -55,9 +55,10 @@ namespace CEMSIM
 
                     if(GameManager.instance.localPlayerVR.activeInHierarchy)
                     {
+                        //To do: Handle this in XR & Menu Manager Instances
                         // disable the manu and request to enter the OR
-                        UIManager.instance.networkPanel.SetActive(false);
-                        Client.instance.ConnectedToServer();
+                        ClientPCConnetMenu.Instance.gameObject.SetActive(false);
+                        Client.instance.ConnectToServer(ip);
 
                         //Delays the Spawn request to ensure the client is connected
                         StartCoroutine(DelaySpawnRequest());
@@ -83,8 +84,10 @@ namespace CEMSIM
                 }
 
 
-                public void ConnectedToServer()
+                public void ConnectToServer(string ipAddress)
                 {
+                    if(ipAddress!="")
+                        ip = ipAddress;
                     InitializeClientData();
                     tcp.Connect();
                     isConnected = true;
@@ -395,15 +398,14 @@ namespace CEMSIM
                 private static void InitializeClientData()
                 {
                     packetHandlers = new Dictionary<int, PacketHandler>() {
-            { (int)ServerPackets.welcome, ClientHandle.Welcome },
-            { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
-            { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
-            { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
-            { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition},
-            { (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation},
-            { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected},
-
-        };
+                    { (int)ServerPackets.welcome, ClientHandle.Welcome },
+                    { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
+                    { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
+                    { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
+                    { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition},
+                    { (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation},
+                    { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected},
+                };
 
                     Debug.Log("Client Data Initialization Complete.");
 

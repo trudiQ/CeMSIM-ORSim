@@ -41,7 +41,7 @@ namespace CEMSIM
                 {
                     string _msg = _packet.ReadString();
 
-                    UIManager.instance.serverMsgField.text = "TCP:" + _msg;
+                    ClientPCConnetMenu.Instance.UpdateServerMessage("TCP:" + _msg);
 
                 }
 
@@ -53,7 +53,7 @@ namespace CEMSIM
                 {
                     string _msg = _packet.ReadString();
 
-                    UIManager.instance.serverMsgField.text = "UDP:" + _msg;
+                    ClientPCConnetMenu.Instance.UpdateServerMessage("UDP:" + _msg);
                 }
 
                 /// <summary>

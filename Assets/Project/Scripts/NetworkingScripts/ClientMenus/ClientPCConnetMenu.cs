@@ -9,40 +9,20 @@ namespace CEMSIM
     {
         namespace Client
         {
-            /// <summary>
-            /// This class deals with the panel for network tests.
-            /// </summary>
-            public class UIManager : MonoBehaviour
+            public class ClientPCConnetMenu : Menu<ClientPCConnetMenu>
             {
-                public static UIManager instance;
-
-                // controls
-                public GameObject networkPanel;
-                public Button connectButton;
-                public Button sendViaTCPButton;
-                public Button sendViaUDPButton;
-                public InputField clientMsgField;   // for player to type message for the server
-                public InputField serverMsgField;   // for display server responses.
+                [Header("References")]
+                public GameObject enterButton;      // For enabling once connected to the network
+                public InputField IPField;          // For player to enter the IP address for connecting to.
+                public InputField clientMsgField;   // For player to type message for the server (Debug).
+                public InputField serverMsgField;   // For displaying server responses (Debug).
 
                 //To Do: Create UI for identifying if user is entering using VR or desktop
-                public bool vREnabled;
+                //public bool vREnabled;
 
-                private void Awake()
+                private void Update()
                 {
-                    if (instance == null)
-                    {
-                        instance = this;
-                    }
-                    else if (instance != this)
-                    {
-                        // We only allow one instance of this class to exist.
-                        // Destroy current instance if different from the current one.
-                        Debug.Log("Another instance already exists. Destroy this one.");
-                        Destroy(this);
-                    }
-
-                    //// initialization to controls
-                    //serverMsgField.interactable = false; // this control is for display only
+                    enterButton.GetComponent<Selectable>().interactable = Client.instance.isConnected;
                 }
 
                 /// <summary>
@@ -51,9 +31,8 @@ namespace CEMSIM
                 public void ConnectOnClick()
                 {
                     // connect to the server via TCP
-                    serverMsgField.text = "Connecting to Server";
-                    Client.instance.ConnectedToServer();
-
+                    UpdateServerMessage("Connecting to Server");
+                    Client.instance.ConnectToServer(IPField.text);
                 }
 
                 /// <summary>
@@ -74,16 +53,19 @@ namespace CEMSIM
                 public void EnterOROnClick()
                 {
                     // disable the manu and request to enter the OR
-                    networkPanel.SetActive(false);
+                    this.gameObject.SetActive(false);
 
                     // we use Player + id to temporarily represent the player username
                     string _username = "Player" + Client.instance.myId.ToString();
 
                     //TO DO: Allow user to set 
                     ClientSend.SendSpawnRequest(_username, GameManager.instance.localPlayerVR.activeInHierarchy);
-
                 }
 
+                public void UpdateServerMessage(string serverMsg)
+                {
+                    serverMsgField.text = serverMsg;
+                }
             }
         }
     }
