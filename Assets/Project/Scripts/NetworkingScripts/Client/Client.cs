@@ -53,6 +53,7 @@ namespace CEMSIM
                 {
                     //ip = defaultIP;
                     //initialize TCP and UDP connections
+                    Debug.Log($"Current server IP is {ip}");
                     tcp = new TCP();
                     udp = new UDP();
 
@@ -61,7 +62,7 @@ namespace CEMSIM
                         //To do: Handle this in XR & Menu Manager Instances
                         // disable the manu and request to enter the OR
                         ClientPCConnetMenu.Instance.gameObject.SetActive(false);
-                        Client.instance.ConnectToServer(ip);
+                        Client.instance.ConnectToServer(ip, port);
 
                         //Delays the Spawn request to ensure the client is connected
                         StartCoroutine(DelaySpawnRequest());
@@ -87,12 +88,14 @@ namespace CEMSIM
                 }
 
 
-                public void ConnectToServer(string ipAddress)
+                public void ConnectToServer(string _ipAddress, int _port)
                 {
-                    if(ipAddress!="")
-                        ip = ipAddress;
+                    if(_ipAddress != "")
+                        ip = _ipAddress;
+                    port = _port;
                     InitializeClientData();
                     tcp.Connect();
+                    udp.Connect(_port);
                     isConnected = true;
                 }
 
@@ -108,13 +111,7 @@ namespace CEMSIM
 
                     public UDP()
                     {
-                        IPAddress _ip;
-                        if (!System.Net.IPAddress.TryParse(instance.ip, out _ip))
-                        {
-                            // ip is actually a hostname
-                            _ip = Dns.GetHostAddresses(instance.ip)[0];
-                        }
-                        endPoint = new IPEndPoint(_ip, instance.port);
+                        
                     }
 
                     /// <summary>
@@ -123,6 +120,17 @@ namespace CEMSIM
                     /// <param name="_localPort">The local port we open for UDP</param>
                     public void Connect(int _localPort)
                     {
+                        IPAddress _ip;
+                        // convert hostname to corresponding ip
+                        if (!System.Net.IPAddress.TryParse(instance.ip, out _ip))
+                        {
+                            // ip is actually a hostname
+                            _ip = Dns.GetHostAddresses(instance.ip)[0];
+                        }
+
+                        Debug.Log($"UDP is connecting to the server with ip:{instance.ip} {_ip}");
+                        endPoint = new IPEndPoint(_ip, instance.port);
+
                         socket = new UdpClient(_localPort);
                         socket.Connect(endPoint);
 
@@ -247,6 +255,8 @@ namespace CEMSIM
                         };
 
                         receiveBuffer = new byte[Client.dataBufferSize];
+                        Debug.Log($"TCP is connecting to the server with ip:{instance.ip}");
+
                         socket.BeginConnect(instance.ip, instance.port, ConnectCallback, socket);
 
                     }

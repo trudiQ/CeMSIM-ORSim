@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,8 +15,16 @@ namespace CEMSIM
                 [Header("References")]
                 public GameObject enterButton;      // For enabling once connected to the network
                 public InputField IPField;          // For player to enter the IP address for connecting to.
+                public InputField portField;        // For player to enter the port address
                 public InputField clientMsgField;   // For player to type message for the server (Debug).
                 public InputField serverMsgField;   // For displaying server responses (Debug).
+
+
+                private void Start()
+                {
+                    IPField.text = Constants.SERVER_IP;
+                    portField.text = Constants.SERVER_PORT + "";
+                }
 
                 //To Do: Create UI for identifying if user is entering using VR or desktop
                 //public bool vREnabled;
@@ -30,9 +39,11 @@ namespace CEMSIM
                 /// </summary>
                 public void ConnectOnClick()
                 {
-                    // connect to the server via TCP
+                    // connect to the server via TCP and UDP
+                    string _ip = IPField.text;
+                    int _port = Int32.Parse(portField.text);
                     UpdateServerMessage("Connecting to Server");
-                    Client.instance.ConnectToServer(IPField.text);
+                    Client.instance.ConnectToServer(_ip, _port);
                 }
 
                 /// <summary>

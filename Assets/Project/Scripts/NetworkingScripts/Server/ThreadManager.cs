@@ -46,7 +46,7 @@ namespace CEMSIM
                 {
                     if (actionToExecuteOnMainThread)
                     {
-                        executeCopiedOnMainTread.Clear();
+                        executeCopiedOnMainTread.Clear(); // It seems that sometimes some vital tasks are cleared
                         lock (executeOnMainThread)
                         {
                             executeCopiedOnMainTread.AddRange(executeOnMainThread);

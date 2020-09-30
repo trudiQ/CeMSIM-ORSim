@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12809429, g: 0.15871584, b: 0.21006814, a: 1}
+  m_IndirectSpecularColor: {r: 0.10940202, g: 0.13990085, b: 0.1904511, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1962,7 +1962,7 @@ PrefabInstance:
     - target: {fileID: 4531919474393089600, guid: 1893d7955d41e854186a9bec83d04194,
         type: 3}
       propertyPath: ip
-      value: 192.168.0.114
+      value: 128.213.68.1
       objectReference: {fileID: 0}
     - target: {fileID: 4531919474393089602, guid: 1893d7955d41e854186a9bec83d04194,
         type: 3}
@@ -3328,6 +3328,18 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0.15
   m_ShadowAngle: 0
+--- !u!114 &906700831 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 571180525612315679, guid: 4a6759160d9117b42b5ede9abcf370ab,
+    type: 3}
+  m_PrefabInstance: {fileID: 1578539649}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d199490a83bb2b844b9695cbf13b01ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &922421530
 GameObject:
   m_ObjectHideFlags: 0
@@ -6123,6 +6135,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1338650458}
     m_Modifications:
+    - target: {fileID: 2222572676092330630, guid: 4a6759160d9117b42b5ede9abcf370ab,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 450
+      objectReference: {fileID: 0}
+    - target: {fileID: 2222572676092330630, guid: 4a6759160d9117b42b5ede9abcf370ab,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -75
+      objectReference: {fileID: 0}
     - target: {fileID: 2222572676540410501, guid: 4a6759160d9117b42b5ede9abcf370ab,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6233,6 +6255,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ClientPCNetworkMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 2222572676540410506, guid: 4a6759160d9117b42b5ede9abcf370ab,
+        type: 3}
+      propertyPath: portField
+      value: 
+      objectReference: {fileID: 906700831}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a6759160d9117b42b5ede9abcf370ab, type: 3}
 --- !u!224 &1578539650 stripped

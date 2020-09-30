@@ -289,14 +289,14 @@ namespace CEMSIM
                         // We have to move them into the thread queue just in case there is no other actions after the player is destroied.
                         UnityEngine.Object.Destroy(player.gameObject); // distroy the associated gameObject attached by Player.cs
                         player = null;
+
+                        // inform all other users the disconnection of this player
+                        ServerSend.PlayerDisconnect(id);
+
+                        tcp.Disconnect();
+                        udp.Disconnect();
                     });
-
-
-                    tcp.Disconnect();
-                    udp.Disconnect();
-
-                    // inform all other users the disconnection of this player
-                    ServerSend.PlayerDisconnect(id);
+                    
                 }
             }
         }
