@@ -11,9 +11,16 @@ namespace CEMSIM
             public class NetworkManager : MonoBehaviour
             {
                 public static NetworkManager instance;
-                public GameObject playerDesktopPrefab; // associate to a player
-                public GameObject playerVRPrefab; // associate to a player
 
+                [Header("Player Prefabs")]
+                public GameObject playerDesktopPrefab;  // associate to a player
+                public GameObject playerVRPrefab;       // associate to a player'
+
+                [Header("Player Spawning")]
+                public Vector3 spawnLocation;
+                public Vector3 spawnRotation;
+
+                [Header("References")]
                 public GameObject playersContainer;
 
 
@@ -58,7 +65,7 @@ namespace CEMSIM
                 public Player InstantiatePlayerDesktop()
                 {
                     // initialize a player at the initial location and return the reference
-                    return Instantiate(playerDesktopPrefab, new Vector3(0f, 1f, 0f), Quaternion.identity, playersContainer.transform).GetComponent<Player>();
+                    return Instantiate(playerDesktopPrefab, spawnLocation, Quaternion.Euler(spawnRotation), playersContainer.transform).GetComponent<Player>();
                 }
 
                 /// <summary>

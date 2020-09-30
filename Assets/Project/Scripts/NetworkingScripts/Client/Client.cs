@@ -17,9 +17,9 @@ namespace CEMSIM
                 public static int dataBufferSize = 4096;
 
                 // server ip and port
-                public string defaultIP = Constants.SERVER_IP;
-                [HideInInspector]
-                public string ip;
+                public string ip = Constants.SERVER_IP;
+                //[HideInInspector]
+                //public string ip;
                 public int port = Constants.SERVER_PORT;
 
                 public int myId = 0;
@@ -51,7 +51,7 @@ namespace CEMSIM
                 // Start is called before the first frame update
                 private void Start()
                 {
-                    ip = defaultIP;
+                    //ip = defaultIP;
                     //initialize TCP and UDP connections
                     tcp = new TCP();
                     udp = new UDP();
