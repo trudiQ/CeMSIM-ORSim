@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using CEMSIM.Network.Server;
+using CEMSIM.Network;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace CEMSIM
 {
+    // display debug message on screen (server side)
     public class NetworkOverlayMenu : Menu<NetworkOverlayMenu>
     {
         public GameObject debugTextOutput;
@@ -33,7 +35,7 @@ namespace CEMSIM
             {
                 _log = _log + "\n" + outputString;               
             }
-            ThreadManager.ExecuteOnMainThread(() =>
+            ServerThreadManager.ExecuteOnMainThread(() =>
             {
                 debugTextOutput.GetComponent<Text>().text = _log;
             });

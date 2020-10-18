@@ -6,13 +6,11 @@ namespace CEMSIM
 {
     namespace Network
     {
-        namespace Client
+
+        public class PlayerManager : MonoBehaviour
         {
-            public class PlayerManager : MonoBehaviour
-            {
-                public int id;
-                public string username;
-            }
+            public int id;
+            public string username;
         }
     }
 }

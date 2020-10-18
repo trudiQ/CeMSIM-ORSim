@@ -6,16 +6,13 @@ namespace CEMSIM
 {
     namespace Network
     {
-        namespace Client
+        public class PlayerVRController : MonoBehaviour
         {
-            public class PlayerVRController : MonoBehaviour
-            {
-                public Transform VRCamera;
+            public Transform VRCamera;
 
-                private void FixedUpdate()
-                {
-                    ClientSend.PlayerVRMovement();
-                }
+            private void FixedUpdate()
+            {
+                ClientSend.PlayerVRMovement();
             }
         }
     }

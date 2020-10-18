@@ -148,7 +148,7 @@ namespace CEMSIM
                             byte[] _packetBytes = receivedData.ReadBytes(_packetLength);
 
 
-                            ThreadManager.ExecuteOnMainThread(() =>
+                            ServerThreadManager.ExecuteOnMainThread(() =>
                             {
                                 // create a packet containing just the data
                                 using (Packet _packet = new Packet(_packetBytes))
@@ -225,7 +225,7 @@ namespace CEMSIM
                         int _packetLength = _packetData.ReadInt32();
                         byte[] _data = _packetData.ReadBytes(_packetLength);
 
-                        ThreadManager.ExecuteOnMainThread(() =>
+                        ServerThreadManager.ExecuteOnMainThread(() =>
                         {
                             using (Packet _packet = new Packet(_data))
                             {
@@ -284,7 +284,7 @@ namespace CEMSIM
                     Debug.Log($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
                     NetworkOverlayMenu.Instance.Log($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
 
-                    ThreadManager.ExecuteOnMainThread(() =>
+                    ServerThreadManager.ExecuteOnMainThread(() =>
                     {
                         // We have to move them into the thread queue just in case there is no other actions after the player is destroied.
                         UnityEngine.Object.Destroy(player.gameObject); // distroy the associated gameObject attached by Player.cs
