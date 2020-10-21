@@ -27,8 +27,12 @@ namespace CEMSIM
                 // send response
                 ClientSend.WelcomeReceived();
 
-                // connect udp
+                // connect udp 
                 ClientInstance.instance.udp.Connect(((IPEndPoint)ClientInstance.instance.tcp.socket.Client.LocalEndPoint).Port);
+
+                // Mark TCP ready-to-use
+                ClientInstance.instance.tcp.isTCPConnected = true;
+                ClientInstance.instance.CheckConnection();
             }
 
             /// <summary>

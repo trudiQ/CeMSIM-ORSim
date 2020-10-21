@@ -25,7 +25,7 @@ namespace CEMSIM
             public TCP tcp;
             public UDP udp;
 
-            public bool isConnected = false;
+            public bool isConnected = false; // true: both TCP and UDP ready to use
             // data structures dealing with packet fragments due to TCP streaming
             private delegate void PacketHandler(Packet _packet);
             private static Dictionary<int, PacketHandler> packetHandlers;
@@ -98,9 +98,16 @@ namespace CEMSIM
                 InitializeClientData();
                 tcp.Connect();
                 udp.Connect(_port);
-                isConnected = true;
+                //isConnected = true;
             }
 
+            /// <summary>
+            /// Check whether TCP and UDP are ready
+            /// </summary>
+            public void CheckConnection()
+            {
+                instance.isConnected = instance.tcp.isTCPConnected && instance.udp.isUDPConnected;
+            }
 
 
             /// <summary>
@@ -110,10 +117,11 @@ namespace CEMSIM
             {
                 public UdpClient socket;
                 public IPEndPoint endPoint;
+                public bool isUDPConnected = false;
 
                 public UDP()
                 {
-                        
+                    isUDPConnected = false;
                 }
 
                 /// <summary>
@@ -144,6 +152,9 @@ namespace CEMSIM
                         // since user id has already been added to the packet, no need to manually add it again.
                         SendData(_packet);
                     }
+
+                    isUDPConnected = true;
+                    instance.CheckConnection();
                 }
 
 
@@ -247,6 +258,12 @@ namespace CEMSIM
                 public NetworkStream stream;
                 private Packet receivedData;
                 private byte[] receiveBuffer;
+                public bool isTCPConnected;
+
+                public TCP()
+                {
+                    isTCPConnected = false;
+                }
 
                 public void Connect()
                 {
@@ -269,14 +286,15 @@ namespace CEMSIM
 
                     if (!socket.Connected)
                     {
+                        isTCPConnected = false;
                         return;
                     }
 
                     stream = socket.GetStream();
                     stream.BeginRead(receiveBuffer, 0, ClientNetworkConstants.DATA_BUFFER_SIZE, ReceiveCallback, null);
 
-                    receivedData = new Packet(); // create an empty packet to parse incoming packets
-
+                    receivedData = new Packet(); ///< create an empty packet to parse incoming packets
+                    instance.CheckConnection();
 
                 }
 
@@ -407,6 +425,7 @@ namespace CEMSIM
                     receivedData = null;
                     receiveBuffer = null;
                     socket = null;
+
                 }
             }
 
@@ -430,7 +449,9 @@ namespace CEMSIM
             {
                 if (isConnected)
                 {
-                    isConnected = false;
+                    tcp.isTCPConnected = false;
+                    udp.isUDPConnected = false;
+                    CheckConnection(); ///< isConnect = false;
                     tcp.socket.Close();
                     if (udp.socket != null)
                         udp.socket.Close();
