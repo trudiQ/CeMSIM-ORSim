@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using CEMSIM.GameLogic;
+
 namespace CEMSIM
 {
     namespace Network

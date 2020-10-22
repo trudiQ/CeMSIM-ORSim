@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using CEMSIM.Network;
+
 namespace CEMSIM
 {
-    namespace Network
+    namespace GameLogic
     {
         public class GameManager : MonoBehaviour
         {

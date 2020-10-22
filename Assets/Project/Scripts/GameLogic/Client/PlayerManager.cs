@@ -4,9 +4,8 @@ using UnityEngine;
 
 namespace CEMSIM
 {
-    namespace Network
+    namespace GameLogic
     {
-
         public class PlayerManager : MonoBehaviour
         {
             public int id;

@@ -2,35 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using CEMSIM.Network;
+
 namespace CEMSIM
 {
-    namespace Network
+    namespace GameLogic
     {
-        namespace Client
+        public class PlayerDesktopController : MonoBehaviour
         {
-            public class PlayerDesktopController : MonoBehaviour
+            private void FixedUpdate()
             {
-                private void FixedUpdate()
-                {
-                    SendInputToServer();
-                }
+                SendInputToServer();
+            }
 
-                /// <summary>
-                /// Collect user's input control onto the player, and send the input to the server
-                /// </summary>
-                private void SendInputToServer()
+            /// <summary>
+            /// Collect user's input control onto the player, and send the input to the server
+            /// </summary>
+            private void SendInputToServer()
+            {
+                bool[] _inputs = new bool[]
                 {
-                    bool[] _inputs = new bool[]
-                    {
-                        Input.GetKey(KeyCode.W),
-                        Input.GetKey(KeyCode.S),
-                        Input.GetKey(KeyCode.A),
-                        Input.GetKey(KeyCode.D),
-                        Input.GetKey(KeyCode.Space), // for jump
-                    };
+                    Input.GetKey(KeyCode.W),
+                    Input.GetKey(KeyCode.S),
+                    Input.GetKey(KeyCode.A),
+                    Input.GetKey(KeyCode.D),
+                    Input.GetKey(KeyCode.Space), // for jump
+                };
 
-                    ClientSend.PlayerDesktopMovement(_inputs);
-                }
+                ClientSend.PlayerDesktopMovement(_inputs);
             }
         }
     }

@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
+using CEMSIM.GameLogic;
+
 namespace CEMSIM
 {
     namespace Network
