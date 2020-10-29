@@ -178,7 +178,7 @@ namespace Pulse.CDM
                         SETensionPneumothorax tp = new SETensionPneumothorax();
                         tp.SetSide(eSide.Left);
                         tp.SetType(eGate.Open);
-                        tp.GetSeverity().SetValue(0.35f);
+                        tp.GetSeverity().SetValue(1.0f);
                         driver.engine.ProcessAction(tp);
                         break;
                     }

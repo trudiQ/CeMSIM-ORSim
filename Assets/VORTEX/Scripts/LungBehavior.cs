@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pulse.CDM;
 
 public class LungBehavior : MonoBehaviour
 {
     public Material originalMaterial;
     public Material enterMaterial;
+    public PulseEventManager eventManager;
 
     private MeshRenderer meshRenderer;
 
@@ -15,20 +17,13 @@ public class LungBehavior : MonoBehaviour
         meshRenderer = this.GetComponent<MeshRenderer>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if(other.tag == "Tool")
         {
-            //var tool = other.GetComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
             meshRenderer.material = enterMaterial;
             other.GetComponent<NeedleBehavior>().NeedleInserted(true);
-            //tool.gravityOnDetach = false;
+            eventManager.TriggerPulseAction(Pulse.CDM.PulseAction.NeedleDecompressions);
         }
     }
 
@@ -36,10 +31,8 @@ public class LungBehavior : MonoBehaviour
     {
         if (other.tag == "Tool")
         {
-            //var tool = other.GetComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
             meshRenderer.material = originalMaterial;
             other.GetComponent<NeedleBehavior>().NeedleInserted(false);
-            //tool.gravityOnDetach = true;
         }
     }
 }

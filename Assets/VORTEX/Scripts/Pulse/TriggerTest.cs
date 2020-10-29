@@ -10,9 +10,10 @@ namespace Pulse.CDM
 
         public void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.tag == "Respawn")
+            if (other.gameObject.tag == "Tool")
             {
-                eventManager.TriggerPulseAction(PulseAction.StopAirwayObstruction);
+                Debug.Log("Start Tension Pneumothorax");
+                eventManager.TriggerPulseAction(PulseAction.TensionPneumothorax);
             }
         }
     }

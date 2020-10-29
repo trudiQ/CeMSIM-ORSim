@@ -26,12 +26,12 @@ public class NeedleBehavior : MonoBehaviour
         if(isInserted)
         {
             _xrInteractable.gravityOnDetach = false;
-            _rb.constraints = RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+            //_rb.constraints = RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
         }
         else
         {
             _xrInteractable.gravityOnDetach = true;
-            _rb.constraints = RigidbodyConstraints.None;
+            //_rb.constraints = RigidbodyConstraints.None;
         }
     }
 }
