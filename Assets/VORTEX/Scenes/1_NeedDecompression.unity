@@ -360,7 +360,7 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 968458184}
-  m_RootOrder: 6
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &33634569
 MonoBehaviour:
@@ -505,7 +505,7 @@ PrefabInstance:
     - target: {fileID: 8789847168405069975, guid: b08a710f4b0134e4e874fcf4f69c63e8,
         type: 3}
       propertyPath: m_Name
-      value: LungLoFi
+      value: Lung_lofi
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b08a710f4b0134e4e874fcf4f69c63e8, type: 3}
@@ -1529,48 +1529,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!114 &399469984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1001 &432115626
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1645,6 +1603,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 954143688583653873, guid: 92e2f527374218648a109240e1500ec2,
     type: 3}
   m_PrefabInstance: {fileID: 432115626}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &477656168 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+    type: 3}
+  m_PrefabInstance: {fileID: 2978497669125963851}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &480915605
 GameObject:
@@ -3492,6 +3456,8 @@ Transform:
   - {fileID: 1494293397}
   - {fileID: 2898224318181899995}
   - {fileID: 130580437}
+  - {fileID: 5082926735417786740}
+  - {fileID: 477656168}
   - {fileID: 1946027120}
   - {fileID: 33634568}
   m_Father: {fileID: 0}
@@ -4601,6 +4567,48 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1405721870624433582}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1290518427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &1300211231
 GameObject:
   m_ObjectHideFlags: 0
@@ -8194,7 +8202,7 @@ Transform:
   m_LocalScale: {x: 0.75046, y: 0.7504599, z: 0.75046015}
   m_Children: []
   m_Father: {fileID: 968458184}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1956642774
 GameObject:
@@ -9357,6 +9365,90 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1dee0794db3362b438c426b5f84822a9, type: 3}
+--- !u!1001 &44337375414103026
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 968458184}
+    m_Modifications:
+    - target: {fileID: 3596019630760075338, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_Name
+      value: RibCage
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.3743155
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.46685815
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.8953958
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7848855
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.2113091
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.4531539
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.36599812
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.0050000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.005000002
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.005000001
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3d713f0196f5f654f896b521e57a9565, type: 3}
 --- !u!1001 &375603718884954451
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11480,6 +11572,90 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 43163304050678622}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2978497669125963851
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 968458184}
+    m_Modifications:
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.039
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.046
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 725385534106804030, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1785596814307711693, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_Name
+      value: Lung_lofi
+      objectReference: {fileID: 0}
+    - target: {fileID: 1785596814307711695, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: eventManager
+      value: 
+      objectReference: {fileID: 1894583677}
+    - target: {fileID: 2972036937120108371, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_Name
+      value: ChestAnatomy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4626591027616437275, guid: 84ef6d1454f6c0a45adb7e56445c6ba3,
+        type: 3}
+      propertyPath: m_Name
+      value: RibCage
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 84ef6d1454f6c0a45adb7e56445c6ba3, type: 3}
 --- !u!23 &3377587136069244703 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 3373199096606928143, guid: 9f8d57207961cb645b659a35ab4962f1,
@@ -11815,6 +11991,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1885289562460092453, guid: a16fdc41eca38aa47a5df4e6ba38274f,
     type: 3}
   m_PrefabInstance: {fileID: 6868921889328467708}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5082926735417786740 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5050692925873023622, guid: 3d713f0196f5f654f896b521e57a9565,
+    type: 3}
+  m_PrefabInstance: {fileID: 44337375414103026}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5135900666441506836
 PrefabInstance:
