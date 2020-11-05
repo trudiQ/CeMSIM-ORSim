@@ -6,7 +6,12 @@ namespace Pulse.CDM
 {
     public class TriggerTest : MonoBehaviour
     {
-        public PulseEventManager eventManager;
+        private PulseEventManager eventManager;
+
+        private void Start()
+        {
+            eventManager = PatientManager.Instance.pulseEventManager;
+        }
 
         public void OnTriggerEnter(Collider other)
         {

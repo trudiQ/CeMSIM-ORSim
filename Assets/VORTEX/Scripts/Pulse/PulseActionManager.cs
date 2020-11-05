@@ -82,6 +82,11 @@ namespace Pulse.CDM
     {
         public PulseAction action;
 
+        private void Start()
+        {
+            driver = this.GetComponent<PulseEngineDriver>();
+        }
+
         private void OnEnable()
         {
             PulseEventManager.triggerAction += RunAction;

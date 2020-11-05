@@ -7,14 +7,15 @@ public class LungBehavior : MonoBehaviour
 {
     public Material originalMaterial;
     public Material enterMaterial;
-    public PulseEventManager eventManager;
 
+    private PulseEventManager eventManager;
     private MeshRenderer meshRenderer;
 
     // Start is called before the first frame update
     void Start()
     {
         meshRenderer = this.GetComponent<MeshRenderer>();
+        eventManager = PatientManager.Instance.pulseEventManager;
     }
 
     private void OnTriggerEnter(Collider other)

@@ -5,6 +5,6 @@ using UnityEngine;
 
 public class PulseEngineController : MonoBehaviour
 {
-    //[HideInInspector]
+    [HideInInspector]
     public PulseEngineDriver driver;  // Holds the pulse engine
 }
