@@ -5,26 +5,30 @@ using Pulse.CDM;
 
 public class LungBehavior : MonoBehaviour
 {
-    public Material originalMaterial;
+    public Material defaultMaterial;
     public Material enterMaterial;
 
-    private PulseEventManager eventManager;
+    public bool inLung; //TO DO: Only handles the insertion of one tool, need to update for multiple tool tracking
+
+    private PatientManager patient;
     private MeshRenderer meshRenderer;
 
     // Start is called before the first frame update
     void Start()
     {
         meshRenderer = this.GetComponent<MeshRenderer>();
-        eventManager = PatientManager.Instance.pulseEventManager;
+        patient = PatientManager.Instance;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.tag == "Tool")
         {
+            inLung = true;
             meshRenderer.material = enterMaterial;
             other.GetComponent<NeedleBehavior>().NeedleInserted(true);
-            eventManager.TriggerPulseAction(Pulse.CDM.PulseAction.NeedleDecompressions);
+            Debug.Log("Needle decompression event");
+            patient.pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.NeedleDecompressions);
         }
     }
 
@@ -32,7 +36,8 @@ public class LungBehavior : MonoBehaviour
     {
         if (other.tag == "Tool")
         {
-            meshRenderer.material = originalMaterial;
+            inLung = false;
+            meshRenderer.material = defaultMaterial;
             other.GetComponent<NeedleBehavior>().NeedleInserted(false);
         }
     }

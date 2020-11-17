@@ -5,11 +5,11 @@ using Pulse.CDM;
 
 public class TriggerTest : MonoBehaviour
 {
-    private PulseEventManager eventManager;
+    private PatientManager patient;
 
     private void Start()
     {
-        eventManager = PatientManager.Instance.pulseEventManager;
+        patient = PatientManager.Instance;
     }
 
     public void OnTriggerEnter(Collider other)
@@ -17,7 +17,7 @@ public class TriggerTest : MonoBehaviour
         if (other.gameObject.tag == "Tool")
         {
             Debug.Log("Start Tension Pneumothorax");
-            eventManager.TriggerPulseAction(Pulse.CDM.PulseAction.TensionPneumothorax);
+            patient.pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.TensionPneumothorax);
         }
     }
 }
