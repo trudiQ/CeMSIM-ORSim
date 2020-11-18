@@ -17,7 +17,7 @@ public class TriggerTest : MonoBehaviour
         if (other.gameObject.tag == "Tool")
         {
             Debug.Log("Start Tension Pneumothorax");
-            patient.pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.TensionPneumothorax);
+            ScenarioManager.Instance.StartScenario();
         }
     }
 }

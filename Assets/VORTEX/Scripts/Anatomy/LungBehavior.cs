@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Pulse.CDM;
 
 public class LungBehavior : MonoBehaviour
 {
@@ -28,7 +27,7 @@ public class LungBehavior : MonoBehaviour
             meshRenderer.material = enterMaterial;
             other.GetComponent<NeedleBehavior>().NeedleInserted(true);
             Debug.Log("Needle decompression event");
-            patient.pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.NeedleDecompressions);
+            PatientEvents.Instance.TriggerNeedleDecompression();           
         }
     }
 

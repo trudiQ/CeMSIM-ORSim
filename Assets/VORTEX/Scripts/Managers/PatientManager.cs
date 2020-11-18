@@ -37,5 +37,19 @@ public class PatientManager : MonoBehaviour
     {
         pulseEngineDriver = this.GetComponent<PulseEngineDriver>();
         pulseEventManager = this.GetComponent<PulseEventManager>();
+
+        PatientEvents.Instance.NeedleDecompression += OnNeedleDecompression;
+        PatientEvents.Instance.PatientPneumothorax += OnTriggerPneumothorax;
+    }
+
+    private void OnTriggerPneumothorax()
+    {
+        //Trigger Pneumothorax
+        pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.TensionPneumothorax);
+    }
+
+    private void OnNeedleDecompression()
+    {
+        pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.NeedleDecompressions);
     }
 }
