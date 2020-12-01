@@ -10,6 +10,15 @@ public class PulseEventManager : MonoBehaviour
     public delegate void TriggerAction();
     public static event TriggerAction triggerAction;
 
+   // private void OnEnable()
+   // {
+   //     PatientEvents.Instance.PatientPneumothorax += TriggerPulseAction;
+   // }
+   // private void OnDisable()
+   // {
+   //     PatientEvents.Instance.PatientPneumothorax -= TriggerPulseAction;
+   // }
+
     private void Start()
     {
         actionManager = this.GetComponent<PulseActionManager>();
@@ -18,6 +27,14 @@ public class PulseEventManager : MonoBehaviour
     public void TriggerPulseAction(Pulse.CDM.PulseAction action)
     {
         actionManager.action = action;
+
+        triggerAction?.Invoke();
+    }
+
+    public void TriggerPulseAction(Pulse.CDM.PulseAction action, float severity)
+    {
+        actionManager.action = action;
+        actionManager.tp_severity = severity;
 
         triggerAction?.Invoke();
     }

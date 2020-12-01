@@ -81,6 +81,7 @@ namespace Pulse.CDM
     public class PulseActionManager : PulseEngineController
     {
         public PulseAction action;
+        public float tp_severity;
 
         private void Start()
         {
@@ -183,7 +184,7 @@ namespace Pulse.CDM
                         SETensionPneumothorax tp = new SETensionPneumothorax();
                         tp.SetSide(eSide.Left);
                         tp.SetType(eGate.Open);
-                        tp.GetSeverity().SetValue(1.0f);
+                        tp.GetSeverity().SetValue(tp_severity);
                         driver.engine.ProcessAction(tp);
                         break;
                     }

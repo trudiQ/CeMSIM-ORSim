@@ -8,6 +8,7 @@ public class PatientEvents : MonoBehaviour
     private static PatientEvents _instance;
     public static PatientEvents Instance { get { return _instance; } }
 
+
     protected virtual void Awake()
     {
         if (_instance = null)
@@ -31,6 +32,7 @@ public class PatientEvents : MonoBehaviour
     public event Action PatientPneumothorax;
     public event Action NeedleDecompression;
 
+
     public void TriggerPatientPneumothorax()
     {
         if (PatientPneumothorax != null)
@@ -46,4 +48,5 @@ public class PatientEvents : MonoBehaviour
             NeedleDecompression();
         }
     }
+
 }

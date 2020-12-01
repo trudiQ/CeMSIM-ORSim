@@ -52,6 +52,7 @@ public class ScenarioManager : MonoBehaviour
     void Start()
     {
         PatientEvents.Instance.NeedleDecompression += OnNeedleDecompression;
+        StartScenario();
     }
 
     // Update is called once per frame
@@ -67,7 +68,7 @@ public class ScenarioManager : MonoBehaviour
                 {
                     if (timeElapsed > timeNeedleDecompFail)
                     {
-                        Debug.Log("Failed scenario: Did not perform Needle Deompression in time");
+                        Debug.Log("Failed scenario: Did not perform Needle Decompression in time");
                         PauseScenario();
                     }
                 }
@@ -77,6 +78,8 @@ public class ScenarioManager : MonoBehaviour
                     PauseScenario();
                 }
             }
+
+            PatientManager.Instance.CheckTime(4);
         }
     }
 
