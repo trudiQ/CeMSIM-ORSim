@@ -1,10 +1,5 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Runtime.InteropServices;
-using System.Security.Policy;
 using UnityEditor;
 using UnityEngine;
 
@@ -69,7 +64,7 @@ public class SelectTool : MonoBehaviour
 
     public void RunChildren() //Enables consecutive selection of linear stapler components
     { 
-        Tools[] children = new Tools[transform.childCount];
+        GameObject[] children = new GameObject[transform.childCount];
         for (int i = 0; i < transform.childCount; i++)
         {
             ClickAndCount();

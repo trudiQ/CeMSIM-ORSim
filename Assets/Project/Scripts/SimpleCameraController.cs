@@ -85,19 +85,19 @@ namespace UnityTemplateProjects
         Vector3 GetInputTranslationDirection()
         {
             Vector3 direction = new Vector3();
-            if (Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow))
+            if (Input.GetKey(KeyCode.W))
             {
                 direction += Vector3.forward;
             }
-            if (Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow))
+            if (Input.GetKey(KeyCode.S))
             {
                 direction += Vector3.back;
             }
-            if (Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow))
+            if (Input.GetKey(KeyCode.A))
             {
                 direction += Vector3.left;
             }
-            if (Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow))
+            if (Input.GetKey(KeyCode.D))
             {
                 direction += Vector3.right;
             }
@@ -127,23 +127,23 @@ namespace UnityTemplateProjects
 				#endif
             }
             // Hide and lock cursor when right mouse button pressed
-            if (Input.GetMouseButtonDown(1)||Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetMouseButtonDown(1))
             {
                 Cursor.lockState = CursorLockMode.Locked;
             }
 
             // Unlock and show cursor when right mouse button released
-            if (Input.GetMouseButtonUp(1)||Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetMouseButtonUp(1))
             {
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
             }
- 
+
             // Rotation
-            if (Input.GetMouseButton(1)||Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetMouseButton(1))
             {
                 var mouseMovement = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y") * (invertY ? 1 : -1));
-               
+                
                 var mouseSensitivityFactor = mouseSensitivityCurve.Evaluate(mouseMovement.magnitude);
 
                 m_TargetCameraState.yaw += mouseMovement.x * mouseSensitivityFactor;
