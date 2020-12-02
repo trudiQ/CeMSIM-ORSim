@@ -540,7 +540,23 @@ PrefabInstance:
       propertyPath: m_LocalScale.x
       value: 0.19999999
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8037887736889436517, guid: e8ecd409dc6abe14493d12c69899822c,
+        type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 1970608045}
+    - target: {fileID: 8037887736889436517, guid: e8ecd409dc6abe14493d12c69899822c,
+        type: 3}
+      propertyPath: activeInputAxis
+      value: Fire1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8037887736889436517, guid: e8ecd409dc6abe14493d12c69899822c,
+        type: 3}
+      propertyPath: secondaryActiveInputAxis
+      value: Fire2
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 8037887736889436517, guid: e8ecd409dc6abe14493d12c69899822c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e8ecd409dc6abe14493d12c69899822c, type: 3}
 --- !u!1 &107854622
 GameObject:
@@ -9263,6 +9279,28 @@ MonoScript:
   m_ExecutionOrder: 0
   m_ClassName: SceneObjectIDMapSceneAsset
   m_Namespace: UnityEngine.Rendering.HighDefinition
+--- !u!1 &962412343 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 405605147029014127, guid: e8ecd409dc6abe14493d12c69899822c,
+    type: 3}
+  m_PrefabInstance: {fileID: 94826998}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &962412344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 962412343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2290e574c0b94418a72b483faf63c90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1970608045}
+  activeInputAxis: Sample LStapler1
+  secondaryActiveInputAxis: Sample LStapler2
+  speed: 1
 --- !u!1 &968458183
 GameObject:
   m_ObjectHideFlags: 0
@@ -13651,6 +13689,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18d97988ede7d3648aef4ca72973e4a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 1
+  inputSource: 0
+  gravity: -9.81
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  additionalHeight: 0.2
 --- !u!114 &1794432984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14623,6 +14668,12 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!95 &1970608045 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 1279750981205864978, guid: e8ecd409dc6abe14493d12c69899822c,
+    type: 3}
+  m_PrefabInstance: {fileID: 94826998}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2021137346
 GameObject:
   m_ObjectHideFlags: 0
