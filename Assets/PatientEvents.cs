@@ -8,6 +8,7 @@ public class PatientEvents : MonoBehaviour
     private static PatientEvents _instance;
     public static PatientEvents Instance { get { return _instance; } }
 
+    //public PulseEventManager eventManager;
 
     protected virtual void Awake()
     {
@@ -48,5 +49,36 @@ public class PatientEvents : MonoBehaviour
             NeedleDecompression();
         }
     }
+
+  // public void AdministerMedication(string medicationName)
+  // {
+  //     switch (medicationName)
+  //     {
+  //         case "Epinephrine":
+  //             {
+  //                 actionManager.drug = Pulse.CDM.Drug.StartEpinephrineInfusion;
+  //                 break;
+  //             }
+  //         case "Succinylcholine":
+  //             {
+  //                 actionManager.drug = Pulse.CDM.Drug.StartSuccinylcholineInfusion;
+  //                 break;
+  //             }
+  //         case "Propofol":
+  //             {
+  //                 actionManager.drug = Pulse.CDM.Drug.StartPropofolInfusion;
+  //                 break;
+  //             }
+  //         case "Rocuronium":
+  //             {
+  //                 actionManager.drug = Pulse.CDM.Drug.StartRocuroniumInfusion;
+  //                 break;
+  //             }
+  //         default:
+  //             {
+  //                 break;
+  //             }
+  //     }
+  // }
 
 }

@@ -84,6 +84,7 @@ public class PatientManager : MonoBehaviour
         {
             if (scenarioManager.timeElapsed > intervals[i] && !intervalActionsTriggered[i])
             {
+                //TODO: trigger through PatientEvents instead of PulseEventManager (12/1/2020 MH)
                 pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.TensionPneumothorax, (1 / (float)noIntervals) * (i + 1));
                 intervalActionsTriggered[i] = true;
             }
