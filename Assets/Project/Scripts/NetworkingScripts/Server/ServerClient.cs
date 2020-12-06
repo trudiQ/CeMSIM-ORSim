@@ -152,7 +152,7 @@ namespace CEMSIM
                             // create a packet containing just the data
                             using (Packet _packet = new Packet(_packetBytes))
                             {
-                                int _packetId = _packet.ReadInt32();
+                                int _packetId = _packet.DigestClientHeader(); // extract header information
 
                                 Debug.Log($"Receive a packet with id {_packetId} from client {id}");
                                 NetworkOverlayMenu.Instance.Log($"Receive a packet with id {_packetId} from client {id}");
@@ -228,7 +228,8 @@ namespace CEMSIM
                     {
                         using (Packet _packet = new Packet(_data))
                         {
-                            int _packetId = _packet.ReadInt32();
+                            // extract header information
+                            int _packetId = _packet.DigestClientHeader(); 
                             ServerInstance.packetHandlers[_packetId](id, _packet);
                         }
                     });

@@ -10,6 +10,13 @@ namespace CEMSIM
     {
         public class ServerHandle : MonoBehaviour
         {
+            public static void InvalidPacketResponse(int _fromClient, Packet _packet)
+            {
+                Debug.LogWarning($"Client {_fromClient} sends an invalid packet");
+                NetworkOverlayMenu.Instance.Log($"Client {_fromClient} sends an invalid packet");
+                return;
+            }
+
             public static void WelcomeReceived(int _fromClient, Packet _packet)
             {
                 int _clientIdCheck = _packet.ReadInt32();

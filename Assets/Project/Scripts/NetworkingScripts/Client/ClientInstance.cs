@@ -234,7 +234,8 @@ namespace CEMSIM
                     {
                         using (Packet _packet = new Packet(_data))
                         {
-                            int _packetId = _packet.ReadInt32();
+                            // digest the packet header information
+                            int _packetId = _packet.DigestServerHeader();
                             packetHandlers[_packetId](_packet);
                         }
                     });
@@ -387,7 +388,8 @@ namespace CEMSIM
                             // create a packet containing just the data
                             using (Packet _packet = new Packet(_packetBytes))
                             {
-                                int _packetId = _packet.ReadInt32();
+                                // digest the packet header information
+                                int _packetId = _packet.DigestServerHeader();
 
                                 Debug.Log($"Receive a packet with id {_packetId}");
                                 // call proper handling function based on packet id
@@ -434,6 +436,7 @@ namespace CEMSIM
             private static void InitializeClientData()
             {
                 packetHandlers = new Dictionary<int, PacketHandler>() {
+                { (int)ServerPackets.invalidPacket, ClientHandle.InvalidPacketResponse},
                 { (int)ServerPackets.welcome, ClientHandle.Welcome },
                 { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
                 { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },

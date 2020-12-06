@@ -15,6 +15,11 @@ namespace CEMSIM
         public class ClientHandle : MonoBehaviour
         {
 
+            public static void InvalidPacketResponse(Packet _packet)
+            {
+                Debug.Log($"Received an invalid packet from Server");
+            }
+
             public static void Welcome(Packet _packet)
             {
                 string _msg = _packet.ReadString();

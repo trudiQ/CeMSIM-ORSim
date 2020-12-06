@@ -17,9 +17,10 @@ namespace CEMSIM
             /// </summary>
             /// <param name="_toClient">Client id</param>
             /// <param name="_packet">The packet</param>
-            private static void SendTCPData(int _toClient, Packet _packet)
+            /// <param name="addTime"> Whether include the generate time in the packet header</param>
+            private static void SendTCPData(int _toClient, Packet _packet, bool addTime = false)
             {
-                _packet.WriteLength(); // add the Data Length to the packet
+                _packet.WriteHeader(addTime);   // write the header information including length
                 ServerInstance.clients[_toClient].tcp.SendData(_packet);
 
             }
@@ -28,9 +29,10 @@ namespace CEMSIM
             /// Multicast packet to all clients
             /// </summary>
             /// <param name="_packet">The packet to multicast</param>
-            private static void MulticastTCPData(Packet _packet)
+            /// <param name="addTime"> Whether include the generate time in the packet header</param>
+            private static void MulticastTCPData(Packet _packet, bool addTime = false)
             {
-                _packet.WriteLength();
+                _packet.WriteHeader(addTime);   // write the header information including length
                 for (int i = 1; i < ServerInstance.maxPlayers; i++)
                 {
                     ServerInstance.clients[i].tcp.SendData(_packet);
@@ -42,9 +44,10 @@ namespace CEMSIM
             /// </summary>
             /// <param name="_exceptClient">The client to who no packet is sent</param>
             /// <param name="_packet"> The packet to multicast</param>
-            private static void MulticastExceptOneTCPData(int _exceptClient, Packet _packet)
+            /// <param name="addTime"> Whether include the generate time in the packet header</param>
+            private static void MulticastExceptOneTCPData(int _exceptClient, Packet _packet, bool addTime = false)
             {
-                _packet.WriteLength();
+                _packet.WriteHeader(addTime);   // write the header information including length
                 for (int i = 1; i < ServerInstance.maxPlayers; i++)
                 {
                     if (i != _exceptClient)
@@ -63,9 +66,9 @@ namespace CEMSIM
             /// </summary>
             /// <param name="_toClient">Client id</param>
             /// <param name="_packet">The packet to send</param>
-            private static void SendUDPData(int _toClient, Packet _packet)
+            private static void SendUDPData(int _toClient, Packet _packet, bool addTime = false)
             {
-                _packet.WriteLength();
+                _packet.WriteHeader(addTime);
                 ServerInstance.clients[_toClient].udp.SendData(_packet);
             }
 
@@ -73,9 +76,9 @@ namespace CEMSIM
             /// Multicast packet to all clients
             /// </summary>
             /// <param name="_packet">The packet to multicast</param>
-            private static void MulticastUDPData(Packet _packet)
+            private static void MulticastUDPData(Packet _packet, bool addTime = false)
             {
-                _packet.WriteLength();
+                _packet.WriteHeader(addTime);
                 for (int i = 1; i < ServerInstance.maxPlayers; i++)
                 {
                     ServerInstance.clients[i].udp.SendData(_packet);
@@ -87,9 +90,9 @@ namespace CEMSIM
             /// </summary>
             /// <param name="_exceptClient">The client to who no packet is sent</param>
             /// <param name="_packet"> The packet to multicast</param>
-            private static void MulticastExceptOneUDPData(int _exceptClient, Packet _packet)
+            private static void MulticastExceptOneUDPData(int _exceptClient, Packet _packet, bool addTime = false)
             {
-                _packet.WriteLength();
+                _packet.WriteHeader(addTime);
                 for (int i = 1; i < ServerInstance.maxPlayers; i++)
                 {
                     if (i != _exceptClient)
@@ -115,12 +118,12 @@ namespace CEMSIM
                     /*
                         * Packet format: <---|Data length|msg string|client id|
                         * Data length is taken cared by the SendTCPData function. 
-                        * Here, user focuses on data.
+                        * Here, user focuses on "msg string" and "client id" .
                         * **/
                     _packet.Write(_msg);
                     _packet.Write(_toClient); // add the client id assigned to the client
 
-                    SendTCPData(_toClient, _packet);
+                    SendTCPData(_toClient, _packet, true);
                 }
             }
 
@@ -135,7 +138,7 @@ namespace CEMSIM
                 {
                     _packet.Write(_msg);
 
-                    SendTCPData(_toClient, _packet);
+                    SendTCPData(_toClient, _packet, true);
                 }
             }
 
@@ -151,7 +154,7 @@ namespace CEMSIM
                 {
                     _packet.Write(_msg);
 
-                    SendUDPData(_toClient, _packet);
+                    SendUDPData(_toClient, _packet, true);
                 }
             }
 
@@ -169,7 +172,7 @@ namespace CEMSIM
                     _packet.Write(_player.transform.position);
                     _packet.Write(_player.transform.rotation);
 
-                    SendTCPData(_toClient, _packet);
+                    SendTCPData(_toClient, _packet, true);
                 }
             }
 
@@ -182,9 +185,9 @@ namespace CEMSIM
 
                     //Do not update VR player position based on server
                     if (_player is ServerPlayerVR)
-                        MulticastExceptOneUDPData(_player.id, _packet);
+                        MulticastExceptOneUDPData(_player.id, _packet, true);
                     else
-                        MulticastUDPData(_packet);
+                        MulticastUDPData(_packet, true);
                 }
             }
 
@@ -196,7 +199,7 @@ namespace CEMSIM
                     _packet.Write(_player.transform.rotation);
 
                     // no need to force update user's rotation
-                    MulticastExceptOneUDPData(_player.id, _packet);
+                    MulticastExceptOneUDPData(_player.id, _packet, true);
                 }
             }
 
@@ -207,7 +210,7 @@ namespace CEMSIM
                     _packet.Write(_playerId);
 
                     // This packet is important, we cannot afford losing it.
-                    MulticastTCPData(_packet);
+                    MulticastTCPData(_packet, true);
                 }
             }
         }
