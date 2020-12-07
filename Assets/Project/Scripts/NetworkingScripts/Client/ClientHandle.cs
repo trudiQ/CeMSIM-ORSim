@@ -142,6 +142,18 @@ namespace CEMSIM
                 // remove the value in the player dictionary
                 GameManager.players.Remove(_id);
             }
+
+            public static void HeartBeatDetectionUDP(Packet _packet)
+            {
+                long sendTicks = _packet.getUtcTicks(); // the utc ticks that generates the received packet
+                ClientSend.SendHeartBeatResponseUDP(sendTicks);
+            }
+
+            public static void HeartBeatDetectionTCP(Packet _packet)
+            {
+                long sendTicks = _packet.getUtcTicks(); // the utc ticks that generates the received packet
+                ClientSend.SendHeartBeatResponseTCP(sendTicks);
+            }
         }
     }
 }

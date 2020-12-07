@@ -121,6 +121,24 @@ namespace CEMSIM
                     Debug.Log("Warning: Client ID does not exist or has not been added yet");
                 }
             }
+
+            public static void SendHeartBeatResponseTCP(long sendTicks)
+            {
+                using (Packet _packet = new Packet((int)ClientPackets.heartBeatDetectionTCP))
+                {
+                    _packet.Write(sendTicks);
+                    SendTCPData(_packet);
+                }
+            }
+
+            public static void SendHeartBeatResponseUDP(long sendTicks)
+            {
+                using (Packet _packet = new Packet((int)ClientPackets.heartBeatDetectionUDP))
+                {
+                    _packet.Write(sendTicks);
+                    SendUDPData(_packet);
+                }
+            }
             #endregion
         }
     }

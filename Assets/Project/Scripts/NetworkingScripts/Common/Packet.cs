@@ -161,6 +161,11 @@ namespace CEMSIM
                 return id;
             }
 
+            public long getUtcTicks()
+            {
+                return utcticks;
+            }
+
             /// <summary>
             /// Get the packet content in bytes
             /// </summary>

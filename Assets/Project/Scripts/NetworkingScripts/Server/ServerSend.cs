@@ -213,6 +213,19 @@ namespace CEMSIM
                     MulticastTCPData(_packet, true);
                 }
             }
+
+            public static void HeartBeatDetection()
+            {
+                using (Packet _packet = new Packet((int)ServerPackets.heartBeatDetectionUDP))
+                {
+                    MulticastUDPData(_packet, true);
+                }
+
+                using (Packet _packet = new Packet((int)ServerPackets.heartBeatDetectionTCP))
+                {
+                    MulticastTCPData(_packet, true);
+                }
+            }
         }
     }
 }

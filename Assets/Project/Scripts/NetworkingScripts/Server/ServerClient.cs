@@ -36,15 +36,20 @@ namespace CEMSIM
             public class TCP
             {
                 public TcpClient socket;
+                public long rtt; // round trip time
+                public long lastHeartBeat; // tick for the last heart beat
 
                 private readonly int id;
                 private NetworkStream stream;
                 private byte[] receiveBuffer;
                 private Packet receivedData;
+                
 
                 public TCP(int _id)
                 {
                     id = _id;
+                    rtt = 0;
+                    lastHeartBeat = 0;
                 }
 
                 /// <summary>
@@ -191,6 +196,7 @@ namespace CEMSIM
                     receivedData = null;
                     receiveBuffer = null;
                     socket = null;
+                    lastHeartBeat = 0;
                 }
 
             }
@@ -201,12 +207,16 @@ namespace CEMSIM
             public class UDP
             {
                 public IPEndPoint endPoint;
+                public long rtt; // udp rtt
+                public long lastHeartBeat; // tick for the last heart beat response
 
                 private int id;
 
                 public UDP(int _id)
                 {
                     id = _id;
+                    rtt = 0;
+                    lastHeartBeat = 0;
                 }
 
                 public void Connect(IPEndPoint _endPoint)
@@ -216,7 +226,16 @@ namespace CEMSIM
 
                 public void SendData(Packet _packet)
                 {
-                    ServerInstance.SendUDPData(endPoint, _packet);
+                    try
+                    {
+                        if (endPoint != null)
+                            ServerInstance.SendUDPData(endPoint, _packet);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log($"Error sending packet to client {id} via UDP. Exception {e}");
+                        NetworkOverlayMenu.Instance.Log($"Error sending packet to client {id} via UDP. Exception {e}");
+                    }
                 }
 
                 public void HandleData(Packet _packetData)
@@ -236,9 +255,11 @@ namespace CEMSIM
 
                 }
 
+                // UDP disconnect handling
                 public void Disconnect()
                 {
                     endPoint = null;
+                    lastHeartBeat = 0;
                 }
 
             }
@@ -298,6 +319,7 @@ namespace CEMSIM
                 });
                     
             }
+
         }
     }
 }

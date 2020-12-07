@@ -18,7 +18,8 @@ namespace CEMSIM
             playerPosition,     // update of player position
             playerRotation,     // update of player rotation
             playerDisconnected, // inform player the disconnection of another player
-            heartbeatDetection, // a packet containing the server's system time. used to check whether the target client is alive and get the round-trip-time.
+            heartBeatDetectionUDP, // a packet containing the server's system time. used to check whether the target client is alive and get the round-trip-time.
+            heartBeatDetectionTCP,
         }
 
         /// <summary>
@@ -33,7 +34,8 @@ namespace CEMSIM
             spawnRequest,       // player request to enter
             playerDesktopMovement, // client's control operations on the movement of the desktop player
             playerVRMovement,   // client's position and orientation of the VR player
-            heartbeatResponse,  // in response to the server's system. 
+            heartBeatDetectionUDP,  // in response to the server's system.
+            heartBeatDetectionTCP,
         }
     }
 }
