@@ -13,26 +13,15 @@ namespace CEMSIM
         /// </summary>
         public class ClientSend : MonoBehaviour
         {
-            /// <summary>
-            /// Send packet to the server via TCP
-            /// </summary>
-            /// <param name="_packet">The packet including only the payload</param>
-            /// <param name="addTime">Whether to include the generation time of the packet</param>
-            private static void SendTCPData(Packet _packet, bool addTime = false)
+            private static void SendTCPData(Packet _packet)
             {
-                //_packet.WriteLength(); // add the Data Length to the packet
-                _packet.WriteHeader(addTime);// 
+                _packet.WriteLength(); // add the Data Length to the packet
                 ClientInstance.instance.tcp.SendData(_packet);
             }
 
-            /// <summary>
-            /// Send packet to the server via UDP
-            /// </summary>
-            /// <param name="_packet">The packet including only the payload</param>
-            /// <param name="addTime">Whether to include the generation time of the packet</param>
-            private static void SendUDPData(Packet _packet, bool addTime = false)
+            private static void SendUDPData(Packet _packet)
             {
-                _packet.WriteHeader(addTime);// 
+                _packet.WriteLength();
                 ClientInstance.instance.udp.SendData(_packet);
             }
 
@@ -119,24 +108,6 @@ namespace CEMSIM
                 else
                 {
                     Debug.Log("Warning: Client ID does not exist or has not been added yet");
-                }
-            }
-
-            public static void SendHeartBeatResponseTCP(long sendTicks)
-            {
-                using (Packet _packet = new Packet((int)ClientPackets.heartBeatDetectionTCP))
-                {
-                    _packet.Write(sendTicks);
-                    SendTCPData(_packet);
-                }
-            }
-
-            public static void SendHeartBeatResponseUDP(long sendTicks)
-            {
-                using (Packet _packet = new Packet((int)ClientPackets.heartBeatDetectionUDP))
-                {
-                    _packet.Write(sendTicks);
-                    SendUDPData(_packet);
                 }
             }
             #endregion

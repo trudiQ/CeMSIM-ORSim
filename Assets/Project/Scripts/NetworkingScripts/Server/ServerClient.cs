@@ -36,20 +36,15 @@ namespace CEMSIM
             public class TCP
             {
                 public TcpClient socket;
-                public long rtt; // round trip time
-                public long lastHeartBeat; // tick for the last heart beat
 
                 private readonly int id;
                 private NetworkStream stream;
                 private byte[] receiveBuffer;
                 private Packet receivedData;
-                
 
                 public TCP(int _id)
                 {
                     id = _id;
-                    rtt = 0;
-                    lastHeartBeat = 0;
                 }
 
                 /// <summary>
@@ -157,7 +152,7 @@ namespace CEMSIM
                             // create a packet containing just the data
                             using (Packet _packet = new Packet(_packetBytes))
                             {
-                                int _packetId = _packet.DigestClientHeader(); // extract header information
+                                int _packetId = _packet.ReadInt32();
 
                                 Debug.Log($"Receive a packet with id {_packetId} from client {id}");
                                 NetworkOverlayMenu.Instance.Log($"Receive a packet with id {_packetId} from client {id}");
@@ -196,7 +191,6 @@ namespace CEMSIM
                     receivedData = null;
                     receiveBuffer = null;
                     socket = null;
-                    lastHeartBeat = 0;
                 }
 
             }
@@ -207,16 +201,12 @@ namespace CEMSIM
             public class UDP
             {
                 public IPEndPoint endPoint;
-                public long rtt; // udp rtt
-                public long lastHeartBeat; // tick for the last heart beat response
 
                 private int id;
 
                 public UDP(int _id)
                 {
                     id = _id;
-                    rtt = 0;
-                    lastHeartBeat = 0;
                 }
 
                 public void Connect(IPEndPoint _endPoint)
@@ -226,16 +216,7 @@ namespace CEMSIM
 
                 public void SendData(Packet _packet)
                 {
-                    try
-                    {
-                        if (endPoint != null)
-                            ServerInstance.SendUDPData(endPoint, _packet);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.Log($"Error sending packet to client {id} via UDP. Exception {e}");
-                        NetworkOverlayMenu.Instance.Log($"Error sending packet to client {id} via UDP. Exception {e}");
-                    }
+                    ServerInstance.SendUDPData(endPoint, _packet);
                 }
 
                 public void HandleData(Packet _packetData)
@@ -247,19 +228,16 @@ namespace CEMSIM
                     {
                         using (Packet _packet = new Packet(_data))
                         {
-                            // extract header information
-                            int _packetId = _packet.DigestClientHeader(); 
+                            int _packetId = _packet.ReadInt32();
                             ServerInstance.packetHandlers[_packetId](id, _packet);
                         }
                     });
 
                 }
 
-                // UDP disconnect handling
                 public void Disconnect()
                 {
                     endPoint = null;
-                    lastHeartBeat = 0;
                 }
 
             }
@@ -319,7 +297,6 @@ namespace CEMSIM
                 });
                     
             }
-
         }
     }
 }

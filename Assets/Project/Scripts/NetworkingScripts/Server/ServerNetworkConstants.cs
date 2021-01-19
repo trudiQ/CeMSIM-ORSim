@@ -13,10 +13,6 @@ namespace CEMSIM
             public const int CONCURRENT_CLIENTS = 40;
 
             public const int DATA_BUFFER_SIZE = 4096; //4KB for both Tx & Rx
-
-            // Heart Beat Detection
-            public const int HEARTBEAT_DETECTION_PERIOD = 1; // second
-            public const long HEARTBEAT_TIMEOUT = 3 * HEARTBEAT_DETECTION_PERIOD * (long)1e7;
         }
     }
 }

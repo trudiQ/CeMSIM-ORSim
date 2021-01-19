@@ -10,13 +10,6 @@ namespace CEMSIM
     {
         public class ServerHandle : MonoBehaviour
         {
-            public static void InvalidPacketResponse(int _fromClient, Packet _packet)
-            {
-                Debug.LogWarning($"Client {_fromClient} sends an invalid packet");
-                NetworkOverlayMenu.Instance.Log($"Client {_fromClient} sends an invalid packet");
-                return;
-            }
-
             public static void WelcomeReceived(int _fromClient, Packet _packet)
             {
                 int _clientIdCheck = _packet.ReadInt32();
@@ -126,25 +119,6 @@ namespace CEMSIM
                 ServerPlayerVR fromPlayer = (ServerPlayerVR)ServerInstance.clients[_fromClient].player;
                 fromPlayer.SetPosition(_position, _rotation);
             }
-
-            // update the TCP round-trip-time based on the response packet
-            public static void HeartBeatDetectionTCP(int _fromClient, Packet _packet)
-            {
-                long utcnow = System.DateTime.UtcNow.Ticks;
-                long sendticks = _packet.ReadInt64();
-                ServerInstance.clients[_fromClient].tcp.lastHeartBeat = utcnow;
-                ServerInstance.clients[_fromClient].tcp.rtt = utcnow - sendticks;
-            }
-
-            // update the UDP round-trip-time based on the response packet
-            public static void HeartBeatDetectionUDP(int _fromClient, Packet _packet)
-            {
-                long utcnow = System.DateTime.UtcNow.Ticks;
-                long sendticks = _packet.ReadInt64();
-                ServerInstance.clients[_fromClient].udp.lastHeartBeat = utcnow;
-                ServerInstance.clients[_fromClient].udp.rtt = utcnow - sendticks;
-            }
-
         }
     }
 }

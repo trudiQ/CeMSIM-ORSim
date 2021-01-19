@@ -234,8 +234,7 @@ namespace CEMSIM
                     {
                         using (Packet _packet = new Packet(_data))
                         {
-                            // digest the packet header information
-                            int _packetId = _packet.DigestServerHeader();
+                            int _packetId = _packet.ReadInt32();
                             packetHandlers[_packetId](_packet);
                         }
                     });
@@ -388,8 +387,7 @@ namespace CEMSIM
                             // create a packet containing just the data
                             using (Packet _packet = new Packet(_packetBytes))
                             {
-                                // digest the packet header information
-                                int _packetId = _packet.DigestServerHeader();
+                                int _packetId = _packet.ReadInt32();
 
                                 Debug.Log($"Receive a packet with id {_packetId}");
                                 // call proper handling function based on packet id
@@ -436,7 +434,6 @@ namespace CEMSIM
             private static void InitializeClientData()
             {
                 packetHandlers = new Dictionary<int, PacketHandler>() {
-                { (int)ServerPackets.invalidPacket, ClientHandle.InvalidPacketResponse},
                 { (int)ServerPackets.welcome, ClientHandle.Welcome },
                 { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
                 { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
@@ -444,8 +441,6 @@ namespace CEMSIM
                 { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition},
                 { (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation},
                 { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected},
-                { (int)ServerPackets.heartBeatDetectionTCP, ClientHandle.HeartBeatDetectionTCP},
-                { (int)ServerPackets.heartBeatDetectionUDP, ClientHandle.HeartBeatDetectionUDP},
             };
 
                 Debug.Log("Client Data Initialization Complete.");
