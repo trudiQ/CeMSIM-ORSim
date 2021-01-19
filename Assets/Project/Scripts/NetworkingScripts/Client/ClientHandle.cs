@@ -15,11 +15,6 @@ namespace CEMSIM
         public class ClientHandle : MonoBehaviour
         {
 
-            public static void InvalidPacketResponse(Packet _packet)
-            {
-                Debug.Log($"Received an invalid packet from Server");
-            }
-
             public static void Welcome(Packet _packet)
             {
                 string _msg = _packet.ReadString();
@@ -141,18 +136,6 @@ namespace CEMSIM
                 Destroy(GameManager.players[_id].gameObject);
                 // remove the value in the player dictionary
                 GameManager.players.Remove(_id);
-            }
-
-            public static void HeartBeatDetectionUDP(Packet _packet)
-            {
-                long sendTicks = _packet.getUtcTicks(); // the utc ticks that generates the received packet
-                ClientSend.SendHeartBeatResponseUDP(sendTicks);
-            }
-
-            public static void HeartBeatDetectionTCP(Packet _packet)
-            {
-                long sendTicks = _packet.getUtcTicks(); // the utc ticks that generates the received packet
-                ClientSend.SendHeartBeatResponseTCP(sendTicks);
             }
         }
     }
