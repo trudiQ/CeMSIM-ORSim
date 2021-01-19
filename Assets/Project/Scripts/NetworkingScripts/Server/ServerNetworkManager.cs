@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.GameLogic;
+using System;
 
 namespace CEMSIM
 {
@@ -48,6 +49,10 @@ namespace CEMSIM
                 Application.targetFrameRate = ServerGameConstants.TICKS_PER_SECOND;
 
                 ServerInstance.Start(ServerNetworkConstants.CONCURRENT_CLIENTS, ServerNetworkConstants.TCP_PORT);
+
+                // start the HeartBeatDetection mechanism
+                Debug.Log("Start HeartBeat Detection");
+                StartCoroutine(HeartBeatDetection());
             }
 
             /// <summary>
@@ -77,6 +82,54 @@ namespace CEMSIM
                 // initialize a player at the initial location and return the reference
                 return Instantiate(playerVRPrefab, new Vector3(0f, 1f, 0f), Quaternion.identity, playersContainer.transform).GetComponent<ServerPlayer>();
             }
+
+
+            /// <summary>
+            /// Periodically sending HeartBeatDetection packets to
+            /// 1. measure the round-trip-time for tcp and udp link
+            /// 2. check whether a client is alive
+            /// </summary>
+            /// <returns></returns>
+            IEnumerator HeartBeatDetection()
+            {
+                while (true)
+                {
+                    // prepare for the next detection after HEARTBEAT_DETECTION_PERIOD seconds
+                    yield return new WaitForSeconds(ServerNetworkConstants.HEARTBEAT_DETECTION_PERIOD);
+
+                    // check whether a client is offline
+                    long utcNow = DateTime.UtcNow.Ticks;
+                    //for (int clientId = 0; clientId < ServerNetworkConstants.CONCURRENT_CLIENTS; clientId++)
+                    //{
+                    //    if (ServerInstance.clients[clientId].udp.lastHeartBeat == 0 && ServerInstance.clients[clientId].tcp.lastHeartBeat == 0)
+                    //    {
+                    //        // lastHeartBeat = 0 => this client has not been utilized yet
+                    //        continue;
+                    //    }
+                    //    // check UDP instance
+                    //    if (utcNow - ServerInstance.clients[clientId].udp.lastHeartBeat > ServerNetworkConstants.HEARTBEAT_TIMEOUT)
+                    //    {
+                    //        // the udp instance of the client is offline
+
+                    //    }
+
+                    //    if (utcNow - ServerInstance.clients[clientId].tcp.lastHeartBeat > ServerNetworkConstants.HEARTBEAT_TIMEOUT)
+                    //    {
+                    //        // the tcp instance of the client is offline
+
+                    //    }
+
+                    //}
+
+                    // send UDP and TCP Heart Beat Detection packets
+                    ServerSend.HeartBeatDetection();
+                    Debug.Log("Send HeartBeat Detection packets.");
+
+
+
+                }
+            }
+
         }
     }
 }

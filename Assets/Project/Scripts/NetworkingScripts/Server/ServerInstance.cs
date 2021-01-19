@@ -161,12 +161,15 @@ namespace CEMSIM
 
                 packetHandlers = new Dictionary<int, PacketHandler>
                 {
+                    { (int)ClientPackets.invalidPacket, ServerHandle.InvalidPacketResponse},
                     { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
                     { (int)ClientPackets.pingTCP, ServerHandle.PingTCP},
                     { (int)ClientPackets.pingUDP, ServerHandle.PingUDP},
                     { (int)ClientPackets.spawnRequest, ServerHandle.SpawnRequest},
                     { (int)ClientPackets.playerDesktopMovement, ServerHandle.PlayerDesktopMovement},
                     { (int)ClientPackets.playerVRMovement, ServerHandle.PlayerVRMovement},
+                    { (int)ClientPackets.heartBeatDetectionTCP, ServerHandle.HeartBeatDetectionTCP},
+                    { (int)ClientPackets.heartBeatDetectionUDP, ServerHandle.HeartBeatDetectionUDP},
                 };
 
                 Debug.Log("Initialized Server Data");
