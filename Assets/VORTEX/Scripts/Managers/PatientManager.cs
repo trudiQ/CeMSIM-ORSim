@@ -70,7 +70,19 @@ public class PatientManager : MonoBehaviour
     {
         for (int i = 0; i <= noIntervals; i++)
         {
-            intervals.Add((dur / noIntervals) * (i));
+            if (i == 0)
+            {
+                intervals.Add(0);
+            }
+            else if(i == noIntervals)
+            {
+                intervals.Add(dur);
+            }
+            else
+            {
+                //intervals.Add((dur / noIntervals) * (i));       //determine intervals linearly
+                intervals.Add((int)(dur /2  * Mathf.Exp(0.42f * i) / noIntervals) - 15);
+            }
             intervalActionsTriggered.Add(false);
         }
         scenarioManager.tensionPneumothorax = true;

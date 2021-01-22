@@ -94,6 +94,10 @@ public class ScenarioManager : MonoBehaviour
     {
         isRunning = false;
     }
+    public void UnPauseScenario()
+    {
+        isRunning = true;
+    }
 
     private void OnNeedleDecompression()
     {

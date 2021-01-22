@@ -109,8 +109,11 @@ namespace Pulse.CDM
     public class PulseActionManager : PulseEngineController
     {
         #region Variables
+        [UnityEngine.HideInInspector]
         public PulseAction action;
+        //[UnityEngine.HideInInspector]
         public float tp_severity;
+        [UnityEngine.HideInInspector]
         public Drug drug;
         #endregion
 
@@ -203,7 +206,7 @@ namespace Pulse.CDM
                     {
                         SESubstanceBolus bo = new SESubstanceBolus();
                         bo.SetSubstance(Substance.Morphine);
-                        bo.GetConcentration().SetValue(10, MassPerVolumeUnit.mg_Per_mL);
+                        bo.GetConcentration().SetValue(100, MassPerVolumeUnit.mg_Per_mL);
                         bo.GetDose().SetValue(1, VolumeUnit.mL);
                         bo.SetAdminRoute(SESubstanceBolus.eAdministration.Intravenous);
                         driver.engine.ProcessAction(bo);
@@ -327,7 +330,7 @@ namespace Pulse.CDM
         }
         #endregion
 
-        #region Functions | Adminser Drug
+        #region Functions | Administer Drug
         public void AdministerDrug()
         {
             switch(drug)
@@ -341,6 +344,14 @@ namespace Pulse.CDM
                         si.GetRate().SetValue(100, VolumePerTimeUnit.mL_Per_min);
                         driver.engine.ProcessAction(si);
                         break;
+
+                        //SESubstanceBolus bo = new SESubstanceBolus();
+                        //bo.SetSubstance(Substance.Succinylcholine);
+                        //bo.GetConcentration().SetValue(1, MassPerVolumeUnit.mg_Per_L);
+                        //bo.GetDose().SetValue(1, VolumeUnit.mL);
+                        //bo.SetAdminRoute(SESubstanceBolus.eAdministration.Intravenous);
+                        //driver.engine.ProcessAction(bo);
+                        //break;
                     }
                 case Drug.StopSuccinylcholineInfusion:
                     {
@@ -356,11 +367,19 @@ namespace Pulse.CDM
                     //TODO: update amounts to match drive doc
                 case Drug.StartEpinephrineInfusion:
                     {
-                        SESubstanceInfusion si = new SESubstanceInfusion();
-                        si.SetSubstance(Substance.Epinephrine);
-                        si.GetConcentration().SetValue(0.5f, MassPerVolumeUnit.ug_Per_mL);
-                        si.GetRate().SetValue(100, VolumePerTimeUnit.mL_Per_min);
-                        driver.engine.ProcessAction(si);
+                       //SESubstanceInfusion si = new SESubstanceInfusion();
+                       //si.SetSubstance(Substance.Epinephrine);
+                       //si.GetConcentration().SetValue(5f, MassPerVolumeUnit.ug_Per_mL);
+                       //si.GetRate().SetValue(100, VolumePerTimeUnit.mL_Per_min);
+                       //driver.engine.ProcessAction(si);
+                       //break;
+
+                        SESubstanceBolus bo = new SESubstanceBolus();
+                        bo.SetSubstance(Substance.Epinephrine);
+                        bo.GetConcentration().SetValue(100, MassPerVolumeUnit.mg_Per_mL);
+                        bo.GetDose().SetValue(1, VolumeUnit.mL);
+                        bo.SetAdminRoute(SESubstanceBolus.eAdministration.Intravenous);
+                        driver.engine.ProcessAction(bo);
                         break;
                     }
                 case Drug.StopEpinephrineInfusion:
@@ -377,11 +396,19 @@ namespace Pulse.CDM
                 //TODO: update amounts to match drive doc
                 case Drug.StartPropofolInfusion:
                     {
-                        SESubstanceInfusion si = new SESubstanceInfusion();
-                        si.SetSubstance(Substance.Propofol);
-                        si.GetConcentration().SetValue(7050, MassPerVolumeUnit.ug_Per_mL);
-                        si.GetRate().SetValue(100, VolumePerTimeUnit.mL_Per_min);
-                        driver.engine.ProcessAction(si);
+                        //SESubstanceInfusion si = new SESubstanceInfusion();
+                        //si.SetSubstance(Substance.Propofol);
+                        //si.GetConcentration().SetValue(7050, MassPerVolumeUnit.ug_Per_mL);
+                        //si.GetRate().SetValue(100, VolumePerTimeUnit.mL_Per_min);
+                        //driver.engine.ProcessAction(si);
+                        //break;
+
+                        SESubstanceBolus bo = new SESubstanceBolus();
+                        bo.SetSubstance(Substance.Propofol);
+                        bo.GetConcentration().SetValue(10, MassPerVolumeUnit.mg_Per_mL);
+                        bo.GetDose().SetValue(1, VolumeUnit.mL);
+                        bo.SetAdminRoute(SESubstanceBolus.eAdministration.Intravenous);
+                        driver.engine.ProcessAction(bo);
                         break;
                     }
                 case Drug.StopPropofolInfusion:
