@@ -4,22 +4,19 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    private List<Component> audioPlayers;
+    [Header("References")]
+    public GameObject audioContainer;
+
+    [Header("Debugging")]
     public bool paused = false;
     private bool playing = true;
     public bool startScenario = false;
+
+    private AudioPlayer[] audioPlayers;
     // Start is called before the first frame update
     void Start()
     {
-        audioPlayers = new List<Component>();
-
-        foreach(var component in GetComponents<Component>())
-        {
-            if(component != this && component != GetComponent<Transform>())
-            {
-                audioPlayers.Add(component);
-            }
-        }
+        audioPlayers = audioContainer.GetComponentsInChildren<AudioPlayer>();
     }
 
     public void Update()
