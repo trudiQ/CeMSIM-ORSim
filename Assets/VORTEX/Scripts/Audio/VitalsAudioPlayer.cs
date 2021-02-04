@@ -56,13 +56,9 @@ public class VitalsAudioPlayer : AudioPlayer
 
     public override void Initialize()
     {
-        if (source == null)
-        {
-            source = gameObject;
-        }
-        audioSource = source.AddComponent<AudioSource>();
+        audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = source == gameObject ? 0 : 1;
+        audioSource.spatialBlend = isAudio3D ? 1 : 0;
     }
 
     public override void Pause()
