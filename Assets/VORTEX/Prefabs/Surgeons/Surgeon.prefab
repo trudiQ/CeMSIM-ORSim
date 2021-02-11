@@ -258,6 +258,8 @@ GameObject:
   - component: {fileID: 2347090004830456931}
   - component: {fileID: -8145428874105740767}
   - component: {fileID: 8582911020640040543}
+  - component: {fileID: 5539776984072734536}
+  - component: {fileID: 3331703739854868988}
   m_Layer: 0
   m_Name: Surgeon
   m_TagString: Untagged
@@ -290,13 +292,20 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1642072462627503728}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: a729624dd6cc3ad4398e089d459d42be, type: 3}
   m_Controller: {fileID: 9100000, guid: 91df213f0810b814bb89691b7d643f3a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
-  m_WarningMessage: 
+  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
+    are already bound by a Humanoid avatar. These transforms can only be changed
+    by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
+    'mixamorig:LeftHandThumb2'\n\tTransform 'mixamorig:LeftHandIndex1'\n\tTransform
+    'mixamorig:LeftHandPinky2'\n\tTransform 'mixamorig:RightHandRing2'\n\tTransform
+    'mixamorig:Spine1'\n\tTransform 'mixamorig:LeftToeBase'\n\tTransform 'mixamorig:LeftHandThumb3'\n\tTransform
+    'mixamorig:RightArm'\n\tand more ...\n\tFrom animation clip 'Idle'\n\tFrom animation
+    clip 'Walk'\n\tFrom animation clip 'Idle'\n\tFrom animation clip 'Walk'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
@@ -313,6 +322,108 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: -8145428874105740767}
+  transitionTimeMultiplier: 10
+--- !u!114 &5539776984072734536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642072462627503728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e6929ac04a71647842b6683c02e4eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  headIKActive: 1
+  leftHandIKActive: 1
+  rightHandIKActive: 1
+  rigRoot: {fileID: 2839619630966353637}
+  rigHead: {fileID: 5518510985616435860}
+--- !u!114 &3331703739854868988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642072462627503728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boneShape: 1
+  drawBones: 1
+  drawTripods: 0
+  boneSize: 1
+  tripodSize: 1
+  boneColor: {r: 1, g: 1, b: 1, a: 0.2901961}
+  m_Transforms:
+  - {fileID: 2839619630966353637}
+  - {fileID: 6532682751038419468}
+  - {fileID: 4338431119979399820}
+  - {fileID: 8307431869319362075}
+  - {fileID: 8320603054882961696}
+  - {fileID: 2055609891470187092}
+  - {fileID: 692021536743344004}
+  - {fileID: 7793933001639306180}
+  - {fileID: 5533011799110594405}
+  - {fileID: 1812720727408678604}
+  - {fileID: 910877028910821017}
+  - {fileID: 2828448438928599875}
+  - {fileID: 1397216002852770609}
+  - {fileID: 4341393261705931028}
+  - {fileID: 8546837271466268038}
+  - {fileID: 1420502629658538712}
+  - {fileID: 796379111836373763}
+  - {fileID: 5845811304082053339}
+  - {fileID: 3742947097227561000}
+  - {fileID: 9178619174676134279}
+  - {fileID: 4515240847028327528}
+  - {fileID: 5838577588686138632}
+  - {fileID: 8614239322346940438}
+  - {fileID: 1220462271215501124}
+  - {fileID: 6132448114077471348}
+  - {fileID: 9192520761490258743}
+  - {fileID: 4047310735476563351}
+  - {fileID: 3250693460990721994}
+  - {fileID: 3397845603092729560}
+  - {fileID: 6044848920176614920}
+  - {fileID: 8406038725367418847}
+  - {fileID: 619128418950271014}
+  - {fileID: 2333018238919631152}
+  - {fileID: 8080600154582942540}
+  - {fileID: 8470684495733953700}
+  - {fileID: 4897995440349474912}
+  - {fileID: 1137790959306918463}
+  - {fileID: 2482254128165811509}
+  - {fileID: 3594646360130543092}
+  - {fileID: 5518510985616435860}
+  - {fileID: 3362564074172769297}
+  - {fileID: 8846901080642021731}
+  - {fileID: 4609403184147177732}
+  - {fileID: 239078501150129308}
+  - {fileID: 3938148679291292416}
+  - {fileID: 7484192467917802428}
+  - {fileID: 7174486599237804766}
+  - {fileID: 942064518335007098}
+  - {fileID: 329418305783574639}
+  - {fileID: 6980273870113079506}
+  - {fileID: 3001479871733343928}
+  - {fileID: 7269939162614516796}
+  - {fileID: 1582966068416106713}
+  - {fileID: 5551585405833623631}
+  - {fileID: 6143019931837010505}
+  - {fileID: 2831053002232224226}
+  - {fileID: 2297457645228556008}
+  - {fileID: 2046802102633826365}
+  - {fileID: 7201464239465311349}
+  - {fileID: 6628594073460938228}
+  - {fileID: 2735080028631370764}
+  - {fileID: 5420148420509984963}
+  - {fileID: 7743983622156380495}
+  - {fileID: 3380439767932854670}
+  - {fileID: 59578862145372256}
 --- !u!1 &1652934260057033237
 GameObject:
   m_ObjectHideFlags: 0

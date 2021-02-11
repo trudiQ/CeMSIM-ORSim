@@ -56,6 +56,17 @@ namespace CEMSIM
                         isPlayerControllerEnabled = true;
                         break;
                     }
+                    else if (device.name == "OpenVR Headset(Vive MV)")
+                    {
+                        Debug.Log($"Headset Detected: {device.name}. Activating SteamVR Character and Camera");
+
+                        VRObjects.SetActive(true);
+                        Teleporting.SetActive(true);
+
+                        SteamTeleportationObject.SetActive(true);
+                        isPlayerControllerEnabled = true;
+                        break;
+                    }
                     else if (device.name == "Oculus Rift")
                     {
                         Debug.Log($"Headset Detected: {device.name}. Activating Oculus Character and Camera");

@@ -1509,6 +1509,7 @@ GameObject:
   - component: {fileID: 1405721869494886951}
   - component: {fileID: 1405721869494886950}
   - component: {fileID: 1405721869494886975}
+  - component: {fileID: 6681783125842214066}
   m_Layer: 11
   m_Name: XR Player Rig
   m_TagString: Untagged
@@ -1684,6 +1685,23 @@ MonoBehaviour:
     actionPath: /actions/default/in/HeadsetOnHead
     needsReinit: 0
   allowToggleTo2D: 1
+--- !u!114 &6681783125842214066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1405721869494886953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b659be9eabf3549ae9f84311c1419f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VRCamera: {fileID: 0}
+  avatarPrefabs: []
+  avatarSelection: 0
+  VRLeftHand: {fileID: 0}
+  VRRightHand: {fileID: 0}
 --- !u!1 &1405721869700662664
 GameObject:
   m_ObjectHideFlags: 0
@@ -2511,12 +2529,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e75fe4b0c190eb4ba97e59f062510e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handColliderPrefab: {fileID: 114000013167804218, guid: 2f378ddf4e9373548a3708d26c1d75a4,
-    type: 3}
+  handColliderPrefab: {fileID: 0}
   handCollider: {fileID: 0}
   clearanceCheckMask:
     serializedVersion: 2
-    m_Bits: 4294967039
+    m_Bits: 1842461056
   hand: {fileID: 0}
 --- !u!1 &1405721870632576860
 GameObject:
