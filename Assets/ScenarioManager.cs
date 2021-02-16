@@ -25,6 +25,8 @@ public class ScenarioManager : MonoBehaviour
     public bool eventNeedleDecompression = false;
     public bool eventChestTubeInsertion = false; //TO DO: Implement Chest Tube events
 
+    public bool startScenario;
+
     private static ScenarioManager _instance;
     public static ScenarioManager Instance { get { return _instance; } }
 
@@ -52,7 +54,10 @@ public class ScenarioManager : MonoBehaviour
     void Start()
     {
         PatientEvents.Instance.NeedleDecompression += OnNeedleDecompression;
-        //StartScenario();
+        if (startScenario)
+        {
+            StartScenario();
+        }
     }
 
     // Update is called once per frame

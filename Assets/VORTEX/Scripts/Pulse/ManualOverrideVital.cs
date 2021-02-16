@@ -6,11 +6,14 @@ public class ManualOverrideVital : MonoBehaviour
 {
     private PulseDataNumberRenderer vitalToChange;
     public PulseDataNumberRenderer vitalToMonitor;
+    public float lastValue = 0.0f;
     public bool over = false;
     public int threshold;
 
     private int delayBuffer = 3;
     private bool overrode = false;
+    private float lerpTimerMax = 2.0f;
+    private float lerpTime = 0.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -18,28 +21,19 @@ public class ManualOverrideVital : MonoBehaviour
         vitalToChange = this.GetComponent<PulseDataNumberRenderer>();
     }
 
-    void LateUpdate()
+    void Update()
     {
         //buffer is used to avoid setting vitalToChange to zero during intialization processes
         if(delayBuffer > 0)
         {
             delayBuffer--;
         }
-        else if(!overrode)
+        else
         {
-            over = vitalToMonitor.currentValue >= threshold ? true : false;
-
-            if(over)
-            {
-                Debug.Log("over thresh");
-            }
-            else
-            {
-                overrode = true;
-                vitalToChange.multiplier = 0;
-                Debug.Log("under thresh");
-            }
+            Override();
         }
+
+        
        //else
        //{
            // if(vitalToMonitor.currentValue <= threshold)
@@ -48,4 +42,25 @@ public class ManualOverrideVital : MonoBehaviour
            // }
         //}
     }
+    void Override()
+    {
+            if(vitalToMonitor.currentValue <= threshold && vitalToChange.currentValue >= threshold)
+            {
+                ReduceToZero();
+                Debug.Log("under thresh");
+            }
+    }
+    void ReduceToZero()
+        {
+            if(lerpTime <= lerpTimerMax)
+            {
+                lerpTime += Time.deltaTime * 0.0005f;
+            }
+            
+            float t = lerpTime/lerpTimerMax;
+            if(t < 1)
+            {
+               vitalToChange.multiplier = Mathf.Lerp(vitalToChange.multiplier, 0, t);
+            }
+        }
 }
