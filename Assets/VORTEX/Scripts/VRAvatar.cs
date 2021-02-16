@@ -6,21 +6,27 @@ using UnityEngine.Animations.Rigging;
 
 public class VRAvatar : MonoBehaviour
 {
+    // Variables to turn IK on or off
     public bool headIKActive = true;
     public bool leftHandIKActive = true;
     public bool rightHandIKActive = true;
 
+    // Head to hip distance variables
     public Transform rigRoot;
     public Transform rigHead;
     private float headToRootVerticalDistance;
 
+    // Camera and body position variables
     private Transform floorTarget;
     private Transform viewCamera;
+    public Vector3 bodyOffset;
 
+    // VR input IK object containers
     public VRMap head;
     public VRMap rightHand;
     public VRMap leftHand;
 
+    // Foot IK variables
     [Range(0,1)] public float footIKWeight = 1;
     [Range(0, 1)] public float footRotationWeight = 1;
     public Vector3 footOffset;
@@ -29,33 +35,57 @@ public class VRAvatar : MonoBehaviour
 
     void Start()
     {
+        // Get the vertical distance from head to hip.
         headToRootVerticalDistance = rigHead.position.y - rigRoot.position.y;
+
         animator = GetComponentInChildren<Animator>();
     }
 
+    // Set the camera that is in use and the floor position object of the camera.
     public void SetFloorTargetAndCamera(Transform target, Transform camera)
     {
         floorTarget = target;
         viewCamera = camera;
     }
 
+    // Map the head, left hand, and right hand IK targets to the parameter transforms, deactivate them if null
     public void SetIKTargets(Transform _head = null, Transform _leftHand = null, Transform _rightHand = null)
     {
-        head.Map(_head);
-        leftHand.Map(_leftHand);
-        rightHand.Map(_rightHand);
+        if (_head)
+        {
+            headIKActive = true;
+            head.Map(_head);
+        }
+        else headIKActive = false;
+
+        if (_leftHand)
+        {
+            leftHandIKActive = true;
+            leftHand.Map(_leftHand);
+        }
+        else leftHandIKActive = false;
+
+        if (_rightHand)
+        {
+            rightHandIKActive = true;
+            rightHand.Map(_rightHand);
+        }
+        else rightHandIKActive = false;
     }
 
     private void OnAnimatorIK(int layerIndex)
     {
         if(animator)
         {
+            // Set the hip position to be a set distance below the camera, based on head to hip distance
+            // Rotate the hip rotation to face the camera forward
             if (floorTarget && viewCamera)
             {
-                animator.bodyPosition = new Vector3(floorTarget.position.x, viewCamera.position.y - headToRootVerticalDistance, floorTarget.position.z);
+                animator.bodyPosition = new Vector3(floorTarget.position.x, viewCamera.position.y - headToRootVerticalDistance, floorTarget.position.z) + bodyOffset;
                 animator.bodyRotation = floorTarget.rotation;
             }
 
+            // Set the head lookat direction
             if (headIKActive && head.rigTarget)
             {
                 animator.SetLookAtWeight(1);
@@ -66,6 +96,7 @@ public class VRAvatar : MonoBehaviour
                 animator.SetLookAtWeight(0);
             }
 
+            // Set the right hand IK position and rotation
             if (rightHandIKActive && rightHand.rigTarget)
             {
                 SetAnimatorIKValues(
@@ -79,6 +110,7 @@ public class VRAvatar : MonoBehaviour
                 ResetAnimatorIKWeights(AvatarIKGoal.RightHand);
             }
 
+            // Set the left hand IK position and rotation
             if (leftHandIKActive && leftHand.rigTarget)
             {
                 SetAnimatorIKValues(
@@ -92,6 +124,7 @@ public class VRAvatar : MonoBehaviour
                 ResetAnimatorIKWeights(AvatarIKGoal.LeftHand);
             }
 
+            // Set the right foot IK position to be flat on the floor below where the animation moves it
             Vector3 rightFootPosition = animator.GetIKPosition(AvatarIKGoal.RightFoot);
 
             if (Physics.Raycast(
@@ -114,6 +147,7 @@ public class VRAvatar : MonoBehaviour
                 ResetAnimatorIKWeights(AvatarIKGoal.RightFoot);
             }
 
+            // Set the left foot IK position to be flat on the floor below where the animation moves it
             Vector3 leftFootPosition = animator.GetIKPosition(AvatarIKGoal.LeftFoot);
 
             if (Physics.Raycast(
@@ -138,6 +172,7 @@ public class VRAvatar : MonoBehaviour
         }
     }
 
+    // Set the weights, position, and rotation of an IKGoal
     private void SetAnimatorIKValues(AvatarIKGoal IKGoal, Vector3 position, Quaternion rotation, float weight)
     {
         animator.SetIKPositionWeight(IKGoal, weight);
@@ -146,6 +181,7 @@ public class VRAvatar : MonoBehaviour
         animator.SetIKRotation(IKGoal, rotation);
     }
 
+    // Set the weights of an IKGoal to 0
     private void ResetAnimatorIKWeights(AvatarIKGoal IKGoal)
     {
         animator.SetIKPositionWeight(IKGoal, 0);
@@ -160,6 +196,7 @@ public class VRAvatar : MonoBehaviour
         public Vector3 positionOffset;
         public Vector3 rotationOffset;
 
+        // Set the rig target to be a child of the VR target, and reset its position/rotation
         public void Map(Transform _VRTarget)
         {
             VRTarget = _VRTarget;

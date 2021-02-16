@@ -23,6 +23,8 @@ namespace CEMSIM
         public GameObject FallbackObjects;
         public GameObject HeadCollider;
         public GameObject Teleporting;
+        public GameObject SteamLeftHand;
+        public GameObject SteamRightHand;
 
         [Header("Teleport Areas")]
         public GameObject XRTeleportationObject;
@@ -31,6 +33,10 @@ namespace CEMSIM
         //Private Variables
         private List<InputDevice> deviceList;
         private bool isPlayerControllerEnabled = false;
+
+        // Use this event to send hand objects to other classes when the headset is connected
+        public delegate void OnHeadsetDetected(VRHands hands);
+        public event OnHeadsetDetected onHeadsetDetected;
 
         // Start is called before the first frame update
         void Start()
@@ -54,6 +60,9 @@ namespace CEMSIM
 
                         SteamTeleportationObject.SetActive(true);
                         isPlayerControllerEnabled = true;
+
+                        onHeadsetDetected?.Invoke(GetVRHands());
+
                         break;
                     }
                     else if (device.name == "OpenVR Headset(Vive MV)")
@@ -65,6 +74,9 @@ namespace CEMSIM
 
                         SteamTeleportationObject.SetActive(true);
                         isPlayerControllerEnabled = true;
+
+                        onHeadsetDetected?.Invoke(GetVRHands());
+
                         break;
                     }
                     else if (device.name == "Oculus Rift")
@@ -79,6 +91,9 @@ namespace CEMSIM
 
                         XRTeleportationObject.SetActive(true);
                         isPlayerControllerEnabled = true;
+
+                        onHeadsetDetected?.Invoke(GetVRHands());
+
                         break;
                     }
                     else if (device.name == "Oculus Rift S")
@@ -93,6 +108,9 @@ namespace CEMSIM
 
                         XRTeleportationObject.SetActive(true);
                         isPlayerControllerEnabled = true;
+
+                        onHeadsetDetected?.Invoke(GetVRHands());
+
                         break;
                     }
 
@@ -115,6 +133,35 @@ namespace CEMSIM
                 return true;
             }
             else return false;
+        }
+
+        public VRHands GetVRHands()
+        {
+            if (XRTeleportationObject.activeInHierarchy)
+            {
+                return new VRHands(left: LeftHandController, right: RightHandController);
+            }
+            else if (SteamTeleportationObject.activeInHierarchy)
+            {
+                return new VRHands(left: SteamLeftHand, right: SteamRightHand);
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    [Serializable]
+    public class VRHands
+    {
+        public GameObject leftHand { get; private set; }
+        public GameObject rightHand { get; private set; }
+
+        public VRHands(GameObject left, GameObject right)
+        {
+            leftHand = left;
+            rightHand = right;
         }
     }
 }
