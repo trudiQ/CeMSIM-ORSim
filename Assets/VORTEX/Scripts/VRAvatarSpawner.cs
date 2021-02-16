@@ -34,10 +34,14 @@ public class VRAvatarSpawner : MonoBehaviour
             Debug.LogWarning("VR Camera not specified, using main camera." + e.ToString());
         }
 
-        avatar = Instantiate(avatarPrefabs[avatarSelection]).GetComponentInChildren<VRAvatar>();
+        avatar = Instantiate(
+            original: avatarPrefabs[avatarSelection], 
+            parent: floorPositionObjectTransform, 
+            position: floorPositionObjectTransform.position,
+            rotation: floorPositionObjectTransform.rotation).GetComponentInChildren<VRAvatar>();
 
         avatar.SetFloorTargetAndCamera(target: floorPositionObjectTransform, camera: VRCameraTransform);
-        avatar.SetIKTargets(head: VRCameraTransform, leftHand: VRLeftHand.transform, rightHand: VRRightHand.transform);
+        avatar.SetIKTargets(_head: VRCameraTransform, _leftHand: VRLeftHand.transform, _rightHand: VRRightHand.transform);
     }
 
     void LateUpdate()

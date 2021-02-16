@@ -16,16 +16,21 @@ public class VRAvatar : MonoBehaviour
 
     private Transform floorTarget;
     private Transform viewCamera;
-    private Transform headTarget;
-    private Transform leftHandTarget;
-    private Transform rightHandTarget;
+
+    public VRMap head;
+    public VRMap rightHand;
+    public VRMap leftHand;
+
+    [Range(0,1)] public float footIKWeight = 1;
+    [Range(0, 1)] public float footRotationWeight = 1;
+    public Vector3 footOffset;
 
     private Animator animator;
 
     void Start()
     {
         headToRootVerticalDistance = rigHead.position.y - rigRoot.position.y;
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     public void SetFloorTargetAndCamera(Transform target, Transform camera)
@@ -34,13 +39,11 @@ public class VRAvatar : MonoBehaviour
         viewCamera = camera;
     }
 
-    public void SetIKTargets(Transform head = null, Transform leftHand = null, Transform rightHand = null)
+    public void SetIKTargets(Transform _head = null, Transform _leftHand = null, Transform _rightHand = null)
     {
-        headTarget = head;
-
-        leftHandTarget = leftHand;
-
-        rightHandTarget = rightHand;
+        head.Map(_head);
+        leftHand.Map(_leftHand);
+        rightHand.Map(_rightHand);
     }
 
     private void OnAnimatorIK(int layerIndex)
@@ -53,48 +56,119 @@ public class VRAvatar : MonoBehaviour
                 animator.bodyRotation = floorTarget.rotation;
             }
 
-            if (headIKActive && headTarget)
+            if (headIKActive && head.rigTarget)
             {
                 animator.SetLookAtWeight(1);
-                animator.SetLookAtPosition(headTarget.position + headTarget.forward);
-
-                Debug.Log(animator.bodyPosition);
+                animator.SetLookAtPosition(head.rigTarget.position + head.rigTarget.forward);
             }
             else
             {
                 animator.SetLookAtWeight(0);
             }
 
-            if (rightHandIKActive && rightHandTarget)
+            if (rightHandIKActive && rightHand.rigTarget)
             {
-                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
-                animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
-                animator.SetIKPosition(AvatarIKGoal.RightHand, rightHandTarget.position);
-                animator.SetIKRotation(AvatarIKGoal.RightHand, rightHandTarget.rotation);
+                SetAnimatorIKValues(
+                    IKGoal: AvatarIKGoal.RightHand,
+                    position: rightHand.rigTarget.position,
+                    rotation: rightHand.rigTarget.rotation,
+                    weight: 1);
             }
             else
             {
-                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
-                animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 0);
+                ResetAnimatorIKWeights(AvatarIKGoal.RightHand);
             }
 
-            if (leftHandIKActive && leftHandTarget)
+            if (leftHandIKActive && leftHand.rigTarget)
             {
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
-                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
-                animator.SetIKPosition(AvatarIKGoal.LeftHand, leftHandTarget.position);
-                animator.SetIKRotation(AvatarIKGoal.LeftHand, leftHandTarget.rotation);
+                SetAnimatorIKValues(
+                    IKGoal: AvatarIKGoal.LeftHand,
+                    position: leftHand.rigTarget.position,
+                    rotation: leftHand.rigTarget.rotation,
+                    weight: 1);
             }
             else
             {
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
-                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
+                ResetAnimatorIKWeights(AvatarIKGoal.LeftHand);
             }
 
-            animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 0);
-            animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 0);
-            animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, 0);
-            animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, 0);
+            Vector3 rightFootPosition = animator.GetIKPosition(AvatarIKGoal.RightFoot);
+
+            if (Physics.Raycast(
+                origin: rightFootPosition + Vector3.up,
+                direction: Vector3.down,
+                maxDistance: int.MaxValue,
+                layerMask: LayerMask.GetMask("Ground"),
+                hitInfo: out RaycastHit hit))
+            {
+                Quaternion footRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(rigRoot.forward, hit.normal), hit.normal);
+
+                SetAnimatorIKValues(
+                    IKGoal: AvatarIKGoal.RightFoot,
+                    position: hit.point + footOffset,
+                    rotation: footRotation,
+                    weight: footIKWeight);
+            }
+            else
+            {
+                ResetAnimatorIKWeights(AvatarIKGoal.RightFoot);
+            }
+
+            Vector3 leftFootPosition = animator.GetIKPosition(AvatarIKGoal.LeftFoot);
+
+            if (Physics.Raycast(
+                origin: leftFootPosition + Vector3.up, 
+                direction: Vector3.down,
+                maxDistance: int.MaxValue,
+                layerMask: LayerMask.GetMask("Ground"), 
+                hitInfo: out hit))
+            {
+                Quaternion footRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(rigRoot.forward, hit.normal), hit.normal);
+
+                SetAnimatorIKValues(
+                    IKGoal: AvatarIKGoal.LeftFoot,
+                    position: hit.point + footOffset,
+                    rotation: footRotation,
+                    weight: footIKWeight);
+            }
+            else
+            {
+                ResetAnimatorIKWeights(AvatarIKGoal.LeftFoot);
+            }
+        }
+    }
+
+    private void SetAnimatorIKValues(AvatarIKGoal IKGoal, Vector3 position, Quaternion rotation, float weight)
+    {
+        animator.SetIKPositionWeight(IKGoal, weight);
+        animator.SetIKRotationWeight(IKGoal, weight);
+        animator.SetIKPosition(IKGoal, position);
+        animator.SetIKRotation(IKGoal, rotation);
+    }
+
+    private void ResetAnimatorIKWeights(AvatarIKGoal IKGoal)
+    {
+        animator.SetIKPositionWeight(IKGoal, 0);
+        animator.SetIKRotationWeight(IKGoal, 0);
+    }
+
+    [System.Serializable]
+    public class VRMap
+    {
+        public Transform VRTarget;
+        public Transform rigTarget;
+        public Vector3 positionOffset;
+        public Vector3 rotationOffset;
+
+        public void Map(Transform _VRTarget)
+        {
+            VRTarget = _VRTarget;
+
+            rigTarget.SetParent(VRTarget);
+
+            rigTarget.SetPositionAndRotation(
+                position: VRTarget.TransformPoint(positionOffset),
+                rotation: VRTarget.rotation * Quaternion.Euler(rotationOffset));
         }
     }
 }
