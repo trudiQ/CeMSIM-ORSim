@@ -20,14 +20,8 @@ public class PulseDataLineRenderer: PulseDataConsumer
     public float yMax = 100f;               // Data maximum value
     public float xRange = 10f;              // Time period shown
 
-    public bool applyNoise = false;
     public int noiseDelay = 1;
 
-    public float noiseMaxMagnitude = 0.02f;
-    private System.Random currentRandom;
-    public bool currentRandomSet = false;
-    public int numberOfPointsEffected = 3;
-    private int noiseEffectedCounter = 0;
     private int initialNoiseDelay = 0;
 
     #region Dynamic Viewing Variables

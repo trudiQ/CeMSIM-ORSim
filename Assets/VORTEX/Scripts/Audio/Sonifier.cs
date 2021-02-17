@@ -10,8 +10,7 @@ public class Sonifier : MonoBehaviour
     private float lastValue = 0;
     private AudioPlayer audioPlayer;
     private int delayBuffer = 3;
-    private float lerpTimer = 1f;
-    private float lerpTime = 0f;
+
 
     AudioMixerGroup mixer;
 
