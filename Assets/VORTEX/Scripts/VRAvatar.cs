@@ -17,7 +17,7 @@ public class VRAvatar : MonoBehaviour
     private float headToRootVerticalDistance;
 
     // Camera and body position variables
-    private Transform floorTarget;
+    public Transform floorTarget { get; private set; }
     private Transform viewCamera;
     public Vector3 bodyOffset;
 
