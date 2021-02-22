@@ -10,23 +10,19 @@ public class VitalsAudioPlayer : AudioPlayer
     private float audioPlayRate = 0;    //determined based on 60 seconds / (currentValue of vital)
     private float currentValue = 0;
     private float lastValue = 0;
+    
     private float timer = 0;
     private bool paused = false;
 
-    public void Start()
-    {
-        audioSource.volume = volume;
-    }
 
     void Update()
     {
         if (!paused)
         {
+            audioSource.volume = volume;
             Play();
         }
-        
     }
-
 
     void SetPlayRate()
     {
@@ -76,6 +72,4 @@ public class VitalsAudioPlayer : AudioPlayer
         audioSource.UnPause();
         paused = false;
     }
-
-
 }

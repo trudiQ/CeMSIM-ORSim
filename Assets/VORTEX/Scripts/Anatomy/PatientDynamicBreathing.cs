@@ -22,15 +22,6 @@ public class PatientDynamicBreathing : MonoBehaviour
     public float totalTime = 0;
     public float numberOfBreathesIn = 0;
     public float numberOfBreathesOut = 0;
-    public TieVentilationToBreath audioPlayer;
-    public bool beginningTriggered = false;
-    public bool endTriggered = false;
-    public bool inflating = false;
-    public bool breathIn = false;
-
-    private float lastInflation = 0;
-    public float inflationDifference = 0;
-    //public bool middleTiggered = false;
 
     // Start is called before the first frame update
     void Start()
@@ -89,64 +80,9 @@ public class PatientDynamicBreathing : MonoBehaviour
             meshRenderer.SetBlendShapeWeight(0, inflation);
         }
         
-        breathIn = lastInflation - inflation < -.0001f ? true : false;
-        inflationDifference = lastInflation - inflation;
-
-        ControlVentilatorSounds();
-        lastInflation = inflation;
-        
         
 
-    }
+        
 
-    private void ControlVentilatorSounds()
-    {
-        if(inflation > 10 && inflation < 90 /*&& (endTriggered || beginningTriggered)*/)
-        {
-            if(inflationDifference > 0.0001)
-            {
-                if(!inflating)
-                {
-                    inflating = true;
-                    beginningTriggered = false;
-                    endTriggered = false;
-                    audioPlayer.Play(audioPlayer.deflate);
-                }
-            }
-            else if(inflationDifference < -0.0001f)
-            {
-                if(!inflating)
-                {
-                    inflating = true;
-                    beginningTriggered = false;
-                    endTriggered = false;
-                    audioPlayer.Play(audioPlayer.inflate);
-                }
-            }
-        }
-        else if((int)inflation == 0 && inflating)
-        {
-            inflating = false;
-            //audioPlayer.Play(audioPlayer.beginning);
-        }
-        else if((int)inflation == 100 && inflating)
-        {
-            inflating = false;
-            //audioPlayer.Play(audioPlayer.end);
-        }
-        // else if( inflation < 2 && !beginningTriggered)
-        // {
-        //     inflating = false;
-        //     audioPlayer.audioSource.Stop();
-        //     endTriggered = true;
-        //     audioPlayer.Play(audioPlayer.beginning);
-        // }
-        // else if(inflation > 98 && !endTriggered)
-        // {
-        //     inflating = false;
-        //     audioPlayer.audioSource.Stop();
-        //     endTriggered = true;
-        //     audioPlayer.Play(audioPlayer.end);
-        // }
     }
 }
