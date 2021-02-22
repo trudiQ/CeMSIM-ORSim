@@ -6,11 +6,12 @@ public class ManualOverrideVital : MonoBehaviour
 {
     private PulseDataNumberRenderer vitalToChange;
     public PulseDataNumberRenderer vitalToMonitor;
-    // public float lastValue = 0.0f;
-    // public bool over = false;
+    public float lastValue = 0.0f;
+    public bool over = false;
     public int threshold;
 
     private int delayBuffer = 3;
+    private bool overrode = false;
     private float lerpTimerMax = 2.0f;
     private float lerpTime = 0.0f;
 
