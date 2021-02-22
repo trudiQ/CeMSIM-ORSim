@@ -20,16 +20,6 @@ public class PulseDataLineRenderer: PulseDataConsumer
     public float yMax = 100f;               // Data maximum value
     public float xRange = 10f;              // Time period shown
 
-    public bool applyNoise = false;
-    public int noiseDelay = 1;
-
-    public float noiseMaxMagnitude = 0.02f;
-    private System.Random currentRandom;
-    public bool currentRandomSet = false;
-    public int numberOfPointsEffected = 3;
-    private int noiseEffectedCounter = 0;
-    private int initialNoiseDelay = 0;
-
     #region Dynamic Viewing Variables
     /*
     public bool dynamicView = false; 
@@ -60,7 +50,6 @@ public class PulseDataLineRenderer: PulseDataConsumer
     // Called when application or editor opens
     void Awake()
     {
-        initialNoiseDelay = noiseDelay;
         InitInnerComponents();
         UpdateLineProperties();
 
@@ -234,52 +223,8 @@ public class PulseDataLineRenderer: PulseDataConsumer
             AdjustViewingRange(val);
         }
       */
-       // if(applyNoise)
-       // {
-       //     if(val > 45)
-       //     {
-       //         val+= 20;
-       //     }
-       //     else if(val > 35)
-       //     {
-       //         val+= 10;
-       //     }
-       // }
+      
         float p = (val - yMin) / (yMax - yMin);
-        //System.Random rand = 
-        
-        //if(applyNoise)
-        //{
-        //    if(noiseDelay <= 0)
-        //    {
-        //        if(!currentRandomSet)
-        //        {
-        //            currentRandomSet = true;
-        //            currentRandom = new System.Random();
-        //        }
-        //        
-        //        p = SimpleNoiseFilter.SimpleGaussian(currentRandom, p, noiseMaxMagnitude);
-//
-        //        if(noiseEffectedCounter>=numberOfPointsEffected)
-        //        {
-        //            noiseDelay = initialNoiseDelay;
-        //            noiseEffectedCounter = 0;
-        //            currentRandomSet = false;
-        //        }
-        //        else
-        //        {
-        //            noiseEffectedCounter++;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        noiseDelay--;
-        //    }
-        //    
-        //}
-
-        
-            
         return (p - T.pivot.y) * T.rect.height;
      
     }
