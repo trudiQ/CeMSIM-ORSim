@@ -1,15 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
 
 public class VRAvatar : MonoBehaviour
 {
     // Variables to turn IK on or off
     public bool headIKActive = true;
-    public bool leftHandIKActive = true;
-    public bool rightHandIKActive = true;
+    public bool leftHandIKActive = false;
+    public bool rightHandIKActive = false;
 
     // Head to hip distance variables
     public Transform rigRoot;
@@ -124,7 +123,7 @@ public class VRAvatar : MonoBehaviour
                 ResetAnimatorIKWeights(AvatarIKGoal.LeftHand);
             }
 
-            // Set the right foot IK position to be flat on the floor below where the animation moves it
+            // Set the right foot IK position to be flat on the floor according to where the animation moves it
             Vector3 rightFootPosition = animator.GetIKPosition(AvatarIKGoal.RightFoot);
 
             if (Physics.Raycast(
@@ -147,7 +146,7 @@ public class VRAvatar : MonoBehaviour
                 ResetAnimatorIKWeights(AvatarIKGoal.RightFoot);
             }
 
-            // Set the left foot IK position to be flat on the floor below where the animation moves it
+            // Set the left foot IK position to be flat on the floor according to where the animation moves it
             Vector3 leftFootPosition = animator.GetIKPosition(AvatarIKGoal.LeftFoot);
 
             if (Physics.Raycast(

@@ -15,7 +15,8 @@ public class VRAnimatorController : MonoBehaviour
 
     // Thresholds that control the minimum value needed for animations to trigger
     public float movementSpeedThreshold = 0.1f;
-    public float rotationSpeedThreshold = 0.1f;
+    // Rotation in degrees per second
+    public float rotationSpeedThreshold = 5.0f;
 
     IEnumerator Start()
     {
@@ -45,13 +46,16 @@ public class VRAnimatorController : MonoBehaviour
             float hmdRotationSpeed = Mathf.DeltaAngle(previousRotation.eulerAngles.y, vrTarget.rotation.eulerAngles.y) / Time.deltaTime;
             previousRotation = vrTarget.rotation;
 
+            Debug.Log(hmdRotationSpeed);
+
             // Apply values to animator parameters
             animator.SetBool("isMoving", hmdLocalMovementSpeed.magnitude > movementSpeedThreshold);
             animator.SetFloat("moveX", Mathf.Clamp(hmdLocalMovementSpeed.x, -1, 1), 0.1f, Time.deltaTime);
             animator.SetFloat("moveY", Mathf.Clamp(hmdLocalMovementSpeed.z, -1, 1), 0.1f, Time.deltaTime);
 
-            animator.SetBool("isRotating", hmdRotationSpeed / 90f > rotationSpeedThreshold);
-            animator.SetFloat("Rotation", Mathf.Clamp(hmdRotationSpeed, -1, 1), 0.1f, Time.deltaTime);
+            animator.SetBool("isRotating", Mathf.Abs(hmdRotationSpeed) > rotationSpeedThreshold);
+            // Divide rotation speed by quarter rotations since the animations take approximately 1 second
+            animator.SetFloat("Rotation", Mathf.Clamp(hmdRotationSpeed / 90f, -1, 1), 0.1f, Time.deltaTime);
         }
     }
 }
