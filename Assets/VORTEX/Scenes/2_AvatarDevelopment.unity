@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12810227, g: 0.15866542, b: 0.2098979, a: 1}
+  m_IndirectSpecularColor: {r: 0.12809429, g: 0.15871584, b: 0.21006814, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3882,6 +3882,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 206804665}
     m_Modifications:
+    - target: {fileID: 776804944, guid: 2dcebe6e071d1be4d8e9b251432a53b1, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 935709765, guid: 2dcebe6e071d1be4d8e9b251432a53b1, type: 3}
       propertyPath: m_Positions.Array.data[0].y
       value: 0
@@ -3890,10 +3894,23 @@ PrefabInstance:
       propertyPath: m_Positions.Array.data[1].y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 935709765, guid: 2dcebe6e071d1be4d8e9b251432a53b1, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1551580103, guid: 2dcebe6e071d1be4d8e9b251432a53b1, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 727714316855875457, guid: 2dcebe6e071d1be4d8e9b251432a53b1,
         type: 3}
       propertyPath: m_Name
       value: TelevisionLarge
+      objectReference: {fileID: 0}
+    - target: {fileID: 727714316855875457, guid: 2dcebe6e071d1be4d8e9b251432a53b1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4342039073045603730, guid: 2dcebe6e071d1be4d8e9b251432a53b1,
         type: 3}
@@ -3972,7 +3989,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1158019259
 Transform:
   m_ObjectHideFlags: 0
@@ -6690,48 +6707,6 @@ Transform:
   m_Father: {fileID: 1158019259}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1823858522
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &1830556215 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1405721868795459481, guid: 2736bf464f3dfb34bb98437d24f1533e,
@@ -9102,6 +9077,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: XR Player Rig
       objectReference: {fileID: 0}
+    - target: {fileID: 1405721869494886953, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1405721869494886974, guid: 2736bf464f3dfb34bb98437d24f1533e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -9248,6 +9228,11 @@ PrefabInstance:
       propertyPath: VRRightHand
       value: 
       objectReference: {fileID: 1794089628}
+    - target: {fileID: 6681783125842214066, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2736bf464f3dfb34bb98437d24f1533e, type: 3}
 --- !u!1 &1405721870624433583 stripped
@@ -11037,6 +11022,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 9190497283208329054, guid: f29cb43d0f0588f46a8bd0765c0503d9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9202944233399568085, guid: f29cb43d0f0588f46a8bd0765c0503d9,
         type: 3}

@@ -45,6 +45,12 @@ public class VRAvatarSpawner : MonoBehaviour
             VRCameraTransform = VRCamera.transform;
             floorPositionObjectTransform.SetPositionAndRotation(FindFloorPosition(), PlanarCameraRotation());
         }
+        catch (MissingReferenceException e)
+        {
+            VRCamera = Camera.main.gameObject;
+            VRCameraTransform = VRCamera.transform;
+            Debug.LogWarning("VR Camera not specified, using main camera." + e.ToString());
+        }
         catch (System.NullReferenceException e)
         {
             VRCamera = Camera.main.gameObject;
