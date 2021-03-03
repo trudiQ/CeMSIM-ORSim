@@ -46,8 +46,6 @@ public class VRAnimatorController : MonoBehaviour
             float hmdRotationSpeed = Mathf.DeltaAngle(previousRotation.eulerAngles.y, vrTarget.rotation.eulerAngles.y) / Time.deltaTime;
             previousRotation = vrTarget.rotation;
 
-            Debug.Log(hmdRotationSpeed);
-
             // Apply values to animator parameters
             animator.SetBool("isMoving", hmdLocalMovementSpeed.magnitude > movementSpeedThreshold);
             animator.SetFloat("moveX", Mathf.Clamp(hmdLocalMovementSpeed.x, -1, 1), 0.1f, Time.deltaTime);

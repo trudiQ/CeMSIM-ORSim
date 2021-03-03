@@ -9,8 +9,13 @@ public class InteractableClothController : MonoBehaviour
 
     void Start()
     {
+        List<InteractableCloth> clothingFound = new List<InteractableCloth>(FindObjectsOfType<InteractableCloth>());
+
         foreach(ClothPair pair in clothingPairs)
-            pair.Initialize();
+        {
+            InteractableCloth match = clothingFound.Find((x) => x.clothName == pair.clothName);
+            pair.Initialize(match);
+        }
     }
 
     void Update()
@@ -23,29 +28,33 @@ public class InteractableClothController : MonoBehaviour
 [System.Serializable]
 public class ClothPair
 {
-    public GameObject modelCloth;
+    public string clothName;
+    public WornCloth modelCloth;
     public InteractableCloth clothingInWorld;
-    public bool modelClothActive = false;
+    public bool modelClothActiveOnStart = false;
     public float distanceThreshold = 0.1f;
 
-    public void Initialize()
+    public void Initialize(InteractableCloth pairedCloth)
     {
-        SetModelClothActive(modelClothActive);
+        clothingInWorld = pairedCloth;
+        SetmodelClothActiveOnStart(modelCloth.isActive);
     }
 
     public void ToggleModelCloth()
     {
-        SetModelClothActive(!modelClothActive);
+        SetmodelClothActiveOnStart(!modelCloth.isActive);
     }
 
-    public void SetModelClothActive(bool state)
+    public void SetmodelClothActiveOnStart(bool state)
     {
-        modelClothActive = state;
-
         try
         {
             modelCloth.SetActive(state);
-            clothingInWorld.SetActive(!state);
+
+            if (modelCloth.isActive)
+                clothingInWorld.StopGrab();
+
+            clothingInWorld.gameObject.SetActive(!state);
         }
         catch (MissingReferenceException e)
         {
@@ -59,7 +68,7 @@ public class ClothPair
 
     public void CheckIfWithinThreshold()
     {
-        if (Vector3.Distance(modelCloth.transform.position, clothingInWorld.transform.position) < distanceThreshold)
+        if (clothingInWorld.isBeingGrabbed && Vector3.Distance(modelCloth.GetOffsetPosition(), clothingInWorld.GetOffsetPosition()) < distanceThreshold)
             ToggleModelCloth();
     }
 }
