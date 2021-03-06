@@ -6,15 +6,11 @@ public class AmbientAudioPlayer : AudioPlayer
 {
     public override void Initialize()
     {
-        if (source == null)
-        {
-            source = gameObject;
-        }
-        audioSource = source.AddComponent<AudioSource>();
+        audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.clip = audioClip;
         audioSource.loop = true;
-        audioSource.spatialBlend = source == gameObject ? 0 : 1;
+        audioSource.spatialBlend = isAudio3D ? 1 : 0;
         audioSource.Play();
     }
     public override void  Pause()

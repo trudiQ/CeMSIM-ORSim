@@ -29,11 +29,7 @@ public class ManualOverrideVital : MonoBehaviour
         {
             over = vitalToMonitor.currentValue >= threshold ? true : false;
 
-            if(over)
-            {
-                Debug.Log("over thresh");
-            }
-            else
+            if(!over)
             {
                 overrode = true;
                 vitalToChange.multiplier = 0;

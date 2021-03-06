@@ -10,35 +10,45 @@ public class VitalsAudioPlayer : AudioPlayer
     private float audioPlayRate = 0;    //determined based on 60 seconds / (currentValue of vital)
     private float currentValue = 0;
     private float lastValue = 0;
-    
     private float timer = 0;
     private bool paused = false;
 
+    public void Start()
+    {
+        audioSource.volume = volume;
+    }
 
     void Update()
     {
         if (!paused)
         {
-            audioSource.volume = volume;
             Play();
         }
+        
     }
+
 
     void SetPlayRate()
     {
         currentValue = vital.GetComponent<PulseDataNumberRenderer>().currentValue;
-        if(currentValue == lastValue)
-        {
-            return;
-        }
-        else
+        if(Mathf.Abs(currentValue - lastValue) < .001f)
         {
             audioPlayRate = 60 / currentValue;
+            
         }
+        // if(currentValue == lastValue)
+        // {
+        //     return;
+        // }
+        // else
+        // {
+             
+        // }
     }
 
     void Play()
     {
+        
         SetPlayRate();
 
         if (timer < audioPlayRate)
@@ -56,13 +66,9 @@ public class VitalsAudioPlayer : AudioPlayer
 
     public override void Initialize()
     {
-        if (source == null)
-        {
-            source = gameObject;
-        }
-        audioSource = source.AddComponent<AudioSource>();
+        audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = source == gameObject ? 0 : 1;
+        audioSource.spatialBlend = isAudio3D ? 1 : 0;
     }
 
     public override void Pause()
@@ -76,4 +82,6 @@ public class VitalsAudioPlayer : AudioPlayer
         audioSource.UnPause();
         paused = false;
     }
+
+
 }
