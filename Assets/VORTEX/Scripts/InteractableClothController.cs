@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR.InteractionSystem;
 
 public class InteractableClothController : MonoBehaviour
 {
@@ -34,27 +35,33 @@ public class ClothPair
     public bool modelClothActiveOnStart = false;
     public float distanceThreshold = 0.1f;
 
+    private bool movedOutOfThresholdAfterUnequip = true;
+
     public void Initialize(InteractableCloth pairedCloth)
     {
         clothingInWorld = pairedCloth;
-        SetmodelClothActiveOnStart(modelCloth.isActive);
+        SetModelClothActive(modelCloth.isActive);
+
+        modelCloth.onWornClothInteractedSteam += OnWornClothInteractedSteam;
     }
 
     public void ToggleModelCloth()
     {
-        SetmodelClothActiveOnStart(!modelCloth.isActive);
+        SetModelClothActive(!modelCloth.isActive);
     }
 
-    public void SetmodelClothActiveOnStart(bool state)
+    public void SetModelClothActive(bool state)
     {
         try
         {
             modelCloth.SetActive(state);
 
             if (modelCloth.isActive)
-                clothingInWorld.StopGrab();
+            {
+                movedOutOfThresholdAfterUnequip = false;
+            }
 
-            clothingInWorld.gameObject.SetActive(!state);
+            clothingInWorld.SetActiveAndParent(!state, modelCloth.transform, modelCloth.offset);
         }
         catch (MissingReferenceException e)
         {
@@ -68,7 +75,24 @@ public class ClothPair
 
     public void CheckIfWithinThreshold()
     {
-        if (clothingInWorld.isBeingGrabbed && Vector3.Distance(modelCloth.GetOffsetPosition(), clothingInWorld.GetOffsetPosition()) < distanceThreshold)
-            ToggleModelCloth();
+        if (clothingInWorld.isBeingGrabbed)
+        {
+            if (movedOutOfThresholdAfterUnequip && Vector3.Distance(modelCloth.GetOffsetPosition(), clothingInWorld.GetOffsetPosition()) < distanceThreshold)
+            {
+                ToggleModelCloth();
+            }
+            else if (Vector3.Distance(modelCloth.GetOffsetPosition(), clothingInWorld.GetOffsetPosition()) > distanceThreshold)
+            {
+                movedOutOfThresholdAfterUnequip = true;
+            }
+        }
+    }
+
+    private void OnWornClothInteractedSteam(Hand hand)
+    {
+        Debug.Log("Steam grab message received");
+        ToggleModelCloth();
+        clothingInWorld.ManualAttachToHand(hand);
+
     }
 }

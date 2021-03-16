@@ -13,10 +13,11 @@ public class InteractableCloth : MonoBehaviour
     public bool isBeingGrabbed = false;
 
     private Hand connectedSteamHand;
+    private Throwable throwable;
 
     void Start()
     {
-        
+        throwable = GetComponent<Throwable>();
     }
 
     public Vector3 GetOffsetPosition()
@@ -24,7 +25,24 @@ public class InteractableCloth : MonoBehaviour
         return transform.position + transform.rotation * offset;
     }
 
-    public void StopGrab()
+    public void SetActiveAndParent(bool active, Transform parent, Vector3 localOffset)
+    {
+        if (!active)
+        {
+            StopGrab();
+            transform.parent = parent;
+            transform.localRotation = Quaternion.Euler(new Vector3(-90f, 0f, 180f));
+            transform.localPosition = Quaternion.Euler(Vector3.left * -90f) * offset + localOffset;
+            gameObject.SetActive(active);
+        }
+        else
+        {
+            gameObject.SetActive(active);
+            transform.parent = null;
+        }
+    }
+
+    private void StopGrab()
     {
         if(connectedSteamHand)
             connectedSteamHand.DetachObject(gameObject);
@@ -57,5 +75,11 @@ public class InteractableCloth : MonoBehaviour
     {
         connectedSteamHand = null;
         isBeingGrabbed = false;
+    }
+
+    public void ManualAttachToHand(Hand hand)
+    {
+        hand.AttachObject(gameObject, GrabTypes.Pinch, throwable.attachmentFlags);
+        isBeingGrabbed = true;
     }
 }

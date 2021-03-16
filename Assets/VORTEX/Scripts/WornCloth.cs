@@ -14,6 +14,11 @@ public class WornCloth : MonoBehaviour
     public GameObject objectWithSkinnedMesh;
     public bool isActive { get; private set; }
 
+    public delegate void OnWornClothInteractedSteam(Hand hand);
+    public delegate void OnWornClothInteractedXR(XRBaseInteractor hand);
+    public OnWornClothInteractedSteam onWornClothInteractedSteam;
+    public OnWornClothInteractedXR onWornClothInteractedXR;
+
     private XRSimpleInteractable xrInteractable;
     private Interactable steamInteractable;
     private new Rigidbody rigidbody;
@@ -51,21 +56,23 @@ public class WornCloth : MonoBehaviour
     public void OnSelectEnter(XRBaseInteractor interactor)
     {
         Debug.Log("Worn cloth grabbed");
+        onWornClothInteractedXR.Invoke(interactor);
     }
 
     public void OnSelectExit(XRBaseInteractor interactor)
     {
-        
+        Debug.Log("Worn cloth let go");
+        onWornClothInteractedXR.Invoke(interactor);
     }
 
-    private void OnAttachedToHand(Hand hand)
+    private void HandHoverUpdate(Hand hand)
     {
-        Debug.Log("Worn cloth grabbed");
-    }
+        GrabTypes startingGrabType = hand.GetGrabStarting();
 
-    private void OnDetachedFromHand(Hand hand)
-    {
-        
+        if(hand.AttachedObjects.Count == 0 && startingGrabType == GrabTypes.Pinch)
+        {
+            onWornClothInteractedSteam.Invoke(hand);
+        }
     }
 
     private void OnDrawGizmosSelected()
