@@ -12,6 +12,8 @@ public class InteractableClothController : MonoBehaviour
     {
         List<InteractableCloth> clothingFound = new List<InteractableCloth>(FindObjectsOfType<InteractableCloth>());
 
+        // Since objects not in the prefab can't be linked, find the first cloth with the same name in the scene and pair it
+        // NOTE: If there is more than one object in the scene with the same name, it will only choose the first one
         foreach(ClothPair pair in clothingPairs)
         {
             InteractableCloth match = clothingFound.Find((x) => x.clothName == pair.clothName);
@@ -21,6 +23,7 @@ public class InteractableClothController : MonoBehaviour
 
     void Update()
     {
+        // Check if the cloth in the scene aligns with the cloth on the model
         foreach (ClothPair pair in clothingPairs)
             pair.CheckIfWithinThreshold();
     }
@@ -29,14 +32,15 @@ public class InteractableClothController : MonoBehaviour
 [System.Serializable]
 public class ClothPair
 {
-    public string clothName;
-    public WornCloth modelCloth;
-    public InteractableCloth clothingInWorld;
-    public bool modelClothActiveOnStart = false;
+    public string clothName; // Name to be matched at start
+    public WornCloth modelCloth; // Clothing object on the model
+    public InteractableCloth clothingInWorld; // Clothing object in the scene
     public float distanceThreshold = 0.1f;
+    public float angleThreshold = 30f;
 
     private bool movedOutOfThresholdAfterUnequip = true;
 
+    // Pair the cloth objects and subscribe to the grab event
     public void Initialize(InteractableCloth pairedCloth)
     {
         clothingInWorld = pairedCloth;
@@ -45,11 +49,13 @@ public class ClothPair
         modelCloth.onWornClothInteractedSteam += OnWornClothInteractedSteam;
     }
 
+    // Toggles the active state of both cloth
     public void ToggleModelCloth()
     {
         SetModelClothActive(!modelCloth.isActive);
     }
 
+    // Sets the model cloth to a specific state, sets the model and scene cloth to opposite state
     public void SetModelClothActive(bool state)
     {
         try
@@ -61,7 +67,8 @@ public class ClothPair
                 movedOutOfThresholdAfterUnequip = false;
             }
 
-            clothingInWorld.SetActiveAndParent(!state, modelCloth.transform, modelCloth.offset);
+            // Sets the parent of the scene cloth if the model cloth is active
+            clothingInWorld.SetActiveAndParent(!state, modelCloth.transform);
         }
         catch (MissingReferenceException e)
         {
@@ -73,26 +80,54 @@ public class ClothPair
         }
     }
 
+    // Check if the cloth in the scene aligns with the cloth on the model in both position and angle
     public void CheckIfWithinThreshold()
     {
-        if (clothingInWorld.isBeingGrabbed)
+        try
         {
-            if (movedOutOfThresholdAfterUnequip && Vector3.Distance(modelCloth.GetOffsetPosition(), clothingInWorld.GetOffsetPosition()) < distanceThreshold)
+            if (clothingInWorld.isBeingGrabbed)
             {
-                ToggleModelCloth();
-            }
-            else if (Vector3.Distance(modelCloth.GetOffsetPosition(), clothingInWorld.GetOffsetPosition()) > distanceThreshold)
-            {
-                movedOutOfThresholdAfterUnequip = true;
+                if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
+                {
+                    ToggleModelCloth();
+                }
+                else if (!InThresholdDistance())
+                {
+                    movedOutOfThresholdAfterUnequip = true;
+                }
             }
         }
+        catch (MissingReferenceException)
+        {
+            // Do nothing additional, message already printed at start
+        }
+        catch (System.NullReferenceException)
+        {
+            // Do nothing additional, message already printed at start
+        }
+
     }
 
+    // Check if the scene cloth is within the distance threshold
+    private bool InThresholdDistance()
+    {
+        float distance = Vector3.Distance(modelCloth.GetOffsetPosition(), clothingInWorld.GetOffsetPosition());
+        
+        return  distance <= distanceThreshold;
+    }
+
+    // Check if the scene cloth is within the rotation threshold
+    private bool RotationAligned()
+    {
+        float angle = Quaternion.Angle(modelCloth.GetRotation(), clothingInWorld.GetRotation());
+
+        return angle <= angleThreshold;
+    }
+
+    // Event for when the worn cloth is interacted with by a SteamVR controller
     private void OnWornClothInteractedSteam(Hand hand)
     {
-        Debug.Log("Steam grab message received");
         ToggleModelCloth();
-        clothingInWorld.ManualAttachToHand(hand);
-
+        clothingInWorld.ManualAttachToHandSteam(hand);
     }
 }
