@@ -226,6 +226,23 @@ namespace CEMSIM
                     MulticastTCPData(_packet, true);
                 }
             }
+
+            public static void BrodcastItemStatus(string itemStatusMsg)
+            {
+                // //ItemManager.cs calls this method to multicase an item's status
+                // using (Packet _packet = new Packet((int)ServerPackets.itemManagerTCP))
+                // {
+                //     _packet.Write(itemStatusMsg);
+                //     MulticastUDPData(_packet, true);
+                // }
+
+                using (Packet _packet = new Packet((int)ServerPackets.itemManagerUDP))
+                {
+                    _packet.Write(itemStatusMsg);
+                    MulticastTCPData(_packet, true);
+                }
+
+            }
         }
     }
 }

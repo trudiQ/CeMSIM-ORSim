@@ -446,6 +446,8 @@ namespace CEMSIM
                 { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected},
                 { (int)ServerPackets.heartBeatDetectionTCP, ClientHandle.HeartBeatDetectionTCP},
                 { (int)ServerPackets.heartBeatDetectionUDP, ClientHandle.HeartBeatDetectionUDP},
+                { (int)ServerPackets.itemManagerTCP, ClientHandle.ItemStatusTCP},
+                { (int)ServerPackets.itemManagerUDP, ClientHandle.ItemStatusUDP}
             };
 
                 Debug.Log("Client Data Initialization Complete.");

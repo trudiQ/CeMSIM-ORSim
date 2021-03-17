@@ -154,6 +154,27 @@ namespace CEMSIM
                 long sendTicks = _packet.getUtcTicks(); // the utc ticks that generates the received packet
                 ClientSend.SendHeartBeatResponseTCP(sendTicks);
             }
+
+            /// <summary>
+            /// Update an item's status as instructed in packet
+            /// </summary>
+            /// <param name="_packet"></param>
+            public static void ItemStatusTCP(Packet _packet)
+            {
+                string msg = _packet.ReadString();  //the string contains the item's instruction
+                GameObject itemManager = GameObject.Find("ItemManager");
+                ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
+                CIM.UpdateItemStatus(msg);  //hand msg to ClientItemManager to process
+            }
+            public static void ItemStatusUDP(Packet _packet)
+            {
+                string msg = _packet.ReadString();  //the string contains the item's instruction
+                GameObject itemManager = GameObject.Find("ItemManager");
+                ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
+                CIM.UpdateItemStatus(msg);  //hand msg to ClientItemManager to process
+            }
+
+
         }
     }
 }
