@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7340045832515450999
+--- !u!1 &7808959100289247547
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,29 +8,29 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1643816668265988426}
-  - component: {fileID: 7397843767870054356}
-  - component: {fileID: 678348977283153083}
-  - component: {fileID: 3887750797034044501}
-  - component: {fileID: 3930972891565207178}
-  - component: {fileID: 1299390434741308599}
-  - component: {fileID: 2117834105298184381}
-  - component: {fileID: 3727992709827993898}
-  - component: {fileID: 1703787520288446321}
+  - component: {fileID: 2257403658838495238}
+  - component: {fileID: 8010075868466204312}
+  - component: {fileID: 65883746940104183}
+  - component: {fileID: 4357227031395872025}
+  - component: {fileID: 4543697865956868038}
+  - component: {fileID: 1984880796605603323}
+  - component: {fileID: 1506424130170354161}
+  - component: {fileID: 4197240194781098086}
+  - component: {fileID: 2172700529697310269}
   m_Layer: 0
-  m_Name: Hat 1
+  m_Name: RGlove
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1643816668265988426
+--- !u!4 &2257403658838495238
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340045832515450999}
+  m_GameObject: {fileID: 7808959100289247547}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -38,21 +38,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7397843767870054356
+--- !u!33 &8010075868466204312
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340045832515450999}
-  m_Mesh: {fileID: -9060877839676874030, guid: 0ad13a29b798dc345975837e21b14f69, type: 3}
---- !u!23 &678348977283153083
+  m_GameObject: {fileID: 7808959100289247547}
+  m_Mesh: {fileID: -509819286116656040, guid: 0ad13a29b798dc345975837e21b14f69, type: 3}
+--- !u!23 &65883746940104183
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340045832515450999}
+  m_GameObject: {fileID: 7808959100289247547}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 99988712c2f1c9f4dbeb5c6936c0aa3e, type: 2}
+  - {fileID: 2100000, guid: 271fe58ee87b4554286228795574eee8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85,42 +85,42 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &3887750797034044501
+--- !u!64 &4357227031395872025
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340045832515450999}
+  m_GameObject: {fileID: 7808959100289247547}
   m_Material: {fileID: 13400000, guid: 92d4c6c99c0b2bf40a697cfc91c9226c, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: -9060877839676874030, guid: 0ad13a29b798dc345975837e21b14f69, type: 3}
---- !u!114 &3930972891565207178
+  m_Mesh: {fileID: -509819286116656040, guid: 0ad13a29b798dc345975837e21b14f69, type: 3}
+--- !u!114 &4543697865956868038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340045832515450999}
+  m_GameObject: {fileID: 7808959100289247547}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4bc376f2ebbef844499f6c6b7cb130ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clothName: Hat
+  clothName: RGlove
   offset: {x: 0, y: 0, z: 0}
   isBeingGrabbed: 0
---- !u!54 &1299390434741308599
+--- !u!54 &1984880796605603323
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340045832515450999}
+  m_GameObject: {fileID: 7808959100289247547}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
@@ -130,13 +130,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2117834105298184381
+--- !u!114 &1506424130170354161
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340045832515450999}
+  m_GameObject: {fileID: 7808959100289247547}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ad34abafad169848a38072baa96cdb2, type: 3}
@@ -204,13 +204,13 @@ MonoBehaviour:
   m_ThrowAngularVelocityScale: 0.25
   m_GravityOnDetach: 0
   m_RetainTransformParent: 1
---- !u!114 &3727992709827993898
+--- !u!114 &4197240194781098086
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340045832515450999}
+  m_GameObject: {fileID: 7808959100289247547}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b93b6a877adcbf94c89a9d6e0c0e844d, type: 3}
@@ -256,13 +256,13 @@ MonoBehaviour:
   highlightOnHover: 1
   hideHighlight: []
   hoverPriority: 0
---- !u!114 &1703787520288446321
+--- !u!114 &2172700529697310269
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340045832515450999}
+  m_GameObject: {fileID: 7808959100289247547}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ffefbea063cab884ca33e5a449e5c22c, type: 3}

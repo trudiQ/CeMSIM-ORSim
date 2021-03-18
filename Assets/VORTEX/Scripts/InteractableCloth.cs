@@ -6,6 +6,7 @@ using Valve.VR.InteractionSystem;
 
 [RequireComponent(typeof(XRGrabInteractable))]
 [RequireComponent(typeof(Throwable))]
+[RequireComponent(typeof(Collider))]
 public class InteractableCloth : MonoBehaviour
 {
     public string clothName; // Name to be matched at start

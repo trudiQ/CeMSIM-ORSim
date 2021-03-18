@@ -6,6 +6,7 @@ using Valve.VR.InteractionSystem;
 
 [RequireComponent(typeof(XRSimpleInteractable))]
 [RequireComponent(typeof(Interactable))]
+[RequireComponent(typeof(Collider))]
 public class WornCloth : MonoBehaviour
 {
     // This script needs to be placed on an object parented to the bone that the cloth with the mesh renderer is skinned to
@@ -58,25 +59,36 @@ public class WornCloth : MonoBehaviour
     // XR method for when the object is selected
     public void OnSelectEnter(XRBaseInteractor interactor)
     {
-        Debug.Log("Worn cloth grabbed");
-        onWornClothInteractedXR.Invoke(interactor);
+        if (isActive)
+        {
+            Debug.Log("Worn cloth grabbed");
+            onWornClothInteractedXR.Invoke(interactor);
+        }
+        
     }
 
     // XR method for when the object stops being selected
     public void OnSelectExit(XRBaseInteractor interactor)
     {
-        Debug.Log("Worn cloth let go");
-        onWornClothInteractedXR.Invoke(interactor);
+        if (isActive)
+        {
+            Debug.Log("Worn cloth let go");
+            onWornClothInteractedXR.Invoke(interactor);
+        }
     }
 
     // Steam method that updates while the hand is within the collider
     private void HandHoverUpdate(Hand hand)
     {
-        GrabTypes startingGrabType = hand.GetGrabStarting();
-
-        if(hand.AttachedObjects.Count == 0 && startingGrabType == GrabTypes.Pinch)
+        if (isActive)
         {
-            onWornClothInteractedSteam.Invoke(hand);
+            GrabTypes startingGrabType = hand.GetGrabStarting();
+
+            if (hand.AttachedObjects.Count == 0 && startingGrabType == GrabTypes.Pinch)
+            {
+                Debug.Log(name + " grabbed");
+                onWornClothInteractedSteam.Invoke(hand);
+            }
         }
     }
 
