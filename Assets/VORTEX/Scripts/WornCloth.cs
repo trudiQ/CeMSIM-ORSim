@@ -7,6 +7,7 @@ using Valve.VR.InteractionSystem;
 [RequireComponent(typeof(XRSimpleInteractable))]
 [RequireComponent(typeof(Interactable))]
 [RequireComponent(typeof(Collider))]
+[System.Serializable]
 public class WornCloth : MonoBehaviour
 {
     // This script needs to be placed on an object parented to the bone that the cloth with the mesh renderer is skinned to
@@ -16,6 +17,7 @@ public class WornCloth : MonoBehaviour
     public Vector3 offset; // Position offset from the object's origin to the center of the mesh
     public bool isActive { get; private set; }
 
+    // Events that trigger when the user grabs within the collider
     public delegate void OnWornClothInteractedSteam(Hand hand);
     public delegate void OnWornClothInteractedXR(XRBaseInteractor hand);
     public OnWornClothInteractedSteam onWornClothInteractedSteam;
@@ -23,15 +25,12 @@ public class WornCloth : MonoBehaviour
 
     private XRSimpleInteractable xrInteractable;
     private Interactable steamInteractable;
-    private new Rigidbody rigidbody;
-    private new Collider collider;
+
 
     void Start()
     {
         xrInteractable = GetComponent<XRSimpleInteractable>();
         steamInteractable = GetComponent<Interactable>();
-        rigidbody = GetComponent<Rigidbody>();
-        collider = GetComponentInChildren<Collider>();
     }
 
     // Returns the position in the world where the offset of the object would be
@@ -48,12 +47,8 @@ public class WornCloth : MonoBehaviour
     public void SetActive(bool state)
     {
         objectWithSkinnedMesh.SetActive(state);
+        gameObject.SetActive(state);
         isActive = state;
-
-        xrInteractable.enabled = state;
-        steamInteractable.enabled = state;
-        rigidbody.detectCollisions = state;
-        collider.enabled = state;
     }
 
     // XR method for when the object is selected
@@ -71,10 +66,7 @@ public class WornCloth : MonoBehaviour
     public void OnSelectExit(XRBaseInteractor interactor)
     {
         if (isActive)
-        {
-            Debug.Log("Worn cloth let go");
             onWornClothInteractedXR.Invoke(interactor);
-        }
     }
 
     // Steam method that updates while the hand is within the collider
@@ -85,10 +77,7 @@ public class WornCloth : MonoBehaviour
             GrabTypes startingGrabType = hand.GetGrabStarting();
 
             if (hand.AttachedObjects.Count == 0 && startingGrabType == GrabTypes.Pinch)
-            {
-                Debug.Log(name + " grabbed");
                 onWornClothInteractedSteam.Invoke(hand);
-            }
         }
     }
 

@@ -34,19 +34,23 @@ public class ClothPair
 {
     public string clothName; // Name to be matched at start
     public WornCloth modelCloth; // Clothing object on the model
-    public InteractableCloth clothingInWorld; // Clothing object in the scene
+    public InteractableCloth sceneCloth; // Clothing object in the scene
     public float distanceThreshold = 0.1f;
     public float angleThreshold = 30f;
+    public bool equipAtStart = false;
+    public bool snapOnGrab = false; // Snap to/from the model when grabbed
 
     private bool movedOutOfThresholdAfterUnequip = true;
 
     // Pair the cloth objects and subscribe to the grab event
     public void Initialize(InteractableCloth pairedCloth)
     {
-        clothingInWorld = pairedCloth;
-        SetModelClothActive(modelCloth.isActive);
+        sceneCloth = pairedCloth;
+        pairedCloth.throwable.SetState(!snapOnGrab);
+        SetModelClothActive(equipAtStart);
 
         modelCloth.onWornClothInteractedSteam += OnWornClothInteractedSteam;
+        sceneCloth.onSceneClothInteractedSteam += OnSceneClothInteractedSteam;
     }
 
     // Toggles the active state of both cloth
@@ -63,20 +67,20 @@ public class ClothPair
             modelCloth.SetActive(state);
 
             if (modelCloth.isActive)
-            {
                 movedOutOfThresholdAfterUnequip = false;
-            }
 
             // Sets the parent of the scene cloth if the model cloth is active
-            clothingInWorld.SetActiveAndParent(!state, modelCloth.transform);
+            sceneCloth.SetActiveAndParent(!state, snapOnGrab ? null : modelCloth.transform);
         }
         catch (MissingReferenceException e)
         {
-            Debug.LogWarning("Missing objects in a ClothPair." + e.ToString());
+            Debug.LogWarning("Missing objects in a ClothPair. \n" +
+                "Model Cloth: " + modelCloth +  ", Scene Cloth: " + sceneCloth + "\n" + e.ToString());
         }
         catch (System.NullReferenceException e)
         {
-            Debug.LogWarning("Missing objects in a ClothPair." + e.ToString());
+            Debug.LogWarning("Missing objects in a ClothPair (null). \n" +
+                "Model Cloth: " + modelCloth + ", Scene Cloth: " + sceneCloth + "\n" + e.ToString());
         }
     }
 
@@ -85,7 +89,7 @@ public class ClothPair
     {
         try
         {
-            if (clothingInWorld.isBeingGrabbed)
+            if (sceneCloth.isBeingGrabbed)
             {
                 if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
                 {
@@ -111,7 +115,7 @@ public class ClothPair
     // Check if the scene cloth is within the distance threshold
     private bool InThresholdDistance()
     {
-        float distance = Vector3.Distance(modelCloth.GetOffsetPosition(), clothingInWorld.GetOffsetPosition());
+        float distance = Vector3.Distance(modelCloth.GetOffsetPosition(), sceneCloth.GetOffsetPosition());
         
         return  distance <= distanceThreshold;
     }
@@ -119,15 +123,24 @@ public class ClothPair
     // Check if the scene cloth is within the rotation threshold
     private bool RotationAligned()
     {
-        float angle = Quaternion.Angle(modelCloth.GetRotation(), clothingInWorld.GetRotation());
+        float angle = Quaternion.Angle(modelCloth.GetRotation(), sceneCloth.GetRotation());
 
         return angle <= angleThreshold;
+    }
+
+    // Event for when the scene cloth is interacted with by a SteamVR controller
+    private void OnSceneClothInteractedSteam(Hand hand)
+    {
+        if (snapOnGrab)
+            ToggleModelCloth();
     }
 
     // Event for when the worn cloth is interacted with by a SteamVR controller
     private void OnWornClothInteractedSteam(Hand hand)
     {
         ToggleModelCloth();
-        clothingInWorld.ManualAttachToHandSteam(hand);
+
+        if(!snapOnGrab)
+            sceneCloth.ManualAttachToHandSteam(hand);
     }
 }

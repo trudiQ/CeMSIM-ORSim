@@ -5,21 +5,27 @@ using UnityEngine.XR.Interaction.Toolkit;
 using Valve.VR.InteractionSystem;
 
 [RequireComponent(typeof(XRGrabInteractable))]
-[RequireComponent(typeof(Throwable))]
+[RequireComponent(typeof(ToggleThrowable))]
 [RequireComponent(typeof(Collider))]
+[System.Serializable]
 public class InteractableCloth : MonoBehaviour
 {
     public string clothName; // Name to be matched at start
     public Vector3 offset; // Position offset from the object's origin to the center of the mesh
     public bool isBeingGrabbed = false;
+    public bool isActive { get; private set; }
+
+    public delegate void OnSceneClothInteractedSteam(Hand hand);
+    public delegate void OnSceneClothInteractedXR(XRBaseInteractor hand);
+    public OnSceneClothInteractedSteam onSceneClothInteractedSteam;
+    public OnSceneClothInteractedXR onSceneClothInteractedXR;
 
     private Hand connectedSteamHand; // Steam hand
-    private Hand.AttachmentFlags attachmentFlags; // Flags that determine what to do when attaching the object to a hand
+    public ToggleThrowable throwable { get; private set; }
 
     void Start()
     {
-        // Store the attachment flags from the Steam throwable
-        attachmentFlags = GetComponent<Throwable>().attachmentFlags;
+        throwable = GetComponent<ToggleThrowable>();
     }
 
     // Returns the position in the world where the offset of the object would be
@@ -28,27 +34,31 @@ public class InteractableCloth : MonoBehaviour
         return transform.position + transform.rotation * offset;
     }
 
+    // Returns the rotation
     public Quaternion GetRotation()
     {
         return transform.rotation;
     }
 
     // Sets the active state of the cloth and changes its parent based on the state
-    public void SetActiveAndParent(bool active, Transform parent)
+    public void SetActiveAndParent(bool state, Transform parent)
     {
-        if (!active)
+        if (!state)
         {
             StopGrab();
-            transform.parent = parent;
-            transform.localRotation = Quaternion.identity;
-            transform.localPosition = Vector3.zero;
-            gameObject.SetActive(active);
+
+            if (parent)
+            {
+                transform.parent = parent;
+                transform.localRotation = Quaternion.identity;
+                transform.localPosition = Vector3.zero;
+            }
         }
         else
-        {
-            gameObject.SetActive(active);
             transform.parent = null;
-        }
+
+        gameObject.SetActive(state);
+        isActive = state;
     }
 
     // Forces the release of the object from a hand
@@ -72,6 +82,20 @@ public class InteractableCloth : MonoBehaviour
         isBeingGrabbed = false;
     }
 
+    // Steam method that updates while the hand is within the collider
+    private void HandHoverUpdate(Hand hand)
+    {
+        if (!isActive) return;
+
+        GrabTypes startingGrabType = hand.GetGrabStarting();
+
+        if (hand.AttachedObjects.Count == 0 && startingGrabType == GrabTypes.Pinch)
+        {
+            connectedSteamHand = hand;
+            onSceneClothInteractedSteam.Invoke(hand);
+        }
+    }
+
     // Steam method for when an object is grabbed
     private void OnAttachedToHand(Hand hand)
     {
@@ -89,7 +113,7 @@ public class InteractableCloth : MonoBehaviour
     // Manually attach an object to the Steam hand
     public void ManualAttachToHandSteam(Hand hand)
     {
-        hand.AttachObject(gameObject, GrabTypes.Pinch, attachmentFlags);
+        hand.AttachObject(gameObject, GrabTypes.Pinch, throwable.attachmentFlags);
     }
 
     // Show the offset position as a sphere when the object is selected
