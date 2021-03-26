@@ -8,6 +8,12 @@ namespace CEMSIM{
 	public class ClientItemManager : MonoBehaviour
 	{
 
+		public List<GameObject> itemList = new List<GameObject>();	//This List contains all items to be instantiated. To use: drag gameobject into the list in Unity IDE
+		public List<Item> itemManageList = new List<Item>();		//This List contains all items to be managed.
+		private List<Item> ownedItemList = new List<Item>();		//This List contains all items owned by this client
+
+		public bool testOwnAllItems = false;
+
 		private Dictionary<(int,string),(GameObject,string)> itemDict = new Dictionary<(int,string),(GameObject,string)>();//This dictionary contains all items to be manage. To use: drag gameobject into itemManager
 		private  List<string> itemStatusList = new List<string>();
 	    // Start is called before the first frame update
@@ -17,120 +23,118 @@ namespace CEMSIM{
 	    }
 
 	    // Update is called once per frame
-	    void Update()
+	    void FixedUpdate()
 	    {
-	        
+	    	if(testOwnAllItems){
+	    		foreach(Item item in itemManageList){
+	    			if(item.ownerId != ClientInstance.instance.myId){
+	    				GainOwnership(item);
+	    				Debug.Log("Client requested to gain ownership of an item!");
+	    			}
+	    		}
+	    	}else{
+	    		foreach(Item item in ownedItemList){
+	    			DropOwnership(item);
+	    			Debug.Log("Client gave up on ownership of an item!");
+
+	    		}
+	    	}
+
+
+	    	SendOwnedItemStatus();
+
+
+	    }
+
+
+
+	    /// <summary>
+        /// Update an item's position
+        /// </summary>
+        /// <param name="itemID"> The id of the item to be updated </param>
+        /// <param name="position"> The vector3 position of the item </param>
+	    public void UpdateItemPosition(int itemId, Vector3 position){
+	    	itemManageList[itemId].gameObject.transform.position = position;
 	    }
 
 	    /// <summary>
-        /// Parse and update ietm status from server's message
+        /// Update an item's rotation
         /// </summary>
-        /// <param name="msg"></param>
-	    public void UpdateItemStatus(string msg){
-	    	Debug.Log(msg);
-	    	//TODO: If current list doesn't contain this item of it has diffrent type, update according to server
-	    	
-	    	//Get item status from sever's message
-	    	(int id, string name, string owner, Vector3 pos, Quaternion rot) newStatus = 
-	    	ParseItemFromString(msg);
-
-	    	//construct key
-	    	(int,string) key = (newStatus.id, newStatus.name);
-
-	    	//get item reference from dictionary
-	    	(GameObject item,string owner) val;
-	    	if(!itemDict.TryGetValue(key, out val)){
-	    		Debug.Log("WARNING: Unkown item status received from server, check itemManager list");
-	    		return;
-	    	}
-	    	GameObject item = val.item;
-
-	    	//Update an item's rotation and position
-	    	item.transform.position = newStatus.pos;
-	    	
-	    	
-	    	item.transform.rotation = newStatus.rot;
-	    	
-	    	
-	    	
-
-	    	//Update an item's owner
-	    	if(val.owner != newStatus.owner){
-	    		itemDict[key] = (item, newStatus.owner);
-	    	}
-	    	
-
-
-
+        /// <param name="itemID"> The id of the item to be updated </param>
+        /// <param name="position"> The vector3 position of the item </param>
+	    public void UpdateItemRotation(int itemId, Quaternion rotation){
+	    	itemManageList[itemId].gameObject.transform.rotation = rotation;
 	    }
+
+
+
+
+
+
+
 
 	    /// <summary>
         /// Add all items under ItemManager into list
         /// </summary>
 	    private void CollectItems(){
 	    	int id = 0;
-	    	string name = "";
-	    	string owner = "";
-			foreach (Transform child in gameObject.transform)
+	    	int owner = 0;
+			foreach (GameObject itemPrefab in itemList)
 			{ 
-				name = child.gameObject.name;
-				Debug.Log(name);
-				owner = ""; 	
-																										//TODO: Figure out about owner
-			    itemDict.Add((id,name),(child.gameObject,owner));
+				GameObject item = Instantiate(itemPrefab, new Vector3(0,0,0), Quaternion.identity);
+				Rigidbody rb = item.GetComponent<Rigidbody>();
+				rb.isKinematic = true;					//Prevent client from changing the item's position & rotation
+				rb.useGravity = false;
+
+				itemManageList.Add( new Item(item, id, owner ) );
 			    id++;
 			}
 	    }
 
+
 	    /// <summary>
-        /// Parse Item information from string message
+        /// Send Item status that is owned by this client
         /// </summary>
-        /// <param name="msg"></param>
-	    private  (int id, string name, string owner, Vector3 pos, Quaternion rot) ParseItemFromString(string msg){
-	    	//Format of msg:
-	    	//"id=X|name=X|owner=XXX|pos=(x,y,z)|rot=(x,y,z)"
-	    	string[] splited = msg.Split('|');
-	    	int id;
-	    	string name;
-	    	string owner;
-	    	string vector;
-	    	float x,y,z;
+	    private void SendOwnedItemStatus(){
+	    	foreach(Item item in ownedItemList){
 
-	    	//Parse Id
-	    	if(!int.TryParse(splited[0].Split('=')[1], out id)){
-	    		Debug.Log("Warning: Item id parsing error");
+	    		//Send position to Server via UDP
+	    		ClientSend.SendItemPosition(item);
+	    		//Send rotation to Server via UDP
+	    		ClientSend.SendItemRotation(item);
+
+	    		Debug.Log("Sending item status:");
+	    		Debug.Log(item.ToString());
+	    		
 	    	}
-
-	    	//Parse name
-	    	name = splited[1].Split('=')[1];
-
-	    	//Parse owner
-	    	owner = splited[2].Split('=')[1];
-	    	
-	    	//Parse position
-	    	vector = splited[3].Split('=')[1].Replace("(","").Replace(")","");
-	    	string[] vector_splited = vector.Split(',');
-	    	float.TryParse(vector_splited[0], out x);
-	    	float.TryParse(vector_splited[1], out y);
-	    	float.TryParse(vector_splited[2], out z);
-	    	Vector3 pos = new Vector3(x,y,z);
-
-	    	//Parse rotation
-	    	vector = splited[4].Split('=')[1].Replace("(","").Replace(")","");
-	    	vector_splited = vector.Split(',');
-
-	    	
-	    	float.TryParse(vector_splited[0], out x);
-	    	float.TryParse(vector_splited[1], out y);
-	    	float.TryParse(vector_splited[2], out z);
-	    	Quaternion rot = new Quaternion(x,y,z,1);
-
-	    	//return
-	    	(int id, string name, string owner, Vector3 pos, Quaternion rot) itemStatus 
-	    	= (id, name, owner, pos, rot);
-	    	return itemStatus;
-
 	    }
+
+	    public void GainOwnership(Item item){
+	    	//Update item's ownerId
+	    	item.ownerId = ClientInstance.instance.myId;
+	    	//Add item to owned list
+	    	ownedItemList.Add(item);
+	    	//Send ownership request to user
+	    	ClientSend.SendOnwershipChange(item);
+	    }
+
+	    public void DropOwnership(Item item){
+	    	//Update item's ownerID to 0 (not owned)
+	    	item.ownerId = 0;
+	    	//Drop item from ownedItemList
+	    	ownedItemList.Remove(item);
+	    	//Send drop ownership notification to server
+	    	ClientSend.SendOnwershipChange(item);
+	    }
+
+
+
+
+
+
+
+
+
 
 
 

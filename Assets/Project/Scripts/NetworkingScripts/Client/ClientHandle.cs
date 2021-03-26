@@ -156,23 +156,45 @@ namespace CEMSIM
             }
 
             /// <summary>
-            /// Update an item's status as instructed in packet
+            /// Update an item's position as instructed in packet
             /// </summary>
             /// <param name="_packet"></param>
-            public static void ItemStatusTCP(Packet _packet)
+            public static void ItemPosition(Packet _packet)
             {
-                string msg = _packet.ReadString();  //the string contains the item's instruction
+                int _item_id = _packet.ReadInt32();
+                Vector3 _position = _packet.ReadVector3();
                 GameObject itemManager = GameObject.Find("ItemManager");
                 ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
-                CIM.UpdateItemStatus(msg);  //hand msg to ClientItemManager to process
+                CIM.UpdateItemPosition(_item_id, _position);
             }
-            public static void ItemStatusUDP(Packet _packet)
+
+            /// <summary>
+            /// Update an item's rotation as instructed in packet
+            /// </summary>
+            /// <param name="_packet"></param>
+            public static void ItemRotation(Packet _packet)
             {
-                string msg = _packet.ReadString();  //the string contains the item's instruction
+                int _item_id = _packet.ReadInt32();
+                Quaternion _rotation = _packet.ReadQuaternion();
                 GameObject itemManager = GameObject.Find("ItemManager");
                 ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
-                CIM.UpdateItemStatus(msg);  //hand msg to ClientItemManager to process
+                CIM.UpdateItemRotation(_item_id, _rotation);
             }
+
+
+            /// <summary>
+            /// An item's ownership request sent by this client is denied by server, update ownership info accordingly
+            /// </summary>
+            /// <param name="_packet"></param>
+            public static void OwnershipDenial(Packet _packet)
+            {
+                int _item_id = _packet.ReadInt32();
+                GameObject itemManager = GameObject.Find("ItemManager");
+                ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
+                CIM.DropOwnership(CIM.itemManageList[_item_id]);
+            }
+
+
 
 
         }

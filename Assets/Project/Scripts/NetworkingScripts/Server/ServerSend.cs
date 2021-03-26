@@ -227,22 +227,41 @@ namespace CEMSIM
                 }
             }
 
-            public static void BrodcastItemStatus(string itemStatusMsg)
+            public static void BrodcastItemPosition(Item _item)
             {
-                // //ItemManager.cs calls this method to multicase an item's status
-                // using (Packet _packet = new Packet((int)ServerPackets.itemManagerTCP))
-                // {
-                //     _packet.Write(itemStatusMsg);
-                //     MulticastUDPData(_packet, true);
-                // }
-
-                using (Packet _packet = new Packet((int)ServerPackets.itemManagerUDP))
+                // ServerItemManager.cs calls this method to multicase an item's position
+                using (Packet _packet = new Packet((int)ServerPackets.itemPositionUDP))
                 {
-                    _packet.Write(itemStatusMsg);
-                    MulticastTCPData(_packet, true);
+                    _packet.Write(_item.id);
+                    _packet.Write(_item.gameObject.transform.position);
+                    MulticastExceptOneUDPData(_item.ownerId, _packet);                  //Does not update data to owner
                 }
 
             }
+            public static void BrodcastItemRotation(Item _item)
+            {
+                // ServerItemManager.cs calls this method to multicase an item's position
+                using (Packet _packet = new Packet((int)ServerPackets.itemRotationUDP))
+                {
+                    _packet.Write(_item.id);
+                    _packet.Write(_item.gameObject.transform.rotation);
+                    MulticastExceptOneUDPData(_item.ownerId, _packet);                  //Does not update data to owner
+                }
+
+            }
+
+            public static void OwnershipDenial(int _toClient, int item_id)              //Deny a clien's ownership via TCP
+            {
+                using (Packet _packet = new Packet((int)ServerPackets.ownershipDenial))
+                {
+                    _packet.Write(item_id);
+                    SendTCPData(_toClient, _packet);
+                }
+            }
+
+
+
+
         }
     }
 }

@@ -159,7 +159,7 @@ namespace CEMSIM
                 }
 
 
-                packetHandlers = new Dictionary<int, PacketHandler>
+                packetHandlers = new Dictionary<int, PacketHandler>()
                 {
                     { (int)ClientPackets.invalidPacket, ServerHandle.InvalidPacketResponse},
                     { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
@@ -170,6 +170,9 @@ namespace CEMSIM
                     { (int)ClientPackets.playerVRMovement, ServerHandle.PlayerVRMovement},
                     { (int)ClientPackets.heartBeatDetectionTCP, ServerHandle.HeartBeatDetectionTCP},
                     { (int)ClientPackets.heartBeatDetectionUDP, ServerHandle.HeartBeatDetectionUDP},
+                    { (int)ClientPackets.itemPositionUDP, ServerHandle.ItemPosition},
+                    { (int)ClientPackets.itemRotationUDP, ServerHandle.ItemRotation},
+                    { (int)ClientPackets.itemOwnershipChange, ServerHandle.ItemOwnershipChange},
                 };
 
                 Debug.Log("Initialized Server Data");

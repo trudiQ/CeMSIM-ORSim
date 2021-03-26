@@ -145,6 +145,81 @@ namespace CEMSIM
                 ServerInstance.clients[_fromClient].udp.rtt = utcnow - sendticks;
             }
 
+
+            /// <summary>
+            /// Update an item's position as instructed in packet
+            /// </summary>
+            /// <param name="_packet"></param>
+            public static void ItemPosition(int _fromClient, Packet _packet)
+            {
+                int _item_id = _packet.ReadInt32();
+                GameObject itemManager = GameObject.Find("ItemManager");
+                ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
+                //Ignore if the client is not the owner of the item
+                if (SIM.itemManageList[_item_id].ownerId != _fromClient){   
+                    Debug.Log(string.Format("client {0} attempted to update pos on item {1} but ignored by server",_fromClient,_item_id));
+                    return;
+                }
+                Vector3 _position = _packet.ReadVector3();
+                SIM.UpdateItemPosition(_item_id, _position);
+            }
+
+            /// <summary>
+            /// Update an item's rotation as instructed in packet
+            /// </summary>
+            /// <param name="_packet"></param>
+            public static void ItemRotation(int _fromClient, Packet _packet)
+            {
+                int _item_id = _packet.ReadInt32();
+                GameObject itemManager = GameObject.Find("ItemManager");
+                ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
+                //Ignore if the client is not the owner of the item
+                if (SIM.itemManageList[_item_id].ownerId != _fromClient){   
+                    return;
+                }
+                Quaternion _rotation = _packet.ReadQuaternion();
+                SIM.UpdateItemRotation(_item_id, _rotation);
+            }
+
+            /// <summary>
+            /// Update an item's ownership as instructed in packet
+            /// </summary>
+            /// <param name="_packet"></param>
+            public static void ItemOwnershipChange(int _fromClient, Packet _packet)
+            {
+                int _item_id = _packet.ReadInt32();
+                int _newOwner = _packet.ReadInt32();
+                GameObject itemManager = GameObject.Find("ItemManager");
+                ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
+
+                int currentOwner = SIM.itemManageList[_item_id].ownerId;
+                Item item = SIM.itemManageList[_item_id];
+                //This item is currently not owned by anyone\ or owned by the incoming client
+                if (currentOwner == 0 || currentOwner == _fromClient){ 
+                    item.ownerId = _newOwner;
+                    Rigidbody rb = item.gameObject.GetComponent<Rigidbody>(); 
+                    if(_newOwner != 0){ 
+                        //if the item is no longer controlled by server then set item to kinematic and no gravity
+                        rb.isKinematic = true;                  //Prevent server physics system from changing the item's position & rotation
+                        rb.useGravity = false;
+                    }else{
+                        //if server regains control of an item then turn on gravity and set kinematic off
+                        rb.isKinematic = false;                  
+                        rb.useGravity = true;
+
+                    }
+                    Debug.Log(string.Format("Ownership of item {0} is given to player {1}.",_item_id.ToString(),_newOwner));
+                }
+                //If this item is currenly owned by other clients
+                if (currentOwner !=0 && currentOwner != _fromClient){
+                    //Makes no change in ownership and reply with denial
+                    ServerSend.OwnershipDenial(_fromClient, _item_id);
+                    Debug.Log("Ownership denied.");
+                }
+            }
+
+
+
         }
     }
 }

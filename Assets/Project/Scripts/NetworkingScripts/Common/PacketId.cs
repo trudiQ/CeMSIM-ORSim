@@ -20,8 +20,9 @@ namespace CEMSIM
             playerDisconnected, // inform player the disconnection of another player
             heartBeatDetectionUDP, // a packet containing the server's system time. used to check whether the target client is alive and get the round-trip-time.
             heartBeatDetectionTCP,
-            itemManagerTCP,     //TCP update of item status(position/rotation/id/owner)
-            itemManagerUDP,     //UDP update of item status(position/rotation/id/owner)
+            itemPositionUDP,     //UDP update of item position
+            itemRotationUDP,     //UDP update of item rotation
+            ownershipDenial,     //TCP packet that denies a client's request to an item's ownership
         }
 
         /// <summary>
@@ -38,8 +39,9 @@ namespace CEMSIM
             playerVRMovement,   // client's position and orientation of the VR player
             heartBeatDetectionUDP,  // in response to the server's system.
             heartBeatDetectionTCP,
-            itemManagerTCP,     //TCP update of item status(position/rotation/id/owner)
-            itemManagerUDP,     //UDP update of item status(position/rotation/id/owner)
+            itemPositionUDP,     //UDP update of item position
+            itemRotationUDP,     //UDP update of item rotation
+            itemOwnershipChange, //TCP update of item's ownership
         }
     }
 }

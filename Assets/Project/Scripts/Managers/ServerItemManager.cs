@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using CEMSIM.Network;
 using CEMSIM.GameLogic;
+using CEMSIM.GameLogic;
 
 
 namespace CEMSIM{
 
 	public class ServerItemManager : MonoBehaviour
 	{
-		private Dictionary<(int,string),(GameObject,string)> itemDict = new Dictionary<(int,string),(GameObject,string)>();//This dictionary contains all items to be manage. To use: drag gameobject into the list in Unity IDE
-	    private List<string> itemStatusList = new List<string>(); 			//List of string that contains mesages of item information.
+		public List<GameObject> itemList = new List<GameObject>();	//This List contains all items to be instantiated. To use: drag gameobject into the list in Unity IDE
+		public Vector3 spawnPosition;								//This Vector3 controls where the spawned item is located
+		public List<Item> itemManageList = new List<Item>();		//This List contains all items to be managed.
+
 
 
 	    // Start is called before the first frame update
@@ -18,42 +21,27 @@ namespace CEMSIM{
 	    {
 	    	CollectItems();
 
-	    	InvokeRepeating("GetItemStatus", 0.05f, 0.05f);  //1s delay, repeat every 1s
-	    	InvokeRepeating("SendItemStatus", 0.05f, 0.05f);  //1s delay, repeat every 1s
 	    	
 	    }
 
 	    // Update is called once per frame
 	    void FixedUpdate()
 	    {	
-
+	    	SendItemStatus();
 	    }
 
-        /// <summary>
-        /// Get item status (id(unique),type,rotation,position,owner) for each item in itemList.
-        /// </summary>
-	    private void GetItemStatus(){
-
-	    	foreach(KeyValuePair<(int id,string name),(GameObject item,string owner)> kv in itemDict){
-	    		GameObject item = kv.Value.item;
-	    		int id = kv.Key.id;
-	    		string name = kv.Key.name;
-	    		string owner = kv.Value.owner;
-	    		string pos = item.transform.position.ToString();
-	    		string rot = item.transform.rotation.ToString();
-	    		itemStatusList.Add(string.Format("id={0}|name={1}|owner={2}|pos={3}|rot={4}",id.ToString(),name,owner,pos,rot));
-
-	    	}
-	    }
 
 	    private void SendItemStatus(){
-	    	foreach(string msg in itemStatusList){
-	    		//Brodcast messages via tcp
-	    		Debug.Log("Sending item status");
-	    		Debug.Log(msg);
-	    		ServerSend.BrodcastItemStatus(msg);
+	    	foreach(Item item in itemManageList){
+
+	    		//Brodcast item position via UDP
+	    		ServerSend.BrodcastItemPosition(item);
+	    		//Brodcast item rotation via UDP
+	    		ServerSend.BrodcastItemRotation(item);
+	    		//Brodcast item owner via TCP
+	    		//*****TO DO: Brodcast ownership information via TCP********
+	    		
 	    	}
-	    	itemStatusList.Clear();
 	    }
 
 
@@ -63,18 +51,34 @@ namespace CEMSIM{
         /// </summary>
 	    private void CollectItems(){
 	    	int id = 0;
-	    	string name = "";
-	    	string owner = "";
-			foreach (Transform child in gameObject.transform)
+	    	int owner = 0;
+			foreach (GameObject itemPrefab in itemList)
 			{ 
-				name = child.gameObject.name;
-				//Debug.Log(name);
-				owner = ""; 	
-																										//TODO: Figure out about owner
-			    itemDict.Add((id,name),(child.gameObject,owner));
+				GameObject item = Instantiate(itemPrefab, spawnPosition, Quaternion.identity);
+				itemManageList.Add( new Item(item, id, owner ) );
 			    id++;
 			}
 	    }
+
+	    /// <summary>
+        /// Update an item's position
+        /// </summary>
+        /// <param name="itemID"> The id of the item to be updated </param>
+        /// <param name="position"> The vector3 position of the item </param>
+	    public void UpdateItemPosition(int itemId, Vector3 position){
+	    	itemManageList[itemId].gameObject.transform.position = position;
+	    }
+
+	    /// <summary>
+        /// Update an item's rotation
+        /// </summary>
+        /// <param name="itemID"> The id of the item to be updated </param>
+        /// <param name="position"> The vector3 position of the item </param>
+	    public void UpdateItemRotation(int itemId, Quaternion rotation){
+	    	itemManageList[itemId].gameObject.transform.rotation = rotation;
+	    }
+
+
 
  
 

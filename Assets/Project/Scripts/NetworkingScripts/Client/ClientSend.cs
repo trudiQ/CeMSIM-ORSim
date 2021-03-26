@@ -140,6 +140,37 @@ namespace CEMSIM
                 }
             }
             #endregion
+
+            public static void SendItemPosition(Item _item)                             //Send Item position to server via UDP
+            {
+                using (Packet _packet = new Packet((int)ClientPackets.itemPositionUDP))
+                {
+                    _packet.Write(_item.id);
+                    _packet.Write(_item.gameObject.transform.position);
+                    SendUDPData(_packet);
+                }
+            }
+
+            public static void SendItemRotation(Item _item)                             //Send Item rotation to server via UDP
+            {
+                using (Packet _packet = new Packet((int)ClientPackets.itemRotationUDP))
+                {
+                    _packet.Write(_item.id);
+                    _packet.Write(_item.gameObject.transform.rotation);
+                    SendUDPData(_packet);
+                }
+            }
+
+            public static void SendOnwershipChange(Item _item)                          //Send Item rotation to server via TCP
+            {
+                using (Packet _packet = new Packet((int)ClientPackets.itemOwnershipChange))
+                {
+                    _packet.Write(_item.id);
+                    _packet.Write(_item.ownerId);
+                    SendTCPData(_packet);
+                }
+
+            }
         }
     }
 }
