@@ -22,7 +22,7 @@ public class sphereJointModel : MonoBehaviour
     public float m_croLayerSpring = 90.0f;
     public float m_croLayerDamper = 90.0f;
     public float m_croLayerLimit = 0.002f;
-    public float m_circleRadius = 0.025f;
+    public float m_circleRadius = 1.5f;
     public float m_sphereRadius;
     public float m_layerThickness;
     public float m_startX;
@@ -81,9 +81,9 @@ public class sphereJointModel : MonoBehaviour
             layer_i.transform.localScale = new Vector3(1, 1, 1);
             // spheres
             Vector3 startPos = new Vector3(m_startX, m_sphereRadius, i * 2.2f * m_sphereRadius);
-            startPos += globalOffset;
+            //startPos += globalOffset;
             Vector3 curPos = new Vector3(m_startX, m_sphereRadius, i * 2.2f * m_sphereRadius);
-            curPos += globalOffset;
+            //curPos += globalOffset;
             for (int j = 0; j < m_numSpheres; j++)
             {
                 GameObject sphere_j = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -433,14 +433,14 @@ public class sphereJointModel : MonoBehaviour
             Debug.Log("buildJointInfo!");
         }
 
-        if (!m_bFindColonMesh)
-        {
-            if (findColonMesh())
-            {
-                m_bFindColonMesh = true;
-                Debug.Log("sphereJointModel " + m_objIndex.ToString() + " find colon mesh!");
-            }
-        }
+        //if (!m_bFindColonMesh)
+        //{
+        //    if (findColonMesh())
+        //    {
+        //        m_bFindColonMesh = true;
+        //        Debug.Log("sphereJointModel " + m_objIndex.ToString() + " find colon mesh!");
+        //    }
+        //}
 
         if (m_spherePos.Length <= 1)
             m_spherePos = new Vector3[m_numLayers * m_numSpheres];
