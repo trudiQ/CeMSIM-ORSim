@@ -433,14 +433,14 @@ public class sphereJointModel : MonoBehaviour
             Debug.Log("buildJointInfo!");
         }
 
-        //if (!m_bFindColonMesh)
-        //{
-        //    if (findColonMesh())
-        //    {
-        //        m_bFindColonMesh = true;
-        //        Debug.Log("sphereJointModel " + m_objIndex.ToString() + " find colon mesh!");
-        //    }
-        //}
+        if (!m_bFindColonMesh)
+        {
+            if (findColonMesh())
+            {
+                m_bFindColonMesh = true;
+                Debug.Log("sphereJointModel " + m_objIndex.ToString() + " find colon mesh!");
+            }
+        }
 
         if (m_spherePos.Length <= 1)
             m_spherePos = new Vector3[m_numLayers * m_numSpheres];
