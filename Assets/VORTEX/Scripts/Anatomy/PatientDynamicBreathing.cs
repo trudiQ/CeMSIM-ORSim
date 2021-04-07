@@ -45,6 +45,7 @@ public class PatientDynamicBreathing : MonoBehaviour
         if(Mathf.Abs(currentValue - dataSource.currentValue) > .1f)
         {
             currentValue = dataSource.currentValue;
+            holdBreatheTime = 1.6f - currentValue/16;
         }
 
         Breathe(60 / currentValue);

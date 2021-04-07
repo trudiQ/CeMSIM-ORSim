@@ -52,7 +52,7 @@ public class ScenarioManager : MonoBehaviour
     void Start()
     {
         PatientEvents.Instance.NeedleDecompression += OnNeedleDecompression;
-        //StartScenario();
+        StartScenario();
     }
 
     // Update is called once per frame
