@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12812278, g: 0.1586746, b: 0.20989361, a: 1}
+  m_IndirectSpecularColor: {r: 0.12809429, g: 0.15871584, b: 0.21006814, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6173,50 +6173,21 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1405721870624433582}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1147997144
+--- !u!114 &1135380360
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1135380359}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c709c40229536f46903fa2bb9b6c438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  - "RightArmVasculature-InFlow(mL\u2215min)"
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
+  leftTool: {fileID: 0}
+  rightTool: {fileID: 0}
+  xRManager: {fileID: 1731186781}
 --- !u!1 &1157902149
 GameObject:
   m_ObjectHideFlags: 0
@@ -9219,8 +9190,8 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Positions:
-  - {x: 0.7084939, y: 0, z: 0}
-  - {x: -0.7084939, y: 0, z: 0}
+  - {x: 0.7084939, y: -0.000000004847866, z: 0}
+  - {x: -0.7084939, y: -0.000000004847866, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.010166712
@@ -10941,6 +10912,50 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 54835fb116eb0b14da0db202c717c900, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a9e4d7fb5bb4ec64796848ab05a69384, type: 3}
+--- !u!114 &1770724495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  - "RightArmVasculature-InFlow(mL\u2215min)"
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1001 &1772444144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13358,7 +13373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdfdba46e29c84808aadcd3e01268ce2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 1147997144}
+  data: {fileID: 1770724495}
   initialStateFile: {fileID: 4900000, guid: 898d51f4d20f8be4ba2bbad35bca8df2, type: 3}
   serializationFormat: 1
   timeStep: 0.02
@@ -15143,9 +15158,99 @@ PrefabInstance:
       objectReference: {fileID: 1723346066}
     - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
         type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 1723346066}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_PlayAudioClipOnSelectEnter
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_PlayHapticsOnSelectEnter
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_HapticSelectEnterIntensity
+      value: 0.025
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_HapticSelectEnterDuration
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1135380360}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1135380360}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: EquipTool
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: UnequipTool
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721869345400133, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1405721869494886949, guid: 2736bf464f3dfb34bb98437d24f1533e,
         type: 3}
       propertyPath: inputSource
@@ -15233,9 +15338,84 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
         type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 1723346066}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_PlayHapticsOnSelectEnter
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_HapticSelectEnterIntensity
+      value: 0.025
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_HapticSelectEnterDuration
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1135380360}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1135380360}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: EquipTool
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectEnter.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: UnequipTool
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405721870105697818, guid: 2736bf464f3dfb34bb98437d24f1533e,
+        type: 3}
+      propertyPath: m_OnSelectExit.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 1405721870539105753, guid: 2736bf464f3dfb34bb98437d24f1533e,
         type: 3}
       propertyPath: otherHand
@@ -18330,12 +18510,12 @@ PrefabInstance:
     - target: {fileID: 7481306621549324765, guid: 6f5d633b32afc51458283b8ea6838589,
         type: 3}
       propertyPath: m_Positions.Array.data[0].y
-      value: 0
+      value: -0.000000004847866
       objectReference: {fileID: 0}
     - target: {fileID: 7481306621549324765, guid: 6f5d633b32afc51458283b8ea6838589,
         type: 3}
       propertyPath: m_Positions.Array.data[1].y
-      value: 0
+      value: -0.000000004847866
       objectReference: {fileID: 0}
     - target: {fileID: 7481306622776447613, guid: 6f5d633b32afc51458283b8ea6838589,
         type: 3}
