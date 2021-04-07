@@ -9,13 +9,14 @@ using UnityEngine.UI;
 [RequireComponent(typeof(UnityEngine.UI.Text))]
 public class PulseDataNumberRenderer: PulseDataConsumer
 {
+
     public string prefix = "";      // String placed before value
     public string suffix = "";      // String placed after value
     public float multiplier = 1;    // = displayed value / data value
     public uint decimals = 0;       // Number of decimals displayed
     [Range(0f, 120f)]
     public float frequency = 0;     // Update rate to display new value
-
+    public float manualOffset = 0;
     Text textRenderer;              // Text component to update
     float previousTime = 0;         // Used to match the requested frequency
 
@@ -49,6 +50,7 @@ public class PulseDataNumberRenderer: PulseDataConsumer
 
         // Apply multiplier, decimals truncating
         dataValue *= multiplier;
+        dataValue += manualOffset;
         string decimalCode = "F" + decimals.ToString();
         string dataString = dataValue.ToString(decimalCode);
 
