@@ -156,7 +156,7 @@ namespace CEMSIM
                 GameObject itemManager = GameObject.Find("ItemManager");
                 ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
                 //Ignore if the client is not the owner of the item
-                if (SIM.itemManageList[_item_id].ownerId != _fromClient){   
+                if (SIM.itemList[_item_id].GetComponent<ItemController>().ownerId != _fromClient){   
                     Debug.Log(string.Format("client {0} attempted to update pos on item {1} but ignored by server",_fromClient,_item_id));
                     return;
                 }
@@ -174,7 +174,7 @@ namespace CEMSIM
                 GameObject itemManager = GameObject.Find("ItemManager");
                 ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
                 //Ignore if the client is not the owner of the item
-                if (SIM.itemManageList[_item_id].ownerId != _fromClient){   
+                if (SIM.itemList[_item_id].GetComponent<ItemController>().ownerId != _fromClient){   
                     return;
                 }
                 Quaternion _rotation = _packet.ReadQuaternion();
@@ -192,12 +192,13 @@ namespace CEMSIM
                 GameObject itemManager = GameObject.Find("ItemManager");
                 ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
 
-                int currentOwner = SIM.itemManageList[_item_id].ownerId;
-                Item item = SIM.itemManageList[_item_id];
+                GameObject item = SIM.itemList[_item_id];
+                ItemController itemCon = item.GetComponent<ItemController>();
+                int currentOwner = item.GetComponent<ItemController>().ownerId;
                 //This item is currently not owned by anyone\ or owned by the incoming client
                 if (currentOwner == 0 || currentOwner == _fromClient){ 
-                    item.ownerId = _newOwner;
-                    Rigidbody rb = item.gameObject.GetComponent<Rigidbody>(); 
+                    itemCon.ownerId = _newOwner;
+                    Rigidbody rb = item.GetComponent<Rigidbody>(); 
                     if(_newOwner != 0){ 
                         //if the item is no longer controlled by server then set item to kinematic and no gravity
                         rb.isKinematic = true;                  //Prevent server physics system from changing the item's position & rotation

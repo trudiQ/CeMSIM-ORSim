@@ -191,7 +191,7 @@ namespace CEMSIM
                 int _item_id = _packet.ReadInt32();
                 GameObject itemManager = GameObject.Find("ItemManager");
                 ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
-                CIM.DropOwnership(CIM.itemManageList[_item_id]);
+                CIM.DropOwnership(CIM.itemList[_item_id]);
             }
 
 

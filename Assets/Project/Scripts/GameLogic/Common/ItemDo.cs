@@ -6,12 +6,12 @@ namespace CEMSIM
     namespace GameLogic
     {
 
-        public class Item{
+        public class ItemDo{
             public GameObject gameObject;
             public int id;
             public int ownerId;
 
-            public Item(GameObject _gameObject, int _id, int _ownerId)
+            public ItemDo(GameObject _gameObject, int _id, int _ownerId)
             {
                 gameObject = _gameObject;
                 id = _id;

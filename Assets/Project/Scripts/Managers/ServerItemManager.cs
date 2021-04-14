@@ -12,7 +12,6 @@ namespace CEMSIM{
 	{
 		public List<GameObject> itemList = new List<GameObject>();	//This List contains all items to be instantiated. To use: drag gameobject into the list in Unity IDE
 		public Vector3 spawnPosition;								//This Vector3 controls where the spawned item is located
-		public List<Item> itemManageList = new List<Item>();		//This List contains all items to be managed.
 
 
 
@@ -32,7 +31,7 @@ namespace CEMSIM{
 
 
 	    private void SendItemStatus(){
-	    	foreach(Item item in itemManageList){
+	    	foreach(GameObject item in itemList){
 
 	    		//Brodcast item position via UDP
 	    		ServerSend.BrodcastItemPosition(item);
@@ -52,10 +51,12 @@ namespace CEMSIM{
 	    private void CollectItems(){
 	    	int id = 0;
 	    	int owner = 0;
-			foreach (GameObject itemPrefab in itemList)
+			for (int i = 0; i < itemList.Count; i++)
 			{ 
-				GameObject item = Instantiate(itemPrefab, spawnPosition, Quaternion.identity);
-				itemManageList.Add( new Item(item, id, owner ) );
+				itemList[i] = Instantiate(itemList[i], spawnPosition, Quaternion.identity);
+				ItemController itemCon = itemList[i].GetComponent<ItemController>();
+				itemCon.id = id;
+				itemCon.ownerId = owner;
 			    id++;
 			}
 	    }
@@ -66,7 +67,7 @@ namespace CEMSIM{
         /// <param name="itemID"> The id of the item to be updated </param>
         /// <param name="position"> The vector3 position of the item </param>
 	    public void UpdateItemPosition(int itemId, Vector3 position){
-	    	itemManageList[itemId].gameObject.transform.position = position;
+	    	itemList[itemId].transform.position = position;
 	    }
 
 	    /// <summary>
@@ -75,7 +76,7 @@ namespace CEMSIM{
         /// <param name="itemID"> The id of the item to be updated </param>
         /// <param name="position"> The vector3 position of the item </param>
 	    public void UpdateItemRotation(int itemId, Quaternion rotation){
-	    	itemManageList[itemId].gameObject.transform.rotation = rotation;
+	    	itemList[itemId].transform.rotation = rotation;
 	    }
 
 

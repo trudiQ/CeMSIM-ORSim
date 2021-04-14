@@ -141,32 +141,35 @@ namespace CEMSIM
             }
             #endregion
 
-            public static void SendItemPosition(Item _item)                             //Send Item position to server via UDP
+            public static void SendItemPosition(GameObject _item)                             //Send Item position to server via UDP
             {
+                ItemController itemCon = _item.GetComponent<ItemController>();
                 using (Packet _packet = new Packet((int)ClientPackets.itemPositionUDP))
                 {
-                    _packet.Write(_item.id);
-                    _packet.Write(_item.gameObject.transform.position);
+                    _packet.Write(itemCon.id);
+                    _packet.Write(_item.transform.position);
                     SendUDPData(_packet);
                 }
             }
 
-            public static void SendItemRotation(Item _item)                             //Send Item rotation to server via UDP
+            public static void SendItemRotation(GameObject _item)                             //Send Item rotation to server via UDP
             {
+                ItemController itemCon = _item.GetComponent<ItemController>();
                 using (Packet _packet = new Packet((int)ClientPackets.itemRotationUDP))
                 {
-                    _packet.Write(_item.id);
-                    _packet.Write(_item.gameObject.transform.rotation);
+                    _packet.Write(itemCon.id);
+                    _packet.Write(_item.transform.rotation);
                     SendUDPData(_packet);
                 }
             }
 
-            public static void SendOnwershipChange(Item _item)                          //Send Item rotation to server via TCP
+            public static void SendOnwershipChange(GameObject _item)                          //Send Item rotation to server via TCP
             {
                 using (Packet _packet = new Packet((int)ClientPackets.itemOwnershipChange))
                 {
-                    _packet.Write(_item.id);
-                    _packet.Write(_item.ownerId);
+                    ItemController itemCon = _item.GetComponent<ItemController>();
+                    _packet.Write(itemCon.id);
+                    _packet.Write(itemCon.ownerId);
                     SendTCPData(_packet);
                 }
 

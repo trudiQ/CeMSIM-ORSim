@@ -227,25 +227,27 @@ namespace CEMSIM
                 }
             }
 
-            public static void BrodcastItemPosition(Item _item)
+            public static void BrodcastItemPosition(GameObject _item)
             {
+                ItemController itemCon = _item.GetComponent<ItemController>();
                 // ServerItemManager.cs calls this method to multicase an item's position
                 using (Packet _packet = new Packet((int)ServerPackets.itemPositionUDP))
                 {
-                    _packet.Write(_item.id);
-                    _packet.Write(_item.gameObject.transform.position);
-                    MulticastExceptOneUDPData(_item.ownerId, _packet);                  //Does not update data to owner
+                    _packet.Write(itemCon.id);
+                    _packet.Write(_item.transform.position);
+                    MulticastExceptOneUDPData(itemCon.ownerId, _packet);                  //Does not update data to owner
                 }
 
             }
-            public static void BrodcastItemRotation(Item _item)
+            public static void BrodcastItemRotation(GameObject _item)
             {
+                ItemController itemCon = _item.GetComponent<ItemController>();
                 // ServerItemManager.cs calls this method to multicase an item's position
                 using (Packet _packet = new Packet((int)ServerPackets.itemRotationUDP))
                 {
-                    _packet.Write(_item.id);
-                    _packet.Write(_item.gameObject.transform.rotation);
-                    MulticastExceptOneUDPData(_item.ownerId, _packet);                  //Does not update data to owner
+                    _packet.Write(itemCon.id);
+                    _packet.Write(_item.transform.rotation);
+                    MulticastExceptOneUDPData(itemCon.ownerId, _packet);                  //Does not update data to owner
                 }
 
             }
