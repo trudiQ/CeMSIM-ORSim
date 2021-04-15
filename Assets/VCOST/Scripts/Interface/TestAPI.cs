@@ -15,26 +15,38 @@ public class TestAPI : MonoBehaviour
     [DllImport("ATC3DG64", EntryPoint = "GetAsynchronousRecord")]
     public static extern unsafe int GetAsynchronousRecord(ushort sensorID, void* pRecord, int recordSize);
 
-    public Transform trackerMarker;
+    public Transform trackerMarker0;
+    public Transform trackerMarker1;
 
-    public Vector3 trackerMarkerStartPosition;
-    public Vector3 trackerMarkerStartEuler;
+    public Vector3 trackerMarkerStartPosition0;
+    public Vector3 trackerMarkerStartEuler0;
+    public Vector3 trackerMarkerStartPosition1;
+    public Vector3 trackerMarkerStartEuler1;
 
     // Start is called before the first frame update
     void Start()
     {
-        //BIRD_ERROR_CODES errorInit = GetErrorMessage((int)InitializeBIRDSystem());
+        // Tracker initialization
+        BIRD_ERROR_CODES errorInit = GetErrorMessage((int)InitializeBIRDSystem());
         //print(errorInit);
-        //TestSensor();
-        trackerMarkerStartPosition = trackerMarker.position;
-        trackerMarkerStartEuler = trackerMarker.eulerAngles;
+        SetupSensor();
+
+        // Model initialization
+        trackerMarkerStartPosition0 = trackerMarker0.position;
+        trackerMarkerStartEuler0 = trackerMarker0.eulerAngles;
+        trackerMarkerStartPosition1 = trackerMarker1.position;
+        trackerMarkerStartEuler1 = trackerMarker1.eulerAngles;
     }
 
     private void Update()
     {
+        // Keep getting tracking data
         TestTracking();
     }
 
+    /// <summary>
+    /// Test tracker setup and initial readings
+    /// </summary>
     void TestSensor()
     {
         unsafe
@@ -48,18 +60,42 @@ public class TestAPI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Setup all existing sensor
+    /// </summary>
+    void SetupSensor()
+    {
+        unsafe
+        {
+            ushort deviceID0 = 0;
+            BIRD_ERROR_CODES errorSet0 = GetErrorMessage((int)SetSystemParameter(SYSTEM_PARAMETER_TYPE.SELECT_TRANSMITTER, &deviceID0, sizeof(ushort)));
+            print(errorSet0);
+            ushort deviceID1 = 1;
+            BIRD_ERROR_CODES errorSet1 = GetErrorMessage((int)SetSystemParameter(SYSTEM_PARAMETER_TYPE.SELECT_TRANSMITTER, &deviceID1, sizeof(ushort)));
+            print(errorSet1);
+        }
+    }
+
+    /// <summary>
+    /// Update GameObject transform based on tracker's reading
+    /// </summary>
     void TestTracking()
     {
-        DOUBLE_POSITION_ANGLES_RECORD record;
-        ushort deviceID = 0;
+        DOUBLE_POSITION_ANGLES_RECORD record0;
+        ushort deviceID0 = 0;
+        DOUBLE_POSITION_ANGLES_RECORD record1;
+        ushort deviceID1 = 1;
 
         unsafe
         {
-            BIRD_ERROR_CODES errorGet = GetErrorMessage((int)GetAsynchronousRecord(deviceID, &record, Marshal.SizeOf(record)));
+            BIRD_ERROR_CODES errorGet0 = GetErrorMessage((int)GetAsynchronousRecord(deviceID0, &record0, Marshal.SizeOf(record0)));
+            BIRD_ERROR_CODES errorGet1 = GetErrorMessage((int)GetAsynchronousRecord(deviceID1, &record1, Marshal.SizeOf(record1)));
         }
 
-        trackerMarker.position = trackerMarkerStartPosition + new Vector3((float)record.x, -(float)record.z, -(float)record.y);
-        trackerMarker.eulerAngles = trackerMarkerStartEuler + new Vector3((float)record.a, (float)record.e, (float)record.r);
+        trackerMarker0.position = trackerMarkerStartPosition0 + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
+        trackerMarker0.eulerAngles = trackerMarkerStartEuler0 + new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
+        trackerMarker1.position = trackerMarkerStartPosition1 + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
+        trackerMarker1.eulerAngles = trackerMarkerStartEuler1 + new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
     }
 
     /// <summary>
