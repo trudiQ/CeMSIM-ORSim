@@ -88,10 +88,12 @@ public class TestAPI : MonoBehaviour
 
         unsafe
         {
+            // Get the tracker readings
             BIRD_ERROR_CODES errorGet0 = GetErrorMessage((int)GetAsynchronousRecord(deviceID0, &record0, Marshal.SizeOf(record0)));
             BIRD_ERROR_CODES errorGet1 = GetErrorMessage((int)GetAsynchronousRecord(deviceID1, &record1, Marshal.SizeOf(record1)));
         }
 
+        // Update transform based on readings, the position xyz and euler xyz are already matched with the tracker reading
         trackerMarker0.position = trackerMarkerStartPosition0 + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
         trackerMarker0.eulerAngles = trackerMarkerStartEuler0 + new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
         trackerMarker1.position = trackerMarkerStartPosition1 + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
