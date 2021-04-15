@@ -119,6 +119,10 @@ public class sphereJointModel : MonoBehaviour
                 // in-layer joints
                 for (int k = 1; k <= m_numJoints; k++)
                 {
+                    // First layer: only add the configurable joints connecting two adjacent spheres
+                    //if (i == 0 && k > 1)
+                    //    continue;
+
                     int otherObjIdx = 0;
                     if ((j + k) >= m_numSpheres)
                         otherObjIdx = j + k - m_numSpheres;
