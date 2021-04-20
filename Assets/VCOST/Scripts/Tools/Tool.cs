@@ -13,7 +13,7 @@ public class Tool : MonoBehaviour //inherits SelectTool class
     private float angle = 0;
     private Rigidbody m_tool;
 
-    void Start()
+    public virtual void Start()
     {
         m_tool = this.GetComponent<Rigidbody>(); //references rigidbody component of selected tool
     }

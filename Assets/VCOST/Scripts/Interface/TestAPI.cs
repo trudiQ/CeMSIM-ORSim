@@ -100,6 +100,8 @@ public class TestAPI : MonoBehaviour
         trackerMarker1.eulerAngles = trackerMarkerStartEuler1 + new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
     }
 
+    //public void 
+
     /// <summary>
     /// Parse the BIRD error code (no logging for now)
     /// </summary>
