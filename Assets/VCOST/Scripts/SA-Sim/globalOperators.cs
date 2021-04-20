@@ -291,6 +291,44 @@ public class globalOperators : MonoBehaviour
         return true;
     }
 
+    bool cornerCut()
+    {
+        if (m_numSphereModels <= 0)
+        {
+            Debug.Log("Error(cornerCut): no models to split!");
+            return false;
+        }
+
+        if (m_bSplit || m_bJoin)
+        {
+            Debug.Log("Error(cornerCut): models already split or joined!");
+            return false;
+        }
+
+        // cut both models at the same time for now
+        int layerIdx = 0; // layer to cut-corner
+        int[] cutCornerSphereIndices;
+        for (int objIdx = 0; objIdx < m_numSphereModels; objIdx++)
+        {
+            if (objIdx == 0)
+            {
+                cutCornerSphereIndices = new int[] { 6, 7, 8 };
+                if (!m_sphereJointModels[objIdx].cornerCut(layerIdx, cutCornerSphereIndices))
+                    return false;
+                Debug.Log("cornerCut done for sphereJointModel" + objIdx.ToString());
+            }
+            else if (objIdx == 1)
+            {
+                cutCornerSphereIndices = new int[] { 13, 12, 11 };
+                if (!m_sphereJointModels[objIdx].cornerCut(layerIdx, cutCornerSphereIndices))
+                    return false;
+                Debug.Log("cornerCut done for sphereJointModel" + objIdx.ToString());
+            }
+        }
+
+        return true;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -320,6 +358,12 @@ public class globalOperators : MonoBehaviour
                     m_colonMeshes[1].endSplitVers2Join.Add("end_outer", m_colonMeshes[0].vertices[m_colonMeshes[0].startEndSplitVers["end_outer"]]);
                     m_colonMeshes[1].endSplitVers2Join.Add("end_inner", m_colonMeshes[0].vertices[m_colonMeshes[0].startEndSplitVers["end_inner"]]);
                 }
+            }
+
+            // 'C': corner-cut both sphere-joint models
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                cornerCut();
             }
         }
     }
