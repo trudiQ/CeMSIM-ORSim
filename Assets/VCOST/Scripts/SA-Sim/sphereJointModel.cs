@@ -185,9 +185,8 @@ public class sphereJointModel : MonoBehaviour
     ///    to close up the layer
     /// Input:
     ///     layerIdx: index of the layer to close up (defalt: first layer)
-    ///     layerNum: total number of layers to close up
     /// 
-    private bool closeupLayers(int layerIdx, int layerNum)
+    public bool closeupLayers(int layerIdx)
     {
         int oppositeObjIdx = 0;
         float distBottom2Top = 0.0f;
@@ -553,7 +552,7 @@ public class sphereJointModel : MonoBehaviour
                     colonMesh mesh = colonMeshObj.GetComponent<colonMesh>();
                     if (mesh.isBound)
                     {
-                        if (closeupLayers(0, 1))
+                        if (closeupLayers(0))
                             m_bCloseUp = true;
 
                     }

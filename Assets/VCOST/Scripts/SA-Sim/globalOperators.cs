@@ -18,8 +18,10 @@ public class globalOperators : MonoBehaviour
     public colonMesh[] m_colonMeshes;
 
     // opeartors related variables
+    public bool[] m_bCornerCut = { false, false };
     public bool m_bSplit = false;
     public bool m_bJoin = false;
+    public bool m_bFinalClosure = false;
     public int[] m_layers2Split = { -1, -1 }; // same for both models
     public int[] m_sphereIdx2Split = { -1, -1 }; // the first splitting sphere index for each model
 
@@ -59,8 +61,8 @@ public class globalOperators : MonoBehaviour
         // split & joint
         m_layers2Split[0] = 0;
         m_layers2Split[1] = 10;//14
-        m_sphereIdx2Split[0] = 4;//5
-        m_sphereIdx2Split[1] = 16;//14
+        m_sphereIdx2Split[0] = 3;//4 //5
+        m_sphereIdx2Split[1] = 14;//16 //14
     }
 
     /// <summary>
@@ -238,12 +240,6 @@ public class globalOperators : MonoBehaviour
     /// <returns></returns>
     bool join()
     {
-        if (!m_bSplit)
-        {
-            Debug.Log("Error(join): colon meshes have not split yet!");
-            return false;
-        }
-
         if (m_numSphereModels < 2)
         {
             Debug.Log("Error(join): < 2 colons to join!");
@@ -295,13 +291,13 @@ public class globalOperators : MonoBehaviour
     {
         if (m_numSphereModels <= 0)
         {
-            Debug.Log("Error(cornerCut): no models to split!");
+            Debug.Log("Error(cornerCut): no models to conduct corner-cut!");
             return false;
         }
 
         if (m_bSplit || m_bJoin)
         {
-            Debug.Log("Error(cornerCut): models already split or joined!");
+            Debug.Log("Error(cornerCut): colons are already split or joined!");
             return false;
         }
 
@@ -315,6 +311,7 @@ public class globalOperators : MonoBehaviour
                 cutCornerSphereIndices = new int[] { 6, 7, 8 };
                 if (!m_sphereJointModels[objIdx].cornerCut(layerIdx, cutCornerSphereIndices))
                     return false;
+                m_bCornerCut[0] = true;
                 Debug.Log("cornerCut done for sphereJointModel" + objIdx.ToString());
             }
             else if (objIdx == 1)
@@ -322,10 +319,38 @@ public class globalOperators : MonoBehaviour
                 cutCornerSphereIndices = new int[] { 13, 12, 11 };
                 if (!m_sphereJointModels[objIdx].cornerCut(layerIdx, cutCornerSphereIndices))
                     return false;
+                m_bCornerCut[1] = true;
                 Debug.Log("cornerCut done for sphereJointModel" + objIdx.ToString());
             }
         }
 
+        return true;
+    }
+
+    bool finalClosure(int layerIdx)
+    {
+        if (m_numSphereModels <= 0)
+        {
+            Debug.Log("Error(finalClosure): no models to conduct finalClosure!");
+            return false;
+        }
+
+        // conduct final-closure for both models at the same time
+        List<bool> bFinalClosure = new List<bool>();
+        for (int objIdx = 0; objIdx < m_numSphereModels; objIdx++)
+        {
+            bFinalClosure.Add(false);
+            if (m_sphereJointModels[objIdx].closeupLayers(layerIdx))
+                bFinalClosure[bFinalClosure.Count - 1] = true;
+            else
+            {
+                Debug.Log("Error(finalClosure: failed on sphereJointModel" + objIdx.ToString());
+                return false;
+            }
+        }
+
+        m_bFinalClosure = true;
+        Debug.Log("FinalClosure succeeds!");
         return true;
     }
 
@@ -334,10 +359,19 @@ public class globalOperators : MonoBehaviour
     {
         if (Application.isPlaying)
         {
+            // 'C': corner-cut both sphere-joint models
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                cornerCut();
+            }
+
             // 'S': split all the colons in the scene
             if (Input.GetKeyDown(KeyCode.S))
             {
-                split();
+                if (m_bCornerCut[0] && m_bCornerCut[1])
+                    split();
+                else
+                    Debug.Log("Error: Cannot split as either of the colons needs corner-cut!");
             }
 
             // 'J': join colons that were split
@@ -346,6 +380,8 @@ public class globalOperators : MonoBehaviour
 
                 if (m_bSplit)
                     join();
+                else
+                    Debug.Log("Error: Cannot join as colons have not been split yet!");
             }
 
             // handle partial-split join: pull end-split vertices for both colon meshes together
@@ -360,10 +396,18 @@ public class globalOperators : MonoBehaviour
                 }
             }
 
-            // 'C': corner-cut both sphere-joint models
-            if (Input.GetKeyDown(KeyCode.C))
+            // 'V': final close both colons using LS
+            if (Input.GetKeyDown(KeyCode.V))
             {
-                cornerCut();
+                if (!m_bJoin)
+                    Debug.Log("Error: Cannot conduct finalClosure as the colons have not joined yet!");
+                else if (m_bFinalClosure)
+                    Debug.Log("Error: Cannot conduct finalClosure as that's already conducted!");
+                else
+                {
+                    if (!finalClosure(1))
+                        Debug.Log("Final Closure failed!");
+                }
             }
         }
     }
