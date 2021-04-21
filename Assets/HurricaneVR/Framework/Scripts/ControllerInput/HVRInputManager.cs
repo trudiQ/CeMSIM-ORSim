@@ -979,10 +979,10 @@ namespace HurricaneVR.Framework.ControllerInput
 
             XRPluginLoader = XRGeneralSettings.Instance.Manager.activeLoader?.name ?? "";
 
-            var loaders = string.Join(",", XRGeneralSettings.Instance.Manager.activeLoaders.Select(e => e.name));
+            //var loaders = string.Join(",", XRGeneralSettings.Instance.Manager.activeLoaders.Select(e => e.name));
             Debug.Log($"{  XRGeneralSettings.Instance.Manager.automaticLoading}");
             Debug.Log($"XRGeneralSettings.Instance.Manager.isInitializationComplete { XRGeneralSettings.Instance.Manager.isInitializationComplete}");
-            Debug.Log($"XRPlugin Detected | XRSettings.enabled {XRSettings.enabled} | Loader : {XRPluginLoader} | Loaders Enabled: {loaders}");
+            //Debug.Log($"XRPlugin Detected | XRSettings.enabled {XRSettings.enabled} | Loader : {XRPluginLoader} | Loaders Enabled: {loaders}");
 
             XRPluginActive = XRSettings.enabled && XRGeneralSettings.Instance.Manager.isInitializationComplete;
 #elif !UNITY_2020_1_OR_NEWER
