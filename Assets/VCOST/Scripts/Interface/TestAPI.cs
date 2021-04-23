@@ -23,6 +23,8 @@ public class TestAPI : MonoBehaviour
     public Vector3 trackerMarkerStartPosition1;
     public Vector3 trackerMarkerStartEuler1;
 
+    public Tracker[] trackers;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +32,9 @@ public class TestAPI : MonoBehaviour
         BIRD_ERROR_CODES errorInit = GetErrorMessage((int)InitializeBIRDSystem());
         //print(errorInit);
         SetupSensor();
+
+        //Declare the Trackers
+        trackers = new Tracker[2];
 
         // Model initialization
         trackerMarkerStartPosition0 = trackerMarker0.position;
@@ -94,10 +99,22 @@ public class TestAPI : MonoBehaviour
         }
 
         // Update transform based on readings, the position xyz and euler xyz are already matched with the tracker reading
-        trackerMarker0.position = trackerMarkerStartPosition0 + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
-        trackerMarker0.eulerAngles = trackerMarkerStartEuler0 + new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
-        trackerMarker1.position = trackerMarkerStartPosition1 + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
-        trackerMarker1.eulerAngles = trackerMarkerStartEuler1 + new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
+        if (trackerMarker0 != null)
+        {
+            trackerMarker0.position = trackerMarkerStartPosition0 + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
+            trackerMarker0.eulerAngles = trackerMarkerStartEuler0 + new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
+        }
+        if (trackerMarker1 != null)
+        {
+            trackerMarker1.position = trackerMarkerStartPosition1 + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
+            trackerMarker1.eulerAngles = trackerMarkerStartEuler1 + new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
+        }
+
+        //Update the position and orientation of Trackers
+        trackers[0].positions = new Vector3((float)record0.x, (float)record0.y, (float)record0.z);
+        trackers[0].angles = new Vector3((float)record0.r, (float)record0.e, (float)record0.a);
+        trackers[1].positions = new Vector3((float)record1.x, (float)record1.y, (float)record1.z);
+        trackers[1].angles = new Vector3((float)record1.r, (float)record1.e, (float)record1.a);
     }
 
     //public void 
