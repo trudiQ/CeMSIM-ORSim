@@ -26,7 +26,7 @@ public class VRAvatar : MonoBehaviour
     public VRMap leftHand;
 
     // Foot IK variables
-    [Range(0,1)] public float footIKWeight = 1;
+    [Range(0, 1)] public float footIKWeight = 1;
     [Range(0, 1)] public float footRotationWeight = 1;
     public Vector3 footOffset;
 
