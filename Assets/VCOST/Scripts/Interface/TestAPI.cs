@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
+using Sirenix.OdinInspector;
 
 public class TestAPI : MonoBehaviour
 {
@@ -24,8 +25,10 @@ public class TestAPI : MonoBehaviour
     public Vector3 trackerMarkerStartEuler1;
     public Vector3 trackerMarkerCurrentRawRotationData1;
     public Vector3 rotaterEuler;
+    public Vector3 movementScaleCalibrationStartPos; // Starting position in unity when user start to calibrate the movement scale to native Unity scale
+    public float movementScaleCalibrationUnityDisplacement; // Moving distance in Unity when user move tracker to real life finish position
 
-    public Tracker[] trackers;
+    public List<Tracker> trackers;
 
     // Start is called before the first frame update
     void Start()
@@ -36,12 +39,14 @@ public class TestAPI : MonoBehaviour
         SetupSensor();
 
         //Declare the Trackers
-        trackers = new Tracker[2];
-        trackers[0] = new Tracker();
-        trackers[1] = new Tracker();
-        Debug.Log(trackers[0]);
+        trackers = new List<Tracker>();
+        for (int i = 0; i < trackers.Count; i++)
+        {
+            trackers[i] = new Tracker();
+        }
 
         // Model initialization
+        // ### This should be removed once the start position/rotation calibration is implemented
         if (trackerMarker0 != null)
         {
             trackerMarkerStartPosition0 = trackerMarker0.position;
@@ -58,6 +63,8 @@ public class TestAPI : MonoBehaviour
     {
         // Keep getting tracking data
         TestTracking();
+
+        trackers.ForEach(t => GetTrackerData(t));
     }
 
     /// <summary>
@@ -83,12 +90,36 @@ public class TestAPI : MonoBehaviour
     {
         unsafe
         {
+            // ### Should have flag for unconnected tracker based on the return error code
             ushort deviceID0 = 0;
             BIRD_ERROR_CODES errorSet0 = GetErrorMessage((int)SetSystemParameter(SYSTEM_PARAMETER_TYPE.SELECT_TRANSMITTER, &deviceID0, sizeof(ushort)));
             print(errorSet0);
             ushort deviceID1 = 1;
             BIRD_ERROR_CODES errorSet1 = GetErrorMessage((int)SetSystemParameter(SYSTEM_PARAMETER_TYPE.SELECT_TRANSMITTER, &deviceID1, sizeof(ushort)));
             print(errorSet1);
+            ushort deviceID2 = 2;
+            BIRD_ERROR_CODES errorSet2 = GetErrorMessage((int)SetSystemParameter(SYSTEM_PARAMETER_TYPE.SELECT_TRANSMITTER, &deviceID2, sizeof(ushort)));
+            print(errorSet2);
+            ushort deviceID3 = 3;
+            BIRD_ERROR_CODES errorSet3 = GetErrorMessage((int)SetSystemParameter(SYSTEM_PARAMETER_TYPE.SELECT_TRANSMITTER, &deviceID3, sizeof(ushort)));
+            print(errorSet3);
+        }
+    }
+
+    /// <summary>
+    /// Calibrate the movement scale between the real moving distance and the default Unity scale
+    /// </summary>
+    [ShowInInspector]
+    public void CalibrateMovementScale()
+    {
+        if (movementScaleCalibrationStartPos == Vector3.zero)
+        {
+            movementScaleCalibrationStartPos = trackerMarker1.position;
+        }
+        else
+        {
+            movementScaleCalibrationUnityDisplacement = Vector3.Distance(trackerMarker1.position, movementScaleCalibrationStartPos);
+            movementScaleCalibrationStartPos = Vector3.zero;
         }
     }
 
@@ -113,7 +144,8 @@ public class TestAPI : MonoBehaviour
         if (trackerMarker0 != null)
         {
             trackerMarker0.position = trackerMarkerStartPosition0 + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
-            trackerMarker0.eulerAngles = trackerMarkerStartEuler0 + new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
+            trackerMarker0.rotation = Quaternion.Euler(new Vector3(-(float)record0.r, (float)record0.a, 0));
+            RotateZ(trackerMarker0, trackerMarker0.parent, (float)record0.a, (float)record0.e);
         }
         if (trackerMarker1 != null)
         {
@@ -128,6 +160,38 @@ public class TestAPI : MonoBehaviour
         trackers[0].angles = new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
         trackers[1].positions = new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
         trackers[1].angles = new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
+    }
+
+    /// <summary>
+    /// Get tracker data from API readings and store in the target tracker object
+    /// ### This currently assumes that the tracker index in the API will match the connection port number on the tracking station
+    /// </summary>
+    /// <param name="targetTracker"></param>
+    public void GetTrackerData(Tracker targetTracker)
+    {
+        DOUBLE_POSITION_ANGLES_RECORD record;
+        ushort deviceID = (ushort)trackers.IndexOf(targetTracker);
+
+        unsafe
+        {
+            // Get the tracker readings
+            BIRD_ERROR_CODES errorGet = GetErrorMessage((int)GetAsynchronousRecord(deviceID, &record, Marshal.SizeOf(record)));
+        }
+
+        // Create empty GameObject to help with calculations
+        GameObject trackerObject = new GameObject();
+
+        // Update transform based on readings, the position xyz and euler xyz are already matched with the tracker reading
+        trackerObject.transform.position = new Vector3((float)record.x, -(float)record.z, -(float)record.y);
+        trackerObject.transform.rotation = Quaternion.Euler(new Vector3(-(float)record.r, (float)record.a, 0));
+        RotateZ(trackerObject.transform, trackerObject.transform.parent, (float)record.a, (float)record.e);
+
+        //Update the position and orientation of Trackers
+        targetTracker.positions = trackerObject.transform.position;
+        targetTracker.angles = trackerObject.transform.eulerAngles;
+        targetTracker.rotation = trackerObject.transform.rotation;
+
+        Destroy(trackerObject);
     }
 
     /// <summary>

@@ -9,4 +9,5 @@ public class Tracker
 {
     public Vector3 positions;   //Position along each axis
     public Vector3 angles;      //Angle about each axis
+    public Quaternion rotation; // Rotation from the tracker's real orientation relative to the Unity world coordinate system
 }
