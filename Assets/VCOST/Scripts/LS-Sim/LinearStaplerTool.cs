@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 public class LinearStaplerTool : Tool //inherits Tool class
 {
@@ -10,10 +11,14 @@ public class LinearStaplerTool : Tool //inherits Tool class
     public GameObject LockingLever;
     public List<StaplerAttachDetection> attachValidators; // Trigger colliders that validates the tool's two parts' positions to see if they are within attaching distance
     public Transform bottomPartLockingPosition; // Where the bottom part of the tool should be when it is locked with the top part
-    public GameObject bottomHalf; // Bottom half of the tool (without moving parts)
+    public GameObject topHalf;
+    public GameObject bottomHalf; // Bottom half of the tool (the half without moving parts)
+    public Transform topTracker;
     public Transform bottomTracker; // Tracker for the bottom half of the tool
     public Vector3 bottomPartRelativeTrackerPosition;
     public Quaternion bottomPartRelativeTrackerRotation;
+    public Transform topPartDesignatedCalibrationReference; // Reference point that user have to match up to with the real tool when performing calibration for tool rotation and position
+    public Transform bottomPartDesignatedCalibrationReference;
 
     public bool handlePushed;
     public bool leverLocked;
@@ -139,5 +144,19 @@ public class LinearStaplerTool : Tool //inherits Tool class
         bottomHalf.transform.parent = bottomTracker;
         bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
         bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
+    }
+
+    /// <summary>
+    /// After user orient the real tool to the designated orientation, update the rotation on the tool model in Unity so that it matches up with the real tool
+    /// </summary>
+    [ShowInInspector]
+    public void CalibrateToolTopPartRotation()
+    {
+        topHalf.transform.rotation = topPartDesignatedCalibrationReference.rotation;
+    }
+    [ShowInInspector]
+    public void CalibrateToolBottomPartRotation()
+    {
+        bottomHalf.transform.rotation = bottomPartDesignatedCalibrationReference.rotation;
     }
 }
