@@ -29,10 +29,11 @@ public class sphereJointModel : MonoBehaviour
     private Color m_startColor;
     [HideInInspector]
     public Vector3[] m_spherePos = new Vector3[1];
+    public GameObject[,] m_sphereGameObjects;
 
     public GameObject m_sphereJointModel;
 
-    public Vector3 getOriginalSpherePos (int i, int j)
+    public Vector3 getOriginalSpherePos(int i, int j)
     {
         float theta = 360.0f / m_numSpheres;
         float thetaR = 2.0f * Mathf.PI * theta / 360.0f;
@@ -43,7 +44,7 @@ public class sphereJointModel : MonoBehaviour
 
         return curPos;
     }
-    public void initialize (int objIdx, float startX, ref GameObject sphereJointGO) //buildSphereSkeleton()
+    public void initialize(int objIdx, float startX, ref GameObject sphereJointGO) //buildSphereSkeleton()
     {
         m_objIndex = objIdx;
         m_startX = startX;
@@ -228,8 +229,8 @@ public class sphereJointModel : MonoBehaviour
     }
 
     /// Split operation: split in-layer joints of a single model
-        // split the sphere model between sphereIdxA and sphereIdxB (i.e., sphereIdxA+1) 
-        //  along layers of layers2split[]
+    // split the sphere model between sphereIdxA and sphereIdxB (i.e., sphereIdxA+1) 
+    //  along layers of layers2split[]
     public void splitInlayerJoints_sigle(ref int[] layers2split, int sphereIdxA)
     {
         // make sure the input split layers are valid
@@ -279,7 +280,7 @@ public class sphereJointModel : MonoBehaviour
                 jointsInfo = sphere.GetComponent<sphereJointsInfo>();
                 oriInLayerNum = jointsInfo.m_inLayerJointNum;
                 // traverse all its in-layer joints and disconnect all the spheres whose index >= sphereIdxB
-                for (int j = 0; j < oriInLayerNum; j ++)
+                for (int j = 0; j < oriInLayerNum; j++)
                 {
                     bDestroy = false;
                     sphereIdxj = jointsInfo.m_inLayerJointList[j, 3];
@@ -391,15 +392,15 @@ public class sphereJointModel : MonoBehaviour
     }
 
     // highlight a specific sphere
-    private void highlight (int l, int s)
+    private void highlight(int l, int s)
     {
         GameObject sphere = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + l.ToString() + "_" + s.ToString());
         if (sphere)
-           sphere.GetComponent<Renderer>().material.color = Color.red;
+            sphere.GetComponent<Renderer>().material.color = Color.red;
     }
 
     // highlight a set of spheres
-    public void highlight (List<List<int>> neighborSpheres)
+    public void highlight(List<List<int>> neighborSpheres)
     {
         for (int i = 0; i < neighborSpheres.Count; i++)
         {
@@ -408,7 +409,7 @@ public class sphereJointModel : MonoBehaviour
     }
 
     // unhighlight a specific sphere
-    private void unhighlight (int l, int s)
+    private void unhighlight(int l, int s)
     {
         GameObject sphere = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + l.ToString() + "_" + s.ToString());
         if (sphere)
@@ -452,7 +453,7 @@ public class sphereJointModel : MonoBehaviour
             {
                 for (int s = 0; s < m_numSpheres; s++)
                 {
-                    GameObject sphere = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + l.ToString() + "_" + s.ToString());
+                    GameObject sphere = m_sphereGameObjects[l, s];
                     if (sphere)
                     {
                         if (m_bShow)
@@ -479,5 +480,23 @@ public class sphereJointModel : MonoBehaviour
         //        }
         //    }
         //}
+    }
+
+    private void Start()
+    {
+        // Initialize sphere joint GameObject array
+        m_sphereGameObjects = new GameObject[m_numLayers, m_numSpheres];
+
+        for (int l = 0; l < m_numLayers; l++)
+        {
+            for (int s = 0; s < m_numSpheres; s++)
+            {
+                GameObject sphere = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + l.ToString() + "_" + s.ToString());
+                if (sphere)
+                {
+                    m_sphereGameObjects[l, s] = sphere;
+                }
+            }
+        }
     }
 }
