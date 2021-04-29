@@ -205,7 +205,7 @@ namespace CEMSIM
                         if (_data.Length < 4)
                         {
                             // discard the packet
-                            instance.Disconnect();
+                            Debug.Log("Warning: Client received a corrupted packet(data length < 4 bytes)");
                             return;
                         }
 
@@ -227,6 +227,10 @@ namespace CEMSIM
                     using (Packet _packet = new Packet(_data))
                     {
                         int _packetLength = _packet.ReadInt32();
+                        if (_data.Length - _packetLength != 4){
+                            Debug.Log("Warning: packet length is not equal to data length - 4");
+                            return;
+                        }
                         _data = _packet.ReadBytes(_packetLength);
                     }
 
