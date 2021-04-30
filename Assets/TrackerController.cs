@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,21 +11,22 @@ public class TrackerController : MonoBehaviour
     public int trackerNumber=1;
     public Vector3 calibratedAngle = new Vector3(0, 0, 0);
     
+    [Header("Filter")]
     public bool filter=true;
-    public float filterSteps=5;
+    public int filterSteps=5;
 
     private Vector3 rawPosition;
     private Vector3 rawAngle;
     private Vector3[] rawPositions;
-    private float filteredSum;
-    private float filteredPosition;
+    private Vector3 filteredSum;
+    private Vector3 filteredPosition;
     private Quaternion orientation;
     private Vector3 offsetAngle = new Vector3(0, 0, 0);
     
     void Start()
     {
         rawPositions = new Vector3[filterSteps];
-        filteredSum = 0;
+        filteredSum = new Vector3(0,0,0);
     }
 
     void Update()
@@ -59,16 +60,16 @@ public class TrackerController : MonoBehaviour
     {
         filteredSum -= rawPositions[0];
 
-        for(int i=0;i<rawPositions.length-2;i++)
+        for(int i=0;i< filterSteps - 1;i++)
         {
             rawPositions[i] = rawPositions[i+1];
         }
 
-        rawPositions[rawPositions.length-1] = rawPosition;
+        rawPositions[filterSteps - 1] = rawPosition;
 
-        filteredSum += rawPositions[1];
+        filteredSum += rawPositions[filterSteps - 1];
 
-        filteredPosition = filteredSum/rawPositions.length;
+        filteredPosition = filteredSum/ filterSteps;
     }
 
     /// <summary>
