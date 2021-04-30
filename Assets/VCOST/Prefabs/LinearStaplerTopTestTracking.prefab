@@ -133,12 +133,17 @@ MonoBehaviour:
   attachValidators:
   - {fileID: 3956811645297987189}
   bottomPartLockingPosition: {fileID: 6580476204917860768}
+  topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
+  topTracker: {fileID: 0}
   bottomTracker: {fileID: 0}
   bottomPartRelativeTrackerPosition: {x: 0, y: 0, z: 0}
   bottomPartRelativeTrackerRotation: {x: 0, y: 0, z: 0, w: 0}
+  topPartDesignatedCalibrationReference: {fileID: 0}
+  bottomPartDesignatedCalibrationReference: {fileID: 0}
   handlePushed: 0
   leverLocked: 0
+  inAnimation: 0
 --- !u!54 &1788120002
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -164,6 +169,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 386712665451821972}
+  - component: {fileID: 7052196152194323251}
   m_Layer: 0
   m_Name: LinearStaplerTopTestTracking
   m_TagString: Untagged
@@ -186,6 +192,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7052196152194323251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 386712665451821975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67ec7d9326102354185f1f27460f89fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trakStar: {fileID: 0}
+  trackerNumber: 2
+  calibratedAngle: {x: 0, y: 0, z: 0}
+  filter: 1
+  filterSteps: 5
 --- !u!1 &436979361431028336
 GameObject:
   m_ObjectHideFlags: 0
