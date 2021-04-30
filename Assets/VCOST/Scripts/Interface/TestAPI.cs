@@ -27,8 +27,11 @@ public class TestAPI : MonoBehaviour
     public Vector3 rotaterEuler;
     public Vector3 movementScaleCalibrationStartPos; // Starting position in unity when user start to calibrate the movement scale to native Unity scale
     public float movementScaleCalibrationUnityDisplacement; // Moving distance in Unity when user move tracker to real life finish position
+    public Vector3 rawRotationDataForScaleCalibration; // Record the raw rotation data at the beginning and end of the movement then take the average of the two values
 
     public List<Tracker> trackers;
+    public List<Transform> copyees;
+    public List<Transform> rotaters;
 
     // Start is called before the first frame update
     void Start()
@@ -38,11 +41,15 @@ public class TestAPI : MonoBehaviour
         //print(errorInit);
         SetupSensor();
 
-        //Declare the Trackers
+        //Declare the Trackers and their assisting GameObjects
         trackers = new List<Tracker>();
-        for (int i = 0; i < trackers.Count; i++)
+        for (int i = 0; i < 4; i++)
         {
-            trackers[i] = new Tracker();
+            trackers.Add(new Tracker());
+            GameObject copyee = new GameObject();
+            copyees.Add(copyee.transform);
+            GameObject rotater = new GameObject();
+            rotaters.Add(rotater.transform);
         }
 
         // Model initialization
@@ -115,10 +122,27 @@ public class TestAPI : MonoBehaviour
         if (movementScaleCalibrationStartPos == Vector3.zero)
         {
             movementScaleCalibrationStartPos = trackerMarker1.position;
+            rawRotationDataForScaleCalibration = trackerMarkerCurrentRawRotationData1;
         }
         else
         {
             movementScaleCalibrationUnityDisplacement = Vector3.Distance(trackerMarker1.position, movementScaleCalibrationStartPos);
+            Vector3 initialEuler = rawRotationDataForScaleCalibration;
+            Vector3 endEuler = trackerMarkerCurrentRawRotationData1;
+            // Correct the values if the angle value went from +180 to -180
+            if (initialEuler.x * endEuler.x < 0 && Mathf.Abs(initialEuler.x) > 90)
+            {
+                endEuler.x += Mathf.Sign(initialEuler.x) * 360;
+            }
+            if (initialEuler.y * endEuler.y < 0 && Mathf.Abs(initialEuler.y) > 90)
+            {
+                endEuler.y += Mathf.Sign(initialEuler.y) * 360;
+            }
+            if (initialEuler.z * endEuler.z < 0 && Mathf.Abs(initialEuler.z) > 90)
+            {
+                endEuler.z += Mathf.Sign(initialEuler.z) * 360;
+            }
+            rawRotationDataForScaleCalibration = (rawRotationDataForScaleCalibration + trackerMarkerCurrentRawRotationData1) * 0.5f;
             movementScaleCalibrationStartPos = Vector3.zero;
         }
     }
@@ -145,14 +169,14 @@ public class TestAPI : MonoBehaviour
         {
             trackerMarker0.position = trackerMarkerStartPosition0 + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
             trackerMarker0.rotation = Quaternion.Euler(new Vector3(-(float)record0.r, (float)record0.a, 0));
-            RotateZ(trackerMarker0, trackerMarker0.parent, (float)record0.a, (float)record0.e);
+            RotateZ(trackerMarker0, trackerMarker0.parent, (float)record0.a, (float)record0.e, rotaters[0]);
         }
         if (trackerMarker1 != null)
         {
             trackerMarkerCurrentRawRotationData1 = new Vector3((float)record1.r, (float)record1.e, (float)record1.a);
             trackerMarker1.position = trackerMarkerStartPosition1 + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
             trackerMarker1.rotation = Quaternion.Euler(new Vector3(-(float)record1.r, (float)record1.a, 0));
-            RotateZ(trackerMarker1, trackerMarker1.parent, (float)record1.a, (float)record1.e);
+            RotateZ(trackerMarker1, trackerMarker1.parent, (float)record1.a, (float)record1.e, rotaters[1]);
         }
 
         //Update the position and orientation of Trackers
@@ -179,19 +203,19 @@ public class TestAPI : MonoBehaviour
         }
 
         // Create empty GameObject to help with calculations
-        GameObject trackerObject = new GameObject();
+        //GameObject trackerObject = new GameObject();
 
         // Update transform based on readings, the position xyz and euler xyz are already matched with the tracker reading
-        trackerObject.transform.position = new Vector3((float)record.x, -(float)record.z, -(float)record.y);
-        trackerObject.transform.rotation = Quaternion.Euler(new Vector3(-(float)record.r, (float)record.a, 0));
-        RotateZ(trackerObject.transform, trackerObject.transform.parent, (float)record.a, (float)record.e);
+        copyees[deviceID].position = new Vector3((float)record.x, -(float)record.z, -(float)record.y);
+        copyees[deviceID].rotation = Quaternion.Euler(new Vector3(-(float)record.r, (float)record.a, 0));
+        RotateZ(copyees[deviceID], copyees[deviceID].parent, (float)record.a, (float)record.e, rotaters[deviceID]);
 
         //Update the position and orientation of Trackers
-        targetTracker.positions = trackerObject.transform.position;
-        targetTracker.angles = trackerObject.transform.eulerAngles;
-        targetTracker.rotation = trackerObject.transform.rotation;
+        targetTracker.positions = copyees[deviceID].position;
+        targetTracker.angles = copyees[deviceID].eulerAngles;
+        targetTracker.rotation = copyees[deviceID].rotation;
 
-        Destroy(trackerObject);
+        //Destroy(trackerObject);
     }
 
     /// <summary>
@@ -201,17 +225,18 @@ public class TestAPI : MonoBehaviour
     /// <param name="originalParent"></param>
     /// <param name="yAngle"></param>
     /// <param name="zAngle"></param>
+    /// <param name="rotater"></param>
     /// <returns></returns>
-    public Vector3 RotateZ(Transform toRotate, Transform originalParent, float yAngle, float zAngle)
+    public Vector3 RotateZ(Transform toRotate, Transform originalParent, float yAngle, float zAngle, Transform rotater)
     {
-        GameObject rotater = new GameObject();
+        //GameObject rotater = new GameObject();
         rotater.transform.rotation = Quaternion.Euler(new Vector3(0, yAngle, 0));
         toRotate.parent = rotater.transform;
         rotater.transform.eulerAngles += new Vector3(0, 0, zAngle);
         rotaterEuler = rotater.transform.eulerAngles;
         Vector3 result = toRotate.eulerAngles;
         toRotate.parent = originalParent;
-        Destroy(rotater);
+        //Destroy(rotater);
         return result;
     }
 
