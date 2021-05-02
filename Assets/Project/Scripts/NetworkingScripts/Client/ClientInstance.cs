@@ -52,6 +52,10 @@ namespace CEMSIM
             private void Start()
             {
                 //ip = defaultIP;
+
+                // initialize the dictionary that maps packet id to packet description
+                PacketId.InitPacketIdDictionary();
+
                 //initialize TCP and UDP connections
                 Debug.Log($"Current server IP is {ip}");
                 tcp = new TCP();
@@ -149,7 +153,7 @@ namespace CEMSIM
                     socket.BeginReceive(ReceiveCallback, null);
 
                     // send a welcome packet
-                    using (Packet _packet = new Packet())
+                    using (Packet _packet = new Packet((int)ClientPackets.welcome))
                     {
                         // since user id has already been added to the packet, no need to manually add it again.
                         SendData(_packet);
@@ -172,6 +176,7 @@ namespace CEMSIM
 
                         if (socket != null)
                         {
+                            Debug.Log($"[Send] UDP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
                             socket.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
                         }
                         else
@@ -205,7 +210,7 @@ namespace CEMSIM
                         if (_data.Length < 4)
                         {
                             // discard the packet
-                            Debug.Log("Warning: Client received a corrupted packet(data length < 4 bytes)");
+                            Debug.Log("received a broken UDP packet < 4 bytes");
                             return;
                         }
 
@@ -228,7 +233,7 @@ namespace CEMSIM
                     {
                         int _packetLength = _packet.ReadInt32();
                         if (_data.Length - _packetLength != 4){
-                            Debug.Log("Warning: packet length is not equal to data length - 4");
+                            Debug.Log("UDP packet payload != packet size");
                             return;
                         }
                         _data = _packet.ReadBytes(_packetLength);
@@ -240,6 +245,7 @@ namespace CEMSIM
                         {
                             // digest the packet header information
                             int _packetId = _packet.DigestServerHeader();
+                            Debug.Log($"[Recv] UDP {PacketId.ServerPacketsInfo[_packetId]}");
                             packetHandlers[_packetId](_packet);
                         }
                     });
@@ -343,6 +349,7 @@ namespace CEMSIM
                     {
                         if (socket != null)
                         {
+                            Debug.Log($"[Send] TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
                             stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
                         }
                     }
@@ -395,7 +402,7 @@ namespace CEMSIM
                                 // digest the packet header information
                                 int _packetId = _packet.DigestServerHeader();
 
-                                Debug.Log($"Receive a packet with id {_packetId}");
+                                Debug.Log($"[Recv] TCP {PacketId.ServerPacketsInfo[_packetId]}");
                                 // call proper handling function based on packet id
                                 packetHandlers[_packetId](_packet);
                             }

@@ -31,6 +31,9 @@ namespace CEMSIM
 
                 InitializeServerData();
 
+                // initialize the dictionary that maps packet id to packet description
+                PacketId.InitPacketIdDictionary();
+
                 // initialize tcpListener
                 tcpListener = new TcpListener(IPAddress.Any, port);
                 tcpListener.Start();

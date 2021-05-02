@@ -13,6 +13,7 @@ namespace CEMSIM
         /// </summary>
         public class ClientSend : MonoBehaviour
         {
+            #region Basic TCP and UDP packet sending functions
             /// <summary>
             /// Send packet to the server via TCP
             /// </summary>
@@ -35,7 +36,7 @@ namespace CEMSIM
                 _packet.WriteHeader(addTime);// 
                 ClientInstance.instance.udp.SendData(_packet);
             }
-
+            #endregion
 
             #region Generate Packets
             public static void WelcomeReceived()
@@ -118,7 +119,7 @@ namespace CEMSIM
                 }
                 else
                 {
-                    Debug.Log("Warning: Client ID does not exist or has not been added yet");
+                    Debug.Log($"Local Warning: Client ID {ClientInstance.instance.myId} does not exist or has not been added yet");
                 }
             }
 
