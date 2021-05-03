@@ -210,7 +210,7 @@ namespace CEMSIM
                         if (_data.Length < 4)
                         {
                             // discard the packet
-                            Debug.Log("received a broken UDP packet < 4 bytes");
+                            Debug.LogWarning("received a broken UDP packet < 4 bytes");
                             return;
                         }
 
@@ -221,7 +221,7 @@ namespace CEMSIM
                     }
                     catch (Exception _e)
                     {
-                        Debug.Log($"UDP socket encountered an error and is diconnected. Exception {_e}");
+                        Debug.LogWarning($"UDP socket encountered an error and is diconnected. Exception {_e}");
                         // disconnect
                         Disconnect();
                     }
@@ -233,7 +233,7 @@ namespace CEMSIM
                     {
                         int _packetLength = _packet.ReadInt32();
                         if (_data.Length - _packetLength != 4){
-                            Debug.Log("UDP packet payload != packet size");
+                            Debug.LogWarning("UDP packet payload != packet size");
                             return;
                         }
                         _data = _packet.ReadBytes(_packetLength);

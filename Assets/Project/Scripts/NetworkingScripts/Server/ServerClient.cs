@@ -87,7 +87,7 @@ namespace CEMSIM
                     }
                     catch (Exception e)
                     {
-                        Debug.Log($"Error sending packet to client {id} via TCP. Exception {e}");
+                        Debug.LogWarning($"Error sending packet to client {id} via TCP. Exception {e}");
                         NetworkOverlayMenu.Instance.Log($"Error sending packet to client {id} via TCP. Exception {e}");
                     }
                 }
@@ -119,7 +119,7 @@ namespace CEMSIM
                     }
                     catch (Exception e)
                     {
-                        Debug.Log($"Server exception {e}");
+                        Debug.LogWarning($"Server exception {e}");
                         NetworkOverlayMenu.Instance.Log($"Server exception {e}");
                         ServerInstance.clients[id].Disconnect();
                         // disconnect
@@ -237,13 +237,18 @@ namespace CEMSIM
                     }
                     catch (Exception e)
                     {
-                        Debug.Log($"Error sending packet to client {id} via UDP. Exception {e}");
+                        Debug.LogWarning($"Error sending packet to client {id} via UDP. Exception {e}");
                         NetworkOverlayMenu.Instance.Log($"Error sending packet to client {id} via UDP. Exception {e}");
                     }
                 }
 
                 public void HandleData(Packet _packetData)
                 {
+                    if(_packetData.UnreadLength() < 4)
+                    {
+                        Debug.LogWarning($"UDP received a packet of size {_packetData.UnreadLength()} <= 4");
+                        return;
+                    }
                     int _packetLength = _packetData.ReadInt32();
                     byte[] _data = _packetData.ReadBytes(_packetLength);
 

@@ -165,6 +165,7 @@ namespace CEMSIM
                 packetHandlers = new Dictionary<int, PacketHandler>()
                 {
                     { (int)ClientPackets.invalidPacket, ServerHandle.InvalidPacketResponse},
+                    { (int)ClientPackets.welcome, ServerHandle.Welcome},
                     { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
                     { (int)ClientPackets.pingTCP, ServerHandle.PingTCP},
                     { (int)ClientPackets.pingUDP, ServerHandle.PingUDP},

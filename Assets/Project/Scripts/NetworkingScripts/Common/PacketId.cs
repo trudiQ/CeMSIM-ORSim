@@ -75,8 +75,8 @@ namespace CEMSIM
                 ServerPacketsInfo.Add(13, "ownershipDenial");
 
                 ClientPacketsInfo.Add(1, "invalidPacket");
-                ClientPacketsInfo.Add(2, "welcomeReceived");
-                ClientPacketsInfo.Add(3, "welcome");
+                ClientPacketsInfo.Add(2, "welcome");
+                ClientPacketsInfo.Add(3, "welcomeReceived");
                 ClientPacketsInfo.Add(4, "pingTCP");
                 ClientPacketsInfo.Add(5, "pingUDP");
                 ClientPacketsInfo.Add(6, "spawnRequest");

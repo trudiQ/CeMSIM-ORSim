@@ -140,7 +140,6 @@ namespace CEMSIM
                     SendUDPData(_packet);
                 }
             }
-            #endregion
 
             public static void SendItemPosition(GameObject _item)                             //Send Item position to server via UDP
             {
@@ -175,6 +174,8 @@ namespace CEMSIM
                 }
 
             }
+            #endregion
+
         }
     }
 }

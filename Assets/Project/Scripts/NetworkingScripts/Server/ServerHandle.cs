@@ -17,6 +17,13 @@ namespace CEMSIM
                 return;
             }
 
+            
+            public static void Welcome(int _fromClient, Packet _packet)
+            {
+                // Do nothing, because the "Welcome" packet is the first packet sent by the client through UDP
+                // It is used to verify the establishment of UDP connection
+            }
+
             public static void WelcomeReceived(int _fromClient, Packet _packet)
             {
                 int _clientIdCheck = _packet.ReadInt32();
