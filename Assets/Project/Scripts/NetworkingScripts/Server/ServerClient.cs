@@ -258,7 +258,7 @@ namespace CEMSIM
                         {
                             // extract header information
                             int _packetId = _packet.DigestClientHeader();
-                            Debug.Log($"[Recv] UDP {PacketId.ClientPacketsInfo[_packetId]}");
+                            Debug.Log($"[Recv] UDP {PacketId.ClientPacketsInfo[_packetId]} from {id}");
                             ServerInstance.packetHandlers[_packetId](id, _packet);
                         }
                     });

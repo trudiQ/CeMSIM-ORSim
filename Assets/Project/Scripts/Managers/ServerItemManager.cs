@@ -11,15 +11,21 @@ namespace CEMSIM{
 	public class ServerItemManager : MonoBehaviour
 	{
 		public List<GameObject> itemList = new List<GameObject>();	//This List contains all items to be instantiated. To use: drag gameobject into the list in Unity IDE
-		public Vector3 spawnPosition;								//This Vector3 controls where the spawned item is located
+		public List<Vector3>spawnPositionList = new List<Vector3>();//This List contains all positions that item is to be allocated, To use: enter x y z value for vector3 in unity
 
 
 
 	    // Start is called before the first frame update
 	    void Start()
 	    {
+	    	
+	    	if(itemList.Count != spawnPositionList.Count){
+	    		Debug.LogWarning("Warning: itemList and spawnPositionList do not have same size.");
+	    		while(itemList.Count>spawnPositionList.Count){
+	    			spawnPositionList.Add(new Vector3(1,1,1));
+	    		}
+	    	}
 	    	CollectItems();
-
 	    	
 	    }
 
@@ -53,7 +59,7 @@ namespace CEMSIM{
 	    	int owner = 0;
 			for (int i = 0; i < itemList.Count; i++)
 			{ 
-				itemList[i] = Instantiate(itemList[i], spawnPosition, Quaternion.identity);
+				itemList[i] = Instantiate(itemList[i], spawnPositionList[i], Quaternion.identity);
 				ItemController itemCon = itemList[i].GetComponent<ItemController>();
 				itemCon.id = id;
 				itemCon.ownerId = owner;

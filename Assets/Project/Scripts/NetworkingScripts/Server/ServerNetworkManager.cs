@@ -123,7 +123,7 @@ namespace CEMSIM
 
                     // send UDP and TCP Heart Beat Detection packets
                     ServerSend.HeartBeatDetection();
-                    Debug.Log("Send HeartBeat Detection packets.");
+                    //Debug.Log("Send HeartBeat Detection packets.");
 
 
 
