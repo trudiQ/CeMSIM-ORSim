@@ -11,10 +11,12 @@ public class sphereJointModel : MonoBehaviour
     public bool m_bShow = true;
     private bool m_bJointInfo = false;
     public bool m_bFindColonMesh = false;
+    public bool m_bCloseUp = false;
     public int m_objIndex;
     public int m_numLayers = 20;
     public int m_numSpheres = 20;// per layer
     public int m_numJoints = 4; // initial #in-layer joints per sphere, will not be udpated
+    public int m_numJoints_firstLayer = 2; // #in-lalyer joints in the first layer (for colon-end close-up)
     public int m_numLayerJoints = 2;// initial #cross-layer joints per sphere, will not be updated
     public float m_inLayerSpring = 90.0f;
     public float m_inLayerDamper = 90.0f;
@@ -110,6 +112,7 @@ public class sphereJointModel : MonoBehaviour
             layer_i.transform.parent = m_sphereJointModel.transform;
 
             // joints
+            int otherObjIdx = 0; 
             GameObject tmpObj;
             GameObject[] otherObjects = new GameObject[m_numJoints];
             GameObject[] preLayerObjs = new GameObject[m_numLayerJoints];
@@ -120,7 +123,10 @@ public class sphereJointModel : MonoBehaviour
                 // in-layer joints
                 for (int k = 1; k <= m_numJoints; k++)
                 {
-                    int otherObjIdx = 0;
+                    // First layer: only add the limited number of configurable joints 
+                    if (i == 0 && k > m_numJoints_firstLayer)
+                        continue;
+
                     if ((j + k) >= m_numSpheres)
                         otherObjIdx = j + k - m_numSpheres;
                     else
@@ -175,10 +181,99 @@ public class sphereJointModel : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Add fixed joints to connect spheres of the opposite positions in the same layer 
+    ///    to close up the layer
+    /// Input:
+    ///     layerIdx: index of the layer to close up (defalt: first layer)
+    /// 
+    public bool closeupLayers(int layerIdx)
+    {
+        int oppositeObjIdx = 0;
+        float distBottom2Top = 0.0f;
+        Vector3 vecBottom2Top;
+        GameObject tmpObj, oppositeObj;
+        sphereJointsInfo objJointsInfo;
+
+        for (int j = 0; j < m_numSpheres; j++)
+        {
+            tmpObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + layerIdx.ToString() + "_" + j.ToString());
+            objJointsInfo = tmpObj.GetComponent<sphereJointsInfo>();
+
+            // in-layer fixed joints to connect opposite sphere of the first layer (ADD DURING RUNTIME, AFTER BINDING IS DONE!!)
+            if (j >= 6 && j <= 13) // spheres on the top
+            {
+                oppositeObjIdx = 9 - j; // spheres on the bottom
+                if (oppositeObjIdx < 0)
+                    oppositeObjIdx += m_numSpheres;
+                oppositeObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + layerIdx.ToString() + "_" + oppositeObjIdx.ToString());
+                if (tmpObj && oppositeObj)
+                {
+                    // move the two spheres to the middle point
+                    vecBottom2Top = tmpObj.transform.position - oppositeObj.transform.position; // bottom -> top
+                    vecBottom2Top.Normalize();
+                    distBottom2Top = Vector3.Distance(tmpObj.transform.position, oppositeObj.transform.position);
+                    tmpObj.transform.position = tmpObj.transform.position - 0.5f * distBottom2Top * vecBottom2Top;
+                    oppositeObj.transform.position = oppositeObj.transform.position + 0.5f * distBottom2Top * vecBottom2Top;
+                    // add fixed joint
+                    FixedJoint joint = tmpObj.AddComponent<FixedJoint>();
+                    joint.connectedBody = oppositeObj.GetComponent<Rigidbody>();
+                    // fill out joint info.
+                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 0] = objJointsInfo.m_inLayerJointNum;
+                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 1] = m_objIndex;
+                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 2] = layerIdx;
+                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 3] = oppositeObjIdx;
+                    objJointsInfo.m_inLayerJointNum += 1;
+                }
+                else
+                {
+                    Debug.Log("Error in 'closeupLayers'");
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Cut the corner of the colon by removing fixed-joints between the spheres of the given positions 
+    /// Input: 
+    ///     layerIdx: index of the layer to close up (defalt: first layer)
+    ///     cutCornerSphereIndices: int[], indices of the top-corner spheres whose fixed-joints to be removed
+    ///         - [6, 7, 8,...] (bottom counter-parts are [3, 2, 1,...]) OR
+    ///         - [13, 12, 11,..] (bottom counter-parts are [16, 17, 18,...])
+    public bool cornerCut(int layerIdx, int[] cutCornerSphereIndices)
+    {
+        GameObject tmpObj;
+        FixedJoint fixedjoint;
+        sphereJointsInfo jointsInfo;
+        foreach (int sphereIdx in cutCornerSphereIndices)
+        {
+            tmpObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + layerIdx.ToString() + "_" + sphereIdx.ToString());
+            fixedjoint = tmpObj.GetComponent<FixedJoint>();
+            jointsInfo = tmpObj.GetComponent<sphereJointsInfo>();
+            if (fixedjoint && jointsInfo)
+            {
+                // destroy the joint
+                DestroyImmediate(fixedjoint);
+                // update joints info.
+                jointsInfo.m_inLayerJointList[jointsInfo.m_inLayerJointNum - 1, 0] = -1;
+                jointsInfo.m_inLayerJointList[jointsInfo.m_inLayerJointNum - 1, 1] = -1;
+                jointsInfo.m_inLayerJointList[jointsInfo.m_inLayerJointNum - 1, 2] = -1;
+                jointsInfo.m_inLayerJointList[jointsInfo.m_inLayerJointNum - 1, 3] = -1;
+                jointsInfo.m_inLayerJointNum -= 1;
+            }
+        }
+
+        Debug.Log("cornerCut: Done!!");
+        return true;
+    }
+
     /// build joint info for each sphere of sphere-skeleton model
     private void buildJointInfo()
     {
-        int numSpheres;
+        int numSpheres, numJoints;
         GameObject layer, tmpObj;
         GameObject[] preLayerObjs = new GameObject[m_numLayerJoints];
         sphereJointsInfo objJointsInfo;
@@ -195,7 +290,11 @@ public class sphereJointModel : MonoBehaviour
                 objJointsInfo.m_crossLayerJointNum = 0;
 
                 // in-layer joints
-                for (int k = 1; k <= m_numJoints; k++)
+                if (i > 0)
+                    numJoints = m_numJoints;
+                else
+                    numJoints = m_numJoints_firstLayer;
+                for (int k = 1; k <= numJoints; k++)
                 {
                     int otherObjIdx = 0;
                     if ((j + k) >= numSpheres)
@@ -440,6 +539,25 @@ public class sphereJointModel : MonoBehaviour
             {
                 m_bFindColonMesh = true;
                 Debug.Log("sphereJointModel " + m_objIndex.ToString() + " find colon mesh!");
+            }
+        }
+
+        // close-up the layers, after its bind with colon mesh
+        if (!m_bCloseUp)
+        {
+            if (m_bFindColonMesh)
+            {
+                GameObject colonMeshObj = GameObject.Find("outer" + m_objIndex.ToString());
+                if (colonMeshObj)
+                {
+                    colonMesh mesh = colonMeshObj.GetComponent<colonMesh>();
+                    if (mesh.isBound)
+                    {
+                        if (closeupLayers(0))
+                            m_bCloseUp = true;
+
+                    }
+                }
             }
         }
 
