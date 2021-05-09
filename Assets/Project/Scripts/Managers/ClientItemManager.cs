@@ -80,8 +80,6 @@ namespace CEMSIM{
 
 	    		//Send position to Server via UDP
 	    		ClientSend.SendItemPosition(item);
-	    		//Send rotation to Server via UDP
-	    		ClientSend.SendItemRotation(item);
 	    		//Get Item Controller
 	    		ItemController itemCon = item.GetComponent<ItemController>();
 	    		Debug.Log("Sending item status:");

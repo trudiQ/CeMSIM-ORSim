@@ -175,7 +175,6 @@ namespace CEMSIM
                     { (int)ClientPackets.heartBeatDetectionTCP, ServerHandle.HeartBeatDetectionTCP},
                     { (int)ClientPackets.heartBeatDetectionUDP, ServerHandle.HeartBeatDetectionUDP},
                     { (int)ClientPackets.itemPositionUDP, ServerHandle.ItemPosition},
-                    { (int)ClientPackets.itemRotationUDP, ServerHandle.ItemRotation},
                     { (int)ClientPackets.itemOwnershipChange, ServerHandle.ItemOwnershipChange},
                 };
 

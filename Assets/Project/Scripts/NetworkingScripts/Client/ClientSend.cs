@@ -157,22 +157,6 @@ namespace CEMSIM
                 }
             }
 
-            /// <summary>
-            /// Send the latest rotation of the interactable item (owned by the client) to the server.
-            /// The function has been integrated into the SendItemPosition function.
-            /// </summary>
-            /// <param name="_item"></param>
-            public static void SendItemRotation(GameObject _item)                             //Send Item rotation to server via UDP
-            {
-                //ItemController itemCon = _item.GetComponent<ItemController>();
-                //using (Packet _packet = new Packet((int)ClientPackets.itemRotationUDP))
-                //{
-                //    _packet.Write(itemCon.id);
-                //    _packet.Write(_item.transform.rotation);
-                //    SendUDPData(_packet);
-                //}
-            }
-
             public static void SendOnwershipChange(GameObject _item)                          //Send Item rotation to server via TCP
             {
                 using (Packet _packet = new Packet((int)ClientPackets.itemOwnershipChange))
