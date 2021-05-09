@@ -159,7 +159,13 @@ namespace CEMSIM
             /// <param name="_packet"></param>
             public static void ItemPosition(int _fromClient, Packet _packet)
             {
+                // interpret the packet
                 int _item_id = _packet.ReadInt32();
+                Vector3 _position = _packet.ReadVector3();
+                Quaternion _rotation = _packet.ReadQuaternion();
+
+
+                // Update item position
                 GameObject itemManager = GameObject.Find("ItemManager");
                 ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
                 //Ignore if the client is not the owner of the item
@@ -167,25 +173,30 @@ namespace CEMSIM
                     Debug.Log(string.Format("client {0} attempted to update pos on item {1} but ignored by server",_fromClient,_item_id));
                     return;
                 }
-                Vector3 _position = _packet.ReadVector3();
                 SIM.UpdateItemPosition(_item_id, _position);
+                SIM.UpdateItemRotation(_item_id, _rotation);
             }
 
             /// <summary>
             /// Update an item's rotation as instructed in packet
+            /// PS: All its function has been moved to ItemPosition. This function will be deprecated in new version.
             /// </summary>
             /// <param name="_packet"></param>
             public static void ItemRotation(int _fromClient, Packet _packet)
             {
-                int _item_id = _packet.ReadInt32();
-                GameObject itemManager = GameObject.Find("ItemManager");
-                ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
-                //Ignore if the client is not the owner of the item
-                if (SIM.itemList[_item_id].GetComponent<ItemController>().ownerId != _fromClient){   
-                    return;
-                }
-                Quaternion _rotation = _packet.ReadQuaternion();
-                SIM.UpdateItemRotation(_item_id, _rotation);
+                // interpret packet
+                //int _item_id = _packet.ReadInt32();
+                //Quaternion _rotation = _packet.ReadQuaternion();
+
+                //// Update item rotation
+                //GameObject itemManager = GameObject.Find("ItemManager");
+                //ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
+                ////Ignore if the client is not the owner of the item
+                //if (SIM.itemList[_item_id].GetComponent<ItemController>().ownerId != _fromClient){   
+                //    return;
+                //}
+                
+                // SIM.UpdateItemRotation(_item_id, _rotation);
             }
 
             /// <summary>
