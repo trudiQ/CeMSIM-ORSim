@@ -77,7 +77,8 @@ namespace CEMSIM
             IEnumerator DelaySpawnRequest()
             {
                 yield return new WaitForSeconds(5f);
-                string _username = "Player" + ClientInstance.instance.myId.ToString();
+                //string _username = "Player" + ClientInstance.instance.myId.ToString();
+                string _username = ClientInstance.instance.myUsername;
 
                 //TO DO: ConnectOnStart is used for VR mode at the moment. 
                 //Add feature for entering in VR or desktop mode
@@ -458,7 +459,6 @@ namespace CEMSIM
                 { (int)ServerPackets.heartBeatDetectionTCP, ClientHandle.HeartBeatDetectionTCP},
                 { (int)ServerPackets.heartBeatDetectionUDP, ClientHandle.HeartBeatDetectionUDP},
                 { (int)ServerPackets.itemPositionUDP, ClientHandle.ItemPosition},
-                { (int)ServerPackets.itemRotationUDP, ClientHandle.ItemRotation},
                 { (int)ServerPackets.ownershipDenial, ClientHandle.OwnershipDenial},
             };
 

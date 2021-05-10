@@ -285,6 +285,9 @@ namespace CEMSIM
                 else
                     player = ServerNetworkManager.instance.InstantiatePlayerDesktop();
                 player.Initialize(id, _playerName);
+                player.transform.GetChild(1).gameObject.GetComponent<TextMesh>().text = _playerName; // Child 1 is the username
+                //player.GetComponent<TextMesh>().text = _playerName;
+
 
                 // 1. inform all other players the creation of current player
                 foreach (ServerClient _client in ServerInstance.clients.Values)

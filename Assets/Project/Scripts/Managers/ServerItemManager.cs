@@ -41,8 +41,6 @@ namespace CEMSIM{
 
 	    		//Brodcast item position via UDP
 	    		ServerSend.BrodcastItemPosition(item);
-	    		//Brodcast item rotation via UDP
-	    		ServerSend.BrodcastItemRotation(item);
 	    		//Brodcast item owner via TCP
 	    		//*****TO DO: Brodcast ownership information via TCP********
 	    		

@@ -240,23 +240,7 @@ namespace CEMSIM
                 }
 
             }
-            
-            /// <summary>
-            /// Its function has been integrated into the BroadcastItemPosition. Will be deleted in new version.
-            /// </summary>
-            /// <param name="_item"></param>
-            public static void BrodcastItemRotation(GameObject _item)
-            {
-                //ItemController itemCon = _item.GetComponent<ItemController>();
-                //// ServerItemManager.cs calls this method to multicase an item's position
-                //using (Packet _packet = new Packet((int)ServerPackets.itemRotationUDP))
-                //{
-                //    _packet.Write(itemCon.id);
-                //    _packet.Write(_item.transform.rotation);
-                //    MulticastExceptOneUDPData(itemCon.ownerId, _packet);                  //Does not update data to owner
-                //}
-
-            }
+          
 
             public static void OwnershipDenial(int _toClient, int item_id)              //Deny a clien's ownership via TCP
             {

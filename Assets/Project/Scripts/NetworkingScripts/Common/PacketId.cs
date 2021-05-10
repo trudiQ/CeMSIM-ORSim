@@ -23,7 +23,6 @@ namespace CEMSIM
             heartBeatDetectionUDP, // a packet containing the server's system time. used to check whether the target client is alive and get the round-trip-time.
             heartBeatDetectionTCP, 
             itemPositionUDP,     //UDP update of item position
-            itemRotationUDP,     //UDP update of item rotation
             ownershipDenial,     //TCP packet that denies a client's request to an item's ownership
         }
 
@@ -43,7 +42,6 @@ namespace CEMSIM
             heartBeatDetectionUDP,  // in response to the server's system.
             heartBeatDetectionTCP,
             itemPositionUDP,     //UDP update of item position
-            itemRotationUDP,     //UDP update of item rotation
             itemOwnershipChange, //TCP update of item's ownership
         }
 
@@ -71,8 +69,7 @@ namespace CEMSIM
                 ServerPacketsInfo.Add(9, "heartBeatDetectionUDP");
                 ServerPacketsInfo.Add(10, "heartBeatDetectionTCP");
                 ServerPacketsInfo.Add(11, "itemPositionUDP");
-                ServerPacketsInfo.Add(12, "itemRotationUDP");
-                ServerPacketsInfo.Add(13, "ownershipDenial");
+                ServerPacketsInfo.Add(12, "ownershipDenial");
 
                 ClientPacketsInfo.Add(1, "invalidPacket");
                 ClientPacketsInfo.Add(2, "welcome");
@@ -85,8 +82,7 @@ namespace CEMSIM
                 ClientPacketsInfo.Add(9, "heartBeatDetectionUDP");
                 ClientPacketsInfo.Add(10, "heartBeatDetectionTCP");
                 ClientPacketsInfo.Add(11, "itemPositionUDP");
-                ClientPacketsInfo.Add(12, "itemRotationUDP");
-                ClientPacketsInfo.Add(13, "itemOwnershipChange");
+                ClientPacketsInfo.Add(12, "itemOwnershipChange");
             }
 
         }

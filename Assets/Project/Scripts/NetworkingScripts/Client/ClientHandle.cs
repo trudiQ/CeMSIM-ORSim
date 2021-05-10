@@ -173,20 +173,6 @@ namespace CEMSIM
                 CIM.UpdateItemRotation(_item_id, _rotation);
             }
 
-            /// <summary>
-            /// Update an item's rotation as instructed in packet
-            /// PS. The function of item rotation update has been integrated into the ItemPosition function.
-            /// </summary>
-            /// <param name="_packet"></param>
-            public static void ItemRotation(Packet _packet)
-            {
-                //int _item_id = _packet.ReadInt32();
-                //Quaternion _rotation = _packet.ReadQuaternion();
-                //GameObject itemManager = GameObject.Find("ItemManager");
-                //ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
-                //CIM.UpdateItemRotation(_item_id, _rotation);
-            }
-
 
             /// <summary>
             /// An item's ownership request sent by this client is denied by server, update ownership info accordingly
