@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 //using HapticPlugin;
@@ -9,35 +10,67 @@ using UnityEngine;
 //! Optionally, it can also turn off physics interaction when nothing is being held.
 public class HapticSurgTools : MonoBehaviour 
 {
-	public int buttonID = 0;		//!< index of the button assigned to grabbing.  Defaults to the first button
-	public bool ButtonActsAsToggle = false;	//!< Toggle button? as opposed to a press-and-hold setup?  Defaults to off.
-	public enum PhysicsToggleStyle{ none, onTouch, onGrab };
-	public PhysicsToggleStyle physicsToggleStyle = PhysicsToggleStyle.none;   //!< Should the grabber script toggle the physics forces on the stylus? 
+	/// Haptic device
+	//public int buttonID = 0;		//!< index of the button assigned to grabbing.  Defaults to the first button
+	public bool ButtonActsAsToggle = false; //!< Toggle button? as opposed to a press-and-hold setup?  Defaults to off.
+	private HapticPlugin hapticDevice = null;    //!< Reference to the Haptic Device
+	//private  GameObject hapticDevice = null;   //!< Reference to the GameObject representing the Haptic Device
+	private bool[] buttonStatus = { false, false }; //!< Are the buttons currently pressed? {first, second}
+													//private bool buttonStatus = false;			//!< Is the button currently pressed?
 
-	public bool DisableUnityCollisionsWithTouchableObjects = true;
-
-	private  GameObject hapticDevice = null;   //!< Reference to the GameObject representing the Haptic Device
-	private bool buttonStatus = false;			//!< Is the button currently pressed?
+	/// touching, grabing, holding, cutting tool actions (some of them could be true at the same time)
+	private bool bTouching = false; //forceps, scissors
+	private bool bGrabbing = false; //forceps
+	private bool bHolding = false; //forceps
+	private bool bCutting = false; //scissors
+	public int holdSphereJointObjIdx = -1; // 0 or 1
+	public int cutSphereJointObjIdx = -1; // 0 or 1
 	private GameObject touching = null;			//!< Reference to the object currently touched
 	private GameObject grabbing = null;			//!< Reference to the object currently grabbed
 	private FixedJoint joint = null;            //!< The Unity physics joint created between the stylus and the object being grabbed.
+	public enum PhysicsToggleStyle { none, onTouch, onGrab };
+	public PhysicsToggleStyle physicsToggleStyle = PhysicsToggleStyle.none;   //!< Should the grabber script toggle the physics forces on the stylus? 
+	public bool DisableUnityCollisionsWithTouchableObjects = true;
 
 	// feedback force related 
+	private int FXID; // ID of the effect of the haptic device
 	private bool bTouching_pre = false;
-	private bool bTouching = false;
 	private int effectType = 3; // friction
-	private int ID = -1; // handle ID for the new effect
+	//private int ID = -1; // handle ID for the new effect
 	private double[] pos = new double[] { 0.0d, 0.0d, 0.0d };
 	private double[] dir = new double[] { 0.0d, 0.0d, 0.0d };
 	[Range(0.0f, 1.0f)] private double Gain = 0.333f;
 	[Range(0.0f, 1.0f)] private double Magnitude = 0.333f;
 	[Range(1.0f, 1000.0f)] private double Frequency = 200.0f;
 
+	// Actions: tool-tissue interaction relate (allis forcep and scissor)
+	//		to be called by sim state-machine machanism in 'globalOperators.cs'
+	public enum toolAction {idle, touching, grabbing, holding, cutting};
+	public toolAction curAction = toolAction.idle; // idle - no action by default
 
 	//! Automatically called for initialization
 	void Start () 
 	{
-		if (hapticDevice == null)
+		// Initialize the haptic device
+		HapticPlugin[] hapticDevices = (HapticPlugin[])FindObjectsOfType(typeof(HapticPlugin));
+
+		for (int ii = 0; ii < hapticDevices.Length; ii++)
+		{
+			if (hapticDevices[ii].hapticManipulator == this.gameObject)
+			{
+				hapticDevice = hapticDevices[ii];
+				if (physicsToggleStyle != PhysicsToggleStyle.none)
+					hapticDevice.PhysicsManipulationEnabled = false;
+
+				// Generate an OpenHaptics effect ID for each of the devices
+				FXID = HapticPlugin.effects_assignEffect(hapticDevice.configName);
+			}
+		}
+
+		if (DisableUnityCollisionsWithTouchableObjects)
+			disableUnityCollisions();
+
+		/*if (hapticDevice == null)
 		{
 
 			HapticPlugin[] HPs = (HapticPlugin[])Object.FindObjectsOfType(typeof(HapticPlugin));
@@ -59,6 +92,7 @@ public class HapticSurgTools : MonoBehaviour
 
 		// feedback force effect
 		ID = HapticPlugin.effects_assignEffect(hapticDevice.GetComponent<HapticPlugin>().configName);
+		*/
 	}
 
 	void disableUnityCollisions()
@@ -88,58 +122,90 @@ public class HapticSurgTools : MonoBehaviour
 
 	}
 
+	//! Parse touching/grasping sphere's name into [objIdx, layerIdx, sphereIdx]
+	bool parseSphereName(string sphereName, ref int[] sphereIDs)
+	{
+		// make sure the game object is a sphere of sphereJoint model
+		string[] nameSplit = sphereName.Split('_');
+		if (nameSplit.Length != 4 || nameSplit[0] != "sphere")
+			return false;
+
+		// parse the name
+		for (int i = 0; i < sphereIDs.Length; i++)
+			sphereIDs[i] = Int32.Parse(nameSplit[i+1]);
+
+		return true;
+	}
 	
 	//! Update is called once per frame
 	void FixedUpdate () 
 	{
-		bool newButtonStatus = hapticDevice.GetComponent<HapticPlugin>().Buttons [buttonID] == 1;
-		bool oldButtonStatus = buttonStatus;
-		buttonStatus = newButtonStatus;
+		bool[] newButtonStatus = { hapticDevice.Buttons[0] == 1, hapticDevice.Buttons[1] == 1 } ;
+		//bool newButtonStatus = hapticDevice.GetComponent<HapticPlugin>().Buttons [buttonID] == 1;
+		bool[] oldButtonStatus = { buttonStatus[0], buttonStatus[1] };
+		buttonStatus = new bool[] { newButtonStatus[0], newButtonStatus[1] };
 
-
-		if (oldButtonStatus == false && newButtonStatus == true)
+		// Graspping: Forceps only, Button pressing check
+		if (this.gameObject.name == "Forceps")
 		{
-			if (ButtonActsAsToggle)
+			//left button for grasping/releasing
+			if (oldButtonStatus[0] == false && newButtonStatus[0] == true) 
 			{
-				if (grabbing)
-					release();
+				if (ButtonActsAsToggle)
+				{
+					if (grabbing)
+					{
+						release();
+						bGrabbing = false;
+					}
+					else
+					{
+						grab();
+						bGrabbing = true;
+					}
+				}
 				else
+				{
 					grab();
-			} else
-			{
-				grab();
+					bGrabbing = true;
+				}
 			}
-		}
-		if (oldButtonStatus == true && newButtonStatus == false)
-		{
-			if (ButtonActsAsToggle)
+			if (oldButtonStatus[0] == true && newButtonStatus[0] == false)
 			{
-				//Do Nothing
-			} else
-			{
-				release();
+				if (ButtonActsAsToggle)
+				{
+					//Do Nothing
+				}
+				else
+				{
+					release();
+					bGrabbing = false;
+				}
 			}
+
+			// Make sure haptics is ON if we're grabbing
+			if (grabbing && physicsToggleStyle != PhysicsToggleStyle.none)
+				hapticDevice.PhysicsManipulationEnabled = true;
+			//hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = true;
+			if (!grabbing && physicsToggleStyle == PhysicsToggleStyle.onGrab)
+				hapticDevice.PhysicsManipulationEnabled = false;
+			//hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = false;
+
+			/*
+			if (grabbing)
+				hapticDevice.GetComponent<HapticPlugin>().shapesEnabled = false;
+			else
+				hapticDevice.GetComponent<HapticPlugin>().shapesEnabled = true;
+				*/
+
 		}
 
-		// Make sure haptics is ON if we're grabbing
-		if( grabbing && physicsToggleStyle != PhysicsToggleStyle.none)
-			hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = true;
-		if (!grabbing && physicsToggleStyle == PhysicsToggleStyle.onGrab)
-			hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = false;
-
-		/*
-		if (grabbing)
-			hapticDevice.GetComponent<HapticPlugin>().shapesEnabled = false;
-		else
-			hapticDevice.GetComponent<HapticPlugin>().shapesEnabled = true;
-			*/
-
-		// force feedback when touching an object
-		if (ID == -1)
+		// Touching: both forceps and scissors, no button, force feedback when touching an object
+		if (FXID == -1)
 		{
-			ID = HapticPlugin.effects_assignEffect(hapticDevice.GetComponent<HapticPlugin>().configName);
+			FXID = HapticPlugin.effects_assignEffect(hapticDevice.configName);
 		}
-		if (ID == -1) // Still broken?
+		if (FXID == -1) // Still broken?
 		{
 			Debug.LogError("Unable to assign Haptic effect.");
 			return;
@@ -147,21 +213,18 @@ public class HapticSurgTools : MonoBehaviour
 		if (touching)
 		{
 			bTouching = true;
-			if (this.gameObject.name == "Forceps") // Forceps
-			{
-				HapticPlugin.effects_settings(
-					hapticDevice.GetComponent<HapticPlugin>().configName,
-					ID,
-					Gain,
-					Magnitude,
-					Frequency,
-					pos,
-					dir);
-				HapticPlugin.effects_type(
-					hapticDevice.GetComponent<HapticPlugin>().configName,
-					ID,
-					effectType);
-			}
+			HapticPlugin.effects_settings(
+				hapticDevice.configName,
+				FXID,
+				Gain,
+				Magnitude,
+				Frequency,
+				pos,
+				dir);
+			HapticPlugin.effects_type(
+				hapticDevice.configName,
+				FXID,
+				effectType);
 		}
 		else
 		{
@@ -173,12 +236,81 @@ public class HapticSurgTools : MonoBehaviour
 		if (bTouching_pre != bTouching)
 		{
 			if (bTouching)
-				HapticPlugin.effects_startEffect(hapticDevice.GetComponent<HapticPlugin>().configName, ID);
+				HapticPlugin.effects_startEffect(hapticDevice.configName, FXID);
 			else
-				HapticPlugin.effects_stopEffect(hapticDevice.GetComponent<HapticPlugin>().configName, ID);
+				HapticPlugin.effects_stopEffect(hapticDevice.configName, FXID);
 		}
 
 		bTouching_pre = bTouching;
+
+		// Cutting: scissors, left-button 
+		if (this.gameObject.name == "Scissors")
+		{
+			//left button for cutting
+			if (newButtonStatus[0] == true)
+			{
+				if (bTouching && touching)
+				{
+					// check which object being cut
+					int[] sphereIDs = new int[3]; //[objIdx, layerIdx, sphereIdx]
+					if (parseSphereName(touching.name, ref sphereIDs))
+					{
+						cutSphereJointObjIdx = sphereIDs[0];
+						bCutting = true;
+					}
+					else
+					{
+						cutSphereJointObjIdx = -1;
+						bCutting = false;
+					}
+				}
+				else
+				{
+					cutSphereJointObjIdx = -1;
+					bCutting = false;
+				}
+				Debug.Log(bCutting);
+			}
+			if (newButtonStatus[0] == false)
+			{
+				cutSphereJointObjIdx = -1;
+				bCutting = false;
+			}
+		}
+
+		// tool-specific action determination 
+		//	make sure one action at a time
+		if (this.gameObject.name == "Forceps")
+		{
+			// priority: holding > grasping > touching > idle
+			if (bHolding)
+				curAction = toolAction.holding;
+			else // !bHolding
+			{
+				if (bGrabbing)
+					curAction = toolAction.grabbing;
+				else // !bGrabbing
+				{
+					if (bTouching)
+						curAction = toolAction.touching;
+					else // !bTouching
+						curAction = toolAction.idle;
+				}
+			}
+		}
+		if (this.gameObject.name == "Scissors")
+		{
+			// priority: cutting > touching > idle
+			if (bCutting)
+				curAction = toolAction.cutting;
+			else // !bCutting
+			{
+				if (bTouching)
+					curAction = toolAction.touching;
+				else // !bTouching
+					curAction = toolAction.idle;
+			}
+		}
 	}
 
 	private void hapticTouchEvent( bool isTouch )
@@ -186,14 +318,16 @@ public class HapticSurgTools : MonoBehaviour
 		if (physicsToggleStyle == PhysicsToggleStyle.onGrab)
 		{
 			if (isTouch)
-				hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = true;
+				hapticDevice.PhysicsManipulationEnabled = true;
+				//hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = true;
 			else			
 				return; // Don't release haptics while we're holding something.
 		}
 			
 		if( physicsToggleStyle == PhysicsToggleStyle.onTouch )
 		{
-			hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = isTouch;
+			hapticDevice.PhysicsManipulationEnabled = isTouch;
+			//hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = isTouch;
 			GetComponentInParent<Rigidbody>().velocity = Vector3.zero;
 			GetComponentInParent<Rigidbody>().angularVelocity = Vector3.zero;
 
@@ -260,7 +394,8 @@ public class HapticSurgTools : MonoBehaviour
 		if (touchedObject == null) // No Unity Collision? 
 		{
 			// Maybe there's a Haptic Collision
-			touchedObject = hapticDevice.GetComponent<HapticPlugin>().touching;
+			touchedObject = hapticDevice.touching;
+			//touchedObject = hapticDevice.GetComponent<HapticPlugin>().touching;
 		}
 
 		if (grabbing != null) // Already grabbing
@@ -327,8 +462,9 @@ public class HapticSurgTools : MonoBehaviour
 		grabbing = null;
 
 		if (physicsToggleStyle != PhysicsToggleStyle.none)
-			hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = false;
-			
+			hapticDevice.PhysicsManipulationEnabled = false;
+			//hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = false;
+
 	}
 
 	//! Returns true if there is a current object. 
