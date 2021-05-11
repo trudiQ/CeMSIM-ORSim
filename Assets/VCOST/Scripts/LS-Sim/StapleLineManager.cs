@@ -13,9 +13,13 @@ namespace PaintIn3D
     public class StapleLineManager : P3dHitScreenBase
     {
         public List<Transform> testPaint;
+        public float animatePaintInterval;
         public MeshCollider col;
+        public LayerMask paintLayers; // For raycast physics collision
         public StapleLineLocator paintPointsLocator; // A plane that collide with the colon mesh to decide the position for painting staple line
+        public List<Transform> paintPointsLocators; // A list of transform that are on the same plane, which decide the position for staple line
         public float paintInterval; // Distance between each brush touch when paint from point A to point B
+
         public int paintCount; // How many times the brush should paint for each touch
         public int brushSize;
         public float brushAngle; // Angle of the texture (basically horizontal (0 degree) or vertical (90 degree)
@@ -24,6 +28,12 @@ namespace PaintIn3D
         public P3dPaintSphere eraser; // Painter used for erasing the staple line
         public P3dHitScreen eraserMouseSim; // Used to simulate erase with mouse click
         public Transform painterBrushControl; // Used to define the behavior of the staple line painter brush 
+
+        public GameObject stapleLinePrefab; // GameObject to be used as staple line segment
+        public Transform stapleLineParent;
+        public Transform circleCenter;
+        public Transform circleRadA;
+        public Transform circleRadB;
 
 
 
@@ -38,11 +48,66 @@ namespace PaintIn3D
             PaintAlongPlaneCollision(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle);
             //PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), staplePainter, Vector3.one * brushSize, Vector3.zero);
         }
+        [ShowInInspector]
+        public void TestPaintAnimated()
+        {
+            PaintFromCircleRaycast(circleCenter.position, circleRadA.position - circleCenter.position, circleRadB.position - circleCenter.position, stapleLineParent);
+            //StartCoroutine(PaintAlongPlaneCollisionAnimated(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle));
+            //PaintAlongPlaneCollision(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle);
+            //PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), staplePainter, Vector3.one * brushSize, Vector3.zero);
+        }
 
         [ShowInInspector]
         public void ResetPaint()
         {
-            PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), eraser, Vector3.one * brushSize, Vector3.zero);
+            //PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), eraser, Vector3.one * brushSize, Vector3.zero);
+        }
+
+        /// <summary>
+        /// Use a circle to collide with the mesh to paint, raycast from circle side to center, paint staple objects
+        /// 
+        /// ### Can add algorithm to control the object spacing better
+        /// </summary>
+        /// <param name="circleCenter"></param> 
+        /// <param name="circleVectorA"></param> One vector going from the circle's center to the circle's edge
+        /// <param name="circleVectorB"></param> A none parallel vector going from ...
+        /// <param name="stapleObjectParent"></param> 
+        public void PaintFromCircleRaycast(Vector3 circleCenter, Vector3 circleVectorA, Vector3 circleVectorB, Transform stapleObjectParent)
+        {
+            int stapleCount = 0;
+
+            foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, circleVectorA, circleVectorB))
+            {
+                GameObject newStapleObject = Instantiate(stapleLinePrefab);
+                newStapleObject.name = "Staple" + stapleCount.ToString();
+                PaintStapleLineObjects(r, newStapleObject.GetComponent<StapleLineObject>());
+
+                stapleCount++;
+            }
+            foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, circleVectorB, -circleVectorA))
+            {
+                GameObject newStapleObject = Instantiate(stapleLinePrefab);
+                newStapleObject.name = "Staple" + stapleCount.ToString();
+                PaintStapleLineObjects(r, newStapleObject.GetComponent<StapleLineObject>());
+
+                stapleCount++;
+            }
+            foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, -circleVectorA, -circleVectorB))
+            {
+                GameObject newStapleObject = Instantiate(stapleLinePrefab);
+                newStapleObject.name = "Staple" + stapleCount.ToString();
+                PaintStapleLineObjects(r, newStapleObject.GetComponent<StapleLineObject>());
+
+                stapleCount++;
+            }
+            foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, -circleVectorB, circleVectorA))
+            {
+                GameObject newStapleObject = Instantiate(stapleLinePrefab);
+                newStapleObject.name = "Staple" + stapleCount.ToString();
+                PaintStapleLineObjects(r, newStapleObject.GetComponent<StapleLineObject>());
+
+                stapleCount++;
+            }
         }
 
         /// <summary>
@@ -77,6 +142,41 @@ namespace PaintIn3D
         }
 
         /// <summary>
+        /// Use a plane to collide with the mesh to paint, then raycast on the collision points to simulate mouse click paint
+        /// </summary>
+        /// <param name="plane"></param>
+        /// <param name="brush"></param>
+        /// <param name="brushSize"></param>
+        /// <param name="brushRotation"></param>
+        public IEnumerator PaintAlongPlaneCollisionAnimated(StapleLineLocator plane, P3dHitScreen brush, Vector3 brushSize, Vector3 brushRotation)
+        {
+            painterBrushControl.localScale = brushSize;
+            painterBrushControl.eulerAngles = brushRotation;
+
+            WaitForSeconds wait = new WaitForSeconds(animatePaintInterval);
+
+            List<Vector3> planeVetices = new List<Vector3>(plane.GetComponent<MeshFilter>().sharedMesh.vertices);
+            foreach (Vector3 v in planeVetices)
+            {
+                List<Vector3> neighbors = GetNeighborVertices(v, planeVetices);
+
+                Vector3 origin = plane.transform.TransformPoint(v);
+                Vector3 beginRay = plane.transform.TransformPoint(neighbors[0]) - origin;
+                Vector3 endRay = plane.transform.TransformPoint(neighbors[1]) - origin;
+
+                foreach (Ray r in GetRaysBetweenTwoVectors(origin, beginRay, endRay))
+                {
+                    for (int c = 0; c < paintCount; c++)
+                    {
+                        SimulateMouseClickPaint(r, brush);
+                        Debug.DrawRay(r.origin, r.direction * 5, Color.white, 1f);
+                    }
+                    yield return wait;
+                }
+            }
+        }
+
+        /// <summary>
         /// Get the rays in a fan shape between two vectors
         /// </summary>
         /// <param name="beginVector"></param>
@@ -89,6 +189,24 @@ namespace PaintIn3D
             for (float t = 0; t < 1; t += 0.001f)
             {
                 rays.Add(new Ray(rayBeginPosition, Vector3.Lerp(beginVector, endVector, t).normalized));
+            }
+
+            return rays;
+        }
+
+        /// <summary>
+        /// Get the rays in a fan shape between two vectors, invert the ray direction
+        /// </summary>
+        /// <param name="beginVector"></param>
+        /// <param name="endVector"></param>
+        /// <returns></returns>
+        public List<Ray> GetInvertRaysBetweenTwoVectors(Vector3 rayBeginPosition, Vector3 beginVector, Vector3 endVector)
+        {
+            List<Ray> rays = new List<Ray>();
+
+            for (float t = 0; t < 1; t += 0.001f)
+            {
+                rays.Add(new Ray(rayBeginPosition + Vector3.Lerp(beginVector, endVector, t), -Vector3.Lerp(beginVector, endVector, t).normalized));
             }
 
             return rays;
@@ -139,6 +257,37 @@ namespace PaintIn3D
             return neighbors;
         }
 
+        /// <summary>
+        /// Paint objects to the raycast hit position
+        /// </summary>
+        /// <param name="hitRay"></param>
+        /// <param name="brush"></param>
+        public void PaintStapleLineObjects(Ray hitRay, StapleLineObject staple)
+        {
+            var hit3D = default(RaycastHit);
+            var finalPosition = default(Vector3);
+            var finalRotation = default(Quaternion);
+
+            // Hit 3D?
+            if (Physics.Raycast(hitRay, out hit3D, float.PositiveInfinity, paintLayers))
+            {
+                CalcHitData(hit3D.point, hit3D.normal, hitRay, out finalPosition, out finalRotation);
+
+                // Setup staple object
+                staple.belongedObjet = hit3D.transform;
+                staple.belongedMesh = hit3D.transform.GetComponent<MeshFilter>().sharedMesh;
+                staple.belongedTriangleIndex = hit3D.triangleIndex;
+
+                staple.transform.position = hit3D.point;
+                staple.transform.LookAt(hit3D.point + hit3D.normal);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hitRay"></param>
+        /// <param name="brush"></param>
         public void SimulateMouseClickPaint(Ray hitRay, P3dHitScreen brush)
         {
             var hit3D = default(RaycastHit);
@@ -151,36 +300,6 @@ namespace PaintIn3D
                 CalcHitData(hit3D.point, hit3D.normal, hitRay, out finalPosition, out finalRotation);
 
                 brush.Connector.SubmitPoint(brush.gameObject, false, 0, 1, finalPosition, finalRotation, new Link());
-            }
-        }
-
-        /// <summary>
-        /// Paint the staple line along a line along a set of vertices on a mesh
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="brushType"></param>
-        /// <param name="brushSize"></param>
-        /// <param name="brushRotation"></param>
-        public void PaintAlongVertices(Vector3[] path, P3dPaintSphere brushType, Vector3 brushSize, Vector3 brushRotation)
-        {
-            painterBrushControl.localScale = brushSize;
-            painterBrushControl.eulerAngles = brushRotation;
-            for (int i = 0; i < path.Length - 1; i++)
-            {
-                for (int c = 0; c < paintCount; c++)
-                {
-                    PaintLine(path[i], path[i + 1], brushType);
-                }
-            }
-        }
-
-        public void PaintLine(Vector3 startPos, Vector3 endPos, P3dPaintSphere brush)
-        {
-            float distance = Vector3.Distance(startPos, endPos);
-            int step = Mathf.RoundToInt(distance / paintInterval);
-            for (float t = 0; t < 1; t += 1f / step)
-            {
-                brush.HandleHitPoint(false, 0, 1, 0, Vector3.Lerp(startPos, endPos, t), Quaternion.identity);
             }
         }
 
@@ -256,3 +375,38 @@ namespace PaintIn3D
     }
 }
 
+public class GFG
+{
+    public static double[] find_Centroid(double[,] v)
+    {
+        double[] ans = new double[2];
+
+        int n = v.GetLength(0);
+        double signedArea = 0;
+
+        // For all vertices 
+        for (int i = 0; i < n; i++)
+        {
+            double x0 = v[i, 0], y0 = v[i, 1];
+            double x1 = v[(i + 1) % n, 0],
+                    y1 = v[(i + 1) % n, 1];
+
+            // Calculate value of A 
+            // using shoelace formula 
+            double A = (x0 * y1) - (x1 * y0);
+            signedArea += A;
+
+            // Calculating coordinates of 
+            // centroid of polygon 
+            ans[0] += (x0 + x1) * A;
+            ans[1] += (y0 + y1) * A;
+        }
+        signedArea *= 0.5;
+        ans[0] = (ans[0]) / (6 * signedArea);
+        ans[1] = (ans[1]) / (6 * signedArea);
+
+        return ans;
+    }
+}
+// https://www.geeksforgeeks.org/find-the-centroid-of-a-non-self-intersecting-closed-polygon/
+// This code is contributed by PrinciRaj1992
