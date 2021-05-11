@@ -14,6 +14,11 @@ namespace CEMSIM
             public string username;
             public CharacterController controller;
 
+            // controller data
+            public Transform leftController;
+            public Transform rightController;
+
+
             public void Initialize(int _id, string _username)
             {
                 id = _id;
@@ -24,7 +29,6 @@ namespace CEMSIM
             {
                 // public the position to every client, but public the facing direction to all but the player
                 ServerSend.PlayerPosition(this);
-                ServerSend.PlayerRotation(this);
             }
         }
     }

@@ -109,12 +109,30 @@ namespace CEMSIM
             {
                 if (GameManager.players.ContainsKey(ClientInstance.instance.myId))
                 {
+                    // get the avatar position
+                    Vector3 _avatarPosition = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera.position;
+                    Quaternion _avatarRotation = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera.rotation;
+
+                    // get the position of both VR controllers
+                    Transform _lefthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(1);
+                    Transform _righthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(2);
+
+
                     using (Packet _packet = new Packet((int)ClientPackets.playerVRMovement))
                     {
-                        _packet.Write(GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera.position);
-                        _packet.Write(GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera.rotation);
+                        // write avatar position
+                        _packet.Write(_avatarPosition);
+                        _packet.Write(_avatarRotation);
+
+                        // write left and right controller positions
+                        _packet.Write(_lefthand.position);
+                        _packet.Write(_lefthand.rotation);
+                        _packet.Write(_righthand.position);
+                        _packet.Write(_righthand.rotation);
 
                         SendUDPData(_packet);
+
+                        
                     }
                 }
                 else

@@ -62,11 +62,14 @@ namespace CEMSIM
                 {
                     // create player for another client
                     _player = Instantiate(playerPrefab, _position, _rotation);
+                    // Child 1 is the username gameobject
+                    // P.S. Only the prefab of other players has "username"
+                    _player.transform.GetChild(1).gameObject.GetComponent<TextMesh>().text = _username; 
+
                 }
 
                 _player.GetComponent<PlayerManager>().id = _id;
                 _player.GetComponent<PlayerManager>().username = _username;
-                _player.transform.GetChild(1).gameObject.GetComponent<TextMesh>().text = _username; // Child 1 is the username
 
 
                 // record the player instance in the players dictionary

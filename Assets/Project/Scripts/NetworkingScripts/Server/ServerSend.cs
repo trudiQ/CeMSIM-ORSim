@@ -182,6 +182,12 @@ namespace CEMSIM
                 {
                     _packet.Write(_player.id);
                     _packet.Write(_player.transform.position);
+                    _packet.Write(_player.transform.rotation);
+
+                    _packet.Write(_player.leftController.position);
+                    _packet.Write(_player.leftController.rotation);
+                    _packet.Write(_player.rightController.position);
+                    _packet.Write(_player.rightController.rotation);
 
                     //Do not update VR player position based on server
                     if (_player is ServerPlayerVR)
@@ -191,16 +197,17 @@ namespace CEMSIM
                 }
             }
 
+            // This packet is merged into playerPosition packet. 
             public static void PlayerRotation(ServerPlayer _player)
             {
-                using (Packet _packet = new Packet((int)ServerPackets.playerRotation))
-                {
-                    _packet.Write(_player.id);
-                    _packet.Write(_player.transform.rotation);
+                //using (Packet _packet = new Packet((int)ServerPackets.playerRotation))
+                //{
+                //    _packet.Write(_player.id);
+                //    _packet.Write(_player.transform.rotation);
 
-                    // no need to force update user's rotation
-                    MulticastExceptOneUDPData(_player.id, _packet, true);
-                }
+                //    // no need to force update user's rotation
+                //    MulticastExceptOneUDPData(_player.id, _packet, true);
+                //}
             }
 
             public static void PlayerDisconnect(int _playerId)

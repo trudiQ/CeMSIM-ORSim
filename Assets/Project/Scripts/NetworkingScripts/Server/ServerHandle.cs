@@ -126,12 +126,20 @@ namespace CEMSIM
             /// <param name="_packet"></param>
             public static void PlayerVRMovement(int _fromClient, Packet _packet)
             {
+                // avatar position
                 Vector3 _position = _packet.ReadVector3();
                 Quaternion _rotation = _packet.ReadQuaternion();
+
+                // left and right controller positions
+                Vector3 _leftPosition = _packet.ReadVector3();
+                Quaternion _leftRotation = _packet.ReadQuaternion();
+                Vector3 _rightPosition = _packet.ReadVector3();
+                Quaternion _rightRotation = _packet.ReadQuaternion();
 
                 //Debug.Log($"client{_fromClient}: move packet received.");
                 ServerPlayerVR fromPlayer = (ServerPlayerVR)ServerInstance.clients[_fromClient].player;
                 fromPlayer.SetPosition(_position, _rotation);
+                fromPlayer.SetControllerPositions(_leftPosition, _leftRotation, _rightPosition, _rightRotation);
             }
 
             // update the TCP round-trip-time based on the response packet
