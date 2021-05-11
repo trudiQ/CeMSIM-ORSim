@@ -21,10 +21,10 @@ namespace CEMSIM
 
             public void SetControllerPositions(Vector3 _leftPosition, Quaternion _leftRotation, Vector3 _rightPosition, Quaternion _rightRotation)
             {
-                transform.GetChild(2).gameObject.transform.position = _rightPosition;
-                transform.GetChild(2).gameObject.transform.rotation = _rightRotation;
-                transform.GetChild(3).gameObject.transform.position = _leftPosition;
-                transform.GetChild(3).gameObject.transform.rotation = _leftRotation;
+                transform.GetChild(3).gameObject.transform.position = _rightPosition;
+                transform.GetChild(3).gameObject.transform.rotation = _rightRotation;
+                transform.GetChild(2).gameObject.transform.position = _leftPosition;
+                transform.GetChild(2).gameObject.transform.rotation = _leftRotation;
 
             }
         }
