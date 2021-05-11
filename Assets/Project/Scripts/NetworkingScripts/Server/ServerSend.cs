@@ -178,10 +178,10 @@ namespace CEMSIM
 
             public static void PlayerPosition(ServerPlayer _player)
             {
-
+                //TODO: Get rid of function GetChild
                 // get the position of both VR controllers
-                Transform _lefthand = _player.transform.GetChild(1);
-                Transform _righthand = _player.transform.GetChild(2);
+                Transform _lefthand = _player.transform.GetChild(2);
+                Transform _righthand = _player.transform.GetChild(3);
 
                 using (Packet _packet = new Packet((int)ServerPackets.playerPosition))
                 {
@@ -227,7 +227,7 @@ namespace CEMSIM
                 }
             }
 
-            public static void BrodcastItemPosition(GameObject _item)
+            public static void BroadcastItemPosition(GameObject _item)
             {
                 ItemController itemCon = _item.GetComponent<ItemController>();
                 // ServerItemManager.cs calls this method to multicase an item's position

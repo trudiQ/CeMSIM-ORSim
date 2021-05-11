@@ -40,7 +40,7 @@ namespace CEMSIM{
 	    	foreach(GameObject item in itemList){
 
 	    		//Brodcast item position via UDP
-	    		ServerSend.BrodcastItemPosition(item);
+	    		ServerSend.BroadcastItemPosition(item);
 	    		//Brodcast item owner via TCP
 	    		//*****TO DO: Brodcast ownership information via TCP********
 	    		
