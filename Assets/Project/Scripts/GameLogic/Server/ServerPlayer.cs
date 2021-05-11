@@ -15,8 +15,6 @@ namespace CEMSIM
             public CharacterController controller;
 
             // controller data
-            public Transform leftController;
-            public Transform rightController;
 
 
             public void Initialize(int _id, string _username)
