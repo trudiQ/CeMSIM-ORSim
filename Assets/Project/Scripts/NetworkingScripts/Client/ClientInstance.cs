@@ -454,7 +454,6 @@ namespace CEMSIM
                 { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
                 { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
                 { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition},
-                { (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation},
                 { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected},
                 { (int)ServerPackets.heartBeatDetectionTCP, ClientHandle.HeartBeatDetectionTCP},
                 { (int)ServerPackets.heartBeatDetectionUDP, ClientHandle.HeartBeatDetectionUDP},

@@ -10,6 +10,17 @@ namespace CEMSIM
         {
             public int id;
             public string username;
+            
+
+            void Start(){
+	        	
+        	}
+
+        	void FixedUpdate(){
+
+        	}
         }
+
+        
     }
 }

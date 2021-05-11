@@ -160,7 +160,7 @@ namespace CEMSIM
                             {
                                 int _packetId = _packet.DigestClientHeader(); // extract header information
 
-                                Debug.Log($"[Recv] TCP {PacketId.ClientPacketsInfo[_packetId]}");
+                                Debug.Log($"[Recv] Pack ID {_packetId}: TCP {PacketId.ClientPacketsInfo[_packetId]}");
                                 //NetworkOverlayMenu.Instance.Log($"Receive a packet with id {_packetId} from client {id}");
                                 // call proper handling function based on packet id
                                 ServerInstance.packetHandlers[_packetId](id, _packet);

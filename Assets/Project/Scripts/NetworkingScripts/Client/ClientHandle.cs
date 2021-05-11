@@ -97,14 +97,20 @@ namespace CEMSIM
                 Quaternion _rightRotation = _packet.ReadQuaternion();
 
                 // TODO: needs to update both controllers' position
+                
 
-                //Debug.Log($"Player {_id} position to {_position}");
-
-                // update corresponding player's position
+                // update corresponding player's position and hand position
                 if (GameManager.players.ContainsKey(_id))
                 {
+                    //Player
                     GameManager.players[_id].transform.position = _position;
                     GameManager.players[_id].transform.rotation = _rotation;
+                    //Hands
+                    GameManager.players[_id].transform.GetChild(0).gameObject.transform.GetChild(1).transform.position = _rightPosition;
+                    GameManager.players[_id].transform.GetChild(0).gameObject.transform.GetChild(1).transform.rotation = _rightRotation;
+                    GameManager.players[_id].transform.GetChild(0).gameObject.transform.GetChild(2).transform.position = _leftPosition;
+                    GameManager.players[_id].transform.GetChild(0).gameObject.transform.GetChild(2).transform.rotation = _leftRotation;
+
                 }
                 else
                 {

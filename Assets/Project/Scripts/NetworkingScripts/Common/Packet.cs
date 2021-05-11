@@ -143,7 +143,7 @@ namespace CEMSIM
                 // extract packet id
                 id = ReadInt32();
                 if (!Enum.IsDefined(typeof(ServerPackets), id))
-                    id = (int)ClientPackets.invalidPacket;
+                    id = (int)ServerPackets.invalidPacket;
 
                 return id;
             }
@@ -155,7 +155,7 @@ namespace CEMSIM
 
                 // extract packet id
                 id = ReadInt32();
-                if (!Enum.IsDefined(typeof(ServerPackets), id))
+                if (!Enum.IsDefined(typeof(ClientPackets), id))
                     id = (int)ClientPackets.invalidPacket;
 
                 return id;

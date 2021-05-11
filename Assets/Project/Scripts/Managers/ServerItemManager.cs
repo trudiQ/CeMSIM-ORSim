@@ -58,6 +58,7 @@ namespace CEMSIM{
 			for (int i = 0; i < itemList.Count; i++)
 			{ 
 				itemList[i] = Instantiate(itemList[i], spawnPositionList[i], Quaternion.identity);
+				itemList[i].transform.parent = transform;
 				ItemController itemCon = itemList[i].GetComponent<ItemController>();
 				itemCon.id = id;
 				itemCon.ownerId = owner;

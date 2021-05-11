@@ -60,6 +60,7 @@ namespace CEMSIM{
 			{ 
 				Debug.Log(i);
 				itemList[i] = Instantiate(itemList[i], new Vector3(0,0,0), Quaternion.identity);
+				itemList[i].transform.parent = transform;
 				GameObject item = itemList[i];
 				ItemController itemCon = item.GetComponent<ItemController>();
 				Rigidbody rb = item.GetComponent<Rigidbody>();

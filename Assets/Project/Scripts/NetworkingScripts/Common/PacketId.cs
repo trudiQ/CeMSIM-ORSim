@@ -18,7 +18,6 @@ namespace CEMSIM
             pingResponseUDP,    // server response to client's pingUDP
             spawnPlayer,        // the spawn of a player (also a reply to spawn request)
             playerPosition,     // update of player position
-            playerRotation,     // update of player rotation
             playerDisconnected, // inform player the disconnection of another player
             heartBeatDetectionUDP, // a packet containing the server's system time. used to check whether the target client is alive and get the round-trip-time.
             heartBeatDetectionTCP, 
@@ -64,12 +63,11 @@ namespace CEMSIM
                 ServerPacketsInfo.Add(4, "pingResponseUDP");
                 ServerPacketsInfo.Add(5, "spawnPlayer");
                 ServerPacketsInfo.Add(6, "playerPosition");
-                ServerPacketsInfo.Add(7, "playerRotation");
-                ServerPacketsInfo.Add(8, "playerDisconnected");
-                ServerPacketsInfo.Add(9, "heartBeatDetectionUDP");
-                ServerPacketsInfo.Add(10, "heartBeatDetectionTCP");
-                ServerPacketsInfo.Add(11, "itemPositionUDP");
-                ServerPacketsInfo.Add(12, "ownershipDenial");
+                ServerPacketsInfo.Add(7, "playerDisconnected");
+                ServerPacketsInfo.Add(8, "heartBeatDetectionUDP");
+                ServerPacketsInfo.Add(9, "heartBeatDetectionTCP");
+                ServerPacketsInfo.Add(10, "itemPositionUDP");
+                ServerPacketsInfo.Add(11, "ownershipDenial");
 
                 ClientPacketsInfo.Add(1, "invalidPacket");
                 ClientPacketsInfo.Add(2, "welcome");

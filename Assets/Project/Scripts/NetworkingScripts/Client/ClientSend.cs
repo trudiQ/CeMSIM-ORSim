@@ -183,6 +183,7 @@ namespace CEMSIM
                     _packet.Write(itemCon.id);
                     _packet.Write(itemCon.ownerId);
                     SendTCPData(_packet);
+                    Debug.Log($"[Send] Pack ID :{ (int)ClientPackets.itemOwnershipChange } TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
                 }
 
             }
