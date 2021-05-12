@@ -45,16 +45,14 @@ namespace PaintIn3D
         [ShowInInspector]
         public void TestPaint()
         {
-            PaintAlongPlaneCollision(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle);
+            PaintFromCircleRaycast(circleCenter.position, circleRadA.position - circleCenter.position, circleRadB.position - circleCenter.position, stapleLineParent);
+            //PaintAlongPlaneCollision(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle);
             //PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), staplePainter, Vector3.one * brushSize, Vector3.zero);
         }
         [ShowInInspector]
         public void TestPaintAnimated()
         {
-            PaintFromCircleRaycast(circleCenter.position, circleRadA.position - circleCenter.position, circleRadB.position - circleCenter.position, stapleLineParent);
-            //StartCoroutine(PaintAlongPlaneCollisionAnimated(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle));
-            //PaintAlongPlaneCollision(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle);
-            //PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), staplePainter, Vector3.one * brushSize, Vector3.zero);
+            StartCoroutine(PaintAlongPlaneCollisionAnimated(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle));
         }
 
         [ShowInInspector]
@@ -78,33 +76,25 @@ namespace PaintIn3D
 
             foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, circleVectorA, circleVectorB))
             {
-                GameObject newStapleObject = Instantiate(stapleLinePrefab);
-                newStapleObject.name = "Staple" + stapleCount.ToString();
-                PaintStapleLineObjects(r, newStapleObject.GetComponent<StapleLineObject>());
+                PaintStapleLineObjects(r, stapleLinePrefab, "Staple" + stapleCount.ToString(), stapleLineParent);
 
                 stapleCount++;
             }
             foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, circleVectorB, -circleVectorA))
             {
-                GameObject newStapleObject = Instantiate(stapleLinePrefab);
-                newStapleObject.name = "Staple" + stapleCount.ToString();
-                PaintStapleLineObjects(r, newStapleObject.GetComponent<StapleLineObject>());
+                PaintStapleLineObjects(r, stapleLinePrefab, "Staple" + stapleCount.ToString(), stapleLineParent);
 
                 stapleCount++;
             }
             foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, -circleVectorA, -circleVectorB))
             {
-                GameObject newStapleObject = Instantiate(stapleLinePrefab);
-                newStapleObject.name = "Staple" + stapleCount.ToString();
-                PaintStapleLineObjects(r, newStapleObject.GetComponent<StapleLineObject>());
+                PaintStapleLineObjects(r, stapleLinePrefab, "Staple" + stapleCount.ToString(), stapleLineParent);
 
                 stapleCount++;
             }
             foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, -circleVectorB, circleVectorA))
             {
-                GameObject newStapleObject = Instantiate(stapleLinePrefab);
-                newStapleObject.name = "Staple" + stapleCount.ToString();
-                PaintStapleLineObjects(r, newStapleObject.GetComponent<StapleLineObject>());
+                PaintStapleLineObjects(r, stapleLinePrefab, "Staple" + stapleCount.ToString(), stapleLineParent);
 
                 stapleCount++;
             }
@@ -186,7 +176,7 @@ namespace PaintIn3D
         {
             List<Ray> rays = new List<Ray>();
 
-            for (float t = 0; t < 1; t += 0.001f)
+            for (float t = 0; t < 1; t += paintInterval)
             {
                 rays.Add(new Ray(rayBeginPosition, Vector3.Lerp(beginVector, endVector, t).normalized));
             }
@@ -204,7 +194,7 @@ namespace PaintIn3D
         {
             List<Ray> rays = new List<Ray>();
 
-            for (float t = 0; t < 1; t += 0.001f)
+            for (float t = 0; t < 1; t += paintInterval)
             {
                 rays.Add(new Ray(rayBeginPosition + Vector3.Lerp(beginVector, endVector, t), -Vector3.Lerp(beginVector, endVector, t).normalized));
             }
@@ -261,8 +251,10 @@ namespace PaintIn3D
         /// Paint objects to the raycast hit position
         /// </summary>
         /// <param name="hitRay"></param>
-        /// <param name="brush"></param>
-        public void PaintStapleLineObjects(Ray hitRay, StapleLineObject staple)
+        /// <param name="staplePrefab"></param>
+        /// <param name="objectName"></param>
+        /// <param name="stapleParentTransform"></param>
+        public void PaintStapleLineObjects(Ray hitRay, GameObject staplePrefab, string objectName, Transform stapleParentTransform)
         {
             var hit3D = default(RaycastHit);
             var finalPosition = default(Vector3);
@@ -273,14 +265,60 @@ namespace PaintIn3D
             {
                 CalcHitData(hit3D.point, hit3D.normal, hitRay, out finalPosition, out finalRotation);
 
+                GameObject staple = Instantiate(staplePrefab);
+                staple.name = objectName;
+
                 // Setup staple object
-                staple.belongedObjet = hit3D.transform;
-                staple.belongedMesh = hit3D.transform.GetComponent<MeshFilter>().sharedMesh;
-                staple.belongedTriangleIndex = hit3D.triangleIndex;
+                StapleLineObject stapleData = staple.GetComponent<StapleLineObject>();
+                stapleData.belongedObjet = hit3D.transform;
+                stapleData.belongedObjectMeshFilter = hit3D.transform.GetComponent<MeshFilter>();
+                stapleData.belongedTriangleIndex = hit3D.triangleIndex;
 
                 staple.transform.position = hit3D.point;
                 staple.transform.LookAt(hit3D.point + hit3D.normal);
+                staple.transform.parent = stapleParentTransform;
+
+                GetStapleLineObjectTriangularWeight(stapleData, stapleData.GetVertPosition(stapleData.belongedTriangleIndex * 3), stapleData.GetVertPosition(stapleData.belongedTriangleIndex * 3 + 1), stapleData.GetVertPosition(stapleData.belongedTriangleIndex * 3 + 2));
             }
+        }
+
+        /// <summary>
+        /// Get and store the triangular interpolation weight for the given staple object based on the vertices of its belonged triangle
+        /// Triangle vertices also need to be in world coord
+        /// </summary>
+        /// <param name="staple"></param>
+        /// <param name="vertexA"></param>
+        /// <param name="vertexB"></param>
+        /// <param name="vertexC"></param>
+        public void GetStapleLineObjectTriangularWeight(StapleLineObject staple, Vector3 vertexA, Vector3 vertexB, Vector3 vertexC)
+        {
+            // calculate vectors from point f to vertices p1, p2 and p3:
+            var f1 = vertexA - staple.transform.position;
+            var f2 = vertexB - staple.transform.position;
+            var f3 = vertexC - staple.transform.position;
+            // calculate the areas and factors (order of parameters doesn't matter):
+            var a = Vector3.Cross(vertexA - vertexB, vertexA - vertexC).magnitude; // main triangle area a
+            staple.positionWeight.x = Vector3.Cross(f2, f3).magnitude / a; // p1's triangle area / a
+            staple.positionWeight.y = Vector3.Cross(f3, f1).magnitude / a; // p2's triangle area / a 
+            staple.positionWeight.z = Vector3.Cross(f1, f2).magnitude / a; // p3's triangle area / a
+                                                                           // find the uv corresponding to point f (uv1/uv2/uv3 are associated to p1/p2/p3):
+
+            //// ### Test
+            //if (staple.gameObject.name == "Staple0")
+            //{
+            //    GameObject vertexAO = new GameObject();
+            //    vertexAO.name = "vA";
+            //    vertexAO.transform.parent = stapleLineParent;
+            //    vertexAO.transform.position = vertexA;
+            //    GameObject vertexBO = new GameObject();
+            //    vertexBO.name = "vB";
+            //    vertexBO.transform.parent = stapleLineParent;
+            //    vertexBO.transform.position = vertexB;
+            //    GameObject vertexCO = new GameObject();
+            //    vertexCO.name = "vC";
+            //    vertexCO.transform.parent = stapleLineParent;
+            //    vertexCO.transform.position = vertexC;
+            //}
         }
 
         /// <summary>
