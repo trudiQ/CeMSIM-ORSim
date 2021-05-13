@@ -10,10 +10,17 @@ public class StapleLineObject : MonoBehaviour
     public Vector3 positionWeight; // The weights of the position of this staple object towards the three vertices of its belonged triangle
     public Vector3 upDirection; // Which direction the staple object's y axis is facing towards
 
+    public Vector3 vertA;
+    public Vector3 vertB;
+    public Vector3 vertC;
+
     private void Update()
     {
+        vertA = GetVertPosition(belongedTriangleIndex * 3);
+        vertB = GetVertPosition(belongedTriangleIndex * 3 + 1);
+        vertC = GetVertPosition(belongedTriangleIndex * 3 + 2);
         UpdatePosition();
-
+        UpdateRotation();
     }
 
     /// <summary>
@@ -21,7 +28,7 @@ public class StapleLineObject : MonoBehaviour
     /// </summary>
     public void UpdatePosition()
     {
-        transform.position = GetVertPosition(belongedTriangleIndex * 3) * positionWeight.x + GetVertPosition(belongedTriangleIndex * 3 + 1) * positionWeight.y + GetVertPosition(belongedTriangleIndex * 3 + 2) * positionWeight.z;
+        transform.position = vertA * positionWeight.x + vertB * positionWeight.y + vertC * positionWeight.z;
     }
 
     /// <summary>
@@ -29,11 +36,17 @@ public class StapleLineObject : MonoBehaviour
     /// </summary>
     public void UpdateRotation()
     {
-
+        Plane triangle = new Plane(vertA, vertB, vertC);
+        transform.LookAt(transform.position + triangle.normal, upDirection);
     }
 
     public Vector3 GetVertPosition(int vertIndex)
     {
         return belongedObjet.TransformPoint(belongedObjectMeshFilter.sharedMesh.vertices[belongedObjectMeshFilter.sharedMesh.triangles[vertIndex]]);
+    }
+
+    public Vector3 GetVertNormal(int vertIndex)
+    {
+        return belongedObjet.TransformDirection(belongedObjectMeshFilter.sharedMesh.normals[belongedObjectMeshFilter.sharedMesh.triangles[vertIndex]]);
     }
 }
