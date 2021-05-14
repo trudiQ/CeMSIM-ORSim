@@ -18,6 +18,17 @@ public class HapticSurgTools : MonoBehaviour
 	private bool[] buttonStatus = { false, false }; //!< Are the buttons currently pressed? {first, second}
 													//private bool buttonStatus = false;			//!< Is the button currently pressed?
 
+	/// tool selector
+	private bool[] bSelectorActive = { true, true }; // {forceps, scissors}
+	// variables for each tool, selector
+	public Vector3 initialPos; // all tools, selector
+	public Quaternion initialRot; // all tools, selector
+	public Bounds toolBbox; // valid for tools only but accessed by selectors
+	private HapticSurgTools tool4Select = null; // valid for tools only but accessed by selectors
+	private HapticSurgTools seleSurgTool = null; // valid for selectors only but accessed by tools
+	private GameObject toolHapticGO = null; // valid for tools only but accessed by selectors
+	private GameObject seleHapticGO = null; // valid for selectors only
+
 	/// touching, grabing, holding, cutting tool actions (some of them could be true at the same time)
 	private bool bTouching = false; //forceps, scissors
 	private bool bGrabbing = false; //forceps
@@ -69,6 +80,55 @@ public class HapticSurgTools : MonoBehaviour
 
 		if (DisableUnityCollisionsWithTouchableObjects)
 			disableUnityCollisions();
+
+		// initialize bbox of each tool: forceps and scissors
+		if (this.gameObject.name == "Forceps" || this.gameObject.name == "Scissors")
+		{
+			toolBbox = GetBbox(this.gameObject, true);
+			initialPos = this.gameObject.transform.position;
+			initialRot = new Quaternion(this.gameObject.transform.rotation.x,
+										this.gameObject.transform.rotation.y,
+										this.gameObject.transform.rotation.z,
+										this.gameObject.transform.rotation.w);
+			
+			if (this.gameObject.name == "Forceps")
+			{
+				GameObject forcepswithhaptic = GameObject.Find("ForcepsWithHaptic");
+				if (forcepswithhaptic)
+				{
+					GameObject forceps = forcepswithhaptic.transform.GetChild(0).gameObject;
+					toolHapticGO = forcepswithhaptic.transform.GetChild(1).gameObject;// haptics object of tool disabled by default
+					if (forceps)
+						tool4Select = forceps.GetComponent<HapticSurgTools>();
+					toolHapticGO.SetActive(false);
+				}
+				GameObject toolSelector = GameObject.Find("LeftToolSelector");
+				if (toolSelector)
+				{
+					seleSurgTool = toolSelector.transform.GetChild(0).gameObject.GetComponent<HapticSurgTools>();
+					seleHapticGO = toolSelector.transform.GetChild(1).gameObject; // haptics object of selector
+				}
+			}
+		}
+
+		// initialize refs to the tools to select
+		if (this.gameObject.name == "LBall")
+		{
+			GameObject forcepswithhaptic = GameObject.Find("ForcepsWithHaptic");
+			if (forcepswithhaptic)
+			{
+				GameObject forceps = forcepswithhaptic.transform.GetChild(0).gameObject;
+				toolHapticGO = forcepswithhaptic.transform.GetChild(1).gameObject;// haptics object of tool disabled by default
+				if (forceps)
+					tool4Select = forceps.GetComponent<HapticSurgTools>();
+			}
+			GameObject toolSelector = this.gameObject.transform.parent.gameObject;
+			if (toolSelector)
+			{
+				seleHapticGO = toolSelector.transform.GetChild(1).gameObject; // haptics object of selector
+			}
+			initialPos = this.gameObject.transform.position;
+		}
 
 		/*if (hapticDevice == null)
 		{
@@ -136,18 +196,74 @@ public class HapticSurgTools : MonoBehaviour
 
 		return true;
 	}
+
+	//! Get bounding box of the tool (gameobj) and enlarge it a bit
+	Bounds GetBbox(GameObject obj, bool bEnlarge)
+	{
+		var b = new Bounds(obj.transform.position, Vector3.zero);
+		foreach (Renderer r in obj.GetComponentsInChildren<Renderer>())
+		{
+			b.Encapsulate(r.bounds);
+		}
+
+		if (bEnlarge)
+			b.Expand(0.5f);
+		return b;
+	}
 	
 	//! Update is called once per frame
 	void FixedUpdate () 
 	{
-		bool[] newButtonStatus = { hapticDevice.Buttons[0] == 1, hapticDevice.Buttons[1] == 1 } ;
-		//bool newButtonStatus = hapticDevice.GetComponent<HapticPlugin>().Buttons [buttonID] == 1;
+		// update forcep and scissors' bboxes
+		if (this.gameObject.name == "Forceps" || this.gameObject.name == "Scissors")
+		{
+			toolBbox = GetBbox(this.gameObject, true);
+		}
+
+		bool[] newButtonStatus = { false, false };
+		if (hapticDevice)
+			newButtonStatus = new bool[] { hapticDevice.Buttons[0] == 1, hapticDevice.Buttons[1] == 1 };
 		bool[] oldButtonStatus = { buttonStatus[0], buttonStatus[1] };
 		buttonStatus = new bool[] { newButtonStatus[0], newButtonStatus[1] };
+
+		// Tool selectors
+		if (this.gameObject.name == "LBall")
+		{
+			if (bSelectorActive[0])
+			{
+				if (newButtonStatus[0])
+				{
+					// check LBall inside a forcep's bbox
+					if (tool4Select.toolBbox.Contains(this.gameObject.transform.position))
+					{
+						// select the forceps, enable its haptics
+						toolHapticGO.SetActive(true);
+						// disable selector's haptics
+						seleHapticGO.SetActive(false);
+						bSelectorActive[0] = false;
+						tool4Select.bSelectorActive[0] = false;
+					}
+				}
+			}
+			else
+			{
+				// reset the selector position
+				this.gameObject.transform.position = initialPos;
+				return;
+			}
+		}
 
 		// Graspping: Forceps only, Button pressing check
 		if (this.gameObject.name == "Forceps")
 		{
+			if (bSelectorActive[0] == true)// forceps disabled
+			{
+				// reset the forceps
+				this.gameObject.transform.position = initialPos;
+				this.gameObject.transform.rotation = new Quaternion(initialRot.x, initialRot.y, initialRot.z, initialRot.w);
+				return;
+			}
+
 			//left button for grasping/releasing
 			if (oldButtonStatus[0] == false && newButtonStatus[0] == true) 
 			{
@@ -186,18 +302,22 @@ public class HapticSurgTools : MonoBehaviour
 			// Make sure haptics is ON if we're grabbing
 			if (grabbing && physicsToggleStyle != PhysicsToggleStyle.none)
 				hapticDevice.PhysicsManipulationEnabled = true;
-			//hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = true;
 			if (!grabbing && physicsToggleStyle == PhysicsToggleStyle.onGrab)
 				hapticDevice.PhysicsManipulationEnabled = false;
-			//hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = false;
 
-			/*
-			if (grabbing)
-				hapticDevice.GetComponent<HapticPlugin>().shapesEnabled = false;
-			else
-				hapticDevice.GetComponent<HapticPlugin>().shapesEnabled = true;
-				*/
-
+			// right button for tool dropping/holding
+			if (newButtonStatus[1] == true)
+			{
+				if (!bTouching && !bGrabbing && !bHolding)
+				{
+					// select the selector, enable its haptics
+					seleHapticGO.SetActive(true);
+					// disable forceps's haptics
+					toolHapticGO.SetActive(false);
+					bSelectorActive[0] = true;
+					seleSurgTool.bSelectorActive[0] = true;
+				}
+			}
 		}
 
 		// Touching: both forceps and scissors, no button, force feedback when touching an object

@@ -74,7 +74,7 @@ public class globalOperators : MonoBehaviour
         m_hapticSurgToolObjs = new GameObject[m_numSurgTools]; // {forceps, scissors}
         m_hapticSurgTools = new HapticSurgTools[m_numSurgTools];
         HapticPlugin[] hapticDevices = (HapticPlugin[])Object.FindObjectsOfType(typeof(HapticPlugin));
-        if (hapticDevices.Length <= 0 || (hapticDevices.Length != m_numSurgTools))
+        if (hapticDevices.Length <= 0 || (hapticDevices.Length < m_numSurgTools))
         {
             Debug.Log("globalOperators: No valid haptic devices found!");
             return;
