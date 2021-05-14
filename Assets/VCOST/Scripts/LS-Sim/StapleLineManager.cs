@@ -15,6 +15,7 @@ namespace PaintIn3D
         public List<Transform> testPaint;
         public float animatePaintInterval;
         public MeshCollider col;
+        public List<MeshFilter> stapleObjectAttachedMeshes;
         public LayerMask paintLayers; // For raycast physics collision
         public StapleLineLocator paintPointsLocator; // A plane that collide with the colon mesh to decide the position for painting staple line
         public List<Transform> paintPointsLocators; // A list of transform that are on the same plane, which decide the position for staple line
@@ -30,22 +31,45 @@ namespace PaintIn3D
         public Transform painterBrushControl; // Used to define the behavior of the staple line painter brush 
 
         public GameObject stapleLinePrefab; // GameObject to be used as staple line segment
+        public Vector3 stapleObjectUpDirection; // Which direction staple object's up (y) axis should face
         public Transform stapleLineParent;
         public Transform circleCenter;
         public Transform circleRadA;
         public Transform circleRadB;
 
+        public Transform twoRayStartStart;
+        public Transform twoRayStartEnd;
+        public Transform twoRayEndStart;
+        public Transform twoRayEndEnd;
 
+
+        public static Dictionary<MeshFilter, Mesh> updatingMeshDataForStapleObjects;
+        public static Dictionary<MeshFilter, List<Vector3>> updatingMeshDataVertices;
+        public static Dictionary<MeshFilter, List<int>> meshDataTriangles;
+
+        private void Start()
+        {
+            updatingMeshDataForStapleObjects = new Dictionary<MeshFilter, Mesh>();
+            stapleObjectAttachedMeshes.ForEach(mf => updatingMeshDataForStapleObjects.Add(mf, mf.sharedMesh));
+            updatingMeshDataVertices = new Dictionary<MeshFilter, List<Vector3>>();
+            stapleObjectAttachedMeshes.ForEach(mf => updatingMeshDataVertices.Add(mf, updatingMeshDataForStapleObjects[mf].vertices.ToList()));
+            meshDataTriangles = new Dictionary<MeshFilter, List<int>>();
+            stapleObjectAttachedMeshes.ForEach(mf => meshDataTriangles.Add(mf, updatingMeshDataForStapleObjects[mf].triangles.ToList()));
+        }
 
         private void Update()
         {
-            col.sharedMesh = col.GetComponent<MeshFilter>().sharedMesh;
+            //col.sharedMesh = col.GetComponent<MeshFilter>().sharedMesh;
+
+            stapleObjectAttachedMeshes.ForEach(mf => updatingMeshDataForStapleObjects[mf] = mf.sharedMesh);
+            stapleObjectAttachedMeshes.ForEach(mf => updatingMeshDataVertices[mf] = updatingMeshDataForStapleObjects[mf].vertices.ToList());
         }
 
         [ShowInInspector]
         public void TestPaint()
         {
-            PaintFromCircleRaycast(circleCenter.position, circleRadA.position - circleCenter.position, circleRadB.position - circleCenter.position, stapleLineParent);
+            PaintBetweenTwoVectorsRaycast(twoRayStartStart, twoRayStartEnd, twoRayEndStart, twoRayEndEnd, stapleLineParent);
+            //PaintFromCircleRaycast(circleCenter.position, circleRadA.position - circleCenter.position, circleRadB.position - circleCenter.position, stapleLineParent);
             //PaintAlongPlaneCollision(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle);
             //PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), staplePainter, Vector3.one * brushSize, Vector3.zero);
         }
@@ -61,6 +85,18 @@ namespace PaintIn3D
             //PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), eraser, Vector3.one * brushSize, Vector3.zero);
         }
 
+        public void PaintBetweenTwoVectorsRaycast(Transform vectorAstart, Transform vectorAend, Transform vectorBstart, Transform vectorBend, Transform stapleObjectParent)
+        {
+            int stapleCount = 0;
+
+            foreach (Ray r in GetRaysBetweenTwoVectors(vectorAstart.position, vectorAend.position, vectorBstart.position, vectorBend.position))
+            {
+                PaintStapleLineObjects(r, stapleLinePrefab, "Staple" + stapleCount.ToString(), stapleLineParent);
+
+                stapleCount++;
+            }
+        }
+
         /// <summary>
         /// Use a circle to collide with the mesh to paint, raycast from circle side to center, paint staple objects
         /// 
@@ -74,25 +110,25 @@ namespace PaintIn3D
         {
             int stapleCount = 0;
 
-            foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, circleVectorA, circleVectorB))
+            foreach (Ray r in GetInvertFanRaysBetweenTwoVectors(circleCenter, circleVectorA, circleVectorB))
             {
                 PaintStapleLineObjects(r, stapleLinePrefab, "Staple" + stapleCount.ToString(), stapleLineParent);
 
                 stapleCount++;
             }
-            foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, circleVectorB, -circleVectorA))
+            foreach (Ray r in GetInvertFanRaysBetweenTwoVectors(circleCenter, circleVectorB, -circleVectorA))
             {
                 PaintStapleLineObjects(r, stapleLinePrefab, "Staple" + stapleCount.ToString(), stapleLineParent);
 
                 stapleCount++;
             }
-            foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, -circleVectorA, -circleVectorB))
+            foreach (Ray r in GetInvertFanRaysBetweenTwoVectors(circleCenter, -circleVectorA, -circleVectorB))
             {
                 PaintStapleLineObjects(r, stapleLinePrefab, "Staple" + stapleCount.ToString(), stapleLineParent);
 
                 stapleCount++;
             }
-            foreach (Ray r in GetInvertRaysBetweenTwoVectors(circleCenter, -circleVectorB, circleVectorA))
+            foreach (Ray r in GetInvertFanRaysBetweenTwoVectors(circleCenter, -circleVectorB, circleVectorA))
             {
                 PaintStapleLineObjects(r, stapleLinePrefab, "Staple" + stapleCount.ToString(), stapleLineParent);
 
@@ -121,7 +157,7 @@ namespace PaintIn3D
                 Vector3 beginRay = plane.transform.TransformPoint(neighbors[0]) - origin;
                 Vector3 endRay = plane.transform.TransformPoint(neighbors[1]) - origin;
 
-                foreach (Ray r in GetRaysBetweenTwoVectors(origin, beginRay, endRay))
+                foreach (Ray r in GetFanRaysBetweenTwoVectors(origin, beginRay, endRay))
                 {
                     for (int c = 0; c < paintCount; c++)
                     {
@@ -154,7 +190,7 @@ namespace PaintIn3D
                 Vector3 beginRay = plane.transform.TransformPoint(neighbors[0]) - origin;
                 Vector3 endRay = plane.transform.TransformPoint(neighbors[1]) - origin;
 
-                foreach (Ray r in GetRaysBetweenTwoVectors(origin, beginRay, endRay))
+                foreach (Ray r in GetFanRaysBetweenTwoVectors(origin, beginRay, endRay))
                 {
                     for (int c = 0; c < paintCount; c++)
                     {
@@ -167,12 +203,35 @@ namespace PaintIn3D
         }
 
         /// <summary>
+        /// Get rays between two vectors
+        /// </summary>
+        /// <param name="beginRayBegin"></param> Beginning position of the beginning ray
+        /// <param name="beginRayEnd"></param> Ending position of the beginning ray
+        /// <param name="endRayBegin"></param>
+        /// <param name="endRayEnd"></param>
+        /// <returns></returns>
+        public List<Ray> GetRaysBetweenTwoVectors(Vector3 beginRayBegin, Vector3 beginRayEnd, Vector3 endRayBegin, Vector3 endRayEnd)
+        {
+            List<Ray> rays = new List<Ray>();
+
+            Vector3 beginVector = beginRayEnd - beginRayBegin;
+            Vector3 endVector = endRayEnd - endRayBegin;
+
+            for (float t = 0; t < 1; t += paintInterval)
+            {
+                rays.Add(new Ray(Vector3.Lerp(beginRayBegin, endRayBegin, t), Vector3.Lerp(beginVector, endVector, t).normalized));
+            }
+
+            return rays;
+        }
+
+        /// <summary>
         /// Get the rays in a fan shape between two vectors
         /// </summary>
         /// <param name="beginVector"></param>
         /// <param name="endVector"></param>
         /// <returns></returns>
-        public List<Ray> GetRaysBetweenTwoVectors(Vector3 rayBeginPosition, Vector3 beginVector, Vector3 endVector)
+        public List<Ray> GetFanRaysBetweenTwoVectors(Vector3 rayBeginPosition, Vector3 beginVector, Vector3 endVector)
         {
             List<Ray> rays = new List<Ray>();
 
@@ -190,7 +249,7 @@ namespace PaintIn3D
         /// <param name="beginVector"></param>
         /// <param name="endVector"></param>
         /// <returns></returns>
-        public List<Ray> GetInvertRaysBetweenTwoVectors(Vector3 rayBeginPosition, Vector3 beginVector, Vector3 endVector)
+        public List<Ray> GetInvertFanRaysBetweenTwoVectors(Vector3 rayBeginPosition, Vector3 beginVector, Vector3 endVector)
         {
             List<Ray> rays = new List<Ray>();
 
@@ -273,9 +332,10 @@ namespace PaintIn3D
                 stapleData.belongedObjet = hit3D.transform;
                 stapleData.belongedObjectMeshFilter = hit3D.transform.GetComponent<MeshFilter>();
                 stapleData.belongedTriangleIndex = hit3D.triangleIndex;
+                stapleData.upDirection = stapleObjectUpDirection;
 
                 staple.transform.position = hit3D.point;
-                staple.transform.LookAt(hit3D.point + hit3D.normal);
+                staple.transform.LookAt(hit3D.point + hit3D.normal, stapleObjectUpDirection);
                 staple.transform.parent = stapleParentTransform;
 
                 GetStapleLineObjectTriangularWeight(stapleData, stapleData.GetVertPosition(stapleData.belongedTriangleIndex * 3), stapleData.GetVertPosition(stapleData.belongedTriangleIndex * 3 + 1), stapleData.GetVertPosition(stapleData.belongedTriangleIndex * 3 + 2));

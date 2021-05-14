@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using PaintIn3D;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,17 +37,19 @@ public class StapleLineObject : MonoBehaviour
     /// </summary>
     public void UpdateRotation()
     {
-        Plane triangle = new Plane(vertA, vertB, vertC);
-        transform.LookAt(transform.position + triangle.normal, upDirection);
+        //Plane triangle = new Plane(vertA, vertB, vertC);
+        //transform.LookAt(transform.position + triangle.normal, upDirection);
+        transform.LookAt(transform.position + Vector3.Cross(vertB - vertA, vertC - vertA), upDirection);
     }
 
     public Vector3 GetVertPosition(int vertIndex)
     {
-        return belongedObjet.TransformPoint(belongedObjectMeshFilter.sharedMesh.vertices[belongedObjectMeshFilter.sharedMesh.triangles[vertIndex]]);
+        return belongedObjet.TransformPoint(StapleLineManager.updatingMeshDataVertices[belongedObjectMeshFilter][StapleLineManager.meshDataTriangles[belongedObjectMeshFilter][vertIndex]]);
+        //return belongedObjet.TransformPoint(belongedObjectMeshFilter.sharedMesh.vertices[belongedObjectMeshFilter.sharedMesh.triangles[vertIndex]]);
     }
 
     public Vector3 GetVertNormal(int vertIndex)
     {
-        return belongedObjet.TransformDirection(belongedObjectMeshFilter.sharedMesh.normals[belongedObjectMeshFilter.sharedMesh.triangles[vertIndex]]);
+        return belongedObjet.TransformDirection(StapleLineManager.updatingMeshDataForStapleObjects[belongedObjectMeshFilter].normals[belongedObjectMeshFilter.sharedMesh.triangles[vertIndex]]);
     }
 }
