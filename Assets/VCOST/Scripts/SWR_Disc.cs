@@ -11,7 +11,9 @@ public class SWR_Disc : MonoBehaviour
     Vector3[] originalVertices;
     Vector3[] verticesTempRot;
 
-    public bool drawinEditorMode = false;
+    public bool directionIsPositiveX = false;
+    public bool useMarkers = true;
+    public GameObject p_Marker;
 
     private Bone[] bones;
     private VertexBoneAttachment[] vertexBoneAttachments;
@@ -105,10 +107,22 @@ public class SWR_Disc : MonoBehaviour
 
     void TrimObjects()
     {
-        float minX = float.MaxValue;
-        foreach(GameObject g in objects)
+        float desiredX;
+        if (directionIsPositiveX)
         {
-            if (g.transform.position.x < minX) minX = g.transform.position.x;
+            desiredX = float.MinValue;
+            foreach (GameObject g in objects)
+            {
+                if (g.transform.position.x > desiredX) desiredX = g.transform.position.x;
+            }
+        }
+        else
+        {
+            desiredX = float.MaxValue;
+            foreach (GameObject g in objects)
+            {
+                if (g.transform.position.x < desiredX) desiredX = g.transform.position.x;
+            }
         }
 
         List<GameObject> newObjects = new List<GameObject>();
@@ -118,7 +132,7 @@ public class SWR_Disc : MonoBehaviour
         foreach(GameObject g in objects)
         {
             float xpos = g.transform.position.x;
-            if (Mathf.Abs(minX - xpos) > fuzzDistance) continue;
+            if (Mathf.Abs(desiredX - xpos) > fuzzDistance) continue;
             if (currentSkip != 0)
             {
                 if (currentSkip == skipAmount)
@@ -139,12 +153,21 @@ public class SWR_Disc : MonoBehaviour
         objects = newObjects;
     }
 
+    void PlaceMarkers()
+    {
+        foreach(GameObject g in objects)
+        {
+            GameObject marker = Instantiate(p_Marker, g.transform.position, Quaternion.identity, g.transform);
+        }
+    }
+
     // Use this for initialization
     public void Start()
     {
         objects = new List<GameObject>();
         GetChildrenRecursively(transform);
         TrimObjects();
+        if (useMarkers) PlaceMarkers();
         skinMesh = skinObject.GetComponent<MeshFilter>().mesh;
         skinMesh.MarkDynamic();
 
