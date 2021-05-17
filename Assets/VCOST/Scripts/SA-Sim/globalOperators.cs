@@ -25,6 +25,12 @@ public class globalOperators : MonoBehaviour
     public int[] m_layers2Split = { -1, -1 }; // same for both models
     public int[] m_sphereIdx2Split = { -1, -1 }; // the first splitting sphere index for each model
 
+    // haptics device inputs
+    private int m_numSurgTools = 2;
+    private string[] m_surgToolNames = { "Forceps", "Scissors" };
+    private GameObject[] m_hapticSurgToolObjs; // {forceps, scissors}
+    private HapticSurgTools[] m_hapticSurgTools;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -63,6 +69,24 @@ public class globalOperators : MonoBehaviour
         m_layers2Split[1] = 10;//14
         m_sphereIdx2Split[0] = 3;//4 //5
         m_sphereIdx2Split[1] = 14;//16 //14
+
+        /// initialize haptic device variables
+        m_hapticSurgToolObjs = new GameObject[m_numSurgTools]; // {forceps, scissors}
+        m_hapticSurgTools = new HapticSurgTools[m_numSurgTools];
+        HapticPlugin[] hapticDevices = (HapticPlugin[])Object.FindObjectsOfType(typeof(HapticPlugin));
+        if (hapticDevices.Length <= 0 || (hapticDevices.Length < m_numSurgTools))
+        {
+            Debug.Log("globalOperators: No valid haptic devices found!");
+            return;
+        }
+        for (int j = 0; j < m_numSurgTools; j++)
+        {
+            m_hapticSurgToolObjs[j] = GameObject.Find(m_surgToolNames[j]);
+            if (m_hapticSurgToolObjs[j])
+            {
+                m_hapticSurgTools[j] = m_hapticSurgToolObjs[j].GetComponent<HapticSurgTools>();
+            }
+        }
     }
 
     /// <summary>
@@ -327,6 +351,43 @@ public class globalOperators : MonoBehaviour
         return true;
     }
 
+    bool cornerCut(int objIdx)
+    {
+        if (m_numSphereModels <= 0)
+        {
+            Debug.Log("Error(cornerCut): no models to conduct corner-cut!");
+            return false;
+        }
+
+        if (m_bSplit || m_bJoin)
+        {
+            Debug.Log("Error(cornerCut): colons are already split or joined!");
+            return false;
+        }
+
+        // cut the specified model
+        int layerIdx = 0; // layer to cut-corner
+        int[] cutCornerSphereIndices;
+        if (objIdx == 0)
+        {
+            cutCornerSphereIndices = new int[] { 6, 7, 8 };
+            if (!m_sphereJointModels[objIdx].cornerCut(layerIdx, cutCornerSphereIndices))
+                return false;
+            m_bCornerCut[0] = true;
+            Debug.Log("cornerCut done for sphereJointModel" + objIdx.ToString());
+        }
+        else if (objIdx == 1)
+        {
+            cutCornerSphereIndices = new int[] { 13, 12, 11 };
+            if (!m_sphereJointModels[objIdx].cornerCut(layerIdx, cutCornerSphereIndices))
+                return false;
+            m_bCornerCut[1] = true;
+            Debug.Log("cornerCut done for sphereJointModel" + objIdx.ToString());
+        }
+
+        return true;
+    }
+
     bool finalClosure(int layerIdx)
     {
         if (m_numSphereModels <= 0)
@@ -363,6 +424,18 @@ public class globalOperators : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C))
             {
                 cornerCut();
+            }
+            // [Haptics version]
+            if (m_hapticSurgTools[1]) //scissors
+            {
+                if (m_hapticSurgTools[1].curAction == HapticSurgTools.toolAction.cutting)
+                {
+                    int objIdx = m_hapticSurgTools[1].cutSphereJointObjIdx;
+                    if (objIdx >= 0 && objIdx < m_numSphereModels)
+                    {
+                        cornerCut(objIdx);
+                    }
+                }
             }
 
             // 'S': split all the colons in the scene
