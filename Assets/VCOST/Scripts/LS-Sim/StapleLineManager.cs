@@ -42,6 +42,9 @@ namespace PaintIn3D
         public Transform twoRayEndStart;
         public Transform twoRayEndEnd;
 
+        public GameObject meshToAssignToStapleObjects;
+        public Transform stapleObjectsParentToAssignMesh;
+
 
         public static Dictionary<MeshFilter, Mesh> updatingMeshDataForStapleObjects;
         public static Dictionary<MeshFilter, List<Vector3>> updatingMeshDataVertices;
@@ -83,6 +86,19 @@ namespace PaintIn3D
         public void ResetPaint()
         {
             //PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), eraser, Vector3.one * brushSize, Vector3.zero);
+        }
+
+        [ShowInInspector]
+        public void AssignMeshToStapleObjects()
+        {
+            Transform meshTrans = meshToAssignToStapleObjects.transform;
+            MeshFilter mesh = meshToAssignToStapleObjects.GetComponent<MeshFilter>();
+
+            foreach (StapleLineObject s in stapleObjectsParentToAssignMesh.GetComponentsInChildren<StapleLineObject>(true))
+            {
+                s.belongedObjet = meshTrans;
+                s.belongedObjectMeshFilter = mesh;
+            }
         }
 
         public void PaintBetweenTwoVectorsRaycast(Transform vectorAstart, Transform vectorAend, Transform vectorBstart, Transform vectorBend, Transform stapleObjectParent)
