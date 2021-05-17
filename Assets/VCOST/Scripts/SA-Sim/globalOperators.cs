@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using PaintIn3D;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -424,6 +425,9 @@ public class globalOperators : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C))
             {
                 cornerCut();
+
+                // Hide corner cut staples
+                StapleLineManager.instance.LSSimStepTwo();
             }
             // [Haptics version]
             if (m_hapticSurgTools[1]) //scissors

@@ -12,6 +12,8 @@ namespace PaintIn3D
     /// </summary>
     public class StapleLineManager : P3dHitScreenBase
     {
+        public List<GameObject> lsSimStepTwoHideStaples;
+
         public List<Transform> testPaint;
         public float animatePaintInterval;
         public MeshCollider col;
@@ -45,13 +47,15 @@ namespace PaintIn3D
         public GameObject meshToAssignToStapleObjects;
         public Transform stapleObjectsParentToAssignMesh;
 
-
+        public static StapleLineManager instance;
         public static Dictionary<MeshFilter, Mesh> updatingMeshDataForStapleObjects;
         public static Dictionary<MeshFilter, List<Vector3>> updatingMeshDataVertices;
         public static Dictionary<MeshFilter, List<int>> meshDataTriangles;
 
         private void Start()
         {
+            instance = this;
+
             updatingMeshDataForStapleObjects = new Dictionary<MeshFilter, Mesh>();
             stapleObjectAttachedMeshes.ForEach(mf => updatingMeshDataForStapleObjects.Add(mf, mf.sharedMesh));
             updatingMeshDataVertices = new Dictionary<MeshFilter, List<Vector3>>();
@@ -99,6 +103,14 @@ namespace PaintIn3D
                 s.belongedObjet = meshTrans;
                 s.belongedObjectMeshFilter = mesh;
             }
+        }
+
+        /// <summary>
+        /// Hide cut corner staple objects for step 2 of the LS Sim
+        /// </summary>
+        public void LSSimStepTwo()
+        {
+            lsSimStepTwoHideStaples.ForEach(g => g.SetActive(false));
         }
 
         public void PaintBetweenTwoVectorsRaycast(Transform vectorAstart, Transform vectorAend, Transform vectorBstart, Transform vectorBend, Transform stapleObjectParent)
