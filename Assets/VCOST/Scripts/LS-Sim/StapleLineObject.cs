@@ -24,6 +24,15 @@ public class StapleLineObject : MonoBehaviour
         UpdateRotation();
     }
 
+    public void ManualUpdate()
+    {
+        vertA = GetVertPosition(belongedTriangleIndex * 3);
+        vertB = GetVertPosition(belongedTriangleIndex * 3 + 1);
+        vertC = GetVertPosition(belongedTriangleIndex * 3 + 2);
+        UpdatePosition();
+        UpdateRotation();
+    }
+
     /// <summary>
     /// Update its position based on its belonged triangle
     /// </summary>
