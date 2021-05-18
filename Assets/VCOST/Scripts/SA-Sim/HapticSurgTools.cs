@@ -90,7 +90,7 @@ public class HapticSurgTools : MonoBehaviour
 										this.gameObject.transform.rotation.y,
 										this.gameObject.transform.rotation.z,
 										this.gameObject.transform.rotation.w);
-			
+
 			if (this.gameObject.name == "Forceps")
 			{
 				GameObject forcepswithhaptic = GameObject.Find("ForcepsWithHaptic");
