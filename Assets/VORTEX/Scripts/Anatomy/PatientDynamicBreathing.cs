@@ -17,7 +17,7 @@ public class PatientDynamicBreathing : MonoBehaviour
 
     public float currentLerpTime;
 
-    private int mod = 1;
+    private int mod = 1;        //used to delimit whether lungs should be inflating or deflating
 
     public float totalTime = 0;
     public float numberOfBreathesIn = 0;
@@ -30,12 +30,18 @@ public class PatientDynamicBreathing : MonoBehaviour
 
     private float lastInflation = 0;
     public float inflationDifference = 0;
+    private float breathingRate;
+    public bool dynamicBreathing = false;
+    private bool lungsReset = false;
     //public bool middleTiggered = false;
 
     // Start is called before the first frame update
     void Start()
     {
         meshRenderer = GetComponent<SkinnedMeshRenderer>();
+
+        if(!dynamicBreathing)
+            breathingRate = 60/16;
     }
 
     // Update is called once per frame
@@ -48,17 +54,38 @@ public class PatientDynamicBreathing : MonoBehaviour
             holdBreatheTime = 1.6f - currentValue/16;
         }
 
-        Breathe(60 / currentValue);
+        if(dynamicBreathing)
+            breathingRate = 60/currentValue;
+
+        Breathe(breathingRate, 100, 2);
+
+        //TODO (MH 5/21/2021): implement dynamic, asynchronous collapsed lung behaviors
+        // if(ScenarioManager.Instance.pneumothoraxSeverity <= .1f)
+        // {
+        //     Breathe(breathingRate, 100, 2);    
+        // }
+        // else
+        // {
+        //     if(!lungsReset)
+        //     {
+        //         meshRenderer.SetBlendShapeWeight(2, 0);
+        //         lungsReset = true;
+        //     }
+        //     Breathe(breathingRate, 100, 3);
+        //     Breathe(breathingRate, 100, 4);
+        //     // Breathe(breathingRate, 100 * (1.2f - ScenarioManager.Instance.pneumothoraxSeverity), 4);
+        // }
+        
 
     }
 
-    public void Breathe(float breathDuration)
+    public void Breathe(float breathDuration, float breatheMagnitude, int shapeKeyIndex)
     {
         if(breath > 1 && mod == 1)
         {
             holdBreathe = true;
             numberOfBreathesIn++;
-            mod= -1;
+            mod = -1;
         }
         else if(breath < 0 && mod == -1)
         {
@@ -85,9 +112,9 @@ public class PatientDynamicBreathing : MonoBehaviour
 
             breath = currentLerpTime / (breathDuration * 0.5f - holdBreatheTime);
             breath = breath * breath * breath * (breath * (6f * breath - 15f) + 10f);   //smootherstep lerp
-            inflation = Mathf.Lerp(0, 100, breath);
+            inflation = Mathf.Lerp(0, (int)breatheMagnitude, breath);
 
-            meshRenderer.SetBlendShapeWeight(0, inflation);
+            meshRenderer.SetBlendShapeWeight(shapeKeyIndex, inflation);
         }
         
         breathIn = lastInflation - inflation < -.0001f ? true : false;

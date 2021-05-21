@@ -37,7 +37,8 @@ public class PulseEventManager : MonoBehaviour
     public void TriggerPulseAction(Pulse.CDM.PulseAction action, float severity)
     {
         actionManager.action = action;
-        actionManager.tp_severity = severity;
+        actionManager.pneumothoraxSeverity = severity;
+        ScenarioManager.Instance.pneumothoraxSeverity = severity;
 
         triggerAction?.Invoke();
     }

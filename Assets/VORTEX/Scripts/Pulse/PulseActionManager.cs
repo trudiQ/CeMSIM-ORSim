@@ -112,7 +112,7 @@ namespace Pulse.CDM
         [UnityEngine.HideInInspector]
         public PulseAction action;
         //[UnityEngine.HideInInspector]
-        public float tp_severity;
+        public float pneumothoraxSeverity;
         [UnityEngine.HideInInspector]
         public Drug drug;
         #endregion
@@ -220,7 +220,7 @@ namespace Pulse.CDM
                         SETensionPneumothorax tp = new SETensionPneumothorax();
                         tp.SetSide(eSide.Left);
                         tp.SetType(eGate.Open);
-                        tp.GetSeverity().SetValue(tp_severity);
+                        tp.GetSeverity().SetValue(pneumothoraxSeverity);
                         driver.engine.ProcessAction(tp);
                         break;
                     }
