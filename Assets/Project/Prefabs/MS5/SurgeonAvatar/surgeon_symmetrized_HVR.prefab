@@ -291,6 +291,8 @@ GameObject:
   - component: {fileID: 1761845178385659584}
   - component: {fileID: 5662001159730408634}
   - component: {fileID: 370489890428898439}
+  - component: {fileID: 618636056259242599}
+  - component: {fileID: 6815528967545066227}
   m_Layer: 0
   m_Name: surgeon_symmetrized_HVR
   m_TagString: Untagged
@@ -566,6 +568,35 @@ MonoBehaviour:
       onRightFootstep:
         m_PersistentCalls:
           m_Calls: []
+--- !u!114 &618636056259242599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385002529843653754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189aa54d519ab6743b46a824398994d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ik: {fileID: 370489890428898439}
+  rotationLimits:
+  - {fileID: 115603520219130792}
+  - {fileID: 402754229915355644}
+--- !u!114 &6815528967545066227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385002529843653754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 846e931ca7075954fb4fc58005db1ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ik: {fileID: 370489890428898439}
 --- !u!1 &1893429410126608651
 GameObject:
   m_ObjectHideFlags: 0
@@ -703,6 +734,7 @@ GameObject:
   - component: {fileID: 3104898892352464774}
   - component: {fileID: 4934122986748222741}
   - component: {fileID: 4770562758747061850}
+  - component: {fileID: 115603520219130792}
   m_Layer: 0
   m_Name: mixamorig:LeftHand
   m_TagString: Untagged
@@ -896,6 +928,22 @@ MonoBehaviour:
   Hand: {fileID: 3104898892352464774}
   DefaultPoser: {fileID: 4934122986748222741}
   CurrentPoser: {fileID: 0}
+--- !u!114 &115603520219130792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2420874543887194343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45281828b4c9247558c7c695124d6877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axis: {x: 0, y: 1, z: 0}
+  defaultLocalRotation: {x: -0.006675399, y: -0.016494287, z: 0.032589376, w: 0.99931043}
+  limit: 45
+  twistLimit: 90
 --- !u!1 &2476258685295502214
 GameObject:
   m_ObjectHideFlags: 0
@@ -1494,6 +1542,7 @@ GameObject:
   - component: {fileID: 4607839529770798505}
   - component: {fileID: 1512164818854473846}
   - component: {fileID: 4097114771096400410}
+  - component: {fileID: 402754229915355644}
   m_Layer: 0
   m_Name: mixamorig:RightHand
   m_TagString: Untagged
@@ -1687,6 +1736,22 @@ MonoBehaviour:
   Hand: {fileID: 4607839529770798505}
   DefaultPoser: {fileID: 1512164818854473846}
   CurrentPoser: {fileID: 0}
+--- !u!114 &402754229915355644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4203631854334655530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45281828b4c9247558c7c695124d6877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axis: {x: 0, y: 1, z: 0}
+  defaultLocalRotation: {x: -0.0123624345, y: 0.03444419, z: -0.040195875, w: 0.99852145}
+  limit: 45
+  twistLimit: 90
 --- !u!1 &4315559817893824498
 GameObject:
   m_ObjectHideFlags: 0
