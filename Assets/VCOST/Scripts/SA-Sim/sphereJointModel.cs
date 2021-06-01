@@ -34,6 +34,8 @@ public class sphereJointModel : MonoBehaviour
     public GameObject[,] m_sphereGameObjects;
 
     public GameObject m_sphereJointModel;
+    [HideInInspector]
+    public Bounds[] m_layerBoundingBox; //[m_numLayers], Bounds: Vector3 min,max
 
     public Vector3 getOriginalSpherePos(int i, int j)
     {
@@ -232,6 +234,74 @@ public class sphereJointModel : MonoBehaviour
                 }
             }
         }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Add fixed joints to connect one specific pair of spheres of the given layer 
+    /// Input:
+    ///     layerIdx: index of the layer to close up (defalt: first layer)
+    ///     topSphereIdx/botSphereIdx: indices of the top and bottom spheres to be connected
+    /// 
+    public bool closeupSpherePair(int layerIdx, int topSphereIdx, int botSphereIdx)
+    {
+        // parameters checking
+        if (layerIdx < 0 || layerIdx >= m_numLayers)
+        {
+            Debug.Log("Error(closeupSpherePair): invalid layerIdx");
+            return false;
+        }
+        if (topSphereIdx < 0 || topSphereIdx >= m_numSpheres)
+        {
+            Debug.Log("Error(closeupSpherePair): invalid topSphereIdx");
+            return false;
+        }
+        if (botSphereIdx < 0 || botSphereIdx >= m_numSpheres)
+        {
+            Debug.Log("Error(closeupSpherePair): invalid botSphereIdx");
+            return false;
+        }
+
+        float distBottom2Top = 0.0f;
+        Vector3 vecBottom2Top;
+        sphereJointsInfo objJointsInfo;
+        GameObject topObj = m_sphereGameObjects[layerIdx, topSphereIdx];
+        GameObject botObj = m_sphereGameObjects[layerIdx, botSphereIdx];
+        if (topObj && botObj)
+        {
+            // move both spheres to the mid point
+            vecBottom2Top = topObj.transform.position - botObj.transform.position; // bottom -> top
+            vecBottom2Top.Normalize();
+            distBottom2Top = Vector3.Distance(topObj.transform.position, botObj.transform.position);
+            topObj.transform.position = topObj.transform.position - 0.3f * distBottom2Top * vecBottom2Top;
+            botObj.transform.position = botObj.transform.position + 0.3f * distBottom2Top * vecBottom2Top;
+            // add fixed joint
+            FixedJoint joint = topObj.AddComponent<FixedJoint>();
+            joint.connectedBody = botObj.GetComponent<Rigidbody>();
+            // fill out joint info.
+            objJointsInfo = topObj.GetComponent<sphereJointsInfo>();
+            if (objJointsInfo)
+            {
+                objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 0] = objJointsInfo.m_inLayerJointNum;
+                objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 1] = m_objIndex;
+                objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 2] = layerIdx;
+                objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 3] = botSphereIdx;
+                objJointsInfo.m_inLayerJointNum += 1;
+            }
+            else
+            {
+                Debug.Log("Error(closeupSpherePair): invalid objJointInfo for sphereIdx " + topSphereIdx.ToString() + "and " + botSphereIdx.ToString());
+                return false;
+            }
+        }
+        else
+        {
+            Debug.Log("Error(closeupSpherePair): invalid GameObjects for sphereIdx " + topSphereIdx.ToString() + "and " + botSphereIdx.ToString());
+            return false;
+        }
+
+        //Debug.Log("CloseupSpherePair done for sphereIdx " + topSphereIdx.ToString() + "and " + botSphereIdx.ToString());
 
         return true;
     }
@@ -564,23 +634,38 @@ public class sphereJointModel : MonoBehaviour
         if (m_spherePos.Length <= 1)
             m_spherePos = new Vector3[m_numLayers * m_numSpheres];
 
-        // Druing playmode, hide the rendering of all spheres
+        // Update data druing playmode
         if (Application.isPlaying)
         {
+            Vector3 layerBboxMin, layerBboxMax;
             for (int l = 0; l < m_numLayers; l++)
             {
+                layerBboxMin = Vector3.positiveInfinity;
+                layerBboxMax = Vector3.negativeInfinity;
                 for (int s = 0; s < m_numSpheres; s++)
                 {
                     GameObject sphere = m_sphereGameObjects[l, s];
                     if (sphere)
                     {
+                        //hide/unhide the rendering of all spheres
                         if (m_bShow)
                             sphere.GetComponent<Renderer>().enabled = true;
                         else
                             sphere.GetComponent<Renderer>().enabled = false;
                         // fill in m_spherePos
                         m_spherePos[l * m_numSpheres + s] = sphere.transform.position;
+                        // update min/max layerBbox
+                        layerBboxMin = Vector3.Min(layerBboxMin, sphere.transform.position);
+                        layerBboxMax = Vector3.Max(layerBboxMax, sphere.transform.position);
                     }
+                }
+                // update layer bounding box
+                if (m_layerBoundingBox.Length > 0)
+                {
+                    // enlarge the bbox by half
+                    Vector3 min2Max = layerBboxMax - layerBboxMin;
+                    m_layerBoundingBox[l].min = layerBboxMin - 0.5f * min2Max;
+                    m_layerBoundingBox[l].max = layerBboxMax + 0.5f * min2Max;
                 }
             }
         }
@@ -616,5 +701,8 @@ public class sphereJointModel : MonoBehaviour
                 }
             }
         }
+
+        // Initialize layer bounding box
+        m_layerBoundingBox = new Bounds[m_numLayers];
     }
 }

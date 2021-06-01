@@ -7,25 +7,34 @@ using UnityEngine;
 /// </summary>
 public class globalOperators : MonoBehaviour
 {
-    // sphereJoint models
+    /// sphereJoint models
     public int m_numSphereModels = 0; // specified when creating sphereJointModels
     public GameObject[] m_sphereJointObjs; 
     public sphereJointModel[] m_sphereJointModels;
 
-    // meshes
+    /// meshes
     public int m_numBindColonMeshes = 0; // #colon meshs bound to sphereJointModels
     public GameObject[] m_colonMeshObjs;
     public colonMesh[] m_colonMeshes;
 
-    // opeartors related variables
+    /// opeartors related variables
+    // Corner-cut (Enterotomy)
     public bool[] m_bCornerCut = { false, false };
+    // Split & Join (Staple-Anastomosis)
     public bool m_bSplit = false;
     public bool m_bJoin = false;
-    public bool m_bFinalClosure = false;
     public int[] m_layers2Split = { -1, -1 }; // same for both models
     public int[] m_sphereIdx2Split = { -1, -1 }; // the first splitting sphere index for each model
+    // Holding (Opening scure)
+    public bool m_bOpeningSecure = false;
+    private int m_numSpherePairsProcesed = 0; // for opening secure
+    private int m_numSecureOpenings;
+    private int[] m_sphereIdx4EachOpening;// sphere currently being held for each opening
+    private List<List<int>> m_sphIndices4Secure = new List<List<int>>(); //[[opening0], [opening1], [opening2]]
+    // Final closure
+    public bool m_bFinalClosure = false;
 
-    // haptics device inputs
+    /// haptics device inputs
     private int m_numSurgTools = 2;
     private string[] m_surgToolNames = { "Forceps", "Scissors" };
     private GameObject[] m_hapticSurgToolObjs; // {forceps, scissors}
@@ -69,6 +78,13 @@ public class globalOperators : MonoBehaviour
         m_layers2Split[1] = 10;//14
         m_sphereIdx2Split[0] = 3;//4 //5
         m_sphereIdx2Split[1] = 14;//16 //14
+
+        // holding (opening secure)
+        m_sphereIdx4EachOpening = new int[] { -1, -1, -1 };
+        m_sphIndices4Secure.Add(new List<int> { 3, 4, 6, 13, 14, 15, 16 });
+        m_sphIndices4Secure.Add(new List<int> { 1, 2, 7, 8 });
+        m_sphIndices4Secure.Add(new List<int> { 11, 12, 17, 18 });
+        m_numSecureOpenings = m_sphereIdx4EachOpening.Length;
 
         /// initialize haptic device variables
         m_hapticSurgToolObjs = new GameObject[m_numSurgTools]; // {forceps, scissors}
@@ -388,6 +404,82 @@ public class globalOperators : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Steps:
+    ///     1.Close opening
+    ///     2.Lift up first few layers
+    ///     3. Attach forceps accordingly
+    /// 
+    bool openingSecure(bool bSecureOpeningsAtOnce)
+    {
+        if (m_numSphereModels < 2)
+        {
+            Debug.Log("Error(openingSecure): no models to hold!");
+            return false;
+        }
+        for (int objIdx = 0; objIdx < m_numSphereModels; objIdx++)
+        {
+            if (!m_sphereJointModels[objIdx])
+            {
+                Debug.Log("Error(openingSecure): invalid sphereJointModels!");
+                return false;
+            }
+        }
+
+        /// Close opening: close all openings at once
+        int layerIdx = 0;
+        if (bSecureOpeningsAtOnce) 
+        {
+            var closingPairs_obj0 = new (int top, int bottom)[] { (8, 1), (7, 2), (6, 3), (4, 3) };
+            var closingPairs_obj1 = new (int top, int bottom)[] { (11, 18), (12, 17), (13, 16), (14, 15) };
+            int maxSpherePairsToClose = closingPairs_obj0.Length + closingPairs_obj1.Length;
+            while (m_numSpherePairsProcesed < maxSpherePairsToClose)
+            {
+                // close up three pairs of spheres at once               
+                for (int i = 0; i < closingPairs_obj0.Length; i++)
+                {
+                    m_sphereJointModels[0].closeupSpherePair(layerIdx, closingPairs_obj0[i].top, closingPairs_obj0[i].bottom);
+                    m_numSpherePairsProcesed++;
+                }
+                for (int i = 0; i < closingPairs_obj1.Length; i++)
+                {
+                    m_sphereJointModels[1].closeupSpherePair(layerIdx, closingPairs_obj1[i].top, closingPairs_obj1[i].bottom);
+                    m_numSpherePairsProcesed++;
+                }
+
+                if (m_numSpherePairsProcesed == maxSpherePairsToClose)
+                    Debug.Log("openSecure: close up all " + m_numSpherePairsProcesed.ToString() + " sphere pairs");
+            }
+        }
+
+        /// lift up the first few layers of spheres
+        int numLayersLifted = 3;// 0,1,2
+        int numSpheresPerLayer;
+        Vector3[] liftVecs = new[] {new Vector3(0.0f, 0.2f, 0.0f),   // layer==0
+                                    new Vector3(0.0f, 0.15f, 0.0f),   // layer==1
+                                    new Vector3(0.0f, 0.1f, 0.0f)};  // layer==2
+        if (liftVecs.Length != numLayersLifted)
+        {
+            Debug.Log("Error(openingSecure): invalid liftVecs");
+            return false;
+        }
+        GameObject sphere = null;
+        for (int objIdx = 0; objIdx < m_numSphereModels; objIdx++)
+        {
+            numSpheresPerLayer = m_sphereJointModels[objIdx].m_numSpheres;
+            for (int l = 0; l < numLayersLifted; l++)
+            {
+                for (int s = 0; s < numSpheresPerLayer; s++)
+                {
+                    sphere = m_sphereJointModels[objIdx].m_sphereGameObjects[l, s];
+                    sphere.GetComponent<Rigidbody>().AddForce(liftVecs[l]);
+                }
+            }
+        }
+
+        return true;
+    }
+
     bool finalClosure(int layerIdx)
     {
         if (m_numSphereModels <= 0)
@@ -466,6 +558,53 @@ public class globalOperators : MonoBehaviour
                     m_colonMeshes[0].endSplitVers2Join.Add("end_inner", m_colonMeshes[1].vertices[m_colonMeshes[1].startEndSplitVers["end_inner"]]);
                     m_colonMeshes[1].endSplitVers2Join.Add("end_outer", m_colonMeshes[0].vertices[m_colonMeshes[0].startEndSplitVers["end_outer"]]);
                     m_colonMeshes[1].endSplitVers2Join.Add("end_inner", m_colonMeshes[0].vertices[m_colonMeshes[0].startEndSplitVers["end_inner"]]);
+                }
+            }
+
+            // 'H': opening-secure using forceps' holding action
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                if (m_bJoin)
+                {
+                    m_bOpeningSecure = !m_bOpeningSecure;
+                }
+                else
+                {
+                    Debug.Log("Cannot conduct opening-secure: Do split&join first!");
+                }
+            }
+            if (m_bOpeningSecure)
+                openingSecure(true);
+            
+            //  [haptic version]
+            if (m_hapticSurgTools[0]) //forceps
+            {
+                if (m_hapticSurgTools[0].curAction == HapticSurgTools.toolAction.holding)
+                {
+                    if (m_bJoin)
+                    {
+                        // check which obj being holding, only if 1st layer held, valid objIdx
+                        if ((m_hapticSurgTools[0].holdSphereIDs[0] == 0 || m_hapticSurgTools[0].holdSphereIDs[0] == 1) &&
+                                m_hapticSurgTools[0].holdSphereIDs[1] < 2) // holdSphereIDs: [objIdx, layerIdx, sphereIdx]
+                        {
+                            // check the sphere being held belongs to one of the predefined openings
+                            bool bSecureNewOpening = false;
+                            for (int whichOpening = 0; whichOpening < m_numSecureOpenings; whichOpening++)
+                            {
+                                if (m_sphIndices4Secure[whichOpening].Contains(m_hapticSurgTools[0].holdSphereIDs[2]))
+                                {
+                                    if (m_sphereIdx4EachOpening[whichOpening] == -1) // new opening secure
+                                    {
+                                        bSecureNewOpening = true;
+                                        m_sphereIdx4EachOpening[whichOpening] = m_hapticSurgTools[0].holdSphereIDs[2];
+                                        Debug.Log("Hold opening " + whichOpening.ToString());
+                                    }
+                                    break;
+                                }
+                            }
+                            openingSecure(bSecureNewOpening);
+                        }
+                    }
                 }
             }
 
