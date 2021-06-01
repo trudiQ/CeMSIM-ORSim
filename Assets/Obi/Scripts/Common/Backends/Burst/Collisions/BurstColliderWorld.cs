@@ -1,4 +1,6 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
@@ -142,12 +144,9 @@ namespace Obi
             {
                 BurstAabb velocityBounds = bounds[i];
 
-                int rb = shapes[i].rigidbodyIndex;
-
-                // Expand bounds by rigidbody's linear velocity
-                // (check against out of bounds rigidbody access, can happen when a destroyed collider references a rigidbody that has just been destroyed too)
-                if (rb >= 0 && rb < rigidbodies.Length)
-                    velocityBounds.Sweep(rigidbodies[rb].velocity * dt);
+                // Expand bounds by rigidbody's linear velocity:
+                if (shapes[i].rigidbodyIndex >= 0)
+                    velocityBounds.Sweep(rigidbodies[shapes[i].rigidbodyIndex].velocity * dt);
 
                 // Expand bounds by collision material's stick distance:
                 if (shapes[i].materialIndex >= 0) 
@@ -333,31 +332,27 @@ namespace Obi
                     for (int k = 0; k < uniqueCount; ++k)
                     {
                         int c = uniqueCandidates[k];
-                        if (c < shapes.Length)
+                        BurstColliderShape shape = shapes[c];
+                        BurstAabb colliderBoundsWS = bounds[c];
+
+                        // Expand bounds by rigidbody's linear velocity:
+                        if (shape.rigidbodyIndex >= 0)
+                            colliderBoundsWS.Sweep(rigidbodies[shape.rigidbodyIndex].velocity * deltaTime);
+
+                        // Expand bounds by collision material's stick distance:
+                        if (shape.materialIndex >= 0)
+                            colliderBoundsWS.Expand(collisionMaterials[shape.materialIndex].stickDistance);
+
+                        // check if any simplex particle and the collider have the same phase:
+                        bool samePhase = false;
+                        for (int j = 0; j < simplexSize; ++j)
+                            samePhase |= shape.phase == (phases[simplices[simplexStart + j]] & (int)Oni.ParticleFlags.GroupMask);
+
+                        if (!samePhase && simplexBoundsWS.IntersectsAabb(in colliderBoundsWS, is2D))
                         {
-                            BurstColliderShape shape = shapes[c];
-                            BurstAabb colliderBoundsWS = bounds[c];
-                            int rb = shape.rigidbodyIndex;
-
-                            // Expand bounds by rigidbody's linear velocity:
-                            if (rb >= 0)
-                                colliderBoundsWS.Sweep(rigidbodies[rb].velocity * deltaTime);
-
-                            // Expand bounds by collision material's stick distance:
-                            if (shape.materialIndex >= 0)
-                                colliderBoundsWS.Expand(collisionMaterials[shape.materialIndex].stickDistance);
-
-                            // check if any simplex particle and the collider have the same phase:
-                            bool samePhase = false;
-                            for (int j = 0; j < simplexSize; ++j)
-                                samePhase |= shape.phase == (phases[simplices[simplexStart + j]] & (int)Oni.ParticleFlags.GroupMask);
-
-                            if (!samePhase && simplexBoundsWS.IntersectsAabb(in colliderBoundsWS, is2D))
-                            {
-                                // generate contacts for the collider:
-                                BurstAffineTransform colliderToSolver = worldToSolver * transforms[c];
-                                GenerateContacts(in shape, in colliderToSolver, c, rb, i, simplexStart, simplexSize, simplexBoundsSS);
-                            }
+                            // generate contacts for the collider:
+                            BurstAffineTransform colliderToSolver = worldToSolver * transforms[c];
+                            GenerateContacts(in shape, in colliderToSolver, c, i, simplexStart, simplexSize, simplexBoundsSS);
                         }
                     }
                 }
@@ -366,7 +361,6 @@ namespace Obi
             private void GenerateContacts(in BurstColliderShape shape,
                                           in BurstAffineTransform colliderToSolver,
                                           int colliderIndex,
-                                          int rigidbodyIndex,
                                           int simplexIndex,
                                           int simplexStart,
                                           int simplexSize,
@@ -378,18 +372,18 @@ namespace Obi
                 switch (shape.type)
                 {
                     case ColliderShape.ShapeType.Sphere:
-                        BurstSphere sphereShape = new BurstSphere() { colliderToSolver = colliderToSolver, shape = shape, dt = deltaTime };
-                        sphereShape.Contacts(colliderIndex, rigidbodyIndex, rigidbodies, positions, velocities, radii, simplices, in simplexBoundsSS,
+                        BurstSphere sphereShape = new BurstSphere() { transform = colliderToSolver, shape = shape, dt = deltaTime };
+                        sphereShape.Contacts(colliderIndex, positions, velocities, radii, simplices, in simplexBoundsSS,
                                              simplexIndex, simplexStart, simplexSize, contactsQueue, parameters.surfaceCollisionIterations, parameters.surfaceCollisionTolerance);
                         break;
                     case ColliderShape.ShapeType.Box:
-                        BurstBox boxShape = new BurstBox() { colliderToSolver = colliderToSolver, shape = shape, dt = deltaTime };
-                        boxShape.Contacts(colliderIndex, rigidbodyIndex, rigidbodies, positions, velocities, radii, simplices, in simplexBoundsSS,
+                        BurstBox boxShape = new BurstBox() { transform = colliderToSolver, shape = shape, dt = deltaTime };
+                        boxShape.Contacts(colliderIndex, positions, velocities, radii, simplices, in simplexBoundsSS,
                                           simplexIndex, simplexStart, simplexSize, contactsQueue, parameters.surfaceCollisionIterations, parameters.surfaceCollisionTolerance);
                         break;
                     case ColliderShape.ShapeType.Capsule:
-                        BurstCapsule capsuleShape = new BurstCapsule(){colliderToSolver = colliderToSolver,shape = shape, dt = deltaTime };
-                        capsuleShape.Contacts(colliderIndex, rigidbodyIndex, rigidbodies, positions, velocities, radii, simplices, in simplexBoundsSS,
+                        BurstCapsule capsuleShape = new BurstCapsule(){transform = colliderToSolver,shape = shape, dt = deltaTime };
+                        capsuleShape.Contacts(colliderIndex, positions, velocities, radii, simplices, in simplexBoundsSS,
                                               simplexIndex, simplexStart, simplexSize, contactsQueue, parameters.surfaceCollisionIterations, parameters.surfaceCollisionTolerance);
                         break;
                     case ColliderShape.ShapeType.SignedDistanceField:
@@ -398,8 +392,7 @@ namespace Obi
 
                         BurstDistanceField distanceFieldShape = new BurstDistanceField()
                         {
-                            colliderToSolver = colliderToSolver,
-                            solverToWorld = solverToWorld,
+                            transform = colliderToSolver,
                             shape = shape,
                             distanceFieldHeaders = distanceFieldHeaders,
                             dfNodes = distanceFieldNodes,
@@ -407,7 +400,7 @@ namespace Obi
                             collisionMargin = parameters.collisionMargin
                         };
 
-                        distanceFieldShape.Contacts(colliderIndex, rigidbodyIndex, rigidbodies, positions, velocities, radii, simplices, in simplexBoundsSS,
+                        distanceFieldShape.Contacts(colliderIndex, positions, velocities, radii, simplices, in simplexBoundsSS,
                                                     simplexIndex, simplexStart, simplexSize, contactsQueue, parameters.surfaceCollisionIterations, parameters.surfaceCollisionTolerance);
 
                         break;
@@ -421,16 +414,14 @@ namespace Obi
 
                         BurstHeightField heightmapShape = new BurstHeightField()
                         {
-                            colliderToSolver = colliderToSolver,
-                            solverToWorld = solverToWorld,
+                            transform = colliderToSolver,
                             shape = shape,
                             header = heightFieldHeaders[shape.dataIndex],
                             heightFieldSamples = heightFieldSamples,
-                            collisionMargin = parameters.collisionMargin,
                             dt = deltaTime
                         };
 
-                        heightmapShape.Contacts(colliderIndex, rigidbodyIndex, rigidbodies, positions, velocities, radii, simplices, in simplexBoundsCS,
+                        heightmapShape.Contacts(colliderIndex, positions, velocities, radii, simplices, in simplexBoundsCS,
                                                     simplexIndex, simplexStart, simplexSize, contactsQueue, parameters.surfaceCollisionIterations, parameters.surfaceCollisionTolerance);
 
                         break;
@@ -444,8 +435,7 @@ namespace Obi
 
                         BurstTriangleMesh triangleMeshShape = new BurstTriangleMesh()
                         {
-                            colliderToSolver = colliderToSolver,
-                            solverToWorld = solverToWorld,
+                            transform = colliderToSolver,
                             shape = shape,
                             header = triangleMeshHeaders[shape.dataIndex],
                             bihNodes = bihNodes,
@@ -455,7 +445,7 @@ namespace Obi
                             dt = deltaTime
                         };
 
-                        triangleMeshShape.Contacts(colliderIndex, rigidbodyIndex, rigidbodies, positions, velocities, radii, simplices, in simplexBoundsCS,
+                        triangleMeshShape.Contacts(colliderIndex, positions, velocities, radii, simplices, in simplexBoundsCS,
                                                     simplexIndex, simplexStart, simplexSize, contactsQueue, parameters.surfaceCollisionIterations, parameters.surfaceCollisionTolerance);
 
                         break;
@@ -469,7 +459,7 @@ namespace Obi
 
                         BurstEdgeMesh edgeMeshShape = new BurstEdgeMesh()
                         {
-                            colliderToSolver = colliderToSolver,
+                            transform = colliderToSolver,
                             shape = shape,
                             header = edgeMeshHeaders[shape.dataIndex],
                             edgeBihNodes = edgeBihNodes,
@@ -478,7 +468,7 @@ namespace Obi
                             dt = deltaTime
                         };
 
-                        edgeMeshShape.Contacts(colliderIndex, rigidbodyIndex, rigidbodies, positions, velocities, radii, simplices, in simplexBoundsCS,
+                        edgeMeshShape.Contacts(colliderIndex, positions, velocities, radii, simplices, in simplexBoundsCS,
                                                     simplexIndex, simplexStart, simplexSize, contactsQueue, parameters.surfaceCollisionIterations, parameters.surfaceCollisionTolerance);
 
                         break;
@@ -488,7 +478,7 @@ namespace Obi
         }
 
 
-        public JobHandle GenerateContacts(BurstSolverImpl solver, float deltaTime, JobHandle inputDeps)
+        public JobHandle GenerateContacts(BurstSolverImpl solver, float deltaTime)
         {
             var world = ObiColliderWorld.GetInstance();
 
@@ -537,7 +527,7 @@ namespace Obi
                 parameters = solver.abstraction.parameters
             };
 
-            return generateColliderContactsJob.Schedule(solver.simplexCounts.simplexCount, 16, inputDeps);
+            return generateColliderContactsJob.Schedule(solver.simplexCounts.simplexCount,16);
 
         }
 

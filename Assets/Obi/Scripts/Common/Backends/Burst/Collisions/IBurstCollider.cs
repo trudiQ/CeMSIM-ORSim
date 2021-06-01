@@ -7,8 +7,6 @@ namespace Obi
     interface IBurstCollider
     {
         void Contacts(int colliderIndex,
-                      int rigidbodyIndex,
-                      NativeArray<BurstRigidbody> rigidbodies,
 
                       NativeArray<float4> positions,
                       NativeArray<float4> velocities,

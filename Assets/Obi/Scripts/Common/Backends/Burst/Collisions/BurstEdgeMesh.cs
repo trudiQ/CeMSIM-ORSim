@@ -1,6 +1,11 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Burst;
 
 namespace Obi
 {
@@ -8,7 +13,7 @@ namespace Obi
     {
 
         public BurstColliderShape shape;
-        public BurstAffineTransform colliderToSolver;
+        public BurstAffineTransform transform;
         public int dataOffset;
         public float dt;
 
@@ -19,26 +24,24 @@ namespace Obi
 
         public void Evaluate(float4 point, ref BurstLocalOptimization.SurfacePoint projectedPoint)
         {
-            point = colliderToSolver.InverseTransformPointUnscaled(point);
+            point = transform.InverseTransformPointUnscaled(point);
 
             if (shape.is2D != 0)
                 point[2] = 0;
 
             Edge t = edges[header.firstEdge + dataOffset];
-            float4 v1 = (new float4(vertices[header.firstVertex + t.i1], 0) + shape.center) * colliderToSolver.scale;
-            float4 v2 = (new float4(vertices[header.firstVertex + t.i2], 0) + shape.center) * colliderToSolver.scale;
+            float4 v1 = (new float4(vertices[header.firstVertex + t.i1], 0) + shape.center) * transform.scale;
+            float4 v2 = (new float4(vertices[header.firstVertex + t.i2], 0) + shape.center) * transform.scale;
 
             float4 nearestPoint = BurstMath.NearestPointOnEdge(v1, v2, point, out float mu);
             float4 normal = math.normalizesafe(point - nearestPoint);
 
-            projectedPoint.normal = colliderToSolver.TransformDirection(normal);
-            projectedPoint.point = colliderToSolver.TransformPointUnscaled(nearestPoint + normal * shape.contactOffset);
+            projectedPoint.normal = transform.TransformDirection(normal);
+            projectedPoint.point = transform.TransformPointUnscaled(nearestPoint + normal * shape.contactOffset);
         }
 
 
         public void Contacts(int colliderIndex,
-                             int rigidbodyIndex,
-                             NativeArray<BurstRigidbody> rigidbodies,
 
                               NativeArray<float4> positions,
                               NativeArray<float4> velocities,

@@ -44,7 +44,7 @@ namespace Obi
         {
             CreateMaterialIfNeeded();
             foreach (Mesh mesh in impostorDrawer.Meshes)
-                Graphics.DrawMesh(mesh, Matrix4x4.identity, material, 0, camera);
+                Graphics.DrawMesh(mesh, Matrix4x4.identity, material, 0);
         }
 
         public override void Refresh()

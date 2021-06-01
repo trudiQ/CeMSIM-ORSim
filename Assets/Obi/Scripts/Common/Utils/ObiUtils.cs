@@ -180,15 +180,6 @@ namespace Obi
             return a;
         }
 
-        public static float FrobeniusNorm(this Matrix4x4 a)
-        {
-            float norm = 0;
-            for (int i = 0; i < 16; ++i)
-                norm += a[i] * a[i];
-
-            return Mathf.Sqrt(norm);
-        }
-
         public static Matrix4x4 ScalarMultiply(this Matrix4x4 a, float s)
         {
             for (int i = 0; i < 16; ++i)

@@ -575,7 +575,7 @@ namespace Obi
                 // particle-collider interactions (contacts)
                 if (collisionParameters.enabled)
                 {
-                    generateContactsHandle = colliderGrid.GenerateContacts(this, deltaTime, inputDeps);
+                    generateContactsHandle = colliderGrid.GenerateContacts(this, deltaTime);
                 }
 
                 JobHandle.CombineDependencies(generateParticleInteractionsHandle, generateContactsHandle).Complete();

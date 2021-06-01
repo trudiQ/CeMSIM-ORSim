@@ -533,8 +533,6 @@ public static class Oni
                                                           IntPtr restComs,
                                                           IntPtr coms,
                                                           IntPtr orientations,
-                                                          IntPtr linearTransforms,
-                                                          IntPtr plasticDeformations,
                                                           int num);
 
     [DllImport(LIBNAME)]

@@ -19,12 +19,12 @@ public class CollisionEventHandler : MonoBehaviour
 
     void OnEnable()
     {
-        solver.OnParticleCollision += Solver_OnCollision;
+        solver.OnCollision += Solver_OnCollision;
     }
 
     void OnDisable()
     {
-        solver.OnParticleCollision -= Solver_OnCollision;
+        solver.OnCollision -= Solver_OnCollision;
     }
 
     void Solver_OnCollision(object sender, Obi.ObiSolver.ObiCollisionEventArgs e)
@@ -40,7 +40,7 @@ public class CollisionEventHandler : MonoBehaviour
 
         contactCount = frame.contacts.Count;
 
-        /*for (int i = 0; i < frame.contacts.Count; ++i)
+        for (int i = 0; i < frame.contacts.Count; ++i)
         {
             var contact = frame.contacts.Data[i];
 
@@ -59,8 +59,9 @@ public class CollisionEventHandler : MonoBehaviour
             Gizmos.color = Color.cyan;
             Gizmos.DrawRay(point, contact.tangent * contact.tangentImpulse + contact.bitangent * contact.bitangentImpulse);
 
-        }*/
+        }
 
+        /*var counts = new SimplexCounts(solver.pointCount, solver.edgeCount, solver.triCount);
         for (int i = 0; i < frame.contacts.Count; ++i)
         {
             var contact = frame.contacts.Data[i];
@@ -73,13 +74,13 @@ public class CollisionEventHandler : MonoBehaviour
 
             Vector3 point = Vector3.zero;//frame.contacts.Data[i].point;
 
-            int simplexStart = solver.simplexCounts.GetSimplexStartAndSize(contact.bodyB, out int simplexSize);
+            int simplexStart = counts.GetSimplexStartAndSize(contact.other, out int simplexSize);
 
             float radius = 0;
             for (int j = 0; j < simplexSize; ++j)
             {
-                point += (Vector3)solver.positions[solver.simplices[simplexStart + j]] * contact.pointB[j];
-                radius += solver.principalRadii[solver.simplices[simplexStart + j]].x * contact.pointB[j];
+                point += (Vector3)solver.positions[solver.simplices[simplexStart + j]] * contact.point[j];
+                radius += solver.principalRadii[solver.simplices[simplexStart + j]].x * contact.point[j];
             }
 
             Vector3 normal = contact.normal;
@@ -89,7 +90,7 @@ public class CollisionEventHandler : MonoBehaviour
             Gizmos.DrawSphere(point + normal * radius, 0.01f);
 
             Gizmos.DrawRay(point + normal * radius, normal.normalized * contact.distance);
-        }
+        }*/
     }
 
 }

@@ -122,7 +122,6 @@ namespace Obi
         private List<int> points    = new List<int>();      /**< 0-simplices*/
         private List<int> edges     = new List<int>();      /**< 1-simplices*/
         private List<int> triangles = new List<int>();      /**< 2-simplices*/
-        private SimplexCounts m_SimplexCounts;
 
         [HideInInspector] [NonSerialized] public bool dirtyActiveParticles = true;
         [HideInInspector] [NonSerialized] public bool dirtySimplices = true;
@@ -251,11 +250,6 @@ namespace Obi
                 }
             }
             get { return m_Backend; }
-        }
-
-        public SimplexCounts simplexCounts
-        {
-            get { return m_SimplexCounts; }
         }
 
         public UnityEngine.Bounds Bounds
@@ -1149,8 +1143,6 @@ namespace Obi
                 for (int i = 0; i < actor.solverIndices.Length; ++i)
                     particleToActor[actor.solverIndices[i]] = null;
 
-                FreeParticles(actor.solverIndices);
-
                 actors.RemoveAt(index);
 
                 actor.solverIndices = null;
@@ -1357,10 +1349,9 @@ namespace Obi
             simplices.AddRange(edges);
             simplices.AddRange(triangles);
 
-            m_SimplexCounts = new SimplexCounts(points.Count, edges.Count / 2, triangles.Count / 3);
-            cellCoords.ResizeInitialized(m_SimplexCounts.simplexCount);
+            cellCoords.ResizeInitialized(points.Count + edges.Count / 2 + triangles.Count / 3);
 
-            m_SolverImpl.SetSimplices(simplices.ToArray(), m_SimplexCounts);
+            m_SolverImpl.SetSimplices(simplices.ToArray(), new SimplexCounts(points.Count, edges.Count/2, triangles.Count/3));
             dirtySimplices = false;
 
         }

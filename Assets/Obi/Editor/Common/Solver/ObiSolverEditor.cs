@@ -108,7 +108,7 @@ namespace Obi
 
 #if !(OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
             if (backend.enumValueIndex == (int)ObiSolver.BackendType.Burst)
-                EditorGUILayout.HelpBox("The Burst backend depends on the following packages: Mathematics, Collections, Jobs and Burst. The default backend (Oni) will be used instead, if possible.", MessageType.Warning);
+                EditorGUILayout.HelpBox("The Burst backend depends on the following packages: Mathematics, Collections and Burst. The default backend (Oni) will be used instead, if possible.", MessageType.Warning);
 #endif
 #if !(OBI_ONI_SUPPORTED)
             if (backend.enumValueIndex == (int)ObiSolver.BackendType.Oni)

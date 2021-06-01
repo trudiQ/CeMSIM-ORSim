@@ -115,7 +115,7 @@ namespace Oni
         
 		EXPORT void GetBounds(Solver* solver, Eigen::Vector3f& min, Eigen::Vector3f& max);
         EXPORT int GetParticleGridSize(Solver* solver);
-        EXPORT void GetParticleGrid(Solver* solver, Bounds* cells);
+        EXPORT void GetParticleGrid(Solver* solver, ParticleGrid::GridCell* cells);
         
 		EXPORT void SetSolverParameters(Solver* solver, const SolverParameters* parameters);
 		EXPORT void GetSolverParameters(Solver* solver, SolverParameters* parameters);
@@ -302,8 +302,6 @@ namespace Oni
                                                  Eigen::Vector4f* rest_coms,
                                                  Eigen::Vector4f* coms,
                                                  Eigen::Quaternionf* orientations,
-                                                 Eigen::Matrix4f* linear_transforms,
-                                                 Eigen::Matrix4f* plastic_deformations,
                                                  int num);
         
         EXPORT  void CalculateRestShapeMatching(Solver* solver, ConstraintBatchHandle* batch);

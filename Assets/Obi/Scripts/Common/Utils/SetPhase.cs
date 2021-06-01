@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Obi
 {
@@ -6,18 +8,15 @@ namespace Obi
     public class SetPhase : MonoBehaviour
     {
         public int phase;
-        private ObiActor act;
 
         private void Awake()
         {
-            act = GetComponent<ObiActor>();
-            act.OnBlueprintLoaded += Set;
-            if (act.isLoaded) Set(act, null);
+            GetComponent<ObiActor>().OnBlueprintLoaded += Set;
         }
 
         private void OnDestroy()
         {
-            act.OnBlueprintLoaded -= Set;
+            GetComponent<ObiActor>().OnBlueprintLoaded -= Set;
         }
 
         private void OnValidate()

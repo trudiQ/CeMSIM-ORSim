@@ -20,8 +20,7 @@ namespace Obi
         private NativeArray<quaternion> constraintOrientations;
 
         private NativeArray<float4x4> Aqq;
-        private NativeArray<float4x4> linearTransforms;
-        private NativeArray<float4x4> plasticDeformations;
+        private NativeArray<float4x4> deformation;
 
         public BurstShapeMatchingConstraintsBatch(BurstShapeMatchingConstraints constraints)
         {
@@ -37,8 +36,6 @@ namespace Obi
                                                 ObiNativeVector4List restComs,
                                                 ObiNativeVector4List coms,
                                                 ObiNativeQuaternionList constraintOrientations,
-                                                ObiNativeMatrix4x4List linearTransforms,
-                                                ObiNativeMatrix4x4List plasticDeformations,
                                                 ObiNativeFloatList lambdas,
                                                 int count)
         {
@@ -50,13 +47,17 @@ namespace Obi
             this.restComs = restComs.AsNativeArray<float4>();
             this.coms = coms.AsNativeArray<float4>();
             this.constraintOrientations = constraintOrientations.AsNativeArray<quaternion>();
-            this.linearTransforms = linearTransforms.AsNativeArray<float4x4>();
-            this.plasticDeformations = plasticDeformations.AsNativeArray<float4x4>();
 
             if (Aqq.IsCreated)
                 Aqq.Dispose();
+            if (deformation.IsCreated)
+                deformation.Dispose();
 
             Aqq = new NativeArray<float4x4>(count,Allocator.Persistent);
+
+            deformation = new NativeArray<float4x4>(count, Allocator.Persistent);
+            for (int i = 0; i < count; ++i)
+                deformation[i] = float4x4.identity;
 
             m_ConstraintCount = count;
         }
@@ -65,6 +66,8 @@ namespace Obi
         {
             if (Aqq.IsCreated)
                 Aqq.Dispose();
+            if (deformation.IsCreated)
+                deformation.Dispose();
         }
 
         public override JobHandle Initialize(JobHandle inputDeps, float substepTime)
@@ -85,8 +88,7 @@ namespace Obi
                 coms = coms,
                 constraintOrientations = constraintOrientations,
                 Aqq = Aqq,
-                linearTransforms = linearTransforms,
-                deformation = plasticDeformations,
+                deformation = deformation,
 
                 positions = solverImplementation.positions,
                 restPositions = solverImplementation.restPositions,
@@ -137,7 +139,7 @@ namespace Obi
                 restComs = restComs,
                 coms = coms,
                 Aqq = Aqq,
-                deformation = plasticDeformations,
+                deformation = deformation,
 
                 restPositions = solverAbstraction.restPositions.AsNativeArray<float4>(),
                 restOrientations = solverAbstraction.restOrientations.AsNativeArray<quaternion>(),
@@ -251,12 +253,11 @@ namespace Obi
             [ReadOnly] public NativeArray<int> numIndices;
             [ReadOnly] public NativeArray<int> explicitGroup;
             [ReadOnly] public NativeArray<float> shapeMaterialParameters;
-            public NativeArray<float4> restComs;
-            public NativeArray<float4> coms;
-            public NativeArray<quaternion> constraintOrientations;
+             public NativeArray<float4> restComs;
+             public NativeArray<float4> coms;
+             public NativeArray<quaternion> constraintOrientations;
 
             public NativeArray<float4x4> Aqq;
-            public NativeArray<float4x4> linearTransforms;
             public NativeArray<float4x4> deformation;
 
             [ReadOnly] public NativeArray<float4> positions;
@@ -275,7 +276,7 @@ namespace Obi
 
             public void Execute(int i)
             {
-                int k;
+                int k = 0;
                 float maximumMass = 10000;
 
                 coms[i] = float4.zero;
@@ -321,10 +322,6 @@ namespace Obi
 
                 // calculate optimal transform including plastic deformation:
                 float4x4 Apq_def = Rpq + math.mul(Apq , math.transpose(deformation[i]));
-                Apq_def[3][3] = 1;
-
-                // reconstruct full best-matching linear transform:
-                linearTransforms[i] = math.mul(Apq_def, Aqq[i]);
 
                 // extract rotation from transform matrix, using warmstarting and few iterations:
                 constraintOrientations[i] = BurstMath.ExtractRotation(Apq_def, constraintOrientations[i], 2);
@@ -371,9 +368,10 @@ namespace Obi
                 if (plastic_creep > 0)
                 {
                     R[3][3] = 1;
+                    Apq_def[3][3] = 1;
 
                     // get scale matrix (A = RS so S = Rt * A) and its deviation from the identity matrix:
-                    float4x4 deform_matrix = math.mul(math.transpose(R), linearTransforms[i]) - float4x4.identity;
+                    float4x4 deform_matrix = math.mul(math.transpose(R), math.mul(Apq_def, Aqq[i])) - float4x4.identity;
 
                     // if the amount of deformation exceeds the yield threshold:
                     float norm = deform_matrix.frobeniusNorm();
