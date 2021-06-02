@@ -12,6 +12,11 @@ namespace PaintIn3D
     /// </summary>
     public class StapleLineManager : P3dHitScreenBase
     {
+        public List<GameObject> lsSimStepTwoHideStaples;
+        public List<GameObject> lsSimStepThreeShowStaples;
+        public List<GameObject> lsSimStepFourShowStaplesZero;
+        public List<GameObject> lsSimStepFourShowStaplesOne;
+
         public List<Transform> testPaint;
         public float animatePaintInterval;
         public MeshCollider col;
@@ -45,13 +50,15 @@ namespace PaintIn3D
         public GameObject meshToAssignToStapleObjects;
         public Transform stapleObjectsParentToAssignMesh;
 
-
+        public static StapleLineManager instance;
         public static Dictionary<MeshFilter, Mesh> updatingMeshDataForStapleObjects;
         public static Dictionary<MeshFilter, List<Vector3>> updatingMeshDataVertices;
         public static Dictionary<MeshFilter, List<int>> meshDataTriangles;
 
         private void Start()
         {
+            instance = this;
+
             updatingMeshDataForStapleObjects = new Dictionary<MeshFilter, Mesh>();
             stapleObjectAttachedMeshes.ForEach(mf => updatingMeshDataForStapleObjects.Add(mf, mf.sharedMesh));
             updatingMeshDataVertices = new Dictionary<MeshFilter, List<Vector3>>();
@@ -99,6 +106,42 @@ namespace PaintIn3D
                 s.belongedObjet = meshTrans;
                 s.belongedObjectMeshFilter = mesh;
             }
+        }
+
+        /// <summary>
+        /// Hide cut corner staple objects for step 2 of the LS Sim
+        /// </summary>
+        public void LSSimStepTwo()
+        {
+            lsSimStepTwoHideStaples.ForEach(g => g.SetActive(false));
+        }
+
+        public void LSSimStepThree()
+        {
+            foreach (StapleLineObject[] ss in lsSimStepThreeShowStaples.Select(g => g.GetComponentsInChildren<StapleLineObject>(true)))
+            {
+                foreach (StapleLineObject s in ss)
+                {
+                    s.ManualUpdate();
+                }
+            }
+
+            lsSimStepThreeShowStaples.ForEach(g => g.SetActive(true));
+        }
+
+        public void LSSimStepFour(int layer)
+        {
+            foreach (StapleLineObject s in lsSimStepFourShowStaplesZero[layer].GetComponentsInChildren<StapleLineObject>(true))
+            {
+                s.ManualUpdate();
+            }
+            foreach (StapleLineObject s in lsSimStepFourShowStaplesOne[layer].GetComponentsInChildren<StapleLineObject>(true))
+            {
+                s.ManualUpdate();
+            }
+
+            lsSimStepFourShowStaplesZero[layer].SetActive(true);
+            lsSimStepFourShowStaplesOne[layer].SetActive(true);
         }
 
         public void PaintBetweenTwoVectorsRaycast(Transform vectorAstart, Transform vectorAend, Transform vectorBstart, Transform vectorBend, Transform stapleObjectParent)

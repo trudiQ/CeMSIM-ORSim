@@ -23,6 +23,8 @@ public class LinearStaplerTool : Tool //inherits Tool class
     public bool handlePushed;
     public bool leverLocked;
     public bool inAnimation; // Is the tool currently in any animation
+    public float handleReading; // Sensor input for the firing handle position (should be from 0 to 1, 1 is pushed all the way in)
+    public float leverReading; // Sensor input for the locking level angle (1 should be the lock position)
 
     public override void Start()
     {
@@ -67,6 +69,16 @@ public class LinearStaplerTool : Tool //inherits Tool class
         }
     }
 
+    void UpdateKnobWithSensorReading()
+    {
+        if (Enable)
+        {
+            FiringHandle.transform.localPosition = Vector3.Lerp(firingHandleStartPosition.localPosition, firingHandleEndPosition.localPosition, handleReading);
+
+            handlePushed = handleReading > 0.95f ? true : false;
+        }
+    }
+
     void LockLeverWithKeyboardInput()
     {
         if (Enable && Input.GetKeyUp(KeyCode.Y))
@@ -93,6 +105,32 @@ public class LinearStaplerTool : Tool //inherits Tool class
             }
 
             leverLocked = !leverLocked;
+        }
+    }
+
+    void UpdateLeverWithSensorReading()
+    {
+        if (Enable)
+        {
+            LockingLever.transform.localEulerAngles = Vector3.Lerp(Vector3.zero, new Vector3(0, 15, 0), leverReading);
+
+            // Lerp bottom half model towards top half based on handle reading
+            if (leverReading >= 0.03f)
+            {
+                bottomHalf.transform.localPosition = Vector3.Lerp(bottomHalf.transform.localPosition, Vector3.zero, leverReading);
+                bottomHalf.transform.localRotation = Quaternion.Lerp(bottomHalf.transform.localRotation, Quaternion.identity, leverReading);
+            }
+
+            leverLocked = leverReading > 0.95f ? true : false;
+
+            if (leverLocked)
+            {
+                bottomHalf.transform.parent = bottomPartLockingPosition;
+            }
+            else
+            {
+                bottomHalf.transform.parent = bottomTracker;
+            }
         }
     }
 

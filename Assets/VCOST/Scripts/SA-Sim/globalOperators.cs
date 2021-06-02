@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using PaintIn3D;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public class globalOperators : MonoBehaviour
 {
     /// sphereJoint models
     public int m_numSphereModels = 0; // specified when creating sphereJointModels
-    public GameObject[] m_sphereJointObjs; 
+    public GameObject[] m_sphereJointObjs;
     public sphereJointModel[] m_sphereJointModels;
 
     /// meshes
@@ -55,14 +56,14 @@ public class globalOperators : MonoBehaviour
         m_sphereJointModels = new sphereJointModel[m_numSphereModels];
         m_colonMeshObjs = new GameObject[m_numSphereModels];
         m_colonMeshes = new colonMesh[m_numSphereModels];
-        for(int i = 0; i < m_numSphereModels; i++)
+        for (int i = 0; i < m_numSphereModels; i++)
         {
             m_sphereJointObjs[i] = GameObject.Find("sphereJointGameObj" + i.ToString());
             m_sphereJointModels[i] = m_sphereJointObjs[i].GetComponent<sphereJointModel>();
 
             if (!m_sphereJointObjs[i] || !m_sphereJointModels[i])
                 return;
-            
+
             // restore the bound colon mesh
             if (m_sphereJointModels[i].m_bFindColonMesh)
             {
@@ -126,7 +127,7 @@ public class globalOperators : MonoBehaviour
         }
 
         // split the mesh and sphereJointModel for each colon
-        for(int i = 0; i < m_numSphereModels; i++)
+        for (int i = 0; i < m_numSphereModels; i++)
         {
             // Processing colonMesh and bind it to sphereJointModel
             if (!Application.isPlaying) // Edit mode
@@ -516,6 +517,9 @@ public class globalOperators : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C))
             {
                 cornerCut();
+
+                // Hide corner cut staples
+                StapleLineManager.instance.LSSimStepTwo();
             }
             // [Haptics version]
             if (m_hapticSurgTools[1]) //scissors
@@ -544,7 +548,10 @@ public class globalOperators : MonoBehaviour
             {
 
                 if (m_bSplit)
+                {
                     join();
+                    StapleLineManager.instance.LSSimStepThree();
+                }
                 else
                     Debug.Log("Error: Cannot join as colons have not been split yet!");
             }
@@ -619,6 +626,10 @@ public class globalOperators : MonoBehaviour
                 {
                     if (!finalClosure(1))
                         Debug.Log("Final Closure failed!");
+                    else
+                    {
+                        StapleLineManager.instance.LSSimStepFour(0);
+                    }
                 }
             }
         }

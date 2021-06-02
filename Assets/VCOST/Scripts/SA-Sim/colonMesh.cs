@@ -3232,6 +3232,7 @@ public class colonMesh : MonoBehaviour
 
     private void Update()
     {
+#if UNITY_EDITOR
         // About to enter playmode
         if (!Application.isPlaying && UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
         {
@@ -3262,6 +3263,7 @@ public class colonMesh : MonoBehaviour
             }
             ClearAllData();*/
         }
+#endif
 
         // deform the colon mesh during playmode
         if (Application.isPlaying)
