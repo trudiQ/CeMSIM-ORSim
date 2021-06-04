@@ -21,6 +21,8 @@ public class RoomLightsOnOff : MonoBehaviour
     public Material surgicalLightsOnMaterial;
     public Material surgicalLightsOffMaterial;
 
+    public MeshRenderer[] lightSurfaces;
+
 
     Vignette vignetteLayer = null;
     ColorAdjustments colorAdjustmentLayer = null;
@@ -62,6 +64,11 @@ public class RoomLightsOnOff : MonoBehaviour
         //Debug.Log("Lights On");
         ceilingAreaLights.SetActive(true);
         ceilingPointLights.SetActive(true);
+
+        foreach(MeshRenderer light in lightSurfaces)
+        {
+            light.material = surgicalLightsOnMaterial;
+        }
         //ceilingLightsMesh.material = ceilingLightsOnMaterial;
     }
 
@@ -77,6 +84,13 @@ public class RoomLightsOnOff : MonoBehaviour
         //Debug.Log("Lights Off");
         ceilingAreaLights.SetActive(false);
         ceilingPointLights.SetActive(false);
+
+        surgicalLight01.materials[7] = surgicalLightsOffMaterial;
+        surgicalLight02.materials[6] = surgicalLightsOffMaterial;
+        foreach(MeshRenderer light in lightSurfaces)
+        {
+            light.material = surgicalLightsOffMaterial;
+        }
         //ceilingLightsMesh.material = ceilingLightsOffMaterial;
         //surgicalLight01.materials[7] = surgicalLightsOffMaterial;
         //surgicalLight02.materials[6] = surgicalLightsOffMaterial;
