@@ -65,6 +65,11 @@ public class PatientManager : MonoBehaviour
         pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.NeedleDecompressions);
     }
 
+    private void OnNeedleEnter()
+    {
+        Debug.Log("Needle inserted into patient");
+    }
+    
     #region Functions | Intervals/Timing
     public void DetermineIntervals(float dur, int noIntervals)
     {
