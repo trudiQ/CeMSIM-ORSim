@@ -83,8 +83,8 @@ namespace CEMSIM{
 	    		ClientSend.SendItemPosition(item);
 	    		//Get Item Controller
 	    		ItemController itemCon = item.GetComponent<ItemController>();
-	    		Debug.Log("Sending item status:");
-	    		Debug.Log(itemCon.ToString());
+	    		//Debug.Log("Sending item status:");
+	    		//Debug.Log(itemCon.ToString());
 	    		
 	    	}
 	    }
