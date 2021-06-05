@@ -81,7 +81,11 @@ namespace CEMSIM
                     {
                         if (socket != null)
                         {
-                            Debug.Log($"[Send] TCP to {id} {PacketId.ServerPacketsInfo[_packet.GetPacketId()]}");
+                            if (ServerNetworkManager.instance.printNetworkTraffic)
+                            {
+                                Debug.Log($"[Send] TCP to {id} {PacketId.ServerPacketsInfo[_packet.GetPacketId()]}");
+                            }
+                            
                             stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
                         }
                     }
@@ -160,7 +164,10 @@ namespace CEMSIM
                             {
                                 int _packetId = _packet.DigestClientHeader(); // extract header information
 
-                                Debug.Log($"[Recv] TCP {PacketId.ClientPacketsInfo[_packetId]} from {id}");
+                                if (ServerNetworkManager.instance.printNetworkTraffic)
+                                {
+                                    Debug.Log($"[Recv] TCP {PacketId.ClientPacketsInfo[_packetId]} from {id}");
+                                }
                                 //NetworkOverlayMenu.Instance.Log($"Receive a packet with id {_packetId} from client {id}");
                                 // call proper handling function based on packet id
                                 ServerInstance.packetHandlers[_packetId](id, _packet);
@@ -231,7 +238,10 @@ namespace CEMSIM
                     {
                         if (endPoint != null)
                         {
-                            Debug.Log($"[Send] UDP to {id} {PacketId.ServerPacketsInfo[_packet.GetPacketId()]}");
+                            if (ServerNetworkManager.instance.printNetworkTraffic)
+                            {
+                                Debug.Log($"[Send] UDP to {id} {PacketId.ServerPacketsInfo[_packet.GetPacketId()]}");
+                            }
                             ServerInstance.SendUDPData(endPoint, _packet);
                         }
                     }
@@ -258,7 +268,10 @@ namespace CEMSIM
                         {
                             // extract header information
                             int _packetId = _packet.DigestClientHeader();
-                            Debug.Log($"[Recv] UDP {PacketId.ClientPacketsInfo[_packetId]} from {id}");
+                            if (ServerNetworkManager.instance.printNetworkTraffic)
+                            {
+                                Debug.Log($"[Recv] UDP {PacketId.ClientPacketsInfo[_packetId]} from {id}");
+                            }
                             ServerInstance.packetHandlers[_packetId](id, _packet);
                         }
                     });
