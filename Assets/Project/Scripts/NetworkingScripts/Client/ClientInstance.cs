@@ -24,9 +24,15 @@ namespace CEMSIM
 
             public int myId = 0;
             public string myUsername = "DEFAULT_USERNAME";
+
+            [Header("Traffic Visualization")]
+            public bool printNetworkTraffic = false;        // True: print out the inbound and outbound traffic in console.
+
+
             public TCP tcp;
             public UDP udp;
 
+            [HideInInspector] // hide the following public values from the Unity inspector
             public bool isConnected = false; // true: both TCP and UDP ready to use
             // data structures dealing with packet fragments due to TCP streaming
             private delegate void PacketHandler(Packet _packet);
@@ -177,7 +183,10 @@ namespace CEMSIM
 
                         if (socket != null)
                         {
-                            Debug.Log($"[Send] UDP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                            if (ClientInstance.instance.printNetworkTraffic)
+                            {
+                                Debug.Log($"[Send] UDP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                            }
                             socket.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
                         }
                         else
@@ -246,7 +255,10 @@ namespace CEMSIM
                         {
                             // digest the packet header information
                             int _packetId = _packet.DigestServerHeader();
-                            Debug.Log($"[Recv] UDP {PacketId.ServerPacketsInfo[_packetId]}");
+                            if (ClientInstance.instance.printNetworkTraffic)
+                            {
+                                Debug.Log($"[Recv] UDP {PacketId.ServerPacketsInfo[_packetId]}");
+                            }
                             packetHandlers[_packetId](_packet);
                         }
                     });
@@ -338,7 +350,7 @@ namespace CEMSIM
                     }
                     catch (Exception e)
                     {
-                        Debug.Log($"Server exception {e}");
+                        Debug.LogWarning($"Server exception {e}");
                         Disconnect();
                         // disconnect
                     }
@@ -350,7 +362,10 @@ namespace CEMSIM
                     {
                         if (socket != null)
                         {
-                            Debug.Log($"[Send] TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                            if (ClientInstance.instance.printNetworkTraffic)
+                            {
+                                Debug.Log($"[Send] TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                            }
                             stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
                         }
                     }
@@ -403,7 +418,10 @@ namespace CEMSIM
                                 // digest the packet header information
                                 int _packetId = _packet.DigestServerHeader();
 
-                                Debug.Log($"[Recv] TCP {PacketId.ServerPacketsInfo[_packetId]}");
+                                if (ClientInstance.instance.printNetworkTraffic)
+                                {
+                                    Debug.Log($"[Recv] TCP {PacketId.ServerPacketsInfo[_packetId]}");
+                                }
                                 // call proper handling function based on packet id
                                 packetHandlers[_packetId](_packet);
                             }

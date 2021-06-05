@@ -24,6 +24,9 @@ namespace CEMSIM
             [Header("References")]
             public GameObject playersContainer;
 
+            [Header("Traffic Visualization")]
+            public bool printNetworkTraffic=false;        // True: print out the inbound and outbound traffic in console.
+
 
             private void Awake()
             {
@@ -123,7 +126,10 @@ namespace CEMSIM
 
                     // send UDP and TCP Heart Beat Detection packets
                     ServerSend.HeartBeatDetection();
-                    //Debug.Log("Send HeartBeat Detection packets.");
+                    if (ServerNetworkManager.instance.printNetworkTraffic)
+                    {
+                        Debug.Log("Send HeartBeat Detection packets.");
+                    }
 
 
 
