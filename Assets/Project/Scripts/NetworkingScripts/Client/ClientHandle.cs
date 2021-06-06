@@ -106,10 +106,15 @@ namespace CEMSIM
                     GameManager.players[_id].transform.position = _position;
                     GameManager.players[_id].transform.rotation = _rotation;
                     //Hands
-                    GameManager.players[_id].transform.GetChild(3).transform.position = _rightPosition;
-                    GameManager.players[_id].transform.GetChild(3).transform.rotation = _rightRotation;
-                    GameManager.players[_id].transform.GetChild(2).transform.position = _leftPosition;
-                    GameManager.players[_id].transform.GetChild(2).transform.rotation = _leftRotation;
+                    GameManager.players[_id].GetComponent<PlayerManager>().leftHandController.transform.position = _leftPosition;
+                    GameManager.players[_id].GetComponent<PlayerManager>().leftHandController.transform.rotation = _leftRotation;
+                    GameManager.players[_id].GetComponent<PlayerManager>().rightHandController.transform.position = _rightPosition;
+                    GameManager.players[_id].GetComponent<PlayerManager>().rightHandController.transform.rotation = _rightRotation;
+
+                    //GameManager.players[_id].transform.GetChild(3).transform.position = _rightPosition;
+                    //GameManager.players[_id].transform.GetChild(3).transform.rotation = _rightRotation;
+                    //GameManager.players[_id].transform.GetChild(2).transform.position = _leftPosition;
+                    //GameManager.players[_id].transform.GetChild(2).transform.rotation = _leftRotation;
 
                 }
                 else

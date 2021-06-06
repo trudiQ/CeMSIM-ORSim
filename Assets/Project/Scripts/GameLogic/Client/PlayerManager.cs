@@ -10,6 +10,9 @@ namespace CEMSIM
         {
             public int id;
             public string username;
+
+            public GameObject leftHandController;
+            public GameObject rightHandController;
             
 
             void Start(){

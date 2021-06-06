@@ -114,8 +114,11 @@ namespace CEMSIM
                     Quaternion _avatarRotation = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera.rotation;
 
                     // get the position of both VR controllers
-                    Transform _lefthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(1);
-                    Transform _righthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(2);
+                    //Transform _lefthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(1);
+                    //Transform _righthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(2);
+
+                    Transform _lefthand = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().leftHandController.transform;
+                    Transform _righthand = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().rightHandController.transform;
 
 
                     using (Packet _packet = new Packet((int)ClientPackets.playerVRMovement))

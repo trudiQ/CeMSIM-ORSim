@@ -14,6 +14,9 @@ namespace CEMSIM
             public string username;
             public CharacterController controller;
 
+
+            public GameObject leftHandController;
+            public GameObject rightHandController;
             // controller data
 
 

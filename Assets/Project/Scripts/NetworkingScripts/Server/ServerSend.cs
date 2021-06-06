@@ -180,8 +180,8 @@ namespace CEMSIM
             {
                 //TODO: Get rid of function GetChild
                 // get the position of both VR controllers
-                Transform _lefthand = _player.transform.GetChild(2);
-                Transform _righthand = _player.transform.GetChild(3);
+                Transform _lefthand = _player.leftHandController.transform;
+                Transform _righthand = _player.rightHandController.transform;
 
                 using (Packet _packet = new Packet((int)ServerPackets.playerPosition))
                 {
