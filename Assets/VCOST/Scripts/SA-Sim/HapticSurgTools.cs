@@ -19,7 +19,7 @@ public class HapticSurgTools : MonoBehaviour
 													//private bool buttonStatus = false;			//!< Is the button currently pressed?
 
 	/// tool selector
-	private bool[] bSelectorActive = { true, true }; // {forceps, scissors}
+	private bool[] bSelectorActive = { true, false }; // {forceps, scissors}
 	// variables for each tool, selector
 	private bool bJustSwitch2Tool = false; // just tools, indicate just switch to a tool from a selector
 	public Vector3 initialPos; // all tools, selector
@@ -65,6 +65,9 @@ public class HapticSurgTools : MonoBehaviour
 	// globalOperators
 	public globalOperators gOperators = null; // forceps only
 
+	// omni tools animations
+	public OmniToolsAnimations tAnimations = null; 
+
 	//! Automatically called for initialization
 	void Start () 
 	{
@@ -97,6 +100,7 @@ public class HapticSurgTools : MonoBehaviour
 										this.gameObject.transform.rotation.z,
 										this.gameObject.transform.rotation.w);
 
+			GameObject gOperatorsGO = GameObject.Find("globalOperators");
 			if (this.gameObject.name == "Forceps")
 			{
 				GameObject forcepswithhaptic = GameObject.Find("ForcepsWithHaptic");
@@ -107,7 +111,8 @@ public class HapticSurgTools : MonoBehaviour
 					if (forceps)
 					{
 						tool4Select = forceps.GetComponent<HapticSurgTools>();
-						toolTipSphere = forceps.transform.GetChild(2).gameObject;
+						//toolTipSphere = forceps.transform.GetChild(2).gameObject;
+						toolTipSphere = forceps.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject;
 					}
 					toolHapticGO.SetActive(false);
 				}
@@ -118,10 +123,13 @@ public class HapticSurgTools : MonoBehaviour
 					seleHapticGO = toolSelector.transform.GetChild(1).gameObject; // haptics object of selector
 				}
 
-				GameObject gOperatorsGO = GameObject.Find("globalOperators");
 				if (gOperatorsGO)
 					gOperators = gOperatorsGO.GetComponent<globalOperators>();
 			}
+
+			// tool animations
+			if (gOperatorsGO)
+				tAnimations = gOperatorsGO.GetComponent<OmniToolsAnimations>();
 		}
 
 		// initialize refs to the tools to select
@@ -428,11 +436,6 @@ public class HapticSurgTools : MonoBehaviour
 						bSelectorActive[0] = false;
 						tool4Select.bSelectorActive[0] = false;
 						tool4Select.bJustSwitch2Tool = true;
-						//// reset the tools' status
-						//tool4Select.bTouching = false;
-						//tool4Select.bGrabbing = false;
-						//tool4Select.bHolding = false;
-						//tool4Select.curAction = toolAction.idle;
 					}
 				}
 			}
@@ -465,22 +468,34 @@ public class HapticSurgTools : MonoBehaviour
 					{
 						releaseHoldTool();
 						bHolding = false;
+						if (tAnimations)
+							tAnimations.OpenForceps();
 					}
 				}
 			}
-
-			// Left button for grabbing
-			if (oldButtonStatus[0] == false && newButtonStatus[0] == true)
+			else // forceps enabled
 			{
-				// filter touching info.
-				refineTouching();
-
-				if (ButtonActsAsToggle)
+				// Left button for grabbing
+				if (oldButtonStatus[0] == false && newButtonStatus[0] == true)
 				{
-					if (grabbing)
+					if (tAnimations && bJustSwitch2Tool == false)
+						tAnimations.CloseForceps();
+
+					// filter touching info.
+					refineTouching();
+
+					if (ButtonActsAsToggle)
 					{
-						release();
-						bGrabbing = false;
+						if (grabbing)
+						{
+							release();
+							bGrabbing = false;
+						}
+						else
+						{
+							grab();
+							bGrabbing = true;
+						}
 					}
 					else
 					{
@@ -488,74 +503,74 @@ public class HapticSurgTools : MonoBehaviour
 						bGrabbing = true;
 					}
 				}
-				else
+				if (oldButtonStatus[0] == true && newButtonStatus[0] == false)
 				{
-					grab();
-					bGrabbing = true;
-				}
-			}
-			if (oldButtonStatus[0] == true && newButtonStatus[0] == false)
-			{
-				if (ButtonActsAsToggle)
-				{
-					//Do Nothing
-				}
-				else
-				{
-					release();
-					bGrabbing = false;
-				}
-			}
+					if (tAnimations)
+						tAnimations.OpenForceps();
 
-			// Make sure haptics is ON if we're grabbing
-			if (grabbing && physicsToggleStyle != PhysicsToggleStyle.none)
-				hapticDevice.PhysicsManipulationEnabled = true;
-			if (!grabbing && physicsToggleStyle == PhysicsToggleStyle.onGrab)
-				hapticDevice.PhysicsManipulationEnabled = false;
-
-			// right button for tool dropping/holding
-			if (newButtonStatus[1] == true)
-			{
-				// holding
-				if (bTouching && touching && !bHolding)
-				{
-					// check which object being hold
-					int[] sphereIDs = new int[3]; //[objIdx, layerIdx, sphereIdx]
-					if (parseSphereName(touching.name, ref sphereIDs))
+					if (ButtonActsAsToggle)
 					{
-						if (sphereIDs[1] < 2) // only first 2 layer spheres can be held
+						//Do Nothing
+					}
+					else
+					{
+						release();
+						bGrabbing = false;
+					}
+				}
+
+				// Make sure haptics is ON if we're grabbing
+				if (grabbing && physicsToggleStyle != PhysicsToggleStyle.none)
+					hapticDevice.PhysicsManipulationEnabled = true;
+				if (!grabbing && physicsToggleStyle == PhysicsToggleStyle.onGrab)
+					hapticDevice.PhysicsManipulationEnabled = false;
+
+				// right button for tool dropping/holding
+				if (newButtonStatus[1] == true)
+				{
+					// holding
+					if (bTouching && touching && !bHolding)
+					{
+						// check which object being hold
+						int[] sphereIDs = new int[3]; //[objIdx, layerIdx, sphereIdx]
+						if (parseSphereName(touching.name, ref sphereIDs))
 						{
-							holdSphereIDs = new int[] { sphereIDs[0], sphereIDs[1], sphereIDs[2] };
-							holdTool(sphereIDs);
-							bHolding = true;
-							Debug.Log("Holding sphere: " + sphereIDs[0].ToString() + "," + sphereIDs[1].ToString() + "," + sphereIDs[2].ToString());
+							if (sphereIDs[1] < 2) // only first 2 layer spheres can be held
+							{
+								holdSphereIDs = new int[] { sphereIDs[0], sphereIDs[1], sphereIDs[2] };
+								holdTool(sphereIDs);
+								bHolding = true;
+								Debug.Log("Holding sphere: " + sphereIDs[0].ToString() + "," + sphereIDs[1].ToString() + "," + sphereIDs[2].ToString());
+								if (tAnimations)
+									tAnimations.CloseForceps();
+							}
+							else
+							{
+								holdSphereIDs = new int[] { -1, -1, -1 };
+								bHolding = false;
+								Debug.Log("Attemp holding sphere out of range; move forceps to colon edge");
+							}
 						}
 						else
 						{
 							holdSphereIDs = new int[] { -1, -1, -1 };
 							bHolding = false;
-							Debug.Log("Attemp holding sphere out of range; move forceps to colon edge");
 						}
-					}
-					else
-					{
-						holdSphereIDs = new int[] { -1, -1, -1 };
-						bHolding = false;
-					}
 
-					// release the touching obj
-					bTouching = false;
-					touching = null;
-				}
-				// switch to selector
-				if (!bTouching)
-				{
-					// select the selector, enable its haptics
-					seleHapticGO.SetActive(true);
-					// disable forceps's haptics
-					toolHapticGO.SetActive(false);
-					bSelectorActive[0] = true;
-					seleSurgTool.bSelectorActive[0] = true;
+						// release the touching obj
+						bTouching = false;
+						touching = null;
+					}
+					// switch to selector
+					if (!bTouching)
+					{
+						// select the selector, enable its haptics
+						seleHapticGO.SetActive(true);
+						// disable forceps's haptics
+						toolHapticGO.SetActive(false);
+						bSelectorActive[0] = true;
+						seleSurgTool.bSelectorActive[0] = true;
+					}
 				}
 			}
 		}
@@ -575,39 +590,51 @@ public class HapticSurgTools : MonoBehaviour
 
 			bTouching = touching ? true : false;
 
-			if (bTouching == true)
+			if ((this.gameObject.name == "Forceps" && bSelectorActive[0] == false) ||
+				(this.gameObject.name == "Scissors" && bSelectorActive[1] == false))
 			{
-				HapticPlugin.effects_settings(
-					hapticDevice.configName,
-					FXID,
-					Gain,
-					Magnitude,
-					Frequency,
-					pos,
-					dir);
-				HapticPlugin.effects_type(
-					hapticDevice.configName,
-					FXID,
-					effectType);
-				if (bEffectStopped)
+				if (bTouching == true)
 				{
-					HapticPlugin.effects_startEffect(hapticDevice.configName, FXID);
-					bEffectStopped = false;
+					HapticPlugin.effects_settings(
+						hapticDevice.configName,
+						FXID,
+						Gain,
+						Magnitude,
+						Frequency,
+						pos,
+						dir);
+					HapticPlugin.effects_type(
+						hapticDevice.configName,
+						FXID,
+						effectType);
+					if (bEffectStopped)
+					{
+						HapticPlugin.effects_startEffect(hapticDevice.configName, FXID);
+						bEffectStopped = false;
+					}
+				}
+				else // bTouching == false
+				{
+					if (bEffectStopped == false)
+					{
+						HapticPlugin.effects_stopEffect(hapticDevice.configName, FXID);
+						bEffectStopped = true;
+					}
+					// manually stopEffect in case it's not, but flag set so
+					if (!bJustSwitch2Tool && oldButtonStatus[0] == false && newButtonStatus[0] == true)
+					{
+						HapticPlugin.effects_stopEffect(hapticDevice.configName, FXID);
+						Debug.Log("effects_stopEffect: " + hapticDevice.configName + ", " + this.gameObject.name);
+					}
 				}
 			}
-			else // bTouching == false
+
+			// manually stopEffect in case it's not, but flag set so
+			if (this.gameObject.name == "Forceps" && bSelectorActive[0] == true && bEffectStopped == false)
 			{
-				if (bEffectStopped == false)
-				{
-					HapticPlugin.effects_stopEffect(hapticDevice.configName, FXID);
-					bEffectStopped = true;
-				}
-				// manually stopEffect in case it's not, but flag set so
-				if (!bJustSwitch2Tool && oldButtonStatus[0] == false && newButtonStatus[0] == true)
-				{
-					HapticPlugin.effects_stopEffect(hapticDevice.configName, FXID);
-					Debug.Log("effects_stopEffect: " + hapticDevice.configName + ", " + this.gameObject.name);
-				}
+				HapticPlugin.effects_stopEffect(hapticDevice.configName, FXID);
+				Debug.Log("effects_stopEffect: " + hapticDevice.configName + ", " + this.gameObject.name);
+				bEffectStopped = true;
 			}
 
 			bJustSwitch2Tool = false;
@@ -627,6 +654,8 @@ public class HapticSurgTools : MonoBehaviour
 					{
 						cutSphereJointObjIdx = sphereIDs[0];
 						bCutting = true;
+						if (tAnimations)
+							tAnimations.CloseOpenScissors();
 					}
 					else
 					{
