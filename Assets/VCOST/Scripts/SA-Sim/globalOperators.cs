@@ -33,6 +33,7 @@ public class globalOperators : MonoBehaviour
     private int[] m_sphereIdx4EachOpening;// sphere currently being held for each opening
     private List<List<int>> m_sphIndices4Secure = new List<List<int>>(); //[[opening0], [opening1], [opening2]]
     // Final closure
+    private int m_layer2FinalClose = -1;
     public bool m_bFinalClosure = false;
 
     /// haptics device inputs
@@ -79,6 +80,7 @@ public class globalOperators : MonoBehaviour
         m_layers2Split[1] = 10;//14
         m_sphereIdx2Split[0] = 3;//4 //5
         m_sphereIdx2Split[1] = 14;//16 //14
+        m_layer2FinalClose = 1;
 
         // holding (opening secure)
         m_sphereIdx4EachOpening = new int[] { -1, -1, -1 };
@@ -516,10 +518,14 @@ public class globalOperators : MonoBehaviour
             // 'C': corner-cut both sphere-joint models
             if (Input.GetKeyDown(KeyCode.C))
             {
-                cornerCut();
-
-                // Hide corner cut staples
-                StapleLineManager.instance.LSSimStepTwo();
+                if (cornerCut())
+                {
+                    // Hide corner cut staples for both colon models
+                    for (int objIdx = 0; objIdx < m_numSphereModels; objIdx++)
+                    {
+                        StapleLineManager.instance.LSSimStepTwo(objIdx);
+                    }
+                }
             }
             // [Haptics version]
             if (m_hapticSurgTools[1]) //scissors
@@ -529,28 +535,35 @@ public class globalOperators : MonoBehaviour
                     int objIdx = m_hapticSurgTools[1].cutSphereJointObjIdx;
                     if (objIdx >= 0 && objIdx < m_numSphereModels)
                     {
-                        cornerCut(objIdx);
+                        if (cornerCut(objIdx))
+                            StapleLineManager.instance.LSSimStepTwo(objIdx);
                     }
                 }
             }
 
-            // 'S': split all the colons in the scene
+            /*// 'S': split all the colons in the scene
             if (Input.GetKeyDown(KeyCode.S))
             {
                 if (m_bCornerCut[0] && m_bCornerCut[1])
                     split();
                 else
                     Debug.Log("Error: Cannot split as either of the colons needs corner-cut!");
-            }
+            }*/
 
-            // 'J': join colons that were split
+            // 'J': split & join colons in one-action
             if (Input.GetKeyDown(KeyCode.J))
             {
-
+                // split
+                if (m_bCornerCut[0] && m_bCornerCut[1])
+                    split();
+                else
+                    Debug.Log("Error: Cannot split as either of the colons needs corner-cut!");
+                
+                // join
                 if (m_bSplit)
                 {
-                    join();
-                    StapleLineManager.instance.LSSimStepThree();
+                    if (join())
+                        StapleLineManager.instance.LSSimStepThree(m_layers2Split[1]);
                 }
                 else
                     Debug.Log("Error: Cannot join as colons have not been split yet!");
@@ -624,11 +637,16 @@ public class globalOperators : MonoBehaviour
                     Debug.Log("Error: Cannot conduct finalClosure as that's already conducted!");
                 else
                 {
-                    if (!finalClosure(1))
+                    if (m_layer2FinalClose <= 0 || m_layer2FinalClose >= 20)
+                    {
+                        Debug.Log("Error: Invalid final close layer!");
+                        return;
+                    }
+                    if (!finalClosure(m_layer2FinalClose))
                         Debug.Log("Final Closure failed!");
                     else
                     {
-                        StapleLineManager.instance.LSSimStepFour(0);
+                        StapleLineManager.instance.LSSimStepFour(m_layer2FinalClose-1);
                     }
                 }
             }

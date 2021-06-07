@@ -115,6 +115,28 @@ namespace PaintIn3D
         {
             lsSimStepTwoHideStaples.ForEach(g => g.SetActive(false));
         }
+        public void LSSimStepTwo(int objIdx)
+        {
+            if (lsSimStepTwoHideStaples == null || lsSimStepTwoHideStaples.Count <= 0)
+            {
+                Debug.Log("Error in LSSimStepTwo: no staple objects!");
+                return;
+            }
+
+            string stapleObjName = "Cut" + objIdx.ToString(); // objIdx == 0 or 1
+            int i, j;
+            for (i = 0; i < lsSimStepTwoHideStaples.Count; i++)
+            {
+                if (lsSimStepTwoHideStaples[i].name == stapleObjName) // cut0 or cut1
+                {
+                    for (j = 0; j < lsSimStepTwoHideStaples[i].transform.childCount; j++)
+                    {
+                        lsSimStepTwoHideStaples[i].transform.GetChild(j).gameObject.SetActive(false);
+                    }
+                    return;
+                }
+            }
+        }
 
         public void LSSimStepThree()
         {
@@ -127,6 +149,37 @@ namespace PaintIn3D
             }
 
             lsSimStepThreeShowStaples.ForEach(g => g.SetActive(true));
+        }
+
+        public void LSSimStepThree(int layerIdx)
+        {
+            if (lsSimStepThreeShowStaples == null || lsSimStepThreeShowStaples.Count <= 0)
+            {
+                Debug.Log("Error in LSSimStepThree: no staple objects!");
+                return;
+            }
+
+            foreach (StapleLineObject[] ss in lsSimStepThreeShowStaples.Select(g => g.GetComponentsInChildren<StapleLineObject>(true)))
+            {
+                foreach (StapleLineObject s in ss)
+                {
+                    s.ManualUpdate();
+                }
+            }
+
+            int endStapleIdx = 5 * layerIdx - 1;
+            int i, j;
+            for(i = 0; i < lsSimStepThreeShowStaples.Count; i++) // for each colon model
+            {
+                lsSimStepThreeShowStaples[i].SetActive(true);
+                for (j = 0; j < lsSimStepThreeShowStaples[i].transform.childCount; j++)
+                {
+                    if (j <= endStapleIdx)
+                        lsSimStepThreeShowStaples[i].transform.GetChild(j).gameObject.SetActive(true);
+                    else
+                        lsSimStepThreeShowStaples[i].transform.GetChild(j).gameObject.SetActive(false);
+                }
+            }
         }
 
         public void LSSimStepFour(int layer)

@@ -458,7 +458,15 @@ public class HapticSurgTools : MonoBehaviour
 					this.gameObject.transform.position = initialPos;
 					this.gameObject.transform.rotation = new Quaternion(initialRot.x, initialRot.y, initialRot.z, initialRot.w);
 				}
-				return;
+				else
+				{
+					// release the forceps from holding when the final closure is done
+					if (gOperators && gOperators.m_bFinalClosure)
+					{
+						releaseHoldTool();
+						bHolding = false;
+					}
+				}
 			}
 
 			// Left button for grabbing
