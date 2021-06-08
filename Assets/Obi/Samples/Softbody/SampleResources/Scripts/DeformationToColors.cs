@@ -56,9 +56,8 @@ public class DeformationToColors : MonoBehaviour
 					int offset = softbody.solverBatchOffsets[(int)Oni.ConstraintType.ShapeMatching][j];
 
                     // use frobenius norm to estimate deformation.
-                    //Tansel: the line below was giving problem. 06/01/2021
-                    //float deformation = solverBatch.linearTransforms[offset + i].FrobeniusNorm() - 2;
-                    float deformation = 1;
+                    float deformation = solverBatch.linearTransforms[offset + i].FrobeniusNorm() - 2;
+
                     for (int k = 0; k < batch.numIndices[i]; ++k)
                     {
                         int p = batch.particleIndices[batch.firstIndex[i] + k];

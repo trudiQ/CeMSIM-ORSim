@@ -2,13 +2,14 @@
 using Unity.Collections;
 using Unity.Mathematics;
 
-
 namespace Obi
 {
     public struct BurstDistanceField : BurstLocalOptimization.IDistanceFunction, IBurstCollider
     {
         public BurstColliderShape shape;
-        public BurstAffineTransform transform;
+        public BurstAffineTransform colliderToSolver;
+        public BurstAffineTransform solverToWorld;
+
         public float dt;
         public float collisionMargin;
 
@@ -17,7 +18,7 @@ namespace Obi
 
         public void Evaluate(float4 point, ref BurstLocalOptimization.SurfacePoint projectedPoint)
         {
-            point = transform.InverseTransformPoint(point);
+            point = colliderToSolver.InverseTransformPoint(point);
 
             if (shape.is2D != 0)
                 point[2] = 0;
@@ -26,11 +27,13 @@ namespace Obi
             float4 sample = DFTraverse(point, 0, in header, in dfNodes);
             float4 normal = new float4(math.normalize(sample.xyz), 0);
 
-            projectedPoint.point = transform.TransformPoint(point - normal * (sample[3] - shape.contactOffset));
-            projectedPoint.normal = transform.TransformDirection(normal);
+            projectedPoint.point = colliderToSolver.TransformPoint(point - normal * (sample[3] - shape.contactOffset));
+            projectedPoint.normal = colliderToSolver.TransformDirection(normal);
         }
 
         public void Contacts(int colliderIndex,
+                             int rigidbodyIndex,
+                             NativeArray<BurstRigidbody> rigidbodies,
 
                               NativeArray<float4> positions,
                               NativeArray<float4> velocities,
@@ -67,8 +70,12 @@ namespace Obi
                 velocity += velocities[particleIndex] * simplexBary[j];
             }
 
+            float4 rbVelocity = float4.zero;
+            if (rigidbodyIndex >= 0)
+                rbVelocity = BurstMath.GetRigidbodyVelocityAtPoint(rigidbodyIndex, colliderPoint.point, rigidbodies, solverToWorld);
+
             float dAB = math.dot(simplexPoint - colliderPoint.point, colliderPoint.normal);
-            float vel = math.dot(velocity - 0, colliderPoint.normal); // TODO: consider rigidbody velocity here.
+            float vel = math.dot(velocity     - rbVelocity,          colliderPoint.normal);
 
             if (vel * dt + dAB <= simplexRadius + shape.contactOffset + collisionMargin)
                 contacts.Enqueue(co);

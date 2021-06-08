@@ -44,7 +44,18 @@ namespace Obi
         /// <summary>
         /// current best-match orientation for each constraint.
         /// </summary>
-        public ObiNativeQuaternionList orientations = new ObiNativeQuaternionList();   
+        public ObiNativeQuaternionList orientations = new ObiNativeQuaternionList();
+
+        /// <summary>
+        /// current best-match linear transform for each constraint.
+        /// </summary>
+        public ObiNativeMatrix4x4List linearTransforms = new ObiNativeMatrix4x4List();
+
+        /// <summary>
+        /// current plastic deformation for each constraint.
+        /// </summary>
+        public ObiNativeMatrix4x4List plasticDeformations = new ObiNativeMatrix4x4List();
+
 
         public override Oni.ConstraintType constraintType
         {
@@ -101,6 +112,8 @@ namespace Obi
             restComs.Swap(sourceIndex, destIndex);
             coms.Swap(sourceIndex, destIndex);
             orientations.Swap(sourceIndex, destIndex);
+            linearTransforms.Swap(sourceIndex, destIndex);
+            plasticDeformations.Swap(sourceIndex, destIndex);
         }
 
         public override void Merge(ObiActor actor, IObiConstraintsBatch other)
@@ -130,6 +143,9 @@ namespace Obi
                 restComs.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
                 coms.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
                 orientations.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
+                linearTransforms.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
+                plasticDeformations.ResizeInitialized(m_ActiveConstraintCount + batch.activeConstraintCount, Matrix4x4.identity);
+
                 lambdas.ResizeInitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
 
                 numIndices.CopyFrom(batch.numIndices, 0, m_ActiveConstraintCount, batch.activeConstraintCount);
@@ -161,7 +177,8 @@ namespace Obi
             if (m_BatchImpl != null)
             {
                 m_BatchImpl.SetShapeMatchingConstraints(particleIndices, firstIndex, numIndices, explicitGroup,
-                                                        materialParameters, restComs, coms, orientations, lambdas, m_ActiveConstraintCount);
+                                                        materialParameters, restComs, coms, orientations, linearTransforms, plasticDeformations,
+                                                        lambdas, m_ActiveConstraintCount);
 
                 m_BatchImpl.CalculateRestShapeMatching();
             }

@@ -1,11 +1,6 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Burst;
 
 namespace Obi
 {
@@ -13,8 +8,10 @@ namespace Obi
     {
 
         public BurstColliderShape shape;
-        public BurstAffineTransform transform;
+        public BurstAffineTransform colliderToSolver;
+        public BurstAffineTransform solverToWorld;
         public float dt;
+        public float collisionMargin;
 
         public BurstMath.CachedTri tri;
         public float4 triNormal;
@@ -24,7 +21,7 @@ namespace Obi
 
         public void Evaluate(float4 point, ref BurstLocalOptimization.SurfacePoint projectedPoint)
         {
-            point = transform.InverseTransformPoint(point);
+            point = colliderToSolver.InverseTransformPoint(point);
 
             float4 nearestPoint = BurstMath.NearestPointOnTri(tri, point, out float4 bary);
             float4 normal = math.normalizesafe(point - nearestPoint);
@@ -32,11 +29,13 @@ namespace Obi
             // flip the contact normal if it points below ground:
             BurstMath.OneSidedNormal(triNormal, ref normal);
 
-            projectedPoint.point = transform.TransformPoint(nearestPoint + normal * shape.contactOffset);
-            projectedPoint.normal = transform.TransformDirection(normal);
+            projectedPoint.point = colliderToSolver.TransformPoint(nearestPoint + normal * shape.contactOffset);
+            projectedPoint.normal = colliderToSolver.TransformDirection(normal);
         }
 
         public void Contacts(int colliderIndex,
+                             int rigidbodyIndex,
+                              NativeArray<BurstRigidbody> rigidbodies,
 
                               NativeArray<float4> positions,
                               NativeArray<float4> velocities,
@@ -95,7 +94,7 @@ namespace Obi
                             float4 convexPoint;
                             float4 simplexBary = BurstMath.BarycenterForSimplexOfSize(simplexSize);
 
-                            // contact with the first triangle:
+                            // ------contact against the first triangle------:
                             float4 v1 = new float4(min_x, h3, max_z, 0);
                             float4 v2 = new float4(max_x, h4, max_z, 0);
                             float4 v3 = new float4(min_x, h1, min_z, 0);
@@ -106,13 +105,31 @@ namespace Obi
                             var colliderPoint = BurstLocalOptimization.Optimize<BurstHeightField>(ref this, positions, radii, simplices, simplexStart, simplexSize,
                                                                                 ref simplexBary, out convexPoint, optimizationIterations, optimizationTolerance);
 
-                            co.pointB = colliderPoint.point;
-                            co.normal = colliderPoint.normal;
-                            co.pointA = simplexBary;
+                            float4 velocity = float4.zero;
+                            float simplexRadius = 0;
+                            for (int j = 0; j < simplexSize; ++j)
+                            {
+                                int particleIndex = simplices[simplexStart + j];
+                                simplexRadius += radii[particleIndex].x * simplexBary[j];
+                                velocity += velocities[particleIndex] * simplexBary[j];
+                            }
 
-                            contacts.Enqueue(co);
+                            float4 rbVelocity = float4.zero;
+                            if (rigidbodyIndex >= 0)
+                                rbVelocity = BurstMath.GetRigidbodyVelocityAtPoint(rigidbodyIndex, colliderPoint.point, rigidbodies, solverToWorld);
 
-                            // contact with the second triangle:
+                            float dAB = math.dot(convexPoint - colliderPoint.point, colliderPoint.normal);
+                            float vel = math.dot(velocity - rbVelocity, colliderPoint.normal);
+
+                            if (vel * dt + dAB <= simplexRadius + shape.contactOffset + collisionMargin)
+                            {
+                                co.pointB = colliderPoint.point;
+                                co.normal = colliderPoint.normal;
+                                co.pointA = simplexBary;
+                                contacts.Enqueue(co);
+                            }
+
+                            // ------contact against the second triangle------:
                             v1 = new float4(min_x, h1, min_z, 0);
                             v2 = new float4(max_x, h4, max_z, 0);
                             v3 = new float4(max_x, h2, min_z, 0);
@@ -123,11 +140,30 @@ namespace Obi
                             colliderPoint = BurstLocalOptimization.Optimize<BurstHeightField>(ref this, positions, radii, simplices, simplexStart, simplexSize,
                                                                                 ref simplexBary, out convexPoint, optimizationIterations, optimizationTolerance);
 
-                            co.pointB = colliderPoint.point;
-                            co.normal = colliderPoint.normal;
-                            co.pointA = simplexBary;
+                            velocity = float4.zero;
+                            simplexRadius = 0;
+                            for (int j = 0; j < simplexSize; ++j)
+                            {
+                                int particleIndex = simplices[simplexStart + j];
+                                simplexRadius += radii[particleIndex].x * simplexBary[j];
+                                velocity += velocities[particleIndex] * simplexBary[j];
+                            }
 
-                            contacts.Enqueue(co);
+                            rbVelocity = float4.zero;
+                            if (rigidbodyIndex >= 0)
+                                rbVelocity = BurstMath.GetRigidbodyVelocityAtPoint(rigidbodyIndex, colliderPoint.point, rigidbodies, solverToWorld);
+
+                            dAB = math.dot(convexPoint - colliderPoint.point, colliderPoint.normal);
+                            vel = math.dot(velocity - rbVelocity, colliderPoint.normal);
+
+                            if (vel * dt + dAB <= simplexRadius + shape.contactOffset + collisionMargin)
+                            {
+                                co.pointB = colliderPoint.point;
+                                co.normal = colliderPoint.normal;
+                                co.pointA = simplexBary;
+
+                                contacts.Enqueue(co);
+                            }
                         }
                     }
                 }

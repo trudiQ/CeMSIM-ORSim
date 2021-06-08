@@ -113,6 +113,7 @@ namespace Obi
                 CoroutineJob job = new CoroutineJob();
                 routine = job.Start(blueprint.Generate());
                 EditorCoroutine.ShowCoroutineProgressBar("Generating blueprint...", ref routine);
+                Refresh();
                 EditorGUIUtility.ExitGUI();
             }
             else
@@ -123,6 +124,7 @@ namespace Obi
                     CoroutineJob job = new CoroutineJob();
                     routine = job.Start(blueprint.Generate());
                     EditorCoroutine.ShowCoroutineProgressBar("Generating blueprint...", ref routine);
+                    Refresh();
                     EditorGUIUtility.ExitGUI();
                 }
             }

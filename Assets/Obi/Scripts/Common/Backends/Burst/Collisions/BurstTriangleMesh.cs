@@ -7,7 +7,8 @@ namespace Obi
     public struct BurstTriangleMesh : BurstLocalOptimization.IDistanceFunction, IBurstCollider
     {
         public BurstColliderShape shape;
-        public BurstAffineTransform transform;
+        public BurstAffineTransform colliderToSolver;
+        public BurstAffineTransform solverToWorld;
 
         public TriangleMeshHeader header;
         public NativeArray<BIHNode> bihNodes;
@@ -21,7 +22,7 @@ namespace Obi
 
         public void Evaluate(float4 point, ref BurstLocalOptimization.SurfacePoint projectedPoint)
         {
-            point = transform.InverseTransformPointUnscaled(point);
+            point = colliderToSolver.InverseTransformPointUnscaled(point);
 
             if (shape.is2D != 0)
                 point[2] = 0;
@@ -29,11 +30,13 @@ namespace Obi
             float4 nearestPoint = BurstMath.NearestPointOnTri(tri, point, out float4 bary);
             float4 normal = math.normalizesafe(point - nearestPoint);
 
-            projectedPoint.point = transform.TransformPointUnscaled(nearestPoint + normal * shape.contactOffset);
-            projectedPoint.normal = transform.TransformDirection(normal);
+            projectedPoint.point = colliderToSolver.TransformPointUnscaled(nearestPoint + normal * shape.contactOffset);
+            projectedPoint.normal = colliderToSolver.TransformDirection(normal);
         }
 
         public void Contacts(int colliderIndex,
+                             int rigidbodyIndex,
+                             NativeArray<BurstRigidbody> rigidbodies,
 
                               NativeArray<float4> positions,
                               NativeArray<float4> velocities,
@@ -50,15 +53,17 @@ namespace Obi
                               float optimizationTolerance)
         {
 
-            BIHTraverse(colliderIndex, simplexIndex, simplexStart, simplexSize,
-                        positions, velocities, radii, simplices, in simplexBounds, 0, contacts, optimizationIterations, optimizationTolerance);
+            BIHTraverse(colliderIndex, rigidbodyIndex, simplexIndex, simplexStart, simplexSize,
+                        rigidbodies, positions, velocities, radii, simplices, in simplexBounds, 0, contacts, optimizationIterations, optimizationTolerance);
             
         }
 
         private void BIHTraverse(int colliderIndex,
+                                 int rigidbodyIndex,
                                  int simplexIndex,
                                  int simplexStart,
                                  int simplexSize,
+                                 NativeArray<BurstRigidbody> rigidbodies,
                                  NativeArray<float4> positions,
                                  NativeArray<float4> velocities,
                                  NativeArray<float4> radii,
@@ -75,14 +80,14 @@ namespace Obi
             { 
                 // visit min node:
                 if (simplexBounds.min[node.axis] <= node.min)
-                    BIHTraverse(colliderIndex, simplexIndex, simplexStart, simplexSize,
-                                positions, velocities, radii, simplices, in simplexBounds,
+                    BIHTraverse(colliderIndex, rigidbodyIndex, simplexIndex, simplexStart, simplexSize,
+                                rigidbodies, positions, velocities, radii, simplices, in simplexBounds,
                                 node.firstChild, contacts, optimizationIterations, optimizationTolerance);
 
                 // visit max node:
                 if (simplexBounds.max[node.axis] >= node.max)
-                    BIHTraverse(colliderIndex, simplexIndex, simplexStart, simplexSize,
-                                positions, velocities, radii, simplices, in simplexBounds,
+                    BIHTraverse(colliderIndex, rigidbodyIndex, simplexIndex, simplexStart, simplexSize,
+                                rigidbodies, positions, velocities, radii, simplices, in simplexBounds,
                                 node.firstChild + 1, contacts, optimizationIterations, optimizationTolerance);
             }
             else
@@ -99,7 +104,7 @@ namespace Obi
                     if (triangleBounds.IntersectsAabb(simplexBounds, shape.is2D != 0))
                     {
                         float4 simplexBary = BurstMath.BarycenterForSimplexOfSize(simplexSize);
-                        tri.Cache(v1 * transform.scale, v2 * transform.scale, v3 * transform.scale);
+                        tri.Cache(v1 * colliderToSolver.scale, v2 * colliderToSolver.scale, v3 * colliderToSolver.scale);
 
                         var colliderPoint = BurstLocalOptimization.Optimize<BurstTriangleMesh>(ref this, positions, radii, simplices, simplexStart, simplexSize,
                                                                             ref simplexBary, out float4 simplexPoint, optimizationIterations, optimizationTolerance);
@@ -113,8 +118,12 @@ namespace Obi
                             velocity += velocities[particleIndex] * simplexBary[j];
                         }
 
+                        float4 rbVelocity = float4.zero;
+                        if (rigidbodyIndex >= 0)
+                            rbVelocity = BurstMath.GetRigidbodyVelocityAtPoint(rigidbodyIndex, colliderPoint.point, rigidbodies, solverToWorld);
+
                         float dAB = math.dot(simplexPoint - colliderPoint.point, colliderPoint.normal);
-                        float vel = math.dot(velocity     - 0, colliderPoint.normal); // TODO: consider rigidbody velocity here.
+                        float vel = math.dot(velocity     - rbVelocity, colliderPoint.normal); 
 
                         if (vel * dt + dAB <= simplexRadius + shape.contactOffset + collisionMargin)
                         {
