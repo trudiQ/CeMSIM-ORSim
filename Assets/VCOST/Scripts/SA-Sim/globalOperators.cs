@@ -458,9 +458,9 @@ public class globalOperators : MonoBehaviour
         /// lift up the first few layers of spheres
         int numLayersLifted = 3;// 0,1,2
         int numSpheresPerLayer;
-        Vector3[] liftVecs = new[] {new Vector3(0.0f, 0.2f, 0.0f),   // layer==0
-                                    new Vector3(0.0f, 0.15f, 0.0f),   // layer==1
-                                    new Vector3(0.0f, 0.1f, 0.0f)};  // layer==2
+        Vector3[] liftVecs = new[] {new Vector3(0.0f, 0.1f, 0.0f),   // layer==0
+                                    new Vector3(0.0f, 0.1f, 0.0f),   // layer==1
+                                    new Vector3(0.0f, 0.05f, 0.0f)};  // layer==2
         if (liftVecs.Length != numLayersLifted)
         {
             Debug.Log("Error(openingSecure): invalid liftVecs");
