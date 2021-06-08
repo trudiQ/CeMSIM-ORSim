@@ -19,9 +19,13 @@ public class LinearStaplerTool : Tool //inherits Tool class
     public Quaternion bottomPartRelativeTrackerRotation;
     public Transform topPartDesignatedCalibrationReference; // Reference point that user have to match up to with the real tool when performing calibration for tool rotation and position
     public Transform bottomPartDesignatedCalibrationReference;
+    public List<Transform> colonAopenSpheres; // Spheres that will create the insertion opening on the colon0
+    public List<Transform> colonBopenSpheres;
+    public Transform topHalfFrontTip; // The front of the tip of the top half of the LS tool
+    public Transform bottomHalfFrontTip;
 
     public bool handlePushed;
-    public bool leverLocked;
+    public static bool leverLocked;
     public bool inAnimation; // Is the tool currently in any animation
     public float handleReading; // Sensor input for the firing handle position (should be from 0 to 1, 1 is pushed all the way in)
     public float leverReading; // Sensor input for the locking level angle (1 should be the lock position)

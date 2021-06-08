@@ -120,19 +120,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 71246867296234734}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ef8f0fe3921f1c4fbfc7e6a804ca788, type: 3}
+  m_Script: {fileID: 11500000, guid: 92c18d06179f81844bbb7b5ab9240b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  AngularSpeed: 25
+  speed: 0
+  AngularSpeed: 0
   Enable: 0
-  FiringHandle: {fileID: 7015141584092530546}
-  firingHandleStartPosition: {fileID: 2657296363827278255}
-  firingHandleEndPosition: {fileID: 758570367319933146}
-  LockingLever: {fileID: 3512736586634128039}
-  attachValidators:
-  - {fileID: 3956811645297987189}
-  bottomPartLockingPosition: {fileID: 6580476204917860768}
+  FiringHandle: {fileID: 0}
+  firingHandleStartPosition: {fileID: 0}
+  firingHandleEndPosition: {fileID: 0}
+  LockingLever: {fileID: 0}
+  attachValidators: []
+  bottomPartLockingPosition: {fileID: 0}
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   topTracker: {fileID: 0}
@@ -144,6 +143,8 @@ MonoBehaviour:
   handlePushed: 0
   leverLocked: 0
   inAnimation: 0
+  handleReading: 0
+  leverReading: 0
 --- !u!54 &1788120002
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -169,7 +170,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 386712665451821972}
-  - component: {fileID: 7052196152194323251}
   m_Layer: 0
   m_Name: LinearStaplerTopTestTracking
   m_TagString: Untagged
@@ -192,23 +192,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7052196152194323251
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 386712665451821975}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67ec7d9326102354185f1f27460f89fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trakStar: {fileID: 0}
-  trackerNumber: 2
-  calibratedAngle: {x: 0, y: 0, z: 0}
-  filter: 1
-  filterSteps: 5
 --- !u!1 &436979361431028336
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,6 +21,9 @@ public class globalOperators : MonoBehaviour
     /// opeartors related variables
     // Corner-cut (Enterotomy)
     public bool[] m_bCornerCut = { false, false };
+    // LS tool insertion
+    public static bool[] m_bInsert = { false, false };
+    public static float[] m_insertDepth = { 0, 0 }; // Unity world distance starting from colon opening position
     // Split & Join (Staple-Anastomosis)
     public bool m_bSplit = false;
     public bool m_bJoin = false;
@@ -431,7 +434,7 @@ public class globalOperators : MonoBehaviour
 
         /// Close opening: close all openings at once
         int layerIdx = 0;
-        if (bSecureOpeningsAtOnce) 
+        if (bSecureOpeningsAtOnce)
         {
             var closingPairs_obj0 = new (int top, int bottom)[] { (8, 1), (7, 2), (6, 3), (4, 3) };
             var closingPairs_obj1 = new (int top, int bottom)[] { (11, 18), (12, 17), (13, 16), (14, 15) };
@@ -558,7 +561,7 @@ public class globalOperators : MonoBehaviour
                     split();
                 else
                     Debug.Log("Error: Cannot split as either of the colons needs corner-cut!");
-                
+
                 // join
                 if (m_bSplit)
                 {
@@ -595,7 +598,7 @@ public class globalOperators : MonoBehaviour
             }
             if (m_bOpeningSecure)
                 openingSecure(true);
-            
+
             //  [haptic version]
             if (m_hapticSurgTools[0]) //forceps
             {
@@ -646,7 +649,7 @@ public class globalOperators : MonoBehaviour
                         Debug.Log("Final Closure failed!");
                     else
                     {
-                        StapleLineManager.instance.LSSimStepFour(m_layer2FinalClose-1);
+                        StapleLineManager.instance.LSSimStepFour(m_layer2FinalClose - 1);
                     }
                 }
             }
