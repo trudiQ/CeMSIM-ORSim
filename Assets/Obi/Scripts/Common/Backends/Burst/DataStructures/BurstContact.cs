@@ -1,27 +1,28 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
 using Unity.Mathematics;
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 
 namespace Obi
 {
     public struct BurstContact : IConstraint, System.IComparable<BurstContact>
     {
-        public float4 point;
+        public float4 pointA; // point A, expressed as simplex barycentric coords for simplices, as a solver-space position for colliders.
+        public float4 pointB; // point B, expressed as simplex barycentric coords for simplices, as a solver-space position for colliders.
+
         public float4 normal;
         public float4 tangent;
         public float4 bitangent;
 
         public float distance;
 
-        float normalImpulse;
-        float tangentImpulse;
-        float bitangentImpulse;
-        float stickImpulse;
+        float normalLambda;
+        float tangentLambda;
+        float bitangentLambda;
+        float stickLambda;
         float rollingFrictionImpulse;
 
-        public int entityA;
-        public int entityB;
+        public int bodyA;
+        public int bodyB;
 
         public float normalInvMassA;
         public float tangentInvMassA;
@@ -34,29 +35,19 @@ namespace Obi
         public double pad0; // padding to ensure correct alignment to 128 bytes.
 
         public int GetParticleCount() { return 2; }
-        public int GetParticle(int index) { return index == 0 ? entityA : entityB; }
+        public int GetParticle(int index) { return index == 0 ? bodyA : bodyB; }
 
         public override string ToString()
         {
-            return entityA + "," + entityB;
+            return bodyA + "," + bodyB;
         }
 
         public int CompareTo(BurstContact other)
         {
-            int first = entityA.CompareTo(other.entityA);
+            int first = bodyA.CompareTo(other.bodyA);
             if (first == 0)
-                return entityB.CompareTo(other.entityB);
+                return bodyB.CompareTo(other.bodyB);
             return first;
-        }
-
-        public float4 ContactPointA
-        {
-            get { return point + normal * distance; }
-        }
-
-        public float4 ContactPointB
-        {
-            get { return point; }
         }
 
         public float TotalNormalInvMass
@@ -80,18 +71,20 @@ namespace Obi
             bitangent = math.normalizesafe(new float4(math.cross(normal.xyz, tangent.xyz),0));
         }
 
-        public void CalculateContactMassesA(ref NativeArray<float> invMasses,
-                                            ref NativeArray<float4> prevPositions,
-                                            ref NativeArray<quaternion> orientations,
-                                            ref NativeArray<float4> inverseInertiaTensors, bool rollingContacts)
+        public void CalculateContactMassesA(float invMass,
+                                            float4 inverseInertiaTensor,
+                                            float4 position,
+                                            quaternion orientation,
+                                            float4 contactPoint,
+                                            bool rollingContacts)
         {
             // initialize inverse linear masses:
-            normalInvMassA = tangentInvMassA = bitangentInvMassA = invMasses[entityA];
+            normalInvMassA = tangentInvMassA = bitangentInvMassA = invMass;
 
             if (rollingContacts)
             {
-                float4 rA = ContactPointA - prevPositions[entityA];
-                float4x4 solverInertiaA = BurstMath.TransformInertiaTensor(inverseInertiaTensors[entityA], orientations[entityA]);
+                float4 rA = contactPoint - position;
+                float4x4 solverInertiaA = BurstMath.TransformInertiaTensor(inverseInertiaTensor, orientation);
 
                 normalInvMassA += BurstMath.RotationalInvMass(solverInertiaA, rA, normal);
                 tangentInvMassA += BurstMath.RotationalInvMass(solverInertiaA, rA, tangent);
@@ -99,18 +92,20 @@ namespace Obi
             }
         }
 
-        public void CalculateContactMassesB(ref NativeArray<float> invMasses,
-                                            ref NativeArray<float4> prevPositions,
-                                            ref NativeArray<quaternion> orientations,
-                                            ref NativeArray<float4> inverseInertiaTensors, bool rollingContacts)
+        public void CalculateContactMassesB(float invMass,
+                                            float4 inverseInertiaTensor,
+                                            float4 position,
+                                            quaternion orientation,
+                                            float4 contactPoint,
+                                            bool rollingContacts)
         {
             // initialize inverse linear masses:
-            normalInvMassB = tangentInvMassB = bitangentInvMassB = invMasses[entityB];
+            normalInvMassB = tangentInvMassB = bitangentInvMassB = invMass;
 
             if (rollingContacts)
             {
-                float4 rB = ContactPointB - prevPositions[entityB];
-                float4x4 solverInertiaB = BurstMath.TransformInertiaTensor(inverseInertiaTensors[entityB], orientations[entityB]);
+                float4 rB = contactPoint - position;
+                float4x4 solverInertiaB = BurstMath.TransformInertiaTensor(inverseInertiaTensor, orientation);
 
                 normalInvMassB += BurstMath.RotationalInvMass(solverInertiaB, rB, normal);
                 tangentInvMassB += BurstMath.RotationalInvMass(solverInertiaB, rB, tangent);
@@ -118,106 +113,113 @@ namespace Obi
             }
         }
 
-        public void CalculateContactMassesB(BurstRigidbody rigidbody, bool rollingContacts)
+
+        public void CalculateContactMassesB(in BurstRigidbody rigidbody, in BurstAffineTransform solver2World)
         {
+            float4 rB = solver2World.TransformPoint(pointB) - rigidbody.com;
+
             // initialize inverse linear masses:
             normalInvMassB = tangentInvMassB = bitangentInvMassB = rigidbody.inverseMass;
-
-            if (rollingContacts)
-            {
-                float4 rB = ContactPointB - rigidbody.com;
-
-                normalInvMassB += BurstMath.RotationalInvMass(rigidbody.inverseInertiaTensor, rB, normal);
-                tangentInvMassB += BurstMath.RotationalInvMass(rigidbody.inverseInertiaTensor, rB, tangent);
-                bitangentInvMassB += BurstMath.RotationalInvMass(rigidbody.inverseInertiaTensor, rB, bitangent);
-            }
+            normalInvMassB += BurstMath.RotationalInvMass(rigidbody.inverseInertiaTensor, rB, normal);
+            tangentInvMassB += BurstMath.RotationalInvMass(rigidbody.inverseInertiaTensor, rB, tangent);
+            bitangentInvMassB += BurstMath.RotationalInvMass(rigidbody.inverseInertiaTensor, rB, bitangent);
         }
 
-        public float SolveAdhesion(float stickDistance, float stickiness, float dt)
+        public float SolveAdhesion(float4 posA, float4 posB, float stickDistance, float stickiness, float dt)
         {
 
             if (TotalNormalInvMass <= 0 || stickDistance <= 0 || stickiness <= 0 || dt <= 0)
                 return 0;
 
-            // calculate stickiness impulse correction:
-            float stickinessSpeed = stickiness * (1 - math.max(distance / stickDistance, 0));
-            float newStickinessImpulse = math.max(stickImpulse + stickinessSpeed / TotalNormalInvMass, 0);
+            distance = math.dot(posA - posB, normal);
 
-            float stickinessImpulseChange = newStickinessImpulse - stickImpulse;
-            stickImpulse = newStickinessImpulse;
+            // calculate stickiness position correction:
+            float constraint = stickiness * (1 - math.max(distance / stickDistance, 0)) * dt;
 
-            return stickinessImpulseChange;
+            // calculate lambda multiplier:
+            float dlambda = -constraint / TotalNormalInvMass;
+
+            // accumulate lambda:
+            float newStickinessLambda = math.min(stickLambda + dlambda, 0);
+
+            // calculate lambda change and update accumulated lambda:
+            float lambdaChange = newStickinessLambda - stickLambda;
+            stickLambda = newStickinessLambda;
+
+            return lambdaChange;
         }
 
-        public float SolvePenetration(float4 relativeVelocity, float maxDepenetrationVelocity, float dt)
+        public float SolvePenetration(float4 posA, float4 posB, float maxDepenetrationDelta)
         {
 
-            if (TotalNormalInvMass <= 0 || dt <= 0)
+            if (TotalNormalInvMass <= 0)
                 return 0;
 
-            // project relativeVelocity to normal vector:
-            float relativeNormalSpeed = math.dot(relativeVelocity, normal);
+            //project position delta to normal vector:
+            distance = math.dot(posA - posB, normal);
 
-            // calculate normal impulse correction:
-            float velocityCorrection = relativeNormalSpeed + math.max(distance / dt, -maxDepenetrationVelocity);
-            float impulseCorrection = velocityCorrection / TotalNormalInvMass;
+            // calculate max projection distance based on depenetration velocity:
+            float maxProjection = math.max(-distance - maxDepenetrationDelta, 0);
 
-            // accumulate impulse:
-            float newImpulse = math.min(normalImpulse + impulseCorrection, 0);
+            // calculate lambda multiplier:
+            float dlambda = -(distance + maxProjection) / TotalNormalInvMass;
 
-            // calculate normal impulse change and update accumulated impulse:
-            float impulseChange = newImpulse - normalImpulse;
-            normalImpulse = newImpulse;
+            // accumulate lambda:
+            float newLambda = math.max(normalLambda + dlambda, 0);
 
-            return impulseChange;
+            // calculate lambda change and update accumulated lambda:
+            float lambdaChange = newLambda - normalLambda;
+            normalLambda = newLambda;
+
+            return lambdaChange;
         }
 
         public float2 SolveFriction(float4 relativeVelocity, float staticFriction, float dynamicFriction, float dt)
         {
-            float2 impulseChange = float2.zero;
+            float2 lambdaChange = float2.zero;
 
-            if (TotalTangentInvMass <= 0 || TotalBitangentInvMass <= 0 || dt <= 0 ||
-                (dynamicFriction <= 0 && staticFriction <= 0) || (normalImpulse >= 0 && stickImpulse <= 0))
-                return impulseChange;
+            if (TotalTangentInvMass <= 0 || TotalBitangentInvMass <= 0 ||
+                (dynamicFriction <= 0 && staticFriction <= 0) || (normalLambda <= 0 && stickLambda <= 0))
+                return lambdaChange;
 
-            // calculate relative frictional speed:
-            float relativeTangentSpeed = math.dot(relativeVelocity,tangent);
-            float relativeBitangentSpeed = math.dot(relativeVelocity,bitangent);
+            // calculate delta projection on both friction axis:
+            float tangentPosDelta = math.dot(relativeVelocity, tangent);
+            float bitangentPosDelta = math.dot(relativeVelocity, bitangent);
 
-            // calculate friction cone (or rather, pyramid) limit:
-            float frictionCone = -normalImpulse * dynamicFriction;
-            float staticFrictionCone = -normalImpulse * staticFriction;
+            // calculate friction pyramid limit:
+            float dynamicFrictionCone = normalLambda / dt * dynamicFriction;
+            float staticFrictionCone  = normalLambda / dt * staticFriction;
 
             // tangent impulse:
-            float tangentImpulseCorr = -relativeTangentSpeed / TotalTangentInvMass;
-            float newTangentImpulse = tangentImpulse + tangentImpulseCorr;
+            float tangentLambdaDelta = -tangentPosDelta / TotalTangentInvMass; 
+            float newTangentLambda = tangentLambda + tangentLambdaDelta;
 
-            if (math.abs(newTangentImpulse) > staticFrictionCone)
-                newTangentImpulse = math.clamp(newTangentImpulse, -frictionCone, frictionCone);
+            if (math.abs(newTangentLambda) > staticFrictionCone)
+                newTangentLambda = math.clamp(newTangentLambda, -dynamicFrictionCone, dynamicFrictionCone);
 
-            impulseChange[0] = newTangentImpulse - tangentImpulse;
-            tangentImpulse = newTangentImpulse;
+            lambdaChange[0] = newTangentLambda - tangentLambda;
+            tangentLambda = newTangentLambda;
 
             // bitangent impulse:
-            float bitangentImpulseCorr = -relativeBitangentSpeed / TotalBitangentInvMass;
-            float newBitangentImpulse = bitangentImpulse + bitangentImpulseCorr;
+            float bitangentLambdaDelta = -bitangentPosDelta / TotalBitangentInvMass;
+            float newBitangentLambda = bitangentLambda + bitangentLambdaDelta;
 
-            if (math.abs(newBitangentImpulse) > staticFrictionCone)
-                newBitangentImpulse = math.clamp(newBitangentImpulse, -frictionCone, frictionCone);
+            if (math.abs(newBitangentLambda) > staticFrictionCone)
+                newBitangentLambda = math.clamp(newBitangentLambda, -dynamicFrictionCone, dynamicFrictionCone);
 
-            impulseChange[1] = newBitangentImpulse - bitangentImpulse;
-            bitangentImpulse = newBitangentImpulse;
+            lambdaChange[1] = newBitangentLambda - bitangentLambda;
+            bitangentLambda = newBitangentLambda;
 
-            return impulseChange;
+            return lambdaChange;
         }
 
-      
+
         public float SolveRollingFriction(float4 angularVelocityA,
-                                   float4 angularVelocityB,
-                                   float rollingFriction,
-                                   float invMassA,
-                                   float invMassB,
-                                   ref float4 rolling_axis)
+                                          float4 angularVelocityB,
+                                          float rollingFriction,
+                                          float invMassA,
+                                          float invMassB,
+                                          ref float4 rolling_axis)
         {
             float totalInvMass = invMassA + invMassB;
             if (totalInvMass <= 0)
@@ -230,8 +232,8 @@ namespace Obi
 
             float relativeVelocity = vel1 - vel2;
 
-            float maxImpulse = -normalImpulse * rollingFriction;
-            float newRollingImpulse = math.min(math.max(rollingFrictionImpulse - relativeVelocity / totalInvMass, -maxImpulse), maxImpulse);
+            float maxImpulse = normalLambda * rollingFriction;
+            float newRollingImpulse = math.clamp(rollingFrictionImpulse - relativeVelocity / totalInvMass, -maxImpulse, maxImpulse);
             float rolling_impulse_change = newRollingImpulse - rollingFrictionImpulse;
             rollingFrictionImpulse = newRollingImpulse;
         

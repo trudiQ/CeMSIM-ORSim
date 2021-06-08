@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -126,7 +126,7 @@ namespace Obi
             for (int i = 0; i < implementations.Count; ++i)
             {
                 implementations[i].SetColliders(colliderShapes, colliderAabbs, colliderTransforms, 0);
-                implementations[i].UpdateWorld();
+                implementations[i].UpdateWorld(0);
             }
 
             // Invalidate all handles:
@@ -354,30 +354,11 @@ namespace Obi
             }
         }
 
-
-        public void UpdateWorld()
+        public void UpdateColliders()
         {
             // update all colliders:
             for (int i = 0; i < colliderHandles.Count; ++i)
                 colliderHandles[i].owner.UpdateIfNeeded();
-
-            for (int i = 0; i < implementations.Count; ++i)
-            {
-                if (implementations[i].referenceCount > 0)
-                {
-                    // set arrays:
-                    implementations[i].SetColliders(colliderShapes, colliderAabbs, colliderTransforms, colliderShapes.count);
-                    implementations[i].SetRigidbodies(rigidbodies);
-                    implementations[i].SetCollisionMaterials(collisionMaterials);
-                    implementations[i].SetTriangleMeshData(triangleMeshContainer.headers, triangleMeshContainer.bihNodes, triangleMeshContainer.triangles, triangleMeshContainer.vertices);
-                    implementations[i].SetEdgeMeshData(edgeMeshContainer.headers, edgeMeshContainer.bihNodes, edgeMeshContainer.edges, edgeMeshContainer.vertices);
-                    implementations[i].SetDistanceFieldData(distanceFieldContainer.headers, distanceFieldContainer.dfNodes);
-                    implementations[i].SetHeightFieldData(heightFieldContainer.headers, heightFieldContainer.samples);
-
-                    // update world implementation:
-                    implementations[i].UpdateWorld();
-                }
-            }
         }
 
         public void UpdateRigidbodies(List<ObiSolver> solvers, float stepTime)
@@ -395,6 +376,27 @@ namespace Obi
 
             for (int i = 0; i < rigidbodyHandles.Count; ++i)
                 rigidbodyHandles[i].owner.UpdateIfNeeded(stepTime);
+        }
+
+        public void UpdateWorld(float deltaTime)
+        {
+            for (int i = 0; i < implementations.Count; ++i)
+            {
+                if (implementations[i].referenceCount > 0)
+                {
+                    // set arrays:
+                    implementations[i].SetColliders(colliderShapes, colliderAabbs, colliderTransforms, colliderShapes.count);
+                    implementations[i].SetRigidbodies(rigidbodies);
+                    implementations[i].SetCollisionMaterials(collisionMaterials);
+                    implementations[i].SetTriangleMeshData(triangleMeshContainer.headers, triangleMeshContainer.bihNodes, triangleMeshContainer.triangles, triangleMeshContainer.vertices);
+                    implementations[i].SetEdgeMeshData(edgeMeshContainer.headers, edgeMeshContainer.bihNodes, edgeMeshContainer.edges, edgeMeshContainer.vertices);
+                    implementations[i].SetDistanceFieldData(distanceFieldContainer.headers, distanceFieldContainer.dfNodes);
+                    implementations[i].SetHeightFieldData(heightFieldContainer.headers, heightFieldContainer.samples);
+
+                    // update world implementation:
+                    implementations[i].UpdateWorld(deltaTime);
+                }
+            }
         }
 
         public void UpdateRigidbodyVelocities(List<ObiSolver> solvers)

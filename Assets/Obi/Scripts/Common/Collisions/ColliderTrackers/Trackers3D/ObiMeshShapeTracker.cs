@@ -32,6 +32,14 @@ namespace Obi{
             var world = ObiColliderWorld.GetInstance();
             int index = source.Handle.index;
 
+            // decrease reference count of current handle if the mesh data it points to is different
+            // than the mesh used by the collider:
+            if (handle != null && handle.owner != meshCollider.sharedMesh)
+            {
+                if (handle.Dereference())
+                    world.DestroyTriangleMesh(handle);
+            }
+
             // get or create the mesh:
             if (handle == null || !handle.isValid)
             {
@@ -46,7 +54,7 @@ namespace Obi{
             shape.flags = meshCollider.isTrigger ? 1 : 0;
             shape.rigidbodyIndex = source.Rigidbody != null ? source.Rigidbody.handle.index : -1;
             shape.materialIndex = source.CollisionMaterial != null ? source.CollisionMaterial.handle.index : -1;
-            shape.contactOffset = meshCollider.contactOffset + source.Thickness;
+            shape.contactOffset = source.Thickness;
             shape.dataIndex = handle.index;
             world.colliderShapes[index] = shape;
 

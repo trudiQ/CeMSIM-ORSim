@@ -52,29 +52,57 @@ namespace Obi{
 			}
 		}
 
-		public override void OnInspectorGUI() {
+        protected void NonReadableMeshWarning(Mesh mesh)
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            Texture2D icon = EditorGUIUtility.Load("icons/console.erroricon.png") as Texture2D;
+            EditorGUILayout.LabelField(new GUIContent("The renderer mesh is not readable. Read/Write must be enabled in the mesh import settings.", icon), EditorStyles.wordWrappedMiniLabel);
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Fix now", GUILayout.MaxWidth(100), GUILayout.MinHeight(32)))
+            {
+                string assetPath = AssetDatabase.GetAssetPath(mesh);
+                ModelImporter modelImporter = AssetImporter.GetAtPath(assetPath) as ModelImporter;
+                if (modelImporter != null)
+                {
+                    modelImporter.isReadable = true;
+                }
+                modelImporter.SaveAndReimport();
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+        }
+
+        protected bool ValidateRendererMesh()
+        {
+            SkinnedMeshRenderer skin = skinner.GetComponent<SkinnedMeshRenderer>();
+
+            if (skin != null && skin.sharedMesh != null)
+            {
+                if (!skin.sharedMesh.isReadable)
+                {
+                    NonReadableMeshWarning(skin.sharedMesh);
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public override void OnInspectorGUI() {
 			
 			serializedObject.Update();		
 
-			//EditorGUILayout.LabelField("Status: "+ (body.Initialized ? "Initialized":"Not initialized"));
+			GUI.enabled = skinner.Source != null && ValidateRendererMesh();
+            if (GUILayout.Button("Bind skin")){
 
-			GUI.enabled = skinner.Source != null;
-			if (GUILayout.Button("Bind skin")){
-				//if (!body.Initialized){
 					EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
 					CoroutineJob job = new CoroutineJob();
 					routine = job.Start(skinner.BindSkin());
 					EditorCoroutine.ShowCoroutineProgressBar("Binding to particles...",ref routine);
 					EditorGUIUtility.ExitGUI();
-				/*}else{
-					if (EditorUtility.DisplayDialog("Actor initialization","Are you sure you want to re-initialize this actor?","Ok","Cancel")){
-						EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-						CoroutineJob job = new CoroutineJob();
-						routine = job.Start(body.GeneratePhysicRepresentationForMesh());
-						EditorCoroutine.ShowCoroutineProgressBar("Generating physical representation...",ref routine);
-						EditorGUIUtility.ExitGUI();
-					}
-				}*/
+
 			}
 			if (GUILayout.Button("Bake Mesh")){
 				BakeMesh();

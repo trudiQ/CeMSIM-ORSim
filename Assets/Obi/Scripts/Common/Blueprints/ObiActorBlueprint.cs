@@ -37,6 +37,11 @@ namespace Obi
         [HideInInspector] public Vector3[] principalRadii = null;      /**< Particle ellipsoid principal radii. These are the ellipsoid radius in each axis.*/
         [HideInInspector] public Color[] colors = null;                /**< Particle colors (not used by all actors, can be null)*/
 
+        /** Simplices **/
+        [HideInInspector] public int[] points = null;
+        [HideInInspector] public int[] edges = null;
+        [HideInInspector] public int[] triangles = null;
+
         /** Constraint components. Each constraint type contains a list of constraint batches.*/
         [HideInInspector] public ObiDistanceConstraintsData distanceConstraintsData = null;
         [HideInInspector] public ObiBendConstraintsData bendConstraintsData = null;
@@ -281,6 +286,10 @@ namespace Obi
             aerodynamicConstraintsData = null;
             chainConstraintsData = null;
             volumeConstraintsData = null;
+
+            points = null;
+            edges = null;
+            triangles = null;
 
             IEnumerator g = Initialize();
 

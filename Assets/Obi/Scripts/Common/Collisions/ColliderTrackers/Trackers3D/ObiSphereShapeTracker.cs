@@ -34,7 +34,7 @@ namespace Obi{
                 shape.flags = sphere.isTrigger ? 1 : 0;
                 shape.rigidbodyIndex = source.Rigidbody != null ? source.Rigidbody.handle.index : -1;
                 shape.materialIndex = source.CollisionMaterial != null ? source.CollisionMaterial.handle.index : -1;
-                shape.contactOffset = sphere.contactOffset + source.Thickness;
+                shape.contactOffset = source.Thickness;
                 shape.center = sphere.center;
                 shape.size = Vector3.one * sphere.radius;
                 world.colliderShapes[index] = shape;

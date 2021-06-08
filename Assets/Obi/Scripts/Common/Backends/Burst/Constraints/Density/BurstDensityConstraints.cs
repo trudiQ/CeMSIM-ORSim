@@ -39,29 +39,29 @@ namespace Obi
             batch.Destroy();
         }
 
-        protected override JobHandle EvaluateSequential(JobHandle inputDeps, float deltaTime)
+        protected override JobHandle EvaluateSequential(JobHandle inputDeps, float stepTime, float substepTime, int substeps)
         {
-            return EvaluateParallel(inputDeps,deltaTime);
+            return EvaluateParallel(inputDeps, stepTime, substepTime, substeps);
         }
 
-        protected override JobHandle EvaluateParallel(JobHandle inputDeps, float deltaTime)
+        protected override JobHandle EvaluateParallel(JobHandle inputDeps, float stepTime, float substepTime, int substeps)
         {
             inputDeps = UpdateInteractions(inputDeps);
 
             // evaluate all batches as a chain of dependencies:
             for (int i = 0; i < batches.Count; ++i)
             {
-                inputDeps = batches[i].Evaluate(inputDeps, deltaTime);
+                inputDeps = batches[i].Evaluate(inputDeps, stepTime, substepTime, substeps);
                 m_Solver.ScheduleBatchedJobsIfNeeded();
             }
 
             // calculate per-particle lambdas:
-            inputDeps = CalculateLambdas(inputDeps, deltaTime);
+            inputDeps = CalculateLambdas(inputDeps, substepTime);
 
             // then apply them:
             for (int i = 0; i < batches.Count; ++i)
             {
-                inputDeps = batches[i].Apply(inputDeps, deltaTime);
+                inputDeps = batches[i].Apply(inputDeps, substepTime);
                 m_Solver.ScheduleBatchedJobsIfNeeded();
             }
 

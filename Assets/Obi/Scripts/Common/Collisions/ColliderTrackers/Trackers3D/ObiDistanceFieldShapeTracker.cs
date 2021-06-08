@@ -37,6 +37,14 @@ namespace Obi{
             var world = ObiColliderWorld.GetInstance();
             int index = source.Handle.index;
 
+            // decrease reference count of current handle if the df data it points to is different
+            // than the df used by the collider:
+            if (handle != null && handle.owner != distanceField)
+            {
+                if (handle.Dereference())
+                    world.DestroyDistanceField(handle);
+            }
+
             if (handle == null || !handle.isValid)
             {
                 handle = world.GetOrCreateDistanceField(distanceField);

@@ -41,7 +41,12 @@ namespace Obi
         public event ActorBlueprintCallback OnBlueprintUnloaded;
 
         /// <summary>
-        /// Called at the beginning of a time step.
+        /// Called at the beginning of a time step, before dirty constraints and active particles have been updated.
+        /// </summary>
+        public event ActorStepCallback OnPrepareStep;
+
+        /// <summary>
+        /// Called at the beginning of a time step, after dirty constraints and active particles have been updated.
         /// </summary>
         public event ActorStepCallback OnBeginStep;
 
@@ -79,6 +84,7 @@ namespace Obi
         private ObiActorBlueprint m_BlueprintInstance;
         private ObiPinConstraintsData m_PinConstraints;
         [SerializeField] [HideInInspector] protected ObiCollisionMaterial m_CollisionMaterial;
+        [SerializeField] [HideInInspector] protected bool m_SurfaceCollisions = false;
 
         /// <summary>
         /// The solver in charge of simulating this actor.
@@ -112,6 +118,26 @@ namespace Obi
                 {
                     m_CollisionMaterial = value;
                     UpdateCollisionMaterials();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Whether to use simplices (triangles, edges) for contact generation.
+        /// </summary>
+        public virtual bool surfaceCollisions
+        {
+            get
+            {
+                return m_SurfaceCollisions;
+            }
+            set
+            {
+                if (value != m_SurfaceCollisions)
+                {
+                    m_SurfaceCollisions = value;
+                    if (m_Solver != null)
+                        m_Solver.dirtySimplices = true;
                 }
             }
         }
@@ -532,16 +558,42 @@ namespace Obi
         /// </summary>
         public virtual void SetSelfCollisions(bool selfCollisions)
         {
-            if (solver != null && Application.isPlaying && isLoaded)
+            if (m_Solver != null && Application.isPlaying && isLoaded)
             {
                 for (int i = 0; i < particleCount; i++)
                 {
                     if (selfCollisions)
-                        solver.phases[solverIndices[i]] |= (int)Oni.ParticleFlags.SelfCollide;
+                        m_Solver.phases[solverIndices[i]] |= (int)Oni.ParticleFlags.SelfCollide;
                     else
-                        solver.phases[solverIndices[i]] &= ~(int)Oni.ParticleFlags.SelfCollide;
+                        m_Solver.phases[solverIndices[i]] &= ~(int)Oni.ParticleFlags.SelfCollide;
                 }
             }
+        }
+
+        /// <summary>
+        /// Updates particle phases in the solver at runtime, including or removing the one-sided flag.
+        /// </summary>
+        public virtual void SetOneSided(bool oneSided)
+        {
+            if (m_Solver != null && Application.isPlaying && isLoaded)
+            {
+                for (int i = 0; i < particleCount; i++)
+                {
+                    if (oneSided)
+                        m_Solver.phases[solverIndices[i]] |= (int)Oni.ParticleFlags.OneSided;
+                    else
+                        m_Solver.phases[solverIndices[i]] &= ~(int)Oni.ParticleFlags.OneSided;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Marks simplices dirty.
+        /// </summary>
+        public void SetSimplicesDirty()
+        {
+            if (m_Solver != null)
+                m_Solver.dirtySimplices = true;
         }
 
         /// <summary>
@@ -553,8 +605,8 @@ namespace Obi
         /// so it's best to amortize as many constraint modification operations as possible in a single step.
         public void SetConstraintsDirty(Oni.ConstraintType constraintType)
         {
-            if (solver != null)
-                solver.dirtyConstraints |= (1 << (int)constraintType);
+            if (m_Solver != null)
+                m_Solver.dirtyConstraints |= (1 << (int)constraintType);
         }
 
         /// <summary>  
@@ -746,11 +798,11 @@ namespace Obi
 
                 for (int i = 0; i < activeParticleCount; ++i)
                 {
-                    if (solver.invMasses[solverIndices[i]] > 0)
+                    if (m_Solver.invMasses[solverIndices[i]] > 0)
                     {
-                        float mass = 1.0f / solver.invMasses[solverIndices[i]];
+                        float mass = 1.0f / m_Solver.invMasses[solverIndices[i]];
                         actorMass += mass;
-                        com4 += solver.positions[solverIndices[i]] * mass;
+                        com4 += m_Solver.positions[solverIndices[i]] * mass;
                     }
                 }
 
@@ -949,6 +1001,7 @@ namespace Obi
 
             m_ActiveParticleCount = sourceBlueprint.activeParticleCount;
             m_Solver.dirtyActiveParticles = true;
+            m_Solver.dirtySimplices = true;
 
             // Push collision materials:
             UpdateCollisionMaterials();
@@ -960,6 +1013,7 @@ namespace Obi
             // Update active particles. 
             m_ActiveParticleCount = 0;
             m_Solver.dirtyActiveParticles = true;
+            m_Solver.dirtySimplices = true;
         }
 
         /// <summary>  
@@ -1081,10 +1135,16 @@ namespace Obi
                 OnBlueprintUnloaded(this, null);
         }
 
-        public virtual void BeginStep(float stepTime)
+        public virtual void PrepareStep(float stepTime)
         {
             UpdateCollisionMaterials();
 
+            if (OnPrepareStep != null)
+                OnPrepareStep(this, stepTime);
+        }
+
+        public virtual void BeginStep(float stepTime)
+        {
             if (OnBeginStep != null)
                 OnBeginStep(this,stepTime); 
         }

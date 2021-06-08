@@ -21,6 +21,21 @@ namespace Obi
         [SerializeField] protected float _plasticCreep = 0;
         [SerializeField] protected float _plasticRecovery = 0;
 
+        /// <summary>
+        /// Whether to use simplices (triangles, edges) for contact generation.
+        /// </summary>
+        public override bool surfaceCollisions
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+                m_SurfaceCollisions = false;
+            }
+        }
+
         /// <summary>  
         /// Whether this actor's shape matching constraints are enabled.
         /// </summary>

@@ -35,7 +35,7 @@ namespace Obi{
             shape.flags = box.isTrigger ? 1 : 0;
             shape.rigidbodyIndex = source.Rigidbody        != null ? source.Rigidbody.handle.index         : -1;
             shape.materialIndex = source.CollisionMaterial != null ? source.CollisionMaterial.handle.index : -1;
-            shape.contactOffset = box.contactOffset + source.Thickness;
+            shape.contactOffset = source.Thickness;
             shape.center = box.center;
             shape.size = box.size;
             world.colliderShapes[index] = shape;

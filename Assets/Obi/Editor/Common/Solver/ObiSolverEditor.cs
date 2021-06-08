@@ -96,7 +96,12 @@ namespace Obi
         {
 
             serializedObject.UpdateIfRequiredOrScript();
-            EditorGUILayout.HelpBox("Used particles:" + solver.AllocParticleCount, MessageType.None);
+            EditorGUILayout.HelpBox("Used particles:" + solver.allocParticleCount +"\n"+
+                                    "Points:" + solver.pointCount + "\n" +
+                                    "Edges:" + solver.edgeCount + "\n" +
+                                    "Triangles:" + solver.triCount + "\n" +
+                                    "Contacts:" + solver.contactCount + "\n" +
+                                    "Particle contacts:" + solver.particleContactCount, MessageType.None);
 
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(backend);

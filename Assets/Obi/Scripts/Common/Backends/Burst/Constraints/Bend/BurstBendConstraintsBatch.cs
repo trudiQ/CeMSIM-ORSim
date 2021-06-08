@@ -13,6 +13,7 @@ namespace Obi
     {
         private NativeArray<float> restBends;
         private NativeArray<float2> stiffnesses;
+        private NativeArray<float2> plasticity;
 
         public BurstBendConstraintsBatch(BurstBendConstraints constraints)
         {
@@ -20,34 +21,36 @@ namespace Obi
             m_ConstraintType = Oni.ConstraintType.Bending;
         }
 
-        public void SetBendConstraints(ObiNativeIntList particleIndices, ObiNativeFloatList restBends, ObiNativeVector2List bendingStiffnesses, ObiNativeFloatList lambdas, int count)
+        public void SetBendConstraints(ObiNativeIntList particleIndices, ObiNativeFloatList restBends, ObiNativeVector2List bendingStiffnesses, ObiNativeVector2List plasticity, ObiNativeFloatList lambdas, int count)
         {
             this.particleIndices = particleIndices.AsNativeArray<int>();
             this.restBends = restBends.AsNativeArray<float>();
             this.stiffnesses = bendingStiffnesses.AsNativeArray<float2>();
+            this.plasticity = plasticity.AsNativeArray<float2>();
             this.lambdas = lambdas.AsNativeArray<float>();
             m_ConstraintCount = count;
         }
 
-        public override JobHandle Evaluate(JobHandle inputDeps, float deltaTime)
+        public override JobHandle Evaluate(JobHandle inputDeps, float stepTime, float substepTime, int substeps)
         {
             var projectConstraints = new BendConstraintsBatchJob()
             {
                 particleIndices = particleIndices,
                 restBends = restBends,
                 stiffnesses = stiffnesses,
+                plasticity = plasticity,
                 lambdas = lambdas,
                 positions = solverImplementation.positions,
                 invMasses = solverImplementation.invMasses,
                 deltas = solverImplementation.positionDeltas,
                 counts = solverImplementation.positionConstraintCounts,
-                deltaTimeSqr = deltaTime * deltaTime
+                deltaTime = substepTime
             };
 
             return projectConstraints.Schedule(m_ConstraintCount, 32, inputDeps);
         }
 
-        public override JobHandle Apply(JobHandle inputDeps, float deltaTime)
+        public override JobHandle Apply(JobHandle inputDeps, float substepTime)
         {
             var parameters = solverAbstraction.GetConstraintParameters(m_ConstraintType);
 
@@ -69,8 +72,9 @@ namespace Obi
         public struct BendConstraintsBatchJob : IJobParallelFor
         {
             [ReadOnly] public NativeArray<int> particleIndices;
-            [ReadOnly] public NativeArray<float> restBends;
             [ReadOnly] public NativeArray<float2> stiffnesses;
+            [ReadOnly] public NativeArray<float2> plasticity; //plastic yield, creep
+            public NativeArray<float> restBends;
             public NativeArray<float> lambdas;
 
             [ReadOnly] public NativeArray<float4> positions;
@@ -79,7 +83,7 @@ namespace Obi
             [NativeDisableContainerSafetyRestriction][NativeDisableParallelForRestriction] public NativeArray<float4> deltas;
             [NativeDisableContainerSafetyRestriction][NativeDisableParallelForRestriction] public NativeArray<int> counts;
 
-            [ReadOnly] public float deltaTimeSqr;
+            [ReadOnly] public float deltaTime;
 
             public void Execute(int i)
             {
@@ -92,37 +96,36 @@ namespace Obi
                 float w3 = invMasses[p3];
 
                 float wsum = w1 + w2 + 2 * w3;
-                if (wsum > 0)
-                { 
-                    float4 bendVector = positions[p3] - (positions[p1] + positions[p2] + positions[p3]) / 3.0f;
-                    float bend = math.length(bendVector);
 
-                    if (bend > 0)
-                    {
-                        float constraint = 1.0f - (stiffnesses[i].x + restBends[i]) / bend;
+                float4 bendVector = positions[p3] - (positions[p1] + positions[p2] + positions[p3]) / 3.0f;
+                float bend = math.length(bendVector);
 
-                        // remove this to force a certain curvature.
-                        if (constraint >= 0)
-                        {
-                            // calculate time adjusted compliance
-                            float compliance = stiffnesses[i].y / deltaTimeSqr;
+             
+                float constraint = bend - restBends[i];
 
-                            // since the third particle moves twice the amount of the other 2, the modulus of its gradient is 2:
-                            float dlambda = (-constraint - compliance * lambdas[i]) / (wsum + compliance + BurstMath.epsilon);
-                            float4 correction = dlambda * bendVector;
+                constraint = math.max(0, constraint - stiffnesses[i].x) +
+                             math.min(0, constraint + stiffnesses[i].x);
 
-                            lambdas[i] += dlambda;
+                // plasticity:
+                if (math.abs(constraint) > plasticity[i].x)  
+                    restBends[i] += constraint * plasticity[i].y * deltaTime;
 
-                            deltas[p1] -= correction * 2 * w1;
-                            deltas[p2] -= correction * 2 * w2;
-                            deltas[p3] += correction * 4 * w3;
+                // calculate time adjusted compliance
+                float compliance = stiffnesses[i].y / (deltaTime * deltaTime);
 
-                            counts[p1]++;
-                            counts[p2]++;
-                            counts[p3]++;
-                        }
-                    }
-                }
+                // since the third particle moves twice the amount of the other 2, the modulus of its gradient is 2:
+                float dlambda = (-constraint - compliance * lambdas[i]) / (wsum + compliance + BurstMath.epsilon);
+                float4 correction = dlambda * bendVector / (bend + BurstMath.epsilon);
+
+                lambdas[i] += dlambda;
+
+                deltas[p1] -= correction * 2 * w1;
+                deltas[p2] -= correction * 2 * w2;
+                deltas[p3] += correction * 4 * w3;
+
+                counts[p1]++;
+                counts[p2]++;
+                counts[p3]++;
             }
         }
 

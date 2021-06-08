@@ -37,7 +37,7 @@ namespace Obi
                     // smooth out timestep:
                     smoothDelta = Mathf.Lerp(Time.deltaTime, smoothDelta, deltaSmoothing);
 
-                    Substep(smoothDelta);
+                    Substep(smoothDelta, smoothDelta, 1);
 
                     EndStep(smoothDelta);
                 }

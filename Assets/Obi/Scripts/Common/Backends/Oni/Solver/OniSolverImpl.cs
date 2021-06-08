@@ -71,6 +71,11 @@ namespace Obi
             return Oni.RemoveDeformableTriangles(m_OniSolver, num, sourceOffset);
         }
 
+        public void SetSimplices(int[] simplices, SimplexCounts counts)
+        {
+            Oni.SetSimplices(m_OniSolver, simplices, counts.pointCount, counts.edgeCount, counts.triangleCount);
+        }
+
         public void ParticleCountChanged(ObiSolver solver)
         {
             Oni.SetParticlePositions(m_OniSolver, solver.positions.GetIntPtr());
@@ -109,11 +114,7 @@ namespace Obi
             Oni.SetParticleOrientationConstraintCounts(m_OniSolver, solver.orientationConstraintCounts.GetIntPtr());
             Oni.SetParticleNormals(m_OniSolver, solver.normals.GetIntPtr());
             Oni.SetParticleInverseInertiaTensors(m_OniSolver, solver.invInertiaTensors.GetIntPtr());
-        }
 
-
-        public void ParticleCapacityChanged(ObiSolver solver)
-        {
             Oni.SetCapacity(m_OniSolver, solver.positions.capacity);
         }
 
@@ -180,9 +181,9 @@ namespace Obi
             return new OniJobHandle(Oni.CollisionDetection(oniSolver, stepTime));
         }
 
-        public IObiJobHandle Substep(float substepTime)
+        public IObiJobHandle Substep(float stepTime, float substepTime, int substeps)
         {
-            return new OniJobHandle(Oni.Step(oniSolver, substepTime));
+            return new OniJobHandle(Oni.Step(oniSolver, stepTime, substepTime, substeps));
         }
 
         public void ApplyInterpolation(ObiNativeVector4List startPositions, ObiNativeQuaternionList startOrientations, float stepTime, float unsimulatedTime)

@@ -70,12 +70,12 @@ namespace Obi
                 deformation.Dispose();
         }
 
-        public override JobHandle Initialize(JobHandle inputDeps, float deltaTime)
+        public override JobHandle Initialize(JobHandle inputDeps, float substepTime)
         {
             return inputDeps;
         }
 
-        public override JobHandle Evaluate(JobHandle inputDeps, float deltaTime)
+        public override JobHandle Evaluate(JobHandle inputDeps, float stepTime, float substepTime, int substeps)
         {
             var projectConstraints = new ShapeMatchingConstraintsBatchJob()
             {
@@ -101,13 +101,13 @@ namespace Obi
                 deltas = solverImplementation.positionDeltas,
                 counts = solverImplementation.positionConstraintCounts,
 
-                deltaTime = deltaTime
+                deltaTime = substepTime
             };
 
             return projectConstraints.Schedule(m_ConstraintCount, 4, inputDeps);
         }
 
-        public override JobHandle Apply(JobHandle inputDeps, float deltaTime)
+        public override JobHandle Apply(JobHandle inputDeps, float substepTime)
         {
             var parameters = solverAbstraction.GetConstraintParameters(m_ConstraintType);
 

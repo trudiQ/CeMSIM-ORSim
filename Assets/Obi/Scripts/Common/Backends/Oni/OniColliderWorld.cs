@@ -30,9 +30,9 @@ namespace Obi
                 DestroyImmediate(gameObject);
         }
 
-        public void UpdateWorld()
+        public void UpdateWorld(float deltaTime)
         {
-            Oni.UpdateColliderGrid();
+            Oni.UpdateColliderGrid(deltaTime);
         }
 
         public void SetColliders(ObiNativeColliderShapeList shapes, ObiNativeAabbList bounds, ObiNativeAffineTransformList transforms, int count)

@@ -1,8 +1,7 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace Obi
 {
@@ -15,6 +14,8 @@ namespace Obi
 
     public static class ObiUtils
     {
+
+        public const float epsilon = 0.0000001f;
 
         // Colour alphabet from https://www.aic-color.org/resources/Documents/jaic_v5_06.pdf
         public static readonly Color32[] colorAlphabet = new Color32[26]
@@ -72,6 +73,7 @@ namespace Obi
             Debug.DrawLine(pos - Vector3.forward * size, pos + Vector3.forward * size, color);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Swap<T>(ref T lhs, ref T rhs)
         {
             T temp = lhs;
@@ -79,6 +81,7 @@ namespace Obi
             rhs = temp;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Swap<T>(this T[] source, int index1, int index2)
         {
             if (source != null && index1 >= 0 && index2 != 0 && index1 < source.Length && index2 < source.Length)
@@ -89,6 +92,7 @@ namespace Obi
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Swap<T>(this IList<T> list, int index1, int index2)
         {
             if (list != null && index1 >= 0 && index2 != 0 && index1 < list.Count && index2 < list.Count)
@@ -119,6 +123,7 @@ namespace Obi
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool AreValid(this Bounds bounds)
         {
             return !(float.IsNaN(bounds.center.x) || float.IsInfinity(bounds.center.x) ||
@@ -153,6 +158,7 @@ namespace Obi
             result.z = a.z + b.z;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Remap(this float value, float from1, float to1, float from2, float to2)
         {
             return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
@@ -161,6 +167,7 @@ namespace Obi
         /**
          * Modulo operator that also follows intuition for negative arguments. That is , -1 mod 3 = 2, not -1.
          */
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Mod(float a, float b)
         {
             return a - b * Mathf.Floor(a / b);
@@ -207,16 +214,19 @@ namespace Obi
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float InvMassToMass(float invMass)
         {
             return 1.0f / invMass;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float MassToInvMass(float mass)
         {
             return 1.0f / Mathf.Max(mass, 0.00001f);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PureSign(this float val)
         {
             return ((0 <= val)?1:0) - ((val < 0)?1:0);
@@ -437,11 +447,13 @@ namespace Obi
         /**
          * Calculates the area of a triangle.
          */
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float TriangleArea(Vector3 p1, Vector3 p2, Vector3 p3)
         {
             return Mathf.Sqrt(Vector3.Cross(p2 - p1, p3 - p1).sqrMagnitude) / 2f;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float EllipsoidVolume(Vector3 principalRadii)
         {
             return 4.0f / 3.0f * Mathf.PI * principalRadii.x * principalRadii.y * principalRadii.z;
@@ -460,6 +472,7 @@ namespace Obi
             return darboux;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float RestBendingConstraint(Vector3 positionA, Vector3 positionB, Vector3 positionC)
         {
             Vector3 center = (positionA + positionB + positionC) / 3;
@@ -513,11 +526,13 @@ namespace Obi
             result.z = coords.x * p1.z + coords.y * p2.z + coords.z * p3.z;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float BarycentricInterpolation(float p1, float p2, float p3, Vector3 coords)
         {
             return coords[0] * p1 + coords[1] * p2 + coords[2] * p3;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float BarycentricExtrapolationScale(Vector3 coords)
         {
 
@@ -564,20 +579,22 @@ namespace Obi
 
             return normals;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int MakePhase(int group, Oni.ParticleFlags flags)
         {
             return (group & (int)Oni.ParticleFlags.GroupMask) | (int)flags;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetGroupFromPhase(int phase)
         {
             return phase & (int)Oni.ParticleFlags.GroupMask;
         }
 
-        public static int GetFlagsFromPhase(int phase)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Oni.ParticleFlags GetFlagsFromPhase(int phase)
         {
-            return phase & ~(int)Oni.ParticleFlags.GroupMask;
+            return (Oni.ParticleFlags)(phase & ~(int)Oni.ParticleFlags.GroupMask);
         }
 
         public static void EigenSolve(Matrix4x4 D, out Vector3 S, out Matrix4x4 V)
@@ -591,7 +608,7 @@ namespace Obi
             if (S[0] - S[1] > S[1] - S[2])
             {
                 V0 = EigenVector(D, S[0]);
-                if (S[1] - S[2] < Mathf.Epsilon)
+                if (S[1] - S[2] < epsilon)
                 {
                     V2 = V0.unitOrthogonal();
                 }
@@ -604,7 +621,7 @@ namespace Obi
             else
             {
                 V2 = EigenVector(D, S[2]);
-                if (S[0] - S[1] < Mathf.Epsilon)
+                if (S[0] - S[1] < epsilon)
                 {
                     V1 = V2.unitOrthogonal();
                 }
@@ -624,8 +641,8 @@ namespace Obi
         static Vector3 unitOrthogonal(this Vector3 input)
         {
             // Find a vector to cross() the input with.
-            if (!(input.x < input.z * Mathf.Epsilon)
-             || !(input.y < input.z * Mathf.Epsilon))
+            if (!(input.x < input.z * epsilon)
+             || !(input.y < input.z * epsilon))
             {
                 float invnm = 1 / Vector3.Magnitude(new Vector2(input.x,input.y));
                 return new Vector3(-input.y * invnm, input.x * invnm, 0);
@@ -670,7 +687,7 @@ namespace Obi
             Vector3 V = Vector3.zero;
 
             // special case
-            if (norm[index] < Mathf.Epsilon)
+            if (norm[index] < epsilon)
             {
                 V[0] = 1; return V;
             }
@@ -769,7 +786,7 @@ namespace Obi
 
             centroid = GetPointCloudCentroid(points);
 
-            // three columns of a 3x3 anisotropy matrix:
+            // three columns of a 3x3 anisotropy matrix: 
             Vector4 c0 = Vector4.zero,
                     c1 = Vector4.zero,
                     c2 = Vector4.zero;
@@ -780,9 +797,12 @@ namespace Obi
             for (int i = 0; i < count; i++)
             {
                 Vector4 offset = points[i] - centroid;
-                c0 += offset * offset[0];
-                c1 += offset * offset[1];
-                c2 += offset * offset[2];
+
+                // Unity uses an absurdly large epsilon for Mathf.Approximately (used in matrix rotations),
+                // so compensate by scaling the anisotropy matrix values up:
+                c0 += offset * offset[0] * 100;
+                c1 += offset * offset[1] * 100;
+                c2 += offset * offset[2] * 100;
             }
 
             anisotropy.SetColumn(0, c0 / count);

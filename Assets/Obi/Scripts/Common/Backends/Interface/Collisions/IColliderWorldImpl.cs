@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Unity.Jobs;
 
@@ -8,7 +8,7 @@ namespace Obi
     {
         int referenceCount { get; }
 
-        void UpdateWorld();
+        void UpdateWorld(float deltaTime);
 
         void SetColliders(ObiNativeColliderShapeList shapes, ObiNativeAabbList bounds, ObiNativeAffineTransformList transforms, int count);
         void SetRigidbodies(ObiNativeRigidbodyList rigidbody);

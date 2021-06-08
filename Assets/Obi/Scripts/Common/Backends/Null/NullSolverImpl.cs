@@ -35,14 +35,12 @@ namespace Obi
             return 0;
         }
 
-        public void ParticleCountChanged(ObiSolver solver)
+        public void SetSimplices(int[] simplices, SimplexCounts counts)
         {
         }
 
-
-        public void ParticleCapacityChanged(ObiSolver solver)
+        public void ParticleCountChanged(ObiSolver solver)
         {
-
         }
 
         public void SetRigidbodyArrays(ObiSolver solver)
@@ -96,7 +94,7 @@ namespace Obi
             return null;
         }
 
-        public IObiJobHandle Substep(float substepTime)
+        public IObiJobHandle Substep(float stepTime, float substepTime, int index)
         {
             return null;
         }

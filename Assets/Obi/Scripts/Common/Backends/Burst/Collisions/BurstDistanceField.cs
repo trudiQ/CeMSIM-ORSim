@@ -1,51 +1,83 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Burst;
+
 
 namespace Obi
 {
-    public static class BurstDistanceField
+    public struct BurstDistanceField : BurstLocalOptimization.IDistanceFunction, IBurstCollider
     {
-        public static void Contacts(int particleIndex,
-                                    int colliderIndex,
-                                    float4 position,
-                                    quaternion orientation,
-                                    float4 radii,
-                                    ref NativeArray<BurstDFNode> dfNodes,
-                                    DistanceFieldHeader header,
-                                    BurstAffineTransform colliderToSolver,
-                                    BurstColliderShape shape,
-                                    NativeQueue<BurstContact>.ParallelWriter contacts)
+        public BurstColliderShape shape;
+        public BurstAffineTransform transform;
+        public float dt;
+        public float collisionMargin;
+
+        public NativeArray<DistanceFieldHeader> distanceFieldHeaders;
+        public NativeArray<BurstDFNode> dfNodes;
+
+        public void Evaluate(float4 point, ref BurstLocalOptimization.SurfacePoint projectedPoint)
         {
-            float4 pos = colliderToSolver.InverseTransformPoint(position);
+            point = transform.InverseTransformPoint(point);
 
-            BurstContact c = new BurstContact
+            if (shape.is2D != 0)
+                point[2] = 0;
+
+            var header = distanceFieldHeaders[shape.dataIndex];
+            float4 sample = DFTraverse(point, 0, in header, in dfNodes);
+            float4 normal = new float4(math.normalize(sample.xyz), 0);
+
+            projectedPoint.point = transform.TransformPoint(point - normal * (sample[3] - shape.contactOffset));
+            projectedPoint.normal = transform.TransformDirection(normal);
+        }
+
+        public void Contacts(int colliderIndex,
+
+                              NativeArray<float4> positions,
+                              NativeArray<float4> velocities,
+                              NativeArray<float4> radii,
+
+                              NativeArray<int> simplices,
+                              in BurstAabb simplexBounds,
+                              int simplexIndex,
+                              int simplexStart,
+                              int simplexSize,
+
+                              NativeQueue<BurstContact>.ParallelWriter contacts,
+                              int optimizationIterations,
+                              float optimizationTolerance)
+        {
+            if (shape.dataIndex < 0) return;
+
+            var co = new BurstContact() { bodyA = simplexIndex, bodyB = colliderIndex };
+            float4 simplexBary = BurstMath.BarycenterForSimplexOfSize(simplexSize);
+
+            var colliderPoint = BurstLocalOptimization.Optimize<BurstDistanceField>(ref this, positions, radii, simplices, simplexStart, simplexSize,
+                                                                ref simplexBary, out float4 simplexPoint, optimizationIterations, optimizationTolerance);
+
+            co.pointB = colliderPoint.point;
+            co.normal = colliderPoint.normal;
+            co.pointA = simplexBary;
+
+            float4 velocity = float4.zero;
+            float simplexRadius = 0;
+            for (int j = 0; j < simplexSize; ++j)
             {
-                entityA = particleIndex,
-                entityB = colliderIndex,
-            };
+                int particleIndex = simplices[simplexStart + j];
+                simplexRadius += radii[particleIndex].x * simplexBary[j];
+                velocity += velocities[particleIndex] * simplexBary[j];
+            }
 
-            float4 sample = DFTraverse(pos, 0, ref header, ref dfNodes);
+            float dAB = math.dot(simplexPoint - colliderPoint.point, colliderPoint.normal);
+            float vel = math.dot(velocity - 0, colliderPoint.normal); // TODO: consider rigidbody velocity here.
 
-            c.normal = new float4(math.normalize(sample.xyz),0);
-            c.point = pos - c.normal * sample[3];
-
-            c.normal = colliderToSolver.TransformDirection(c.normal);
-            c.point = colliderToSolver.TransformPoint(c.point);
-
-            c.distance = sample[3] * math.cmax(colliderToSolver.scale.xyz) - (shape.contactOffset + BurstMath.EllipsoidRadius(c.normal, orientation, radii.xyz));
-            contacts.Enqueue(c);
+            if (vel * dt + dAB <= simplexRadius + shape.contactOffset + collisionMargin)
+                contacts.Enqueue(co);
         }
 
         private static float4 DFTraverse(float4 particlePosition,
                                          int nodeIndex,
-                                         ref DistanceFieldHeader header,
-                                         ref NativeArray<BurstDFNode> dfNodes)
+                                         in DistanceFieldHeader header,
+                                         in NativeArray<BurstDFNode> dfNodes)
         {
             var node = dfNodes[header.firstNode + nodeIndex];
 
@@ -53,8 +85,7 @@ namespace Obi
             if (node.firstChild >= 0)
             {
                 int octant = node.GetOctant(particlePosition);
-                return DFTraverse(particlePosition, node.firstChild + octant, ref header, ref dfNodes);
-
+                return DFTraverse(particlePosition, node.firstChild + octant, in header, in dfNodes);
             }
             else
             {

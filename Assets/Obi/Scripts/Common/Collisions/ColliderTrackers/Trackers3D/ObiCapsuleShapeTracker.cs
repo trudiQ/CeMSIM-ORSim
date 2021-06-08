@@ -26,7 +26,7 @@ namespace Obi{
             shape.flags = capsule.isTrigger ? 1 : 0;
             shape.rigidbodyIndex = source.Rigidbody != null ? source.Rigidbody.handle.index : -1;
             shape.materialIndex = source.CollisionMaterial != null ? source.CollisionMaterial.handle.index : -1;
-            shape.contactOffset = capsule.contactOffset + source.Thickness;
+            shape.contactOffset = source.Thickness;
             shape.center = capsule.center;
             shape.size = new Vector4(capsule.radius, capsule.height, capsule.direction, 0);
             world.colliderShapes[index] = shape;

@@ -83,7 +83,7 @@ public class SoftbodyController : MonoBehaviour
             // look for actual contacts only:
             if (contact.distance > 0.01)
             {
-                var col = world.colliderHandles[contact.other].owner;
+                var col = world.colliderHandles[contact.bodyB].owner;
                 if (col != null)
                 {
                     onGround = true;
