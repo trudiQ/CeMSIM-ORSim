@@ -18,7 +18,7 @@ public class NeedleBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _xrInteractable = this.GetComponent<XRGrabInteractable>();
+        // _xrInteractable = this.GetComponent<XRGrabInteractable>();
         _rb = this.GetComponent<Rigidbody>();
     }
 
@@ -32,12 +32,12 @@ public class NeedleBehavior : MonoBehaviour
     {
         if(isInserted)
         {
-            _xrInteractable.gravityOnDetach = false;
+            // _xrInteractable.gravityOnDetach = false;
             FreezeRotationUpdate(true);
         }
         else
         {
-            _xrInteractable.gravityOnDetach = true;
+            // _xrInteractable.gravityOnDetach = true;
             FreezeRotationUpdate(false);
         }
     }
@@ -45,8 +45,8 @@ public class NeedleBehavior : MonoBehaviour
     private void FreezeRotationUpdate(bool _freeze)
     {
         //Stop rotation control from XR interactable object
-        _xrInteractable.trackRotation = !_freeze;
-        _xrInteractable.trackPosition = !_freeze;
+        // _xrInteractable.trackRotation = !_freeze;
+        // _xrInteractable.trackPosition = !_freeze;
 
         //Freeze Rotation
         _rb.freezeRotation = _freeze;
