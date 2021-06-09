@@ -43,7 +43,7 @@ public class PatientManager : MonoBehaviour
         }
     }
 
-    void Start()
+    public void Start()
     {
         pulseEngineDriver = this.GetComponent<PulseEngineDriver>();
         pulseEventManager = this.GetComponent<PulseEventManager>();
@@ -51,7 +51,8 @@ public class PatientManager : MonoBehaviour
         PatientEvents.Instance.NeedleDecompression += OnNeedleDecompression;
         PatientEvents.Instance.PatientPneumothorax += OnTriggerPneumothorax;
 
-        DetermineIntervals(scenarioManager.timeNeedleDecompFail, 4);
+        //DetermineIntervals(scenarioManager.timeNeedleDecompFail, 4);
+        DetermineIntervals(ScenarioManager.Instance.timeNeedleDecompFail, 4);
     }
 
     private void OnTriggerPneumothorax()
@@ -90,23 +91,26 @@ public class PatientManager : MonoBehaviour
             }
             intervalActionsTriggered.Add(false);
         }
-        scenarioManager.tensionPneumothorax = true;
+        //scenarioManager.tensionPneumothorax = true;
+        ScenarioManager.Instance.tensionPneumothorax = true;
     }
 
     public void CheckTime(int noIntervals)
     {
-        //scenarioManager.timeElapsed += Time.deltaTime;
+        //scenarioManager.timeElapsed += Time.deltaTime;            //NOTE: MH 6/9/21 this isn't part of the singleton quick fix, leave it as is
 
         for (int i = 0; i < noIntervals; i++)
         {
-            if (scenarioManager.timeElapsed > intervals[i] && !intervalActionsTriggered[i])
+            //if (scenarioManager.timeElapsed > intervals[i] && !intervalActionsTriggered[i])
+            if (ScenarioManager.Instance.timeElapsed > intervals[i] && !intervalActionsTriggered[i])
             {
                 //TODO: trigger through PatientEvents instead of PulseEventManager (12/1/2020 MH)
                 pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.TensionPneumothorax, (1 / (float)noIntervals) * (i + 1));
                 intervalActionsTriggered[i] = true;
             }
 
-            else if (scenarioManager.timeElapsed > intervals[intervals.Count - 1] && !intervalActionsTriggered[intervals.Count - 1])
+            //else if (scenarioManager.timeElapsed > intervals[intervals.Count - 1] && !intervalActionsTriggered[intervals.Count - 1])
+            else if (ScenarioManager.Instance.timeElapsed > intervals[intervals.Count - 1] && !intervalActionsTriggered[intervals.Count - 1])
             {
                 Debug.Log("You Lose");
                 intervalActionsTriggered[intervals.Count - 1] = true;

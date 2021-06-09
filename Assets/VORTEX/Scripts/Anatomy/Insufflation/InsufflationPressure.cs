@@ -7,8 +7,8 @@ public class InsufflationPressure : MonoBehaviour
     // [SerializeField]
     [Range(0,100)]
     public int percentInflated = 0;
-    [SerializeField]
-    private float minPressure = 0;
+    // [SerializeField]
+    // private float minPressure = 0;
     [SerializeField]
     private float maxPressure = 15;
     [SerializeField]

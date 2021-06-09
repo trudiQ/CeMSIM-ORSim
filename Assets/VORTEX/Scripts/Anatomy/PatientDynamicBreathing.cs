@@ -32,7 +32,7 @@ public class PatientDynamicBreathing : MonoBehaviour
     public float inflationDifference = 0;
     private float breathingRate;
     public bool dynamicBreathing = false;
-    private bool lungsReset = false;
+    // private bool lungsReset = false;
     //public bool middleTiggered = false;
 
     // Start is called before the first frame update
