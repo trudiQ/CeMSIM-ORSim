@@ -20,18 +20,22 @@ public class LungBehavior : MonoBehaviour
         patient = PatientManager.Instance;
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void NeedleDecompression()
     {
-        if(other.tag == "Tool")
-        {
-            inLung = true;
+        inLung = true;
             meshRenderer.material = enterMaterial;
-            other.GetComponent<NeedleBehavior>().NeedleInserted(true);
             Debug.Log("Needle decompression event");
             PatientEvents.Instance.TriggerNeedleDecompression();      
             // PatientManager.Instance.pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.TensionPneumothorax, 0); 
             ScenarioManager.Instance.tensionPneumothorax = false;
-            ScenarioManager.Instance.pneumothoraxSeverity = 0;    
+            ScenarioManager.Instance.pneumothoraxSeverity = 0; 
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Tool")
+        {
+            // other.GetComponent<NeedleBehavior>().NeedleInserted(true);
+            NeedleDecompression();
         }
 
         if(other.tag == "Syringe")
