@@ -28,7 +28,10 @@ public class LungBehavior : MonoBehaviour
             meshRenderer.material = enterMaterial;
             other.GetComponent<NeedleBehavior>().NeedleInserted(true);
             Debug.Log("Needle decompression event");
-            PatientEvents.Instance.TriggerNeedleDecompression();           
+            PatientEvents.Instance.TriggerNeedleDecompression();      
+            // PatientManager.Instance.pulseEventManager.TriggerPulseAction(Pulse.CDM.PulseAction.TensionPneumothorax, 0); 
+            ScenarioManager.Instance.tensionPneumothorax = false;
+            ScenarioManager.Instance.pneumothoraxSeverity = 0;    
         }
 
         if(other.tag == "Syringe")

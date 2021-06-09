@@ -32,10 +32,12 @@ public class InsufflationControl : MonoBehaviour
         if(p > 0)
         {
             float severity = ScenarioManager.Instance.pneumothoraxSeverity;
-            jugularVenousDistension.SetLeftDistension((int)(p * (1.2f - severity)));
-            jugularVenousDistension.SetRightDistension((int)(p *(1.2f - severity)));
-            trachealDeviation.SetDeviationPercent((int)(p * (1.2f - severity)));
-
+            jugularVenousDistension.SetLeftDistension((int)(p * (severity)));
+            jugularVenousDistension.SetRightDistension((int)(p *(severity)));
+            trachealDeviation.SetDeviationPercent((int)(p * (severity)));
+            // jugularVenousDistension.SetLeftDistension((int)(p * (1.2f - severity)));
+            // jugularVenousDistension.SetRightDistension((int)(p *(1.2f - severity)));
+            // trachealDeviation.SetDeviationPercent((int)(p * (1.2f - severity)));
             abdominalInflation.SetPercentInflated(p);
             
         }
