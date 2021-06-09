@@ -7065,6 +7065,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 610939190}
   colliders: []
+  player: {fileID: 0}
   otherHVRGrabbableGO: {fileID: 610939129}
 --- !u!1 &613492815
 GameObject:
@@ -8551,48 +8552,6 @@ Transform:
   m_Father: {fileID: 1126014338}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 90, y: -0.000015258789, z: -0.000015258789}
---- !u!114 &788583533
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &807591816
 GameObject:
   m_ObjectHideFlags: 0
@@ -10380,6 +10339,48 @@ Transform:
   m_Father: {fileID: 968458184}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1012716177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &1013616077
 GameObject:
   m_ObjectHideFlags: 0
@@ -17002,6 +17003,11 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: 0.029454997
       objectReference: {fileID: 0}
+    - target: {fileID: 3186439653738795942, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: twistLimit
+      value: 75
+      objectReference: {fileID: 0}
     - target: {fileID: 6855043529602088529, guid: 4859ab80184e78c42a74817d0752fe62,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -17080,7 +17086,92 @@ PrefabInstance:
     - target: {fileID: 7181958829758492739, guid: 4859ab80184e78c42a74817d0752fe62,
         type: 3}
       propertyPath: CameraYOffset
-      value: 0.35
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709993418307154577, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: twistLimit
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].headIKTargetLocalPositionOffset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].headIKTargetLocalPositionOffset.y
+      value: -0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].headIKTargetLocalPositionOffset.z
+      value: -0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].leftHandIKTargetLocalPositionOffset.x
+      value: -0.0461
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].leftHandIKTargetLocalPositionOffset.y
+      value: -0.0194
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].leftHandIKTargetLocalPositionOffset.z
+      value: -0.0752
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].leftHandIKTargetLocalRotationOffset.x
+      value: 243.933
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].leftHandIKTargetLocalRotationOffset.y
+      value: 116.001
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].leftHandIKTargetLocalRotationOffset.z
+      value: 68.434
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].rightHandIKTargetLocalPositionOffset.x
+      value: 0.0525
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].rightHandIKTargetLocalPositionOffset.y
+      value: -0.0427
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].rightHandIKTargetLocalPositionOffset.z
+      value: -0.0703
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].rightHandIKTargetLocalRotationOffset.x
+      value: -64.216
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].rightHandIKTargetLocalRotationOffset.y
+      value: 88.003
+      objectReference: {fileID: 0}
+    - target: {fileID: 9043753927550310137, guid: 4859ab80184e78c42a74817d0752fe62,
+        type: 3}
+      propertyPath: avatarComponents.Array.data[0].rightHandIKTargetLocalRotationOffset.z
+      value: 90.142
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4859ab80184e78c42a74817d0752fe62, type: 3}
@@ -20305,6 +20396,7 @@ MonoBehaviour:
   rb: {fileID: 2046046948}
   colliders:
   - {fileID: 2046046949}
+  player: {fileID: 0}
   otherHVRGrabbableGO: {fileID: 0}
 --- !u!114 &2046046947
 MonoBehaviour:
@@ -20320,6 +20412,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 2046046948}
   colliders: []
+  player: {fileID: 0}
   otherHVRGrabbableGO: {fileID: 0}
 --- !u!54 &2046046948
 Rigidbody:
@@ -55882,6 +55975,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 1364005423}
   colliders: []
+  player: {fileID: 0}
   otherHVRGrabbableGO: {fileID: 0}
 --- !u!1 &8296172667528579950
 GameObject:
@@ -56232,6 +56326,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 8296172668845882952}
   colliders: []
+  player: {fileID: 0}
   otherHVRGrabbableGO: {fileID: 0}
 --- !u!1 &8296172669381318218
 GameObject:

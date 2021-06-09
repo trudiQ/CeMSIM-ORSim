@@ -1138,6 +1138,9 @@ GameObject:
   - component: {fileID: 3750376820021145479}
   - component: {fileID: 7128124040791062013}
   - component: {fileID: 3840477195727832844}
+  - component: {fileID: 5574263512447862892}
+  - component: {fileID: 9124695822246075676}
+  - component: {fileID: 5195455371245616058}
   m_Layer: 0
   m_Name: surgeon012M_rerigged3
   m_TagString: Untagged
@@ -1418,6 +1421,50 @@ MonoBehaviour:
       onRightFootstep:
         m_PersistentCalls:
           m_Calls: []
+--- !u!114 &5574263512447862892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4559845644676134205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189aa54d519ab6743b46a824398994d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ik: {fileID: 3840477195727832844}
+  rotationLimits:
+  - {fileID: 3751569303258135276}
+  - {fileID: 8275267241439140827}
+--- !u!114 &9124695822246075676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4559845644676134205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f96830c85bd58f34a8df4b2f652122a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  avatarRoot: {fileID: 3750376820021145479}
+  avatarHead: {fileID: 3139738798669461243}
+  height: 1.5614662
+--- !u!114 &5195455371245616058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4559845644676134205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 846e931ca7075954fb4fc58005db1ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ik: {fileID: 3840477195727832844}
 --- !u!1 &4638899232467120220
 GameObject:
   m_ObjectHideFlags: 0
@@ -1588,6 +1635,7 @@ GameObject:
   - component: {fileID: 2497819704595679863}
   - component: {fileID: 3399463841030833250}
   - component: {fileID: 6772046081399991293}
+  - component: {fileID: 3751569303258135276}
   m_Layer: 0
   m_Name: Hand.L
   m_TagString: Untagged
@@ -1632,8 +1680,8 @@ MonoBehaviour:
   SphereRadius: 0.008
   FingerTipOnly: 0
   Hand: {fileID: 2497819704595679863}
-  OpenPose: {fileID: 11400000, guid: aef6cd487f6ea1c43bb8dfb144372b71, type: 2}
-  ClosedPose: {fileID: 11400000, guid: a431ee9a6b8a49d4e94e15aacb0c02b3, type: 2}
+  OpenPose: {fileID: 0}
+  ClosedPose: {fileID: 0}
   Palm: {fileID: 7521395488479879654}
   DrawSpheres: 0
   DrawTips: 0
@@ -1708,7 +1756,7 @@ MonoBehaviour:
     - Transform: {fileID: 8229722615959567846}
     - Transform: {fileID: 2832807464496701931}
     - Transform: {fileID: 1755487292258936811}
-  MirrorSettings: {fileID: 11400000, guid: 88bca7a50d0710b47b72347ed55ef2fc, type: 2}
+  MirrorSettings: {fileID: 0}
   CapsuleRadius: 0.01
   CapsuleDirection: 0
   CapsuleAddRadius: 1
@@ -1739,10 +1787,10 @@ MonoBehaviour:
   RightAutoPose: 0
   SelectionIndex: 1
   PoseNames:
-  - 'Primary: RELAXED_HAND'
-  - CLOSED_FIST
+  - Primary Not Set
+  - Not Set
   PrimaryPose:
-    Pose: {fileID: 11400000, guid: 388d9b48ce5002c49b7faadf2d8a0308, type: 2}
+    Pose: {fileID: 0}
     Weight: 1
     Mask: 0
     Disabled: 0
@@ -1762,7 +1810,7 @@ MonoBehaviour:
     RingStart: 0
     PinkyStart: 0
   Blends:
-  - Pose: {fileID: 11400000, guid: a431ee9a6b8a49d4e94e15aacb0c02b3, type: 2}
+  - Pose: {fileID: 0}
     Weight: 1
     Mask: 0
     Disabled: 0
@@ -1801,6 +1849,22 @@ MonoBehaviour:
   Hand: {fileID: 2497819704595679863}
   DefaultPoser: {fileID: 3399463841030833250}
   CurrentPoser: {fileID: 0}
+--- !u!114 &3751569303258135276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4967325515525241274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45281828b4c9247558c7c695124d6877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axis: {x: 0, y: 1, z: 0}
+  defaultLocalRotation: {x: -0.07642468, y: -0.06879916, z: 0.09406848, w: 0.99024093}
+  limit: 45
+  twistLimit: 90
 --- !u!1 &5024168213831906474
 GameObject:
   m_ObjectHideFlags: 0
@@ -2376,6 +2440,7 @@ GameObject:
   - component: {fileID: 9098428089815987154}
   - component: {fileID: 7654128487290403905}
   - component: {fileID: 1179921789201934631}
+  - component: {fileID: 8275267241439140827}
   m_Layer: 0
   m_Name: Hand.R
   m_TagString: Untagged
@@ -2420,8 +2485,8 @@ MonoBehaviour:
   SphereRadius: 0.008
   FingerTipOnly: 0
   Hand: {fileID: 9098428089815987154}
-  OpenPose: {fileID: 11400000, guid: aef6cd487f6ea1c43bb8dfb144372b71, type: 2}
-  ClosedPose: {fileID: 11400000, guid: a431ee9a6b8a49d4e94e15aacb0c02b3, type: 2}
+  OpenPose: {fileID: 0}
+  ClosedPose: {fileID: 0}
   Palm: {fileID: 9179339188512366816}
   DrawSpheres: 0
   DrawTips: 0
@@ -2496,7 +2561,7 @@ MonoBehaviour:
     - Transform: {fileID: 4619724614584465738}
     - Transform: {fileID: 7682376683724708172}
     - Transform: {fileID: 1647506118979078420}
-  MirrorSettings: {fileID: 11400000, guid: 88bca7a50d0710b47b72347ed55ef2fc, type: 2}
+  MirrorSettings: {fileID: 0}
   CapsuleRadius: 0.01
   CapsuleDirection: 0
   CapsuleAddRadius: 1
@@ -2527,10 +2592,10 @@ MonoBehaviour:
   RightAutoPose: 0
   SelectionIndex: 1
   PoseNames:
-  - 'Primary: RELAXED_HAND'
-  - CLOSED_FIST
+  - Primary Not Set
+  - Not Set
   PrimaryPose:
-    Pose: {fileID: 11400000, guid: 388d9b48ce5002c49b7faadf2d8a0308, type: 2}
+    Pose: {fileID: 0}
     Weight: 1
     Mask: 0
     Disabled: 0
@@ -2550,7 +2615,7 @@ MonoBehaviour:
     RingStart: 0
     PinkyStart: 0
   Blends:
-  - Pose: {fileID: 11400000, guid: a431ee9a6b8a49d4e94e15aacb0c02b3, type: 2}
+  - Pose: {fileID: 0}
     Weight: 1
     Mask: 0
     Disabled: 0
@@ -2589,6 +2654,22 @@ MonoBehaviour:
   Hand: {fileID: 9098428089815987154}
   DefaultPoser: {fileID: 7654128487290403905}
   CurrentPoser: {fileID: 0}
+--- !u!114 &8275267241439140827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6402825387620074911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45281828b4c9247558c7c695124d6877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axis: {x: 0, y: 1, z: 0}
+  defaultLocalRotation: {x: -0.07116726, y: 0.0671423, z: -0.04505952, w: 0.99418145}
+  limit: 45
+  twistLimit: 90
 --- !u!1 &6541739451257788970
 GameObject:
   m_ObjectHideFlags: 0
