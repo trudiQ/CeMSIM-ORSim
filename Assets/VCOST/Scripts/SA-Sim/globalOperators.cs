@@ -22,8 +22,8 @@ public class globalOperators : MonoBehaviour
     // Corner-cut (Enterotomy)
     public bool[] m_bCornerCut = { false, false };
     // LS tool insertion
-    public static bool[] m_bInsert = { false, false };
-    public static float[] m_insertDepth = { 0, 0 }; // Unity world distance starting from colon opening position
+    public static int[] m_bInsert = { 0, 0 }; // 1 means top part inserted, 2 means bottom part
+    public static float[] m_insertDepth = { 0, 0 }; // Unity world distance starting from colon opening position (scale from 0 to 1 for the full colon length)
     // Split & Join (Staple-Anastomosis)
     public bool m_bSplit = false;
     public bool m_bJoin = false;

@@ -18,6 +18,8 @@ public class TestAPI : MonoBehaviour
 
     public Transform trackerMarker0;
     public Transform trackerMarker1;
+    public Transform tracker0OriginPosition;
+    public Transform tracker1OriginPosition;
 
     public Vector3 trackerMarkerStartPosition0;
     public Vector3 trackerMarkerStartEuler0;
@@ -167,14 +169,14 @@ public class TestAPI : MonoBehaviour
         // Update transform based on readings, the position xyz and euler xyz are already matched with the tracker reading
         if (trackerMarker0 != null)
         {
-            trackerMarker0.position = trackerMarkerStartPosition0 + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
+            trackerMarker0.position = tracker0OriginPosition.position + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
             trackerMarker0.rotation = Quaternion.Euler(new Vector3(-(float)record0.r, (float)record0.a, 0));
             RotateZ(trackerMarker0, trackerMarker0.parent, (float)record0.a, (float)record0.e, rotaters[0]);
         }
         if (trackerMarker1 != null)
         {
             trackerMarkerCurrentRawRotationData1 = new Vector3((float)record1.r, (float)record1.e, (float)record1.a);
-            trackerMarker1.position = trackerMarkerStartPosition1 + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
+            trackerMarker1.position = tracker1OriginPosition.position + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
             trackerMarker1.rotation = Quaternion.Euler(new Vector3(-(float)record1.r, (float)record1.a, 0));
             RotateZ(trackerMarker1, trackerMarker1.parent, (float)record1.a, (float)record1.e, rotaters[1]);
         }
