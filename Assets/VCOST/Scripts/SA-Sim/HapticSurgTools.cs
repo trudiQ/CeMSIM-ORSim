@@ -36,7 +36,7 @@ public class HapticSurgTools : MonoBehaviour
 	private bool bHolding = false; //forceps
 	private bool bCutting = false; //scissors
 	public int[] holdSphereIDs = new int[] {-1, -1, -1 }; //[objIdx, layerIdx, sphereIdx]
-	public int cutSphereJointObjIdx = -1; // 0 or 1
+	public int[] cutSphereIdx = new int[] { -1, -1, -1 }; //[objIdx, layerIdx, sphereIdx]
 	public GameObject toolTipSphere = null; // forceps only
 	private GameObject touching = null;			//!< Reference to the object currently touched
 	private GameObject grabbing = null;			//!< Reference to the object currently grabbed
@@ -106,6 +106,8 @@ public class HapticSurgTools : MonoBehaviour
 										this.gameObject.transform.rotation.w);
 
 			GameObject gOperatorsGO = GameObject.Find("globalOperators");
+			if (gOperatorsGO)
+				gOperators = gOperatorsGO.GetComponent<globalOperators>();
 			if (this.gameObject.name == "Forceps" || this.gameObject.name == "Forceps1" || this.gameObject.name == "Forceps2")
 			{
 				GameObject forcepswithhaptic = null;
@@ -134,9 +136,6 @@ public class HapticSurgTools : MonoBehaviour
 					seleSurgTool = toolSelector.transform.GetChild(0).gameObject.GetComponent<HapticSurgTools>();
 					seleHapticGO = toolSelector.transform.GetChild(1).gameObject; // haptics object of selector
 				}
-
-				if (gOperatorsGO)
-					gOperators = gOperatorsGO.GetComponent<globalOperators>();
 			}
 			else if (this.gameObject.name == "Scissors")
 			{
@@ -591,11 +590,15 @@ public class HapticSurgTools : MonoBehaviour
 						{
 							holdSphereIDs = new int[] { -1, -1, -1 };
 							bHolding = false;
+							Debug.Log("Attemp holding a non-sphere obj");
 						}
 
-						// release the touching obj
-						bTouching = false;
-						touching = null;
+						// release the touching obj when holding
+						if (bHolding)
+						{
+							bTouching = false;
+							touching = null;
+						}
 					}
 					// switch to selector
 					if (!bTouching)
@@ -707,27 +710,55 @@ public class HapticSurgTools : MonoBehaviour
 						int[] sphereIDs = new int[3]; //[objIdx, layerIdx, sphereIdx]
 						if (parseSphereName(touching.name, ref sphereIDs))
 						{
-							cutSphereJointObjIdx = sphereIDs[0];
-							bCutting = true;
-							if (tAnimations)
-								tAnimations.CloseOpenScissors();
+							// examine if the touching sphere within the layer & corner-cut range
+							bool bTouchSphereAtCorners = false;
+							if (sphereIDs[1] >= 0 && sphereIDs[1] <= 1) // layerIdx = 0 or 1
+							{
+								if (gOperators && gOperators.m_cornerSphereIdxRange.Length > 0) // sphereIdx in the corner-cut range
+								{
+									for (int c = 0; c < gOperators.m_cornerSphereIdxRange.Length; c++)
+									{
+										if (sphereIDs[2] >= gOperators.m_cornerSphereIdxRange[c].Item1 && sphereIDs[2] <= gOperators.m_cornerSphereIdxRange[c].Item2)
+										{
+											bTouchSphereAtCorners = true;
+											break;
+										}
+									}
+								}
+							}
+							if (bTouchSphereAtCorners)
+							{
+								cutSphereIdx = new int[] { sphereIDs[0], sphereIDs[1], sphereIDs[2] };
+								bCutting = true;
+							}
+							else
+							{
+								cutSphereIdx = new int[] { -1, -1, -1 };
+								bCutting = false;
+								Debug.Log("Attemp cutting: cut sphere out-of-range!");
+							}
+							Debug.Log("Cutting: sphere ID: (" + sphereIDs[0].ToString() + "," + sphereIDs[1].ToString() + "," + sphereIDs[2].ToString() + ")");
 						}
 						else
 						{
-							cutSphereJointObjIdx = -1;
+							cutSphereIdx = new int[] { -1, -1, -1 };
 							bCutting = false;
+							//Debug.Log("Attemp cutting: cut non-sphere obj!");
 						}
 					}
-					else
+					else // !bTouching
 					{
-						cutSphereJointObjIdx = -1;
+						cutSphereIdx = new int[] { -1, -1, -1 };
 						bCutting = false;
+						//Debug.Log("Attemp cutting: not touch any sphere!");
 					}
-					Debug.Log(bCutting);
+
+					if (tAnimations)
+						tAnimations.CloseOpenScissors();
 				}
 				if (newButtonStatus[0] == false)
 				{
-					cutSphereJointObjIdx = -1;
+					cutSphereIdx = new int[] { -1, -1, -1 };
 					bCutting = false;
 				}
 
