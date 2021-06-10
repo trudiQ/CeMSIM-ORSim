@@ -26,6 +26,9 @@ public class ScenarioManager : MonoBehaviour
     public bool eventNeedleDecompression = false;
     public bool eventChestTubeInsertion = false; //TO DO: Implement Chest Tube events
 
+    public int pneumoObj = 1;
+    public int pneumoStep = 1;
+
     private static ScenarioManager _instance;
     public static ScenarioManager Instance { get { return _instance; } }
 
@@ -88,6 +91,7 @@ public class ScenarioManager : MonoBehaviour
     {
         timeElapsed = 0f;
         isRunning = true;
+        pneumoStep = 1;
         PatientEvents.Instance.TriggerPatientPneumothorax();
     }
 
@@ -99,9 +103,27 @@ public class ScenarioManager : MonoBehaviour
     {
         isRunning = true;
     }
+    
+    public void OnNeedleGrabbed(bool grabbed)
+    {
+        if(grabbed && pneumoStep == 1)
+        {
+            pneumoStep = 2;
+            WalkthroughMenu.Instance.SetStepText(pneumoStep);
+        }
+        else if(!grabbed && pneumoStep == 2)
+        {
+            pneumoStep = 1;
+            WalkthroughMenu.Instance.SetStepText(pneumoStep);
+        }
+    }
 
     private void OnNeedleDecompression()
     {
         eventNeedleDecompression = true;
+        pneumoStep = 3;
+        pneumoObj = 2;
+        WalkthroughMenu.Instance.SetStepText(pneumoStep);
+        WalkthroughMenu.Instance.SetObjectiveText(pneumoObj);
     }
 }
