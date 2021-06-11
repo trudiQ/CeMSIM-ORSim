@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.Network;
+using System;
 
 namespace CEMSIM
 {
@@ -10,15 +11,23 @@ namespace CEMSIM
     {
         public class GameManager : MonoBehaviour
         {
-            //TO DO: Create proper instance
             public static GameManager instance;
 
             // store all information about all players in game
             public static Dictionary<int, PlayerManager> players = new Dictionary<int, PlayerManager>();
 
+            [Header("Player Prefabs")]
             public GameObject localPlayerVR;
             public GameObject localPlayerPrefab;
             public GameObject playerPrefab;
+
+            [Header("Events")]
+            public GameObject roomLightButton;
+
+            // event management
+            private delegate void eventHandler(Packet _packet);
+            private static Dictionary<int, eventHandler> eventHandlers;
+
 
             private void Awake()
             {
@@ -33,6 +42,11 @@ namespace CEMSIM
                     Debug.Log("Another instance already exists. Destroy this one.");
                     Destroy(this);
                 }
+            }
+
+            private void Start()
+            {
+                GameManager.InitializeEventId();
             }
 
             /// <summary>Spawns a player, not necessarily the player controlled by the current user.</summary>
@@ -75,6 +89,48 @@ namespace CEMSIM
                 // record the player instance in the players dictionary
                 players.Add(_id, _player.GetComponent<PlayerManager>());
             }
+
+
+            #region Environment State Updating Handling
+            public static void handleEventPacket(int eventId, Packet _packet)
+            {
+                if (eventHandlers.ContainsKey(eventId))
+                {
+                    eventHandlers[eventId](_packet);
+                }
+                else
+                {
+                    Debug.LogWarning($"event id {eventId} is not supported");
+                }
+            }
+
+            public static void SetRoomLightState(Packet _packet)
+            {
+                bool onOff = _packet.ReadBool();
+                GameManager.instance.roomLightButton.GetComponent<RoomLightsOnOff>().SetSwitchState(onOff);
+
+            }
+
+
+            public static void SendRoomLightState(bool switchState)
+            {
+                List<byte> message = new List<byte>();
+                message.AddRange(BitConverter.GetBytes(switchState));
+
+                ClientSend.SendEnvironmentState((int)EnvironmentId.roomLight, message.ToArray());
+
+            }
+
+
+            private static void InitializeEventId()
+            {
+                eventHandlers = new Dictionary<int, eventHandler>
+                {
+                    {(int)EnvironmentId.roomLight, SetRoomLightState}
+                };
+            }
+
+            #endregion
         }
     }
 }

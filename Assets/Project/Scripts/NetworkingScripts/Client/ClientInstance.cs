@@ -466,17 +466,18 @@ namespace CEMSIM
             private static void InitializeClientData()
             {
                 packetHandlers = new Dictionary<int, PacketHandler>() {
-                { (int)ServerPackets.invalidPacket, ClientHandle.InvalidPacketResponse},
-                { (int)ServerPackets.welcome, ClientHandle.Welcome },
-                { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
-                { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
-                { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
-                { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition},
-                { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected},
-                { (int)ServerPackets.heartBeatDetectionTCP, ClientHandle.HeartBeatDetectionTCP},
-                { (int)ServerPackets.heartBeatDetectionUDP, ClientHandle.HeartBeatDetectionUDP},
-                { (int)ServerPackets.itemPositionUDP, ClientHandle.ItemPosition},
-                { (int)ServerPackets.ownershipDenial, ClientHandle.OwnershipDenial},
+                    { (int)ServerPackets.invalidPacket, ClientHandle.InvalidPacketResponse},
+                    { (int)ServerPackets.welcome, ClientHandle.Welcome },
+                    { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
+                    { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
+                    { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
+                    { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition},
+                    { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected},
+                    { (int)ServerPackets.heartBeatDetectionTCP, ClientHandle.HeartBeatDetectionTCP},
+                    { (int)ServerPackets.heartBeatDetectionUDP, ClientHandle.HeartBeatDetectionUDP},
+                    { (int)ServerPackets.itemPositionUDP, ClientHandle.ItemPosition},
+                    { (int)ServerPackets.ownershipDenial, ClientHandle.OwnershipDenial},
+                    { (int)ServerPackets.environmentState, ClientHandle.EnvironmentState},
             };
 
                 Debug.Log("Client Data Initialization Complete.");

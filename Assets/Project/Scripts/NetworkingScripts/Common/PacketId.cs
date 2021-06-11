@@ -23,6 +23,7 @@ namespace CEMSIM
             heartBeatDetectionTCP, 
             itemPositionUDP,     //UDP update of item position
             ownershipDenial,     //TCP packet that denies a client's request to an item's ownership
+            environmentState,    // carry the environment state information (not player state)
         }
 
         /// <summary>
@@ -42,6 +43,7 @@ namespace CEMSIM
             heartBeatDetectionTCP,
             itemPositionUDP,     //UDP update of item position
             itemOwnershipChange, //TCP update of item's ownership
+            environmentState,    // carry the environment state information (not player state)
         }
 
 
@@ -68,6 +70,7 @@ namespace CEMSIM
                 ServerPacketsInfo.Add(9, "heartBeatDetectionTCP");
                 ServerPacketsInfo.Add(10, "itemPositionUDP");
                 ServerPacketsInfo.Add(11, "ownershipDenial");
+                ServerPacketsInfo.Add(12, "environmentState");
 
                 ClientPacketsInfo.Add(1, "invalidPacket");
                 ClientPacketsInfo.Add(2, "welcome");
@@ -81,6 +84,7 @@ namespace CEMSIM
                 ClientPacketsInfo.Add(10, "heartBeatDetectionTCP");
                 ClientPacketsInfo.Add(11, "itemPositionUDP");
                 ClientPacketsInfo.Add(12, "itemOwnershipChange");
+                ClientPacketsInfo.Add(13, "environmentState");
             }
 
         }

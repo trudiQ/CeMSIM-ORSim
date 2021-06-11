@@ -206,6 +206,12 @@ namespace CEMSIM
             }
 
 
+            public static void EnvironmentState(Packet _packet)
+            {
+                int _eventId = _packet.ReadInt32();
+                GameManager.handleEventPacket(_eventId, _packet);
+            }
+
 
 
         }

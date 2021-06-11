@@ -24,9 +24,17 @@ namespace CEMSIM
             [Header("References")]
             public GameObject playersContainer;
 
+
             [Header("Traffic Visualization")]
             public bool printNetworkTraffic=false;        // True: print out the inbound and outbound traffic in console.
 
+
+            [Header("Environment")]
+            public GameObject roomLightButton;
+
+            // event management
+            private delegate void eventHandler(int _fromClient, Packet _packet);
+            private static Dictionary<int, eventHandler> eventHandlers;
 
             private void Awake()
             {
@@ -48,6 +56,7 @@ namespace CEMSIM
             /// </summary>
             private void Start()
             {
+                InitializeEventId();
                 QualitySettings.vSyncCount = 0; // disable vSync to limit frame rate.
                 Application.targetFrameRate = ServerGameConstants.TICKS_PER_SECOND;
 
@@ -135,6 +144,43 @@ namespace CEMSIM
 
                 }
             }
+
+
+            #region Environment State Handling
+            public static void handleEventPacket(int _fromClient, int eventId, Packet _packet)
+            {
+                if (eventHandlers.ContainsKey(eventId))
+                {
+                    eventHandlers[eventId](_fromClient, _packet);
+                }
+                else
+                {
+                    Debug.LogWarning($"event id {eventId} is not supported");
+                }
+            }
+
+            public static void SetRoomLightState(int _fromClient, Packet _packet)
+            {
+                bool switchState = _packet.ReadBool();
+                List<byte> message = new List<byte>();
+                instance.roomLightButton.GetComponent<RoomLightsOnOff>().SetSwitchState(switchState);
+
+                message.AddRange(BitConverter.GetBytes(switchState));
+
+
+                ServerSend.SendEnvironmentState(_fromClient, (int)EnvironmentId.roomLight, message.ToArray());
+            }
+
+
+
+            private static void InitializeEventId()
+            {
+                eventHandlers = new Dictionary<int, eventHandler>
+                {
+                    {(int)EnvironmentId.roomLight, SetRoomLightState}
+                };
+            }
+            #endregion
 
         }
     }

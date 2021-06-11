@@ -186,7 +186,18 @@ namespace CEMSIM
                     _packet.Write(itemCon.id);
                     _packet.Write(itemCon.ownerId);
                     SendTCPData(_packet);
-                    Debug.Log($"[Send] Pack ID :{ (int)ClientPackets.itemOwnershipChange } TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                    //Debug.Log($"[Send] Pack ID :{ (int)ClientPackets.itemOwnershipChange } TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                }
+
+            }
+
+            public static void SendEnvironmentState(int eventId, byte[] message)
+            {
+                using (Packet _packet=new Packet((int)ClientPackets.environmentState))
+                {
+                    _packet.Write(eventId); // id of the environment event
+                    _packet.Write(message); // message
+                    SendTCPData(_packet);
                 }
 
             }

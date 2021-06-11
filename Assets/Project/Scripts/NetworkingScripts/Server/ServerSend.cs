@@ -252,7 +252,16 @@ namespace CEMSIM
             }
 
 
+            public static void SendEnvironmentState(int _noClient, int eventId, byte[] message)
+            {
+                using (Packet _packet = new Packet((int)ClientPackets.environmentState))
+                {
+                    _packet.Write(eventId); // id of the environment event
+                    _packet.Write(message); // message
+                    MulticastExceptOneTCPData(_noClient, _packet);
+                }
 
+            }
 
         }
     }

@@ -176,6 +176,7 @@ namespace CEMSIM
                     { (int)ClientPackets.heartBeatDetectionUDP, ServerHandle.HeartBeatDetectionUDP},
                     { (int)ClientPackets.itemPositionUDP, ServerHandle.ItemPosition},
                     { (int)ClientPackets.itemOwnershipChange, ServerHandle.ItemOwnershipChange},
+                    { (int)ClientPackets.environmentState, ServerHandle.EnvironmentState},
                 };
 
                 Debug.Log("Initialized Server Data");

@@ -224,6 +224,12 @@ namespace CEMSIM
             }
 
 
+            public static void EnvironmentState(int _fromClient, Packet _packet)
+            {
+                int _eventId = _packet.ReadInt32();
+                ServerNetworkManager.handleEventPacket(_fromClient, _eventId, _packet);
+            }
+
 
         }
     }
