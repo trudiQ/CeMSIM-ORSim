@@ -10,6 +10,7 @@ public class LinearStaplerTool : Tool //inherits Tool class
     public Transform firingHandleEndPosition;
     public GameObject LockingLever;
     public List<StaplerAttachDetection> attachValidators; // Trigger colliders that validates the tool's two parts' positions to see if they are within attaching distance
+    public float attachDepthDifference; // How close (on a 0-1 scale) the two LS parts needs to be during insertion for them to be able to be locked together
     public Transform bottomPartLockingPosition; // Where the bottom part of the tool should be when it is locked with the top part
     public GameObject topHalf;
     public GameObject bottomHalf; // Bottom half of the tool (the half without moving parts)
@@ -28,6 +29,7 @@ public class LinearStaplerTool : Tool //inherits Tool class
     public List<Transform> colonBsecondLayerSpheres;
     public List<Transform> colonBlastLayerSpheres;
     public float angleDifferenceCondition; // What's the maximum allowing angle difference from the LS tool to the colon direction for the LS tool to enter insertion phase
+    public float tipExitProximityMultiplier; // How many times the tip exiting proximity range it is for the LS tool to exit insertion phase
 
     public bool handlePushed;
     public static bool leverLocked;
@@ -57,6 +59,20 @@ public class LinearStaplerTool : Tool //inherits Tool class
 
     void Update() //Checks status of knob, lever, and linear stapler in every frame
     {
+        // Prevent user interaction if the tool is currently in an animation
+        if (inAnimation)
+        {
+            return;
+        }
+
+        FireKnobWithKeyboardInput();
+        LockLeverWithKeyboardInput();
+
+        //Enabler();
+    }
+
+    private void LateUpdate()
+    {
         // Update colon info
         colonAopeningPos = GetPositionMean(colonAopenSpheres);
         colonBopeningPos = GetPositionMean(colonBopenSpheres);
@@ -82,17 +98,6 @@ public class LinearStaplerTool : Tool //inherits Tool class
         {
             globalOperators.m_insertDepth[1] = LockToolMovementDuringInsertion(bottomHalf.transform, colonBopeningPos, colonBlastLayerPos, Vector3.up * Mathf.Sign(bottomHalf.transform.up.y));
         }
-
-        // Prevent user interaction if the tool is currently in an animation
-        if (inAnimation)
-        {
-            return;
-        }
-
-        FireKnobWithKeyboardInput();
-        LockLeverWithKeyboardInput();
-
-        //Enabler();
     }
 
     void FireKnobWithKeyboardInput()
@@ -187,6 +192,7 @@ public class LinearStaplerTool : Tool //inherits Tool class
     /// <returns></returns>
     public bool ValidateToolLockingCondition()
     {
+        return Mathf.Abs(globalOperators.m_insertDepth[0] - globalOperators.m_insertDepth[1]) <= attachDepthDifference;
         return !attachValidators.Find(v => !v.isTogether);
     }
 
@@ -291,7 +297,7 @@ public class LinearStaplerTool : Tool //inherits Tool class
         if (globalOperators.m_bInsert[1] == 0)
         {
             // Check for angle
-            if (topToColonA <= tipProximityCondition)
+            if (topToColonB <= tipProximityCondition)
             {
                 if (Vector3.Angle(topHalf.transform.right, colonBsecondLayerPos - colonBlastLayerPos) < angleDifferenceCondition)
                 {
@@ -300,7 +306,7 @@ public class LinearStaplerTool : Tool //inherits Tool class
                 }
             }
 
-            if (bottomToColonA <= tipProximityCondition)
+            if (bottomToColonB <= tipProximityCondition)
             {
                 if (Vector3.Angle(bottomHalf.transform.right, colonBsecondLayerPos - colonBlastLayerPos) < angleDifferenceCondition)
                 {

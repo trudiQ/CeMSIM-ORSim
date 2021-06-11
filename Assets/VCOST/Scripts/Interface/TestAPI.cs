@@ -34,6 +34,7 @@ public class TestAPI : MonoBehaviour
     public List<Tracker> trackers;
     public List<Transform> copyees;
     public List<Transform> rotaters;
+    public List<TrackerController> trackerData;
 
     // Start is called before the first frame update
     void Start()
@@ -45,8 +46,10 @@ public class TestAPI : MonoBehaviour
 
         //Declare the Trackers and their assisting GameObjects
         trackers = new List<Tracker>();
+        trackerData = new List<TrackerController>();
         for (int i = 0; i < 4; i++)
         {
+            trackerData.Add(new TrackerController());
             trackers.Add(new Tracker());
             GameObject copyee = new GameObject();
             copyees.Add(copyee.transform);
@@ -66,6 +69,10 @@ public class TestAPI : MonoBehaviour
             trackerMarkerStartPosition1 = trackerMarker1.position;
             trackerMarkerStartEuler1 = trackerMarker1.eulerAngles;
         }
+
+        // Initialize tracker data
+        trackerData.ForEach(t => t.rawPositions = new Vector3[t.filterSteps]);
+        trackerData.ForEach(t => t.filteredSum = Vector3.zero);
     }
 
     private void Update()
@@ -73,7 +80,7 @@ public class TestAPI : MonoBehaviour
         // Keep getting tracking data
         TestTracking();
 
-        trackers.ForEach(t => GetTrackerData(t));
+        //trackers.ForEach(t => GetTrackerData(t));
     }
 
     /// <summary>
@@ -181,11 +188,21 @@ public class TestAPI : MonoBehaviour
             RotateZ(trackerMarker1, trackerMarker1.parent, (float)record1.a, (float)record1.e, rotaters[1]);
         }
 
-        //Update the position and orientation of Trackers
-        trackers[0].positions = new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
-        trackers[0].angles = new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
-        trackers[1].positions = new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
-        trackers[1].angles = new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
+        // Update tracker data
+        trackerData[0].rawPosition = trackerMarker0.position;
+        trackerData[1].rawPosition = trackerMarker1.position;
+
+        // Apply filtered position data
+        trackerData[0].UpdateFilter();
+        trackerMarker0.position = trackerData[0].filteredPosition;
+        trackerData[1].UpdateFilter();
+        trackerMarker1.position = trackerData[1].filteredPosition;
+
+        ////Update the position and orientation of Trackers
+        //trackers[0].positions = tracker0OriginPosition.position + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
+        //trackers[0].angles = new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
+        //trackers[1].positions = tracker1OriginPosition.position + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
+        //trackers[1].angles = new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
     }
 
     /// <summary>
