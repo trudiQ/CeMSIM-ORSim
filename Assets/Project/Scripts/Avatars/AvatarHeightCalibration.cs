@@ -26,8 +26,6 @@ public class AvatarHeightCalibration : MonoBehaviour
         float newHeightScale = (ik.solver.spine.headTarget.position.y - ik.references.root.position.y) / 
                                (heightUtility.height * (ik.references.root.localScale.y / startingScale.y));
 
-        Debug.Log(newHeightScale);
-
         ik.references.root.localScale *= newHeightScale;
         ik.solver.locomotion.footDistance *= newHeightScale;
         ik.solver.locomotion.stepThreshold *= newHeightScale;

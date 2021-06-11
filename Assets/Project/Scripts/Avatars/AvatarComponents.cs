@@ -1,26 +1,16 @@
 ﻿using System;
 using UnityEngine;
-using HurricaneVR.Framework.Shared.HandPoser;
+using HurricaneVR.Framework.Core.Player;
+using HurricaneVR.Framework.Core;
 
-[Serializable]
-public class AvatarComponents
+public class AvatarComponents : MonoBehaviour
 {
-    public string name;
-    public GameObject avatarRoot; // Base GameObject of the avatar in the scene
+    public HVRPlayerController playerController;
+    public Transform rigCamera;
 
-    [Header("Head")]
-    public Vector3 headIKTargetLocalPositionOffset;
-    public Vector3 headIKTargetLocalRotationOffset;
-
-    [Header("Left Hand")]
-    public HVRHandAnimator leftHandAnimator;
-    public HVRPhysicsPoser leftHandPhysicsPoser;
-    public Vector3 leftHandIKTargetLocalPositionOffset;
-    public Vector3 leftHandIKTargetLocalRotationOffset;
-
-    [Header("Right Hand")]
-    public HVRHandAnimator rightHandAnimator;
-    public HVRPhysicsPoser rightHandPhysicsPoser;
-    public Vector3 rightHandIKTargetLocalPositionOffset;
-    public Vector3 rightHandIKTargetLocalRotationOffset;
+    public void SetManagerComponents(HVRManager manager)
+    {
+        manager.PlayerController = playerController;
+        manager.Camera = rigCamera;
+    }
 }

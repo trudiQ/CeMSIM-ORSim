@@ -1,60 +1,61 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using HurricaneVR.Framework.Core.Grabbers;
+using HurricaneVR.Framework.Core;
+using UnityEditor;
 
 public class AvatarSwapper : MonoBehaviour
 {
-    [Header("HVR Rig Components")]
-    public HVRHandGrabber leftHandGrabber;
-    public Transform leftHandIKTarget;
-
-    public HVRHandGrabber rightHandGrabber;
-    public Transform rightHandIKTarget;
-
-    public Transform headIKTarget;
-
-    [Header("Avatars")]
     public int activeAvatar = 0;
-    public List<AvatarComponents> avatarComponents = new List<AvatarComponents>();
+    public HVRManager manager;
+    public List<GameObject> avatars = new List<GameObject>();
+    public GameObject spawnedAvatar { get; private set; }
 
     void Start()
     {
-        SwapAvatar(activeAvatar);
+        SpawnAvatar(activeAvatar);
     }
 
-    // Activate the chosen avatar and deactivate all others
-    private void SetAvatarVisilbilities(int activeIndex)
+    // Create the chosen avatar and remove the current avatar
+    public void SpawnAvatar(int newIndex)
     {
-        for (int i = 0; i < avatarComponents.Count; i++)
+        GameObject temp = Instantiate(original: avatars[newIndex], parent: gameObject.transform);
+        GameObject.Destroy(spawnedAvatar);
+
+        try
         {
-            if (i == activeIndex)
-                avatarComponents[i].avatarRoot.gameObject.SetActive(true);
-            else
-                avatarComponents[i].avatarRoot.gameObject.SetActive(false);
+            AvatarComponents components = spawnedAvatar.GetComponent<AvatarComponents>();
+            components.SetManagerComponents(manager);
         }
+        catch
+        {
+            Debug.LogWarning("AvatarComponents script not available on the spawned avatar.");
+        }
+        
+        spawnedAvatar = temp;
+        activeAvatar = newIndex;
     }
+}
 
-    // Activate the avatar GameObject and swap the components needed in the HVRHandGrabber scripts
-    public void SwapAvatar(int index)
+[CustomEditor(typeof(AvatarSwapper))]
+public class AvatarSwapperEditor : Editor
+{
+    private int avatarIndex;
+
+    public override void OnInspectorGUI()
     {
-        SetAvatarVisilbilities(index);
+        base.OnInspectorGUI();
 
-        var _avatarComponent = avatarComponents[index];
+        if (Application.isPlaying)
+        {
+            Rect rect = EditorGUILayout.GetControlRect(false, 1);
+            EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
 
-        leftHandGrabber.HandAnimator = _avatarComponent.leftHandAnimator;
-        leftHandGrabber.PhysicsPoser = _avatarComponent.leftHandPhysicsPoser;
+            avatarIndex = EditorGUILayout.IntField(label: "Avatar Index", value: avatarIndex);
 
-        rightHandGrabber.HandAnimator = _avatarComponent.rightHandAnimator;
-        rightHandGrabber.PhysicsPoser = _avatarComponent.rightHandPhysicsPoser;
-
-        leftHandIKTarget.localPosition = _avatarComponent.leftHandIKTargetLocalPositionOffset;
-        leftHandIKTarget.localRotation = Quaternion.Euler(_avatarComponent.leftHandIKTargetLocalRotationOffset);
-
-        rightHandIKTarget.localPosition = _avatarComponent.rightHandIKTargetLocalPositionOffset;
-        rightHandIKTarget.localRotation = Quaternion.Euler(_avatarComponent.rightHandIKTargetLocalRotationOffset);
-
-        headIKTarget.localPosition = _avatarComponent.headIKTargetLocalPositionOffset;
-        headIKTarget.localRotation = Quaternion.Euler(_avatarComponent.headIKTargetLocalRotationOffset);
+            if (GUILayout.Button("Swap"))
+                (target as AvatarSwapper).SpawnAvatar(avatarIndex);
+        }
+            
     }
 }
