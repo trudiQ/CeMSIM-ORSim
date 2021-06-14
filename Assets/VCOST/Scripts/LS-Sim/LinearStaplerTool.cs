@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-public class LinearStaplerTool : Tool //inherits Tool class
+public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 {
     public GameObject FiringHandle;
     public Transform firingHandleStartPosition;
@@ -11,7 +11,8 @@ public class LinearStaplerTool : Tool //inherits Tool class
     public GameObject LockingLever;
     public List<StaplerAttachDetection> attachValidators; // Trigger colliders that validates the tool's two parts' positions to see if they are within attaching distance
     public float attachDepthDifference; // How close (on a 0-1 scale) the two LS parts needs to be during insertion for them to be able to be locked together
-    public Transform bottomPartLockingPosition; // Where the bottom part of the tool should be when it is locked with the top part
+    public Transform bottomPartLockingPosition; // Where the bottom part of the tool should be when it is locked with the top part in the insertion phase
+    public Transform bottomPartFullyLockingPosition; // Where the bottom part of the tool should be when it is locked with the top part in the cutting phase
     public GameObject topHalf;
     public GameObject bottomHalf; // Bottom half of the tool (the half without moving parts)
     public Transform topTracker;
@@ -49,12 +50,12 @@ public class LinearStaplerTool : Tool //inherits Tool class
     public Vector3 colonBsecondLayerPos;
     public Vector3 colonAlastLayerPos;
     public Vector3 colonBlastLayerPos;
+    public List<float> insertionDepthInspector;
 
-    public override void Start()
+    public void Start()
     {
-        base.Start();
-
         SaveToolLocalPositionRotation();
+        insertionDepthInspector = new List<float>(globalOperators.m_insertDepth);
     }
 
     void Update() //Checks status of knob, lever, and linear stapler in every frame
@@ -67,6 +68,8 @@ public class LinearStaplerTool : Tool //inherits Tool class
 
         FireKnobWithKeyboardInput();
         LockLeverWithKeyboardInput();
+        insertionDepthInspector[0] = globalOperators.m_insertDepth[0];
+        insertionDepthInspector[1] = globalOperators.m_insertDepth[1];
 
         //Enabler();
     }
@@ -90,6 +93,13 @@ public class LinearStaplerTool : Tool //inherits Tool class
         {
             globalOperators.m_insertDepth[0] = LockToolMovementDuringInsertion(topHalf.transform, colonBopeningPos, colonBlastLayerPos, Vector3.up * Mathf.Sign(topHalf.transform.up.y));
         }
+
+        // If bottom part is locked with top part then stop updating it
+        if (bottomHalf.transform.parent != bottomTracker)
+        {
+            return;
+        }
+
         if (globalOperators.m_bInsert[0] == 2)
         {
             globalOperators.m_insertDepth[1] = LockToolMovementDuringInsertion(bottomHalf.transform, colonAopeningPos, colonAlastLayerPos, Vector3.up * Mathf.Sign(bottomHalf.transform.up.y));
@@ -102,7 +112,7 @@ public class LinearStaplerTool : Tool //inherits Tool class
 
     void FireKnobWithKeyboardInput()
     {
-        if (Enable && Input.GetKeyUp(KeyCode.T))
+        if (Input.GetKeyUp(KeyCode.T))
         {
             // Handle translates to final position if T is pressed and linear stapler is enabled
             if (!handlePushed)
@@ -123,17 +133,14 @@ public class LinearStaplerTool : Tool //inherits Tool class
 
     void UpdateKnobWithSensorReading()
     {
-        if (Enable)
-        {
-            FiringHandle.transform.localPosition = Vector3.Lerp(firingHandleStartPosition.localPosition, firingHandleEndPosition.localPosition, handleReading);
+        FiringHandle.transform.localPosition = Vector3.Lerp(firingHandleStartPosition.localPosition, firingHandleEndPosition.localPosition, handleReading);
 
-            handlePushed = handleReading > 0.95f ? true : false;
-        }
+        handlePushed = handleReading > 0.95f ? true : false;
     }
 
     void LockLeverWithKeyboardInput()
     {
-        if (Enable && Input.GetKeyUp(KeyCode.Y))
+        if (Input.GetKeyUp(KeyCode.Y))
         {
             //Locking lever closes if Y is pressed and linear stapler is enabled
             if (!leverLocked)
@@ -162,27 +169,24 @@ public class LinearStaplerTool : Tool //inherits Tool class
 
     void UpdateLeverWithSensorReading()
     {
-        if (Enable)
+        LockingLever.transform.localEulerAngles = Vector3.Lerp(Vector3.zero, new Vector3(0, 15, 0), leverReading);
+
+        // Lerp bottom half model towards top half based on handle reading
+        if (leverReading >= 0.03f)
         {
-            LockingLever.transform.localEulerAngles = Vector3.Lerp(Vector3.zero, new Vector3(0, 15, 0), leverReading);
+            bottomHalf.transform.localPosition = Vector3.Lerp(bottomHalf.transform.localPosition, Vector3.zero, leverReading);
+            bottomHalf.transform.localRotation = Quaternion.Lerp(bottomHalf.transform.localRotation, Quaternion.identity, leverReading);
+        }
 
-            // Lerp bottom half model towards top half based on handle reading
-            if (leverReading >= 0.03f)
-            {
-                bottomHalf.transform.localPosition = Vector3.Lerp(bottomHalf.transform.localPosition, Vector3.zero, leverReading);
-                bottomHalf.transform.localRotation = Quaternion.Lerp(bottomHalf.transform.localRotation, Quaternion.identity, leverReading);
-            }
+        leverLocked = leverReading > 0.95f ? true : false;
 
-            leverLocked = leverReading > 0.95f ? true : false;
-
-            if (leverLocked)
-            {
-                bottomHalf.transform.parent = bottomPartLockingPosition;
-            }
-            else
-            {
-                bottomHalf.transform.parent = bottomTracker;
-            }
+        if (leverLocked)
+        {
+            bottomHalf.transform.parent = bottomPartLockingPosition;
+        }
+        else
+        {
+            bottomHalf.transform.parent = bottomTracker;
         }
     }
 
@@ -193,7 +197,7 @@ public class LinearStaplerTool : Tool //inherits Tool class
     public bool ValidateToolLockingCondition()
     {
         return Mathf.Abs(globalOperators.m_insertDepth[0] - globalOperators.m_insertDepth[1]) <= attachDepthDifference;
-        return !attachValidators.Find(v => !v.isTogether);
+        //return !attachValidators.Find(v => !v.isTogether);
     }
 
     /// <summary>
@@ -204,6 +208,12 @@ public class LinearStaplerTool : Tool //inherits Tool class
         bottomHalf.transform.parent = bottomPartLockingPosition;
         inAnimation = true;
         StartCoroutine(LockToolAnimation());
+    }
+
+    public void MoveBottomToFullyLockPos()
+    {
+        bottomHalf.transform.parent = bottomPartFullyLockingPosition;
+        bottomHalf.transform.localPosition = Vector3.zero;
     }
 
     /// <summary>
@@ -254,7 +264,7 @@ public class LinearStaplerTool : Tool //inherits Tool class
 
         // Rotate the LS tool to align it with the colon
         controlledObject.LookAt(controlledObject.position + (endPosition - startPosition).normalized, rotateUpDir);
-        controlledObject.Rotate(0, 90 * Mathf.Sign(rotateUpDir.y), 0, Space.Self);
+        controlledObject.Rotate(0, -90 * Mathf.Sign(rotateUpDir.y), 0, Space.Self);
 
         return objectNormalToStartDistance / movementRange;
     }

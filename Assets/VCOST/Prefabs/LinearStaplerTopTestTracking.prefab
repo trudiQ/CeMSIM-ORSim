@@ -131,20 +131,42 @@ MonoBehaviour:
   firingHandleEndPosition: {fileID: 0}
   LockingLever: {fileID: 0}
   attachValidators: []
+  attachDepthDifference: 0
   bottomPartLockingPosition: {fileID: 0}
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   topTracker: {fileID: 0}
   bottomTracker: {fileID: 0}
-  bottomPartRelativeTrackerPosition: {x: 0, y: 0, z: 0}
-  bottomPartRelativeTrackerRotation: {x: 0, y: 0, z: 0, w: 0}
   topPartDesignatedCalibrationReference: {fileID: 0}
   bottomPartDesignatedCalibrationReference: {fileID: 0}
+  colonAopenSpheres: []
+  colonBopenSpheres: []
+  topHalfFrontTip: {fileID: 0}
+  bottomHalfFrontTip: {fileID: 0}
+  tipProximityCondition: 0
+  colonAsecondLayerSpheres: []
+  colonAlastLayerSpheres: []
+  colonBsecondLayerSpheres: []
+  colonBlastLayerSpheres: []
+  angleDifferenceCondition: 0
+  tipExitProximityMultiplier: 0
   handlePushed: 0
-  leverLocked: 0
   inAnimation: 0
   handleReading: 0
   leverReading: 0
+  topHalfInserting: 0
+  bottomHalfInserting: 0
+  bottomPartRelativeTrackerPosition: {x: 0, y: 0, z: 0}
+  bottomPartRelativeTrackerRotation: {x: 0, y: 0, z: 0, w: 0}
+  topPartRelativeTrackerPosition: {x: 0, y: 0, z: 0}
+  topPartRelativeTrackerRotation: {x: 0, y: 0, z: 0, w: 0}
+  colonAopeningPos: {x: 0, y: 0, z: 0}
+  colonBopeningPos: {x: 0, y: 0, z: 0}
+  colonAsecondLayerPos: {x: 0, y: 0, z: 0}
+  colonBsecondLayerPos: {x: 0, y: 0, z: 0}
+  colonAlastLayerPos: {x: 0, y: 0, z: 0}
+  colonBlastLayerPos: {x: 0, y: 0, z: 0}
+  insertionDepthInspector: []
 --- !u!54 &1788120002
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -340,7 +362,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1239026397399961072}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.019835366, y: 0, z: 0.05}
+  m_LocalPosition: {x: -0.019835366, y: 0, z: 0.13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3937913526766264061}

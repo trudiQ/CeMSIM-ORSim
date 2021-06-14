@@ -23,9 +23,7 @@ public class globalOperators : MonoBehaviour
     // Corner-cut (Enterotomy)
     public bool[] m_bCornerCut = { false, false };
     // LS tool insertion
-    [ShowInInspector]
     public static int[] m_bInsert = { 0, 0 }; // 1 means top part inserted, 2 means bottom part
-    [ShowInInspector]
     public static float[] m_insertDepth = { 0, 0 }; // Unity world distance starting from colon opening position (scale from 0 to 1 for the full colon length)
     // Split & Join (Staple-Anastomosis)
     public bool m_bSplit = false;
@@ -47,6 +45,9 @@ public class globalOperators : MonoBehaviour
     private string[] m_surgToolNames = { "Forceps", "Scissors" };
     private GameObject[] m_hapticSurgToolObjs; // {forceps, scissors}
     private HapticSurgTools[] m_hapticSurgTools;
+
+    // Linear Stapler stuff
+    public LinearStaplerTool lsController;
 
     // Start is called before the first frame update
     void Start()
@@ -112,6 +113,9 @@ public class globalOperators : MonoBehaviour
                 m_hapticSurgTools[j] = m_hapticSurgToolObjs[j].GetComponent<HapticSurgTools>();
             }
         }
+
+        // Find linear stapler controller
+        //lsController = FindObjectOfType<LinearStaplerTool>();
     }
 
     /// <summary>
@@ -569,7 +573,10 @@ public class globalOperators : MonoBehaviour
                 if (m_bSplit)
                 {
                     if (join())
+                    {
                         StapleLineManager.instance.LSSimStepThree(m_layers2Split[1]);
+                        lsController.MoveBottomToFullyLockPos();
+                    }
                 }
                 else
                     Debug.Log("Error: Cannot join as colons have not been split yet!");
