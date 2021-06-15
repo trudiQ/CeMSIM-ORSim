@@ -240,7 +240,7 @@ namespace CEMSIM
                 }
 
             }
-          
+
 
             public static void OwnershipDenial(int _toClient, int item_id)              //Deny a clien's ownership via TCP
             {
@@ -252,13 +252,21 @@ namespace CEMSIM
             }
 
 
-            public static void SendEnvironmentState(int _noClient, int eventId, byte[] message)
+            public static void SendEnvironmentState(int _fromClient, int eventId, byte[] message, bool isUnicast = false)
             {
                 using (Packet _packet = new Packet((int)ServerPackets.environmentState))
                 {
                     _packet.Write(eventId); // id of the environment event
                     _packet.Write(message); // message
-                    MulticastExceptOneTCPData(_noClient, _packet);
+
+                    if (isUnicast)
+                    {
+                        SendTCPData(_fromClient, _packet);
+                    }
+                    else
+                    {
+                        MulticastExceptOneTCPData(_fromClient, _packet);
+                    }
                 }
 
             }

@@ -26,7 +26,7 @@ namespace CEMSIM
 
 
             [Header("Traffic Visualization")]
-            public bool printNetworkTraffic=false;        // True: print out the inbound and outbound traffic in console.
+            public bool printNetworkTraffic = false;        // True: print out the inbound and outbound traffic in console.
 
 
             [Header("Environment")]
@@ -34,7 +34,9 @@ namespace CEMSIM
 
             // event management
             private delegate void eventHandler(int _fromClient, Packet _packet);
-            private static Dictionary<int, eventHandler> eventHandlers;
+            private static Dictionary<int, eventHandler> eventHandlerDict;
+            private delegate void eventStatePush(int _fromClient);
+            private static Dictionary<int, eventStatePush> eventStatePushDict;
 
             private void Awake()
             {
@@ -149,9 +151,9 @@ namespace CEMSIM
             #region Environment State Handling
             public static void handleEventPacket(int _fromClient, int eventId, Packet _packet)
             {
-                if (eventHandlers.ContainsKey(eventId))
+                if (eventHandlerDict.ContainsKey(eventId))
                 {
-                    eventHandlers[eventId](_fromClient, _packet);
+                    eventHandlerDict[eventId](_fromClient, _packet);
                 }
                 else
                 {
@@ -159,6 +161,11 @@ namespace CEMSIM
                 }
             }
 
+            /// <summary>
+            /// This function sets the room light state at the server side and multicast the latest state to any other users
+            /// </summary>
+            /// <param name="_fromClient"></param>
+            /// <param name="_packet"></param>
             public static void SetRoomLightState(int _fromClient, Packet _packet)
             {
                 bool switchState = _packet.ReadBool();
@@ -167,17 +174,44 @@ namespace CEMSIM
 
                 message.AddRange(BitConverter.GetBytes(switchState));
 
-
                 ServerSend.SendEnvironmentState(_fromClient, (int)EnvironmentId.roomLight, message.ToArray());
             }
 
+            /// <summary>
+            /// This function gets the current switch state and unicast to the newly added user
+            /// </summary>
+            /// <param name="_toClient"></param>
+            public static void GetRoomLightState(int _toClient)
+            {
+                bool switchState = instance.roomLightButton.GetComponent<RoomLightsOnOff>().GetSwitchState();
+
+                List<byte> message = new List<byte>();
+                message.AddRange(BitConverter.GetBytes(switchState));
+
+                ServerSend.SendEnvironmentState(_toClient, (int)EnvironmentId.roomLight, message.ToArray(), true);
+            }
+
+
+            public static void SendCurrentEnvironmentStates(int _toClient)
+            {
+
+                foreach (int eventId in eventStatePushDict.Keys)
+                {
+                    eventStatePushDict[eventId](_toClient);
+                }
+            }
 
 
             private static void InitializeEventId()
             {
-                eventHandlers = new Dictionary<int, eventHandler>
+                eventHandlerDict = new Dictionary<int, eventHandler>
                 {
                     {(int)EnvironmentId.roomLight, SetRoomLightState}
+                };
+
+                eventStatePushDict = new Dictionary<int, eventStatePush>
+                {
+                    {(int)EnvironmentId.roomLight, GetRoomLightState}
                 };
             }
             #endregion

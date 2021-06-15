@@ -114,6 +114,10 @@ namespace CEMSIM
                 }
             }
 
+            public bool GetSwitchState()
+            {
+                return isLightsOn;
+            }
 
             public void SwitchActivation()
             {

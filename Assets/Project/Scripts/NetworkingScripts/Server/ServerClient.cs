@@ -323,6 +323,9 @@ namespace CEMSIM
                     }
                 }
 
+                // Send current environment state to newly added user
+                ServerNetworkManager.SendCurrentEnvironmentStates(id);
+
 
             }
 
