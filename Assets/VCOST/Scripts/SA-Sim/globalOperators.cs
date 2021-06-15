@@ -575,7 +575,7 @@ public class globalOperators : MonoBehaviour
                     if (join())
                     {
                         StapleLineManager.instance.LSSimStepThree(m_layers2Split[1]);
-                        lsController.MoveBottomToFullyLockPos();
+                        lsController.JoinColonToolLogic();
                     }
                 }
                 else
