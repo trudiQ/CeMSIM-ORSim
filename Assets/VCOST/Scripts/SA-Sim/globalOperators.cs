@@ -25,7 +25,6 @@ public class globalOperators : MonoBehaviour
     public (int, int)[] m_cornerSphereIdxRange; // predefined spheres at corners {(left-corner sphereIdx-range), (right-corner range)}
     public int[][] m_cutCornerSphereIndices = new int[2][]; // predefined spheres to be cut {left corner: [x1, x2, x3], right corner [y1, y2, y3]}
     public List<bool[]> m_LRCornerCutIdices = new List<bool[]>(); // {(objIdx0: left-corner, right-corner), (objIdx1: left-corner, right-corner)}
-    public bool[] m_bCornerCut = { false, false };
     // LS tool insertion
     public static int[] m_bInsert = { 0, 0 }; // 1 means top part inserted, 2 means bottom part
     public static float[] m_insertDepth = { 0, 0 }; // Unity world distance starting from colon opening position (scale from 0 to 1 for the full colon length)
@@ -90,7 +89,7 @@ public class globalOperators : MonoBehaviour
         m_cornerSphereIdxRange = new (int, int)[] { (11, 18), (1, 8) };// sphereIdx range, {(left-corner), (right-corner)}
         m_cutCornerSphereIndices[0] = new int[] { 13, 12, 11 }; // left-corner to be cut
         m_cutCornerSphereIndices[1] = new int[] { 6, 7, 8 }; // right-corner to be cut
-        for (int i = 0; i < m_numSphereModels; i ++)
+        for (int i = 0; i < m_numSphereModels; i++)
         {
             m_LRCornerCutIdices.Add(new bool[] { false, false }); //(left, right)
         }
