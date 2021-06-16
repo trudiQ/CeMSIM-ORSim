@@ -188,8 +188,7 @@ namespace CEMSIM
                 // update item
                 GameObject itemManager = GameObject.Find("ItemManager");
                 ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
-                CIM.UpdateItemPosition(_item_id, _position);
-                CIM.UpdateItemRotation(_item_id, _rotation);
+                CIM.UpdateItemPosition(_item_id, _position, _rotation);
             }
 
 

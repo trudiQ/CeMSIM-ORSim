@@ -181,8 +181,7 @@ namespace CEMSIM
                     Debug.Log(string.Format("client {0} attempted to update pos on item {1} but ignored by server",_fromClient,_item_id));
                     return;
                 }
-                SIM.UpdateItemPosition(_item_id, _position);
-                SIM.UpdateItemRotation(_item_id, _rotation);
+                SIM.UpdateItemPosition(_item_id, _position, _rotation);
             }
 
             /// <summary>

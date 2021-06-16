@@ -29,24 +29,19 @@ namespace CEMSIM{
 
 
 
-	    /// <summary>
-        /// Update an item's position
-        /// </summary>
-        /// <param name="itemID"> The id of the item to be updated </param>
-        /// <param name="position"> The vector3 position of the item </param>
-	    public void UpdateItemPosition(int itemId, Vector3 position){
+		/// <summary>
+		/// Update an item's position and rotation
+		/// </summary>
+		/// <param name="itemID"> The id of the item to be updated </param>
+		/// <param name="position"> The vector3 position of the item </param>
+		/// <param name="position"> The vector3 position of the item </param>
+		/// 
+		public void UpdateItemPosition(int itemId, Vector3 position, Quaternion rotation)
+		{
 	    	itemList[itemId].transform.position = position;
-	    }
+			itemList[itemId].transform.rotation = rotation;
 
-	    /// <summary>
-        /// Update an item's rotation
-        /// </summary>
-        /// <param name="itemID"> The id of the item to be updated </param>
-        /// <param name="position"> The vector3 position of the item </param>
-	    public void UpdateItemRotation(int itemId, Quaternion rotation){
-	    	itemList[itemId].transform.rotation = rotation;
-	    }
-
+		}
 
 
 
@@ -64,8 +59,9 @@ namespace CEMSIM{
 				GameObject item = itemList[i];
 				ItemController itemCon = item.GetComponent<ItemController>();
 				Rigidbody rb = item.GetComponent<Rigidbody>();
-				rb.isKinematic = true;					//Prevent client from changing the item's position & rotation
-				rb.useGravity = false;
+				// The following two lines are no longer needed for the new HVR system
+				//rb.isKinematic = true;					//Prevent client from changing the item's position & rotation
+				//rb.useGravity = false;
 				itemCon.id = id;
 				itemCon.ownerId = owner;
 			    id++;

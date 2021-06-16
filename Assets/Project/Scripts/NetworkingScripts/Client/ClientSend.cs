@@ -174,6 +174,8 @@ namespace CEMSIM
                     _packet.Write(itemCon.id);
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);
+
+                    Debug.Log($"item {itemCon.id} pos {_item.transform.position}");
                     SendUDPData(_packet);
                 }
             }

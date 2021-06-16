@@ -15,16 +15,22 @@ public class ItemController : MonoBehaviour
 
     public void GainOwnership(){
     	GameObject itemManager = GameObject.Find("ItemManager");
-    	Debug.Log("GRABBED!!!!!!");
+    	Debug.Log($"Grabbing item {id}");
     	ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent<ClientItemManager>();
-    	CIM.GainOwnership(gameObject);
+        if (CIM)
+        {
+            CIM.GainOwnership(gameObject);
+        }
     }
 
     public void DropOwnership(){
     	GameObject itemManager = GameObject.Find("ItemManager");
-    	Debug.Log("Released！");
+    	Debug.Log($"Release item {id}");
     	ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent<ClientItemManager>();
-    	CIM.DropOwnership(gameObject);
+        if (CIM)
+        {
+            CIM.DropOwnership(gameObject);
+        }
     }
 }
 
