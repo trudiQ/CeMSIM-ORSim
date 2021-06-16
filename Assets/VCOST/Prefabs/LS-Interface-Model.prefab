@@ -488,6 +488,9 @@ MonoBehaviour:
   trackerMarkerStartEuler0: {x: 0, y: 0, z: 0}
   trackerMarkerStartPosition1: {x: 0, y: 0, z: 0}
   trackerMarkerStartEuler1: {x: 0, y: 0, z: 0}
+  trackerMarkerCurrentTransformedPositionData0: {x: 0, y: 0, z: 0}
+  trackerMarkerCurrentTransformedPositionData1: {x: 0, y: 0, z: 0}
+  trackerMarkerCurrentRawRotationData0: {x: 0, y: 0, z: 0}
   trackerMarkerCurrentRawRotationData1: {x: 0, y: 0, z: 0}
   rotaterEuler: {x: 0, y: 0, z: 0}
   movementScaleCalibrationStartPos: {x: 0, y: 0, z: 0}
@@ -1957,7 +1960,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8824282488682106534}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.02, y: 0, z: 0.05}
+  m_LocalPosition: {x: -0.02, y: -0.01, z: 0.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3516126997881617998}
@@ -2098,6 +2101,11 @@ PrefabInstance:
       propertyPath: matcher
       value: 
       objectReference: {fileID: 1390190578068609086}
+    - target: {fileID: 4494059240763107004, guid: af3e9be7c74882d488fe4a5c60e1d928,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5390270547039013518, guid: af3e9be7c74882d488fe4a5c60e1d928,
         type: 3}
       propertyPath: m_Enabled
@@ -2113,15 +2121,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.02
       objectReference: {fileID: 0}
-    - target: {fileID: 6580476204917860768, guid: af3e9be7c74882d488fe4a5c60e1d928,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.163
-      objectReference: {fileID: 0}
     - target: {fileID: 6722894043024407505, guid: af3e9be7c74882d488fe4a5c60e1d928,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7052196152194323251, guid: af3e9be7c74882d488fe4a5c60e1d928,
         type: 3}
@@ -2371,12 +2374,12 @@ PrefabInstance:
     - target: {fileID: 2553400929593944938, guid: 703ff7234d5abc9459e5a9298643d303,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3478670443317886181, guid: 703ff7234d5abc9459e5a9298643d303,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3680882258650470506, guid: 703ff7234d5abc9459e5a9298643d303,
         type: 3}

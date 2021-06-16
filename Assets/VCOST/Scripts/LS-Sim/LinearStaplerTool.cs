@@ -110,6 +110,17 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
         bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
 
+        if (simStates == 1)
+        {
+            topPartMovingAxisStartPoint += Vector3.up * joiningPhaseToolMovingAxisDifference;
+            topPartMovingAxisEndPoint += Vector3.up * joiningPhaseToolMovingAxisDifference;
+        }
+        else if (simStates > 1)
+        {
+            bottomPartMovingAxisStartPoint += Vector3.up * cuttingPhaseToolMovingAxisDifference;
+            bottomPartMovingAxisEndPoint += Vector3.up * cuttingPhaseToolMovingAxisDifference;
+        }
+
         CheckAndUpdateLStoolInsertionStates();
         if (globalOperators.m_bInsert[0] == 1)
         {
@@ -121,7 +132,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         }
 
         // If bottom part is locked with top part then stop updating it
-        if (bottomHalf.transform.parent != bottomTracker)
+        if (bottomHalf.transform.parent == bottomTracker)
         {
             if (globalOperators.m_bInsert[0] == 2)
             {

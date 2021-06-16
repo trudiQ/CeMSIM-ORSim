@@ -123,9 +123,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92c18d06179f81844bbb7b5ab9240b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0
-  AngularSpeed: 0
-  Enable: 0
   FiringHandle: {fileID: 0}
   firingHandleStartPosition: {fileID: 0}
   firingHandleEndPosition: {fileID: 0}
@@ -133,6 +130,7 @@ MonoBehaviour:
   attachValidators: []
   attachDepthDifference: 0
   bottomPartLockingPosition: {fileID: 0}
+  bottomPartFullyLockingPosition: {fileID: 0}
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   topTracker: {fileID: 0}
@@ -150,6 +148,13 @@ MonoBehaviour:
   colonBlastLayerSpheres: []
   angleDifferenceCondition: 0
   tipExitProximityMultiplier: 0
+  joinedColonFirstLayerSpheres: []
+  joinedColonLastLayerSpheres: []
+  joiningPhaseToolMovingAxisDifference: 0
+  bottomPartLastPhaseProximityDetector: {fileID: 0}
+  joinedColonFirstLayerUpperSpheres: []
+  joinedColonLastLayerLowerSpheres: []
+  cuttingPhaseToolMovingAxisDifference: 0
   handlePushed: 0
   inAnimation: 0
   handleReading: 0
@@ -160,13 +165,18 @@ MonoBehaviour:
   bottomPartRelativeTrackerRotation: {x: 0, y: 0, z: 0, w: 0}
   topPartRelativeTrackerPosition: {x: 0, y: 0, z: 0}
   topPartRelativeTrackerRotation: {x: 0, y: 0, z: 0, w: 0}
+  simStates: 0
   colonAopeningPos: {x: 0, y: 0, z: 0}
   colonBopeningPos: {x: 0, y: 0, z: 0}
-  colonAsecondLayerPos: {x: 0, y: 0, z: 0}
-  colonBsecondLayerPos: {x: 0, y: 0, z: 0}
-  colonAlastLayerPos: {x: 0, y: 0, z: 0}
-  colonBlastLayerPos: {x: 0, y: 0, z: 0}
   insertionDepthInspector: []
+  topPartMovingAxisStart: []
+  topPartMovingAxisEnd: []
+  bottomPartMovingAxisStart: []
+  bottomPartMovingAxisEnd: []
+  topPartMovingAxisStartPoint: {x: 0, y: 0, z: 0}
+  topPartMovingAxisEndPoint: {x: 0, y: 0, z: 0}
+  bottomPartMovingAxisStartPoint: {x: 0, y: 0, z: 0}
+  bottomPartMovingAxisEndPoint: {x: 0, y: 0, z: 0}
 --- !u!54 &1788120002
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -362,7 +372,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1239026397399961072}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.019835366, y: 0, z: 0.13}
+  m_LocalPosition: {x: -0.019835366, y: 0, z: 0.143}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3937913526766264061}
