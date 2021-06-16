@@ -115,7 +115,7 @@ namespace PaintIn3D
         {
             lsSimStepTwoHideStaples.ForEach(g => g.SetActive(false));
         }
-        public void LSSimStepTwo(int objIdx)
+        public void LSSimStepTwo(int objIdx, int LorR)
         {
             if (lsSimStepTwoHideStaples == null || lsSimStepTwoHideStaples.Count <= 0)
             {
@@ -123,7 +123,8 @@ namespace PaintIn3D
                 return;
             }
 
-            string stapleObjName = "Cut" + objIdx.ToString(); // objIdx == 0 or 1
+            string stapleGroup = (LorR == 0) ? "Left" : "Right";
+            string stapleObjName = stapleGroup + objIdx.ToString(); // objIdx == 0 or 1
             int i, j;
             for (i = 0; i < lsSimStepTwoHideStaples.Count; i++)
             {

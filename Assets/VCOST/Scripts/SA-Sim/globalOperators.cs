@@ -21,6 +21,10 @@ public class globalOperators : MonoBehaviour
 
     /// opeartors related variables
     // Corner-cut (Enterotomy)
+    public bool[] m_bCornerCut = { false, false }; // whether right-corner of left colon or left-corner of right colon is cut
+    public (int, int)[] m_cornerSphereIdxRange; // predefined spheres at corners {(left-corner sphereIdx-range), (right-corner range)}
+    public int[][] m_cutCornerSphereIndices = new int[2][]; // predefined spheres to be cut {left corner: [x1, x2, x3], right corner [y1, y2, y3]}
+    public List<bool[]> m_LRCornerCutIdices = new List<bool[]>(); // {(objIdx0: left-corner, right-corner), (objIdx1: left-corner, right-corner)}
     public bool[] m_bCornerCut = { false, false };
     // LS tool insertion
     public static int[] m_bInsert = { 0, 0 }; // 1 means top part inserted, 2 means bottom part
@@ -82,6 +86,15 @@ public class globalOperators : MonoBehaviour
         }
 
         /// initialize opeartor variables
+        // Corner-cut
+        m_cornerSphereIdxRange = new (int, int)[] { (11, 18), (1, 8) };// sphereIdx range, {(left-corner), (right-corner)}
+        m_cutCornerSphereIndices[0] = new int[] { 13, 12, 11 }; // left-corner to be cut
+        m_cutCornerSphereIndices[1] = new int[] { 6, 7, 8 }; // right-corner to be cut
+        for (int i = 0; i < m_numSphereModels; i ++)
+        {
+            m_LRCornerCutIdices.Add(new bool[] { false, false }); //(left, right)
+        }
+
         // split & joint
         m_layers2Split[0] = 0;
         m_layers2Split[1] = 10;//14
@@ -417,6 +430,61 @@ public class globalOperators : MonoBehaviour
         return true;
     }
 
+    bool cornerCut(int objIdx, int sphereIdx, ref int LorR)
+    {
+        if (m_numSphereModels <= 0)
+        {
+            Debug.Log("Error(cornerCut): no models to conduct corner-cut!");
+            return false;
+        }
+
+        if (m_bSplit || m_bJoin)
+        {
+            Debug.Log("Error(cornerCut): colons are already split or joined!");
+            return false;
+        }
+
+        // check which corner of sphereJointModel objIdx to cut
+        string[] debuguse = { "left", "right" };
+        LorR = -1; // 0: left; 1: right
+        for (int c = 0; c < m_cornerSphereIdxRange.Length; c++)
+        {
+            if (sphereIdx >= m_cornerSphereIdxRange[c].Item1 && sphereIdx <= m_cornerSphereIdxRange[c].Item2)
+            {
+                LorR = c;
+                break;
+            }
+        }
+        if (LorR < 0 || LorR >= 2)
+        {
+            Debug.Log("Error (cornerCut): attemped cut is not in the corner range, exit!");
+            return false;
+        }
+
+        // determine if the corner has already cut
+        if (m_LRCornerCutIdices[objIdx][LorR] == true) // already cut
+        {
+            //Debug.Log("Error(cornerCut) on sphereJointModel" + objIdx.ToString() + "on the " + debuguse[LorR] + " has already done!!");
+            return false;
+        }
+
+        // cut the objIdx at a specific layer and corner spheres
+        int layerIdx = 0; // layer to cut-corner
+        if (!m_sphereJointModels[objIdx].cornerCut(layerIdx, m_cutCornerSphereIndices[LorR]))
+            return false;
+
+        m_LRCornerCutIdices[objIdx][LorR] = true;
+        Debug.Log("cornerCut done for sphereJointModel" + objIdx.ToString() + " on the " + debuguse[LorR]);
+
+        // whether cut left model (objIdx=0) on the right while right model (objIdx=1) on the left
+        if ((objIdx == 0 && LorR == 1) || (objIdx == 1 && LorR == 0))
+        {
+            m_bCornerCut[objIdx] = true;
+        }
+
+        return true;
+    }
+
     /// <summary>
     /// Steps:
     ///     1.Close opening
@@ -531,9 +599,10 @@ public class globalOperators : MonoBehaviour
                 if (cornerCut())
                 {
                     // Hide corner cut staples for both colon models
+                    int[] LorR = { 1, 0 }; //objIdx==0: 1 (right); objIdx==1: 0 (left)
                     for (int objIdx = 0; objIdx < m_numSphereModels; objIdx++)
                     {
-                        StapleLineManager.instance.LSSimStepTwo(objIdx);
+                        StapleLineManager.instance.LSSimStepTwo(objIdx, LorR[objIdx]);
                     }
                 }
             }
@@ -542,11 +611,12 @@ public class globalOperators : MonoBehaviour
             {
                 if (m_hapticSurgTools[1].curAction == HapticSurgTools.toolAction.cutting)
                 {
-                    int objIdx = m_hapticSurgTools[1].cutSphereJointObjIdx;
+                    int objIdx = m_hapticSurgTools[1].cutSphereIdx[0];
                     if (objIdx >= 0 && objIdx < m_numSphereModels)
                     {
-                        if (cornerCut(objIdx))
-                            StapleLineManager.instance.LSSimStepTwo(objIdx);
+                        int LorR = -1;
+                        if (cornerCut(objIdx, m_hapticSurgTools[1].cutSphereIdx[2], ref LorR))
+                            StapleLineManager.instance.LSSimStepTwo(objIdx, LorR);
                     }
                 }
             }
