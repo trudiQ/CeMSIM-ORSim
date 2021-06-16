@@ -25,6 +25,9 @@ public class TestAPI : MonoBehaviour
     public Vector3 trackerMarkerStartEuler0;
     public Vector3 trackerMarkerStartPosition1;
     public Vector3 trackerMarkerStartEuler1;
+    public Vector3 trackerMarkerCurrentTransformedPositionData0;
+    public Vector3 trackerMarkerCurrentTransformedPositionData1;
+    public Vector3 trackerMarkerCurrentRawRotationData0;
     public Vector3 trackerMarkerCurrentRawRotationData1;
     public Vector3 rotaterEuler;
     public Vector3 movementScaleCalibrationStartPos; // Starting position in unity when user start to calibrate the movement scale to native Unity scale
@@ -173,19 +176,26 @@ public class TestAPI : MonoBehaviour
             BIRD_ERROR_CODES errorGet1 = GetErrorMessage((int)GetAsynchronousRecord(deviceID1, &record1, Marshal.SizeOf(record1)));
         }
 
+        trackerMarkerCurrentTransformedPositionData0 = new Vector3(-(float)record0.y, -(float)record0.z, -(float)record0.x);
+        trackerMarkerCurrentTransformedPositionData1 = new Vector3(-(float)record1.y, -(float)record1.z, -(float)record1.x);
+        trackerMarkerCurrentRawRotationData0 = new Vector3((float)record0.r, (float)record0.e, (float)record0.a);
+        trackerMarkerCurrentRawRotationData1 = new Vector3((float)record1.r, (float)record1.e, (float)record1.a);
         // Update transform based on readings, the position xyz and euler xyz are already matched with the tracker reading
         if (trackerMarker0 != null)
         {
-            trackerMarker0.position = tracker0OriginPosition.position + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
-            trackerMarker0.rotation = Quaternion.Euler(new Vector3(-(float)record0.r, (float)record0.a, 0));
-            RotateZ(trackerMarker0, trackerMarker0.parent, (float)record0.a, (float)record0.e, rotaters[0]);
+            trackerMarker0.position = tracker0OriginPosition.position + new Vector3(-(float)record0.y, -(float)record0.z, -(float)record0.x);
+            trackerMarker0.rotation = Quaternion.Euler(new Vector3(0, (float)record0.a, (float)record0.r));
+            RotateX(trackerMarker0, trackerMarker0.parent, (float)record0.a, (float)record0.e, rotaters[0]);
+            //trackerMarker0.rotation = Quaternion.Euler(new Vector3(-(float)record0.r, (float)record0.a, 0));
+            //RotateZ(trackerMarker0, trackerMarker0.parent, (float)record0.a, (float)record0.e, rotaters[0]);
         }
         if (trackerMarker1 != null)
         {
-            trackerMarkerCurrentRawRotationData1 = new Vector3((float)record1.r, (float)record1.e, (float)record1.a);
-            trackerMarker1.position = tracker1OriginPosition.position + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
-            trackerMarker1.rotation = Quaternion.Euler(new Vector3(-(float)record1.r, (float)record1.a, 0));
-            RotateZ(trackerMarker1, trackerMarker1.parent, (float)record1.a, (float)record1.e, rotaters[1]);
+            trackerMarker1.position = tracker1OriginPosition.position + new Vector3(-(float)record1.y, -(float)record1.z, -(float)record1.x);
+            trackerMarker1.rotation = Quaternion.Euler(new Vector3(1, (float)record1.a, (float)record1.r));
+            RotateX(trackerMarker1, trackerMarker1.parent, (float)record1.a, (float)record1.e, rotaters[1]);
+            //trackerMarker1.rotation = Quaternion.Euler(new Vector3(-(float)record1.r, (float)record1.a, 0));
+            //RotateZ(trackerMarker1, trackerMarker1.parent, (float)record1.a, (float)record1.e, rotaters[1]);
         }
 
         // Update tracker data
@@ -252,6 +262,28 @@ public class TestAPI : MonoBehaviour
         rotater.transform.rotation = Quaternion.Euler(new Vector3(0, yAngle, 0));
         toRotate.parent = rotater.transform;
         rotater.transform.eulerAngles += new Vector3(0, 0, zAngle);
+        rotaterEuler = rotater.transform.eulerAngles;
+        Vector3 result = toRotate.eulerAngles;
+        toRotate.parent = originalParent;
+        //Destroy(rotater);
+        return result;
+    }
+
+    /// <summary>
+    /// Rotate an object around x-axis based on its current y angle
+    /// </summary>
+    /// <param name="toRotate"></param>
+    /// <param name="originalParent"></param>
+    /// <param name="yAngle"></param>
+    /// <param name="xAngle"></param>
+    /// <param name="rotater"></param>
+    /// <returns></returns>
+    public Vector3 RotateX(Transform toRotate, Transform originalParent, float yAngle, float xAngle, Transform rotater)
+    {
+        //GameObject rotater = new GameObject();
+        rotater.transform.rotation = Quaternion.Euler(new Vector3(0, yAngle, 0));
+        toRotate.parent = rotater.transform;
+        rotater.transform.eulerAngles += new Vector3(xAngle, 0, 0);
         rotaterEuler = rotater.transform.eulerAngles;
         Vector3 result = toRotate.eulerAngles;
         toRotate.parent = originalParent;
