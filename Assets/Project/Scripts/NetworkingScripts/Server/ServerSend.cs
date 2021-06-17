@@ -169,6 +169,7 @@ namespace CEMSIM
                 {
                     _packet.Write(_player.id);
                     _packet.Write(_player.username);
+                    _packet.Write((int)_player.role);
                     _packet.Write(_player.transform.position);
                     _packet.Write(_player.transform.rotation);
 

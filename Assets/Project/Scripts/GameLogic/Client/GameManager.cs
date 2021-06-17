@@ -54,9 +54,15 @@ namespace CEMSIM
             /// <param name="_name">The player's name.</param>
             /// <param name="_position">The player's starting position.</param>
             /// <param name="_rotation">The player's starting rotation.</param>
-            public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation)
+            public void SpawnPlayer(int _id, string _username, int _role_i, Vector3 _position, Quaternion _rotation)
             {
                 GameObject _player;
+
+                // TODO: Currently, no difference when the client knows the role of any other client.
+                Roles _role = Roles.surgeon;
+
+                if (Enum.IsDefined(typeof(Roles), _role_i))
+                    _role = (Roles)_role_i;
 
 
                 if (_id == ClientInstance.instance.myId)
@@ -79,6 +85,7 @@ namespace CEMSIM
                     // Child 1 is the username gameobject
                     // P.S. Only the prefab of other players has "username"
                     _player.transform.GetChild(1).gameObject.GetComponent<TextMesh>().text = _username; 
+
 
                 }
 

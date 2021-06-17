@@ -71,12 +71,13 @@ namespace CEMSIM
                 }
             }
 
-            public static void SendSpawnRequest(string _username, bool _vrEnabled)
+            public static void SendSpawnRequest(string _username, bool _vrEnabled, Roles _role)
             {
                 using (Packet _packet = new Packet((int)ClientPackets.spawnRequest))
                 {
                     _packet.Write(_username);
                     _packet.Write(_vrEnabled);
+                    _packet.Write((int)_role);
 
                     SendTCPData(_packet);
                 }
@@ -90,6 +91,7 @@ namespace CEMSIM
             {
                 using (Packet _packet = new Packet((int)ClientPackets.playerDesktopMovement))
                 {
+                    // use to identify how many keys are sent
                     _packet.Write(_inputs.Length);
                     foreach (bool _input in _inputs)
                     {
@@ -110,13 +112,9 @@ namespace CEMSIM
                 if (GameManager.players.ContainsKey(ClientInstance.instance.myId))
                 {
                     // get the avatar position
-                    Vector3 _avatarPosition = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera.position;
-                    Quaternion _avatarRotation = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera.rotation;
+                    Transform _avatar = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera;
 
                     // get the position of both VR controllers
-                    //Transform _lefthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(1);
-                    //Transform _righthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(2);
-
                     Transform _lefthand = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().leftHandController.transform;
                     Transform _righthand = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().rightHandController.transform;
 
@@ -124,8 +122,8 @@ namespace CEMSIM
                     using (Packet _packet = new Packet((int)ClientPackets.playerVRMovement))
                     {
                         // write avatar position
-                        _packet.Write(_avatarPosition);
-                        _packet.Write(_avatarRotation);
+                        _packet.Write(_avatar.position);
+                        _packet.Write(_avatar.rotation);
 
                         // write left and right controller positions
                         _packet.Write(_lefthand.position);

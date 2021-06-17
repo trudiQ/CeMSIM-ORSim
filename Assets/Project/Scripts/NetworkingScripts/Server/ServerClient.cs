@@ -288,16 +288,22 @@ namespace CEMSIM
             }
 
             // Spawn the player 
-            public void SendIntoGame(string _playerName, bool _vr)
+            public void SendIntoGame(string _playerName, bool _vr, int _role_i)
             {
-                Debug.Log($"Send player {id}: {_playerName} into game");
-                NetworkOverlayMenu.Instance.Log($"Send player {id}: {_playerName} into game");
+                
+                Roles _role = Roles.surgeon;
 
-                if(_vr)
+                if (Enum.IsDefined(typeof(Roles), _role_i))
+                    _role = (Roles)_role_i;
+
+                Debug.Log($"Send player {id}: {_playerName} - {_role} into game");
+                NetworkOverlayMenu.Instance.Log($"Send player {id}: {_playerName} - {_role} into game");
+
+                if (_vr)
                     player = ServerNetworkManager.instance.InstantiatePlayerVR();
                 else
                     player = ServerNetworkManager.instance.InstantiatePlayerDesktop();
-                player.Initialize(id, _playerName);
+                player.Initialize(id, _playerName, _role);
                 player.transform.GetChild(1).gameObject.GetComponent<TextMesh>().text = _playerName; // Child 1 is the username
                 //player.GetComponent<TextMesh>().text = _playerName;
 

@@ -91,12 +91,13 @@ namespace CEMSIM
             {
                 string _username = _packet.ReadString();
                 bool _vr = _packet.ReadBool();
+                int _role_i = _packet.ReadInt32();
 
                 Debug.Log($"client{_fromClient}: Spawn player.");
                 NetworkOverlayMenu.Instance.Log($"client{_fromClient}: Spawn player.");
 
                 // send back the packet with necessary inforamation about player locations
-                ServerInstance.clients[_fromClient].SendIntoGame(_username, _vr);
+                ServerInstance.clients[_fromClient].SendIntoGame(_username, _vr, _role_i);
             }
 
             /// <summary>

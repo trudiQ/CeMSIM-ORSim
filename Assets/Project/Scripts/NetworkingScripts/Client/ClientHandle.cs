@@ -72,12 +72,13 @@ namespace CEMSIM
             {
                 int _id = _packet.ReadInt32();
                 string _username = _packet.ReadString();
+                int _role_i = _packet.ReadInt32();
                 Vector3 _position = _packet.ReadVector3();
                 Quaternion _rotation = _packet.ReadQuaternion();
 
                 Debug.Log($"Spawn Player {_id} at {_position}");
                 // spawn the player
-                GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
+                GameManager.instance.SpawnPlayer(_id, _username, _role_i, _position, _rotation);
 
             }
 

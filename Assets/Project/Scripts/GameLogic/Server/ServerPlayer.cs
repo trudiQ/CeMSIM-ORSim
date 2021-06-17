@@ -12,6 +12,7 @@ namespace CEMSIM
         {
             public int id;
             public string username;
+            public Roles role;
             public CharacterController controller;
 
 
@@ -20,10 +21,11 @@ namespace CEMSIM
             // controller data
 
 
-            public void Initialize(int _id, string _username)
+            public void Initialize(int _id, string _username, Roles _role)
             {
                 id = _id;
                 username = _username;
+                role = (Roles)_role;
             }
 
             public void SendToServer()

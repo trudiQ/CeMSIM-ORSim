@@ -14,7 +14,9 @@ namespace CEMSIM
         public class ClientInstance : MonoBehaviour
         {
             public static ClientInstance instance;
-            public static int dataBufferSize = 4096;
+
+            [Header("Network Configurations")]
+            public static int dataBufferSize = ClientNetworkConstants.DATA_BUFFER_SIZE;
 
             // server ip and port
             public string ip = ClientNetworkConstants.SERVER_IP;
@@ -22,8 +24,10 @@ namespace CEMSIM
             //public string ip;
             public int port = ClientNetworkConstants.SERVER_PORT;
 
+            [Header("Player Configurations")]
             public int myId = 0;
             public string myUsername = "DEFAULT_USERNAME";
+            public Roles role=Roles.surgeon;
 
             [Header("Traffic Visualization")]
             public bool printNetworkTraffic = false;        // True: print out the inbound and outbound traffic in console.
@@ -51,6 +55,7 @@ namespace CEMSIM
                     Debug.Log("Another instance already exists. Destroy this one.");
                     Destroy(this);
                 }
+
             }
 
 
@@ -88,7 +93,7 @@ namespace CEMSIM
 
                 //TO DO: ConnectOnStart is used for VR mode at the moment. 
                 //Add feature for entering in VR or desktop mode
-                ClientSend.SendSpawnRequest(_username, true);
+                ClientSend.SendSpawnRequest(_username, true, role);
                 GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
             }
 
