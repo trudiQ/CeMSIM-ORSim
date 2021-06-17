@@ -28,7 +28,11 @@ public class globalOperators : MonoBehaviour
     // LS tool insertion
     public static int[] m_bInsert = { 0, 0 }; // 1 means top part inserted, 2 means bottom part
     public static float[] m_insertDepth = { 0, 0 }; // Unity world distance starting from colon opening position (scale from 0 to 1 for the full colon length)
-    // Split & Join (Staple-Anastomosis)
+    // LS stapling: Split & Join (Staple-Anastomosis)
+    public bool m_bStapling = false; // <== BUTTON PUSHING
+    public bool m_bLSButtonFullDown = false; // true: button full down/ false: button partially down <== BUTTON PUSHING
+    public bool m_bLSButtonPulling = false; // true: pulling the button back <== BUTTON PULLING
+    public bool m_bLSRemoving = false; // <== 
     public bool m_bSplit = false;
     public bool m_bJoin = false;
     public int[] m_layers2Split = { -1, -1 }; // same for both models
@@ -44,13 +48,16 @@ public class globalOperators : MonoBehaviour
     public bool m_bFinalClosure = false;
 
     /// haptics device inputs
-    private int m_numSurgTools = 2;
-    private string[] m_surgToolNames = { "Forceps", "Scissors" };
-    private GameObject[] m_hapticSurgToolObjs; // {forceps, scissors}
-    private HapticSurgTools[] m_hapticSurgTools;
+    private int m_numSurgTools = 0; // actual surgical tools in the scene
+    private string[] m_surgToolNames = { "Forceps", "Forceps1", "Forceps2", "Scissors" };
+    private Dictionary<string,HapticSurgTools> m_hapticSurgTools = new Dictionary<string, HapticSurgTools>();
 
     // Linear Stapler stuff
     public LinearStaplerTool lsController;
+
+    // Scoring metrics
+    private bool m_bEnableMetricsScoring = true;
+    private LSMetricsScoring MetricsScoringManager = null;
 
     // Start is called before the first frame update
     void Start()
@@ -109,25 +116,27 @@ public class globalOperators : MonoBehaviour
         m_numSecureOpenings = m_sphereIdx4EachOpening.Length;
 
         /// initialize haptic device variables
-        m_hapticSurgToolObjs = new GameObject[m_numSurgTools]; // {forceps, scissors}
-        m_hapticSurgTools = new HapticSurgTools[m_numSurgTools];
-        HapticPlugin[] hapticDevices = (HapticPlugin[])Object.FindObjectsOfType(typeof(HapticPlugin));
-        if (hapticDevices.Length <= 0 || (hapticDevices.Length < m_numSurgTools))
+        int numSurgTool = m_surgToolNames.Length; // {forceps, forceps1, forceps2, scissors}
+        for (int j = 0; j < 4; j++)
         {
-            Debug.Log("globalOperators: No valid haptic devices found!");
-            return;
-        }
-        for (int j = 0; j < m_numSurgTools; j++)
-        {
-            m_hapticSurgToolObjs[j] = GameObject.Find(m_surgToolNames[j]);
-            if (m_hapticSurgToolObjs[j])
+            GameObject hapticSurgToolObj = GameObject.Find(m_surgToolNames[j]);
+            if (hapticSurgToolObj)
             {
-                m_hapticSurgTools[j] = m_hapticSurgToolObjs[j].GetComponent<HapticSurgTools>();
+                m_hapticSurgTools.Add(m_surgToolNames[j], hapticSurgToolObj.GetComponent<HapticSurgTools>());
+                m_numSurgTools += 1;
             }
+        }
+        if (m_numSurgTools != numSurgTool)
+        {
+            Debug.Log("Error (globalOperators): Cannot find all 4 surgical tools!");
         }
 
         // Find linear stapler controller
         //lsController = FindObjectOfType<LinearStaplerTool>();
+
+        // Metrics scoring manager
+        if (m_bEnableMetricsScoring)
+            MetricsScoringManager = FindObjectOfType<globalOperators>().GetComponent<LSMetricsScoring>();
     }
 
     /// <summary>
@@ -592,6 +601,31 @@ public class globalOperators : MonoBehaviour
     {
         if (Application.isPlaying)
         {
+            /// find the forceps currently holding or grasping objs
+            HapticSurgTools graspingForceps = null;
+            HapticSurgTools holdingForceps = null;
+            foreach (KeyValuePair<string, HapticSurgTools> ele in m_hapticSurgTools)
+            {
+                // check forceps only
+                if (ele.Key == m_surgToolNames[0] || ele.Key == m_surgToolNames[1] || ele.Key == m_surgToolNames[2])
+                {
+                    if (m_hapticSurgTools[ele.Key])
+                    {
+                        // find the forceps currently grasping
+                        if (graspingForceps == null && m_hapticSurgTools[ele.Key].curAction == HapticSurgTools.toolAction.grabbing)
+                        {
+                            graspingForceps = m_hapticSurgTools[ele.Key];
+                        }
+                        // find the forceps currently holding
+                        if (holdingForceps == null && m_hapticSurgTools[ele.Key].curAction == HapticSurgTools.toolAction.holding)
+                        {
+                            holdingForceps = m_hapticSurgTools[ele.Key];
+                        }
+                    }
+                }
+            }
+
+            /// Enterotomy
             // 'C': corner-cut both sphere-joint models
             if (Input.GetKeyDown(KeyCode.C))
             {
@@ -606,20 +640,52 @@ public class globalOperators : MonoBehaviour
                 }
             }
             // [Haptics version]
-            if (m_hapticSurgTools[1]) //scissors
+            if (m_hapticSurgTools.Count > 0 && m_hapticSurgTools["Scissors"]) //scissors
             {
-                if (m_hapticSurgTools[1].curAction == HapticSurgTools.toolAction.cutting)
+                if (m_hapticSurgTools["Scissors"].curAction == HapticSurgTools.toolAction.cutting)
                 {
-                    int objIdx = m_hapticSurgTools[1].cutSphereIdx[0];
+                    int objIdx = m_hapticSurgTools["Scissors"].cutSphereIdx[0];
                     if (objIdx >= 0 && objIdx < m_numSphereModels)
                     {
                         int LorR = -1;
-                        if (cornerCut(objIdx, m_hapticSurgTools[1].cutSphereIdx[2], ref LorR))
+                        if (cornerCut(objIdx, m_hapticSurgTools["Scissors"].cutSphereIdx[2], ref LorR))
+                        {
                             StapleLineManager.instance.LSSimStepTwo(objIdx, LorR);
+                            // update metrics scoring
+                            if (MetricsScoringManager) 
+                            {
+                                bool bOpeningSecure = (graspingForceps != null) ? true : false;
+                                MetricsScoringManager.updateEnterotomyScores(objIdx, LorR, bOpeningSecure);
+                            }
+                        }
                     }
                 }
             }
 
+            /// LS-Insertion 
+            // [Haptic version]
+            if (lsController && !m_bStapling && !m_bJoin)
+            {
+                if (m_bInsert[0] + m_bInsert[1] > 0)
+                {
+                    // check if the openings are grasping by the forceps when inserting
+                    bool bOpeningSecure = false;
+                    if (graspingForceps)
+                    {
+                        bOpeningSecure = true;
+                    }
+                    // update metrics scoring
+                    if (MetricsScoringManager)
+                    {
+                        if (m_bInsert[0] > 0)
+                            MetricsScoringManager.updateLSInsertionScores(0, bOpeningSecure);
+                        if (m_bInsert[1] > 0)
+                            MetricsScoringManager.updateLSInsertionScores(1, bOpeningSecure);
+                    }
+                }
+            }
+
+            /// Stapled-Anastomosis
             /*// 'S': split all the colons in the scene
             if (Input.GetKeyDown(KeyCode.S))
             {
@@ -651,6 +717,38 @@ public class globalOperators : MonoBehaviour
                 else
                     Debug.Log("Error: Cannot join as colons have not been split yet!");
             }
+            // [Haptic version]
+            if (lsController)
+            {
+                // check if the LS lever locked <==
+                bool bLSLocked = false; // lsController.levelLocked not accessible?
+                // stapled anastomosis
+                if (m_bStapling && m_bLSButtonPulling)
+                {
+                    if ((m_bInsert[0] + m_bInsert[1] > 0) && bLSLocked)
+                    {
+                        // split
+                        split();
+                        // join
+                        if (m_bSplit)
+                        {
+                            if (join())
+                            {
+                                StapleLineManager.instance.LSSimStepThree(m_layers2Split[1]);
+                                if (lsController)
+                                    lsController.JoinColonToolLogic();
+                            }
+                        }
+                    }
+                }
+                // update metrics scoring
+                if (MetricsScoringManager)
+                {
+                    MetricsScoringManager.updateStapledAnastScores(m_bStapling, m_bLSButtonFullDown, m_bJoin, m_bLSRemoving, bLSLocked);
+                }
+
+                m_bStapling = false;
+            }
 
             // handle partial-split join: pull end-split vertices for both colon meshes together
             if (m_bJoin && m_colonMeshes[0].endSplitVers2Join.Count <= 0 && m_colonMeshes[1].endSplitVers2Join.Count <= 0)
@@ -680,33 +778,30 @@ public class globalOperators : MonoBehaviour
                 openingSecure(true);
 
             //  [haptic version]
-            if (m_hapticSurgTools[0]) //forceps
+            if (holdingForceps) //forceps
             {
-                if (m_hapticSurgTools[0].curAction == HapticSurgTools.toolAction.holding)
+                if (m_bJoin)
                 {
-                    if (m_bJoin)
+                    // check which obj being holding, only if 1st layer held, valid objIdx
+                    if ((holdingForceps.holdSphereIDs[0] == 0 || holdingForceps.holdSphereIDs[0] == 1)
+                         && holdingForceps.holdSphereIDs[1] < 2) // holdSphereIDs: [objIdx, layerIdx, sphereIdx]
                     {
-                        // check which obj being holding, only if 1st layer held, valid objIdx
-                        if ((m_hapticSurgTools[0].holdSphereIDs[0] == 0 || m_hapticSurgTools[0].holdSphereIDs[0] == 1) &&
-                                m_hapticSurgTools[0].holdSphereIDs[1] < 2) // holdSphereIDs: [objIdx, layerIdx, sphereIdx]
+                        // check the sphere being held belongs to one of the predefined openings
+                        bool bSecureNewOpening = false;
+                        for (int whichOpening = 0; whichOpening < m_numSecureOpenings; whichOpening++)
                         {
-                            // check the sphere being held belongs to one of the predefined openings
-                            bool bSecureNewOpening = false;
-                            for (int whichOpening = 0; whichOpening < m_numSecureOpenings; whichOpening++)
+                            if (m_sphIndices4Secure[whichOpening].Contains(holdingForceps.holdSphereIDs[2]))
                             {
-                                if (m_sphIndices4Secure[whichOpening].Contains(m_hapticSurgTools[0].holdSphereIDs[2]))
+                                if (m_sphereIdx4EachOpening[whichOpening] == -1) // new opening secure
                                 {
-                                    if (m_sphereIdx4EachOpening[whichOpening] == -1) // new opening secure
-                                    {
-                                        bSecureNewOpening = true;
-                                        m_sphereIdx4EachOpening[whichOpening] = m_hapticSurgTools[0].holdSphereIDs[2];
-                                        Debug.Log("Hold opening " + whichOpening.ToString());
-                                    }
-                                    break;
+                                    bSecureNewOpening = true;
+                                    m_sphereIdx4EachOpening[whichOpening] = holdingForceps.holdSphereIDs[2];
+                                    Debug.Log("Hold opening " + whichOpening.ToString());
                                 }
+                                break;
                             }
-                            openingSecure(bSecureNewOpening);
                         }
+                        openingSecure(bSecureNewOpening);
                     }
                 }
             }
