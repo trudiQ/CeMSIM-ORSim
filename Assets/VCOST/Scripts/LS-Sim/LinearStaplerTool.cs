@@ -12,7 +12,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public List<StaplerAttachDetection> attachValidators; // Trigger colliders that validates the tool's two parts' positions to see if they are within attaching distance
     public float attachDepthDifference; // How close (on a 0-1 scale) the two LS parts needs to be during insertion for them to be able to be locked together
     public Transform bottomPartLockingPosition; // Where the bottom part of the tool should be when it is locked with the top part in the insertion phase
-    public Transform bottomPartFullyLockingPosition; // Where the bottom part of the tool should be when it is locked with the top part in the cutting phase
+    public Transform bottomPartFullyLockingPosition; // Where the bottom part of the tool should be when it is locked with the top part in the last phase
     public GameObject topHalf;
     public GameObject bottomHalf; // Bottom half of the tool (the half without moving parts)
     public Transform topTracker;
@@ -43,8 +43,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public List<Transform> joinedColonForthLayerLowerSpheres;
     public List<Transform> joinedColonFifthLayerLowerSpheres;
     public List<Transform> joinedColonSixthLayerLowerSpheres;
-    public float cuttingPhaseToolMovingAxisDifference; // During the cutting phase, how much the bottom tool should move down
-    public float cuttingTipHorizontalProximityCondition; // How close the tip has to be to the joined colon center on the x axis to enter cutting moving plane
+    public float lastPhaseToolMovingAxisDifference; // During the last phase, how much the bottom tool should move down
+    public float lastPhaseTipHorizontalProximityCondition; // How close the tip has to be to the joined colon center on the x axis to enter last phase moving plane
+    public float lastPhaseBottomFurthestDistance; // How far end the movement plane far end can be from the colon opening
 
     public bool handlePushed;
     public static bool leverLocked;
@@ -129,8 +130,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         }
         else if (simStates > 1)
         {
-            bottomPartMovingAxisStartPoint += Vector3.up * cuttingPhaseToolMovingAxisDifference;
-            bottomPartMovingAxisEndPoint += Vector3.up * cuttingPhaseToolMovingAxisDifference;
+            bottomPartMovingAxisStartPoint += Vector3.up * lastPhaseToolMovingAxisDifference;
+            bottomPartMovingAxisEndPoint += Vector3.up * lastPhaseToolMovingAxisDifference;
         }
 
         if (simStates < 2)
@@ -164,7 +165,19 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         {
             CheckAndUpdateLStoolTransverseStates();
         }
+        // Move bottom part along colon during last phase
+        if (isBottomHalfMovingInCuttingPlane)
+        {
+            // Update track
+            joinedColonFirstLayerLowerSpheresPosition = GetPositionMean(joinedColonFirstLayerLowerSpheres) + lastPhaseToolMovingAxisDifference * Vector3.up;
+            joinedColonSecondLayerLowerSpheresPosition = GetPositionMean(joinedColonSecondLayerLowerSpheres) + lastPhaseToolMovingAxisDifference * Vector3.up;
+            joinedColonThirdLayerLowerSpheresPosition = GetPositionMean(joinedColonThirdLayerLowerSpheres) + lastPhaseToolMovingAxisDifference * Vector3.up;
+            joinedColonForthLayerLowerSpheresPosition = GetPositionMean(joinedColonForthLayerLowerSpheres) + lastPhaseToolMovingAxisDifference * Vector3.up;
+            joinedColonFifthLayerLowerSpheresPosition = GetPositionMean(joinedColonFifthLayerLowerSpheres) + lastPhaseToolMovingAxisDifference * Vector3.up;
+            joinedColonSixthLayerLowerSpheresPosition = GetPositionMean(joinedColonSixthLayerLowerSpheres) + lastPhaseToolMovingAxisDifference * Vector3.up;
 
+            LockBottomToolMovementInPlaneDuringLastStep(bottomHalf.transform, joinedColonFirstLayerLowerSpheresPosition, joinedColonSixthLayerLowerSpheresPosition);
+        }
     }
 
     void FireKnobWithKeyboardInput()
@@ -346,36 +359,60 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 
     public float LockBottomToolMovementInPlaneDuringLastStep(Transform controlledObject, Vector3 startPosition, Vector3 endPosition)
     {
-        Vector3 objectToStartVector = controlledObject.position - startPosition;
-        float movementRange = Vector3.Distance(startPosition, endPosition);
-        float objectNormalToStartDistance = Vector3.Dot(objectToStartVector, Vector3.Normalize(endPosition - startPosition));
-        controlledObject.position = startPosition + (endPosition - startPosition).normalized * objectNormalToStartDistance; // Place object on the direction vector
+        //Debug.DrawLine(startPosition, endPosition, Color.red, 3f);
+        Vector3 objectOriginalPosition = controlledObject.position;
+        //Vector3 objectToStartVector = controlledObject.position - startPosition;
+        //Debug.DrawLine(startPosition, controlledObject.position, Color.green, 3f);
+        //float movementRange = Vector3.Distance(startPosition, endPosition);
+        //float objectNormalToStartDistance = Vector3.Dot(objectToStartVector, Vector3.Normalize(endPosition - startPosition));
+        //controlledObject.position = startPosition + (endPosition - startPosition).normalized * objectNormalToStartDistance; // Place object on the direction vector
+        //Debug.DrawLine(startPosition, controlledObject.position, Color.magenta, 3f);
+        float depth = (controlledObject.position.z - startPosition.z) / (endPosition.z - startPosition.z);
+        controlledObject.position = Vector3.LerpUnclamped(startPosition, endPosition, depth);
+
         // See which movement segment the object should belong to
-        if (controlledObject.position.z > joinedColonSecondLayerLowerSpheresPosition.z)
+        if (controlledObject.position.z < joinedColonSecondLayerLowerSpheresPosition.z)
         {
-            if (controlledObject.position.z < joinedColonThirdLayerLowerSpheresPosition.z)
-            {
-
-            }
-            else if (controlledObject.position.z < joinedColonForthLayerLowerSpheresPosition.z)
-            {
-
-            }
-            else if (controlledObject.position.z < joinedColonFifthLayerLowerSpheresPosition.z)
-            {
-
-            }
-            else
-            {
-
-            }
+            float unit = joinedColonSecondLayerLowerSpheresPosition.z - joinedColonFirstLayerLowerSpheresPosition.z;
+            float lerpT = Mathf.Clamp((controlledObject.position.z - joinedColonFirstLayerLowerSpheresPosition.z) / unit, lastPhaseBottomFurthestDistance, 1.1f);
+            controlledObject.position = Vector3.LerpUnclamped(joinedColonFirstLayerLowerSpheresPosition, joinedColonSecondLayerLowerSpheresPosition, lerpT);
+        }
+        else if (controlledObject.position.z < joinedColonThirdLayerLowerSpheresPosition.z)
+        {
+            float unit = joinedColonThirdLayerLowerSpheresPosition.z - joinedColonSecondLayerLowerSpheresPosition.z;
+            float lerpT = (controlledObject.position.z - joinedColonSecondLayerLowerSpheresPosition.z) / unit;
+            controlledObject.position = Vector3.Lerp(joinedColonSecondLayerLowerSpheresPosition, joinedColonThirdLayerLowerSpheresPosition, lerpT);
+        }
+        else if (controlledObject.position.z < joinedColonForthLayerLowerSpheresPosition.z)
+        {
+            float unit = joinedColonForthLayerLowerSpheresPosition.z - joinedColonThirdLayerLowerSpheresPosition.z;
+            float lerpT = (controlledObject.position.z - joinedColonThirdLayerLowerSpheresPosition.z) / unit;
+            controlledObject.position = Vector3.Lerp(joinedColonThirdLayerLowerSpheresPosition, joinedColonForthLayerLowerSpheresPosition, lerpT);
+        }
+        else if (controlledObject.position.z < joinedColonFifthLayerLowerSpheresPosition.z)
+        {
+            float unit = joinedColonFifthLayerLowerSpheresPosition.z - joinedColonForthLayerLowerSpheresPosition.z;
+            float lerpT = (controlledObject.position.z - joinedColonForthLayerLowerSpheresPosition.z) / unit;
+            controlledObject.position = Vector3.Lerp(joinedColonForthLayerLowerSpheresPosition, joinedColonFifthLayerLowerSpheresPosition, lerpT);
+        }
+        else
+        {
+            float unit = joinedColonSixthLayerLowerSpheresPosition.z - joinedColonFifthLayerLowerSpheresPosition.z;
+            float lerpT = (controlledObject.position.z - joinedColonFifthLayerLowerSpheresPosition.z) / unit;
+            controlledObject.position = Vector3.Lerp(joinedColonFifthLayerLowerSpheresPosition, joinedColonSixthLayerLowerSpheresPosition, lerpT);
         }
 
+        // Move object back to horizontal position
+        objectOriginalPosition.z = controlledObject.position.z;
+        objectOriginalPosition.y = controlledObject.position.y;
+        controlledObject.position = objectOriginalPosition;
+
         // Rotate the LS tool to align it with the colon
-        controlledObject.LookAt(controlledObject.position + Vector3.down, Vector3.back);
+        controlledObject.LookAt(controlledObject.position + Vector3.down, Vector3.forward);
         //controlledObject.Rotate(0, -90 * Mathf.Sign(rotateUpDir.y), 0, Space.Self);
 
-        return objectNormalToStartDistance / movementRange;
+        return depth;
+        //return objectNormalToStartDistance / movementRange;
     }
 
     /// <summary>
@@ -523,9 +560,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     {
         // Check if bottom part reach target height and z distance towards joined colon, and right axis is aligned with world right, and tip is within the colon width range
         if (!isBottomHalfMovingInCuttingPlane &&
-            Mathf.Abs(bottomHalfFrontTip.position.y - (joinedColonFirstLayerLowerSpheresPosition.y + cuttingPhaseToolMovingAxisDifference)) < tipProximityCondition &&
-            Mathf.Abs(bottomHalfFrontTip.position.z - joinedColonFirstLayerLowerSpheresPosition.z) < tipProximityCondition &&
-            Mathf.Abs(bottomHalfFrontTip.position.x - joinedColonFirstLayerLowerSpheresPosition.x) < cuttingTipHorizontalProximityCondition &&
+            Mathf.Abs(bottomHalfFrontTip.position.y - (joinedColonFirstLayerLowerSpheresPosition.y + lastPhaseToolMovingAxisDifference)) < 0.75f &&
+            Mathf.Abs(bottomHalfFrontTip.position.z - joinedColonFirstLayerLowerSpheresPosition.z) < 0.75f * 0.5f &&
+            Mathf.Abs(bottomHalfFrontTip.position.x - joinedColonFirstLayerLowerSpheresPosition.x) < lastPhaseTipHorizontalProximityCondition &&
             Vector3.Angle(bottomHalf.transform.right, Vector3.right) < angleDifferenceCondition)
         {
             isBottomHalfMovingInCuttingPlane = true;
@@ -533,9 +570,13 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         // Check if bottom part exit cutting plane
         if (isBottomHalfMovingInCuttingPlane &&
             Vector3.Angle((bottomHalfFrontTip.position - joinedColonFirstLayerLowerSpheresPosition), (joinedColonSixthLayerLowerSpheresPosition - joinedColonFirstLayerLowerSpheresPosition)) > 90 &&
-            Mathf.Abs(bottomHalfFrontTip.position.z - joinedColonFirstLayerLowerSpheresPosition.z) > tipProximityCondition * tipExitProximityMultiplier)
+            Mathf.Abs(bottomHalfFrontTip.position.z - joinedColonFirstLayerLowerSpheresPosition.z) > 0.75f * 0.5f)
         {
             isBottomHalfMovingInCuttingPlane = false;
+
+            // Put tool back to default local position and rotation
+            bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
+            bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
         }
     }
 
