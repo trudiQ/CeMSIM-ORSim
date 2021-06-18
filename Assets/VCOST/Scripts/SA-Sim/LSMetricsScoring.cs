@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class LSMetricsScoring : MonoBehaviour
@@ -37,9 +38,36 @@ public class LSMetricsScoring : MonoBehaviour
     string[] m_StapledAnastMetrics = { "FullStapling",
                                        "LSOpenRemove" };
     Dictionary<string, float> m_StapledAnastMetricsScores = new Dictionary<string, float>();
-    // Variables used to determine scores
+    // Variables used to determine scores (udpated by external code)
     bool m_bSAFullStaplingEvaluated = false;
+    bool m_bSAFullyStapled = false; // if LS fully stapled in SA (button full-down)
     bool m_bLSOpenRemoveEvaluated = false;
+    bool m_bLSOpenBeforeRemoving = false; // if LS opened before removing from colons
+
+    /// Final-Closure
+    bool m_FinalClosurePass = true;
+    // metrics scores
+    float m_FinalClosureTime = 0.0f;
+    float m_FinalClosureScore = 0.0f;
+    string[] m_FinalClosureMetrics = { "OpeningSecured",
+                                       "OpeningFullyGrasped",
+                                       "CutZoneCrossed",
+                                       "CloseLS",
+                                       "FullyStapling",
+                                       "MesenteryClear" };
+    Dictionary<string, float> m_FinalClosureMetricsScores = new Dictionary<string, float>();
+    // Variables used to determine scores (updated by external code)
+    int m_numOpeningSecuredForceps = 0; // #forceps holds the opening during the final-closure
+    bool m_LSFullyGraspOpening = false; // if LS grasps both colon ends fully
+    bool m_LSCutZoneCrossed = true; // if LS places in the cut-zone to do the final-closure
+    bool m_LSFinalClosureClosed = false; // if LS fully closed before stapling
+    bool m_LSFinalCloseEvaluated = false;
+    bool m_FCFullyStapled = false; // if LS fully stapled in final-closure (button full-down)
+    bool m_FCFullStapleEvaluated = false;
+    bool m_MesenteryCleared = false; // if mesentery layers are clear after final-closure
+    int m_cutZoneLayerIdx = 1; // sphereJointModel's layerIdx where final-closure is applied
+    int m_mesenteryLayerIdx = 5; // sphereJointModel's layerIdx where mesentery begins to attach
+    float m_LSFullyGraspLength = 1.0f; // LS fully grasps both colon ends when grasp length >= this value
 
     // Start is called before the first frame update
     void Start()
@@ -52,6 +80,14 @@ public class LSMetricsScoring : MonoBehaviour
         for (int i = 0; i < m_LSInsertionMetrics.Length; i++)
         {
             m_LSInsertionMetricsScores.Add(m_LSInsertionMetrics[i], 0.0f);
+        }
+        for (int i = 0; i < m_StapledAnastMetrics.Length; i++)
+        {
+            m_StapledAnastMetricsScores.Add(m_StapledAnastMetrics[i], 0.0f);
+        }
+        for (int i = 0; i < m_FinalClosureMetrics.Length; i++)
+        {
+            m_FinalClosureMetricsScores.Add(m_FinalClosureMetrics[i], 0.0f);
         }
     }
 
@@ -139,30 +175,32 @@ public class LSMetricsScoring : MonoBehaviour
     ///     1) if the button is full-down during stapling
     ///     2) if LS is unlocked when trying to remove the LS
     /// </summary>
-    /// <param name="bStapling"></param> true: pushing LS button now
+    /// <param name="bLSButtonPushing"></param> true: pushing LS button now
     /// <param name="bLSButtonFullDown"></param> true: full down/ false: partial down or no pushing
     /// <param name="bJoin"></param> true: join operation is already done
     /// <param name="m_bLSRemoving"></param> true: LS is removing from the colons
     /// <param name="bLSLocked"></param> true: LS is locked 
-    public void updateStapledAnastScores(bool bStapling, bool bLSButtonFullDown, bool bJoin, bool m_bLSRemoving, bool bLSLocked)
+    public void updateStapledAnastScores(bool bLSButtonPushing, bool bLSButtonFullDown, bool bJoin, bool m_bLSRemoving, bool bLSLocked)
     {
-        // Evaluate "closeLS" for LS-Insertion
-        if (bStapling == true && m_bLSInsertCloseEvaluated == false)
+        // Evaluate "closeLS" for LS-Insertion when just about to push the button
+        if (bLSButtonPushing == true && m_bLSInsertCloseEvaluated == false)
         {
             m_bLSInsertionClosed = (bLSLocked == true) ? true : false;
             m_bLSInsertCloseEvaluated = true;
         }
-        // "Stapling": button full down?
+        // "FullyStaple": button full down?
         if (bJoin == true && m_bSAFullStaplingEvaluated == false)
         {
-            m_StapledAnastMetricsScores[m_StapledAnastMetrics[0]] = (bLSButtonFullDown == true) ? 5.0f : 0.0f;
+            m_bSAFullyStapled = bLSButtonFullDown;
+            m_StapledAnastMetricsScores[m_StapledAnastMetrics[0]] = (m_bSAFullyStapled == true) ? 5.0f : 0.0f;
             m_bSAFullStaplingEvaluated = true;
         }
 
         // "LSOpenRemove": LS unlocked when removing?
-        if (m_bLSRemoving == false && m_bLSOpenRemoveEvaluated == false)
+        if (m_bLSRemoving == true && m_bLSOpenRemoveEvaluated == false)
         {
-            m_StapledAnastMetricsScores[m_StapledAnastMetrics[1]] = (bLSLocked) ? 5.0f : 0.0f;
+            m_bLSOpenBeforeRemoving = (bLSLocked == false) ? true : false;
+            m_StapledAnastMetricsScores[m_StapledAnastMetrics[1]] = (m_bLSOpenBeforeRemoving == true) ? 5.0f : 0.0f;
             m_bLSOpenRemoveEvaluated = true;
         }
 
@@ -172,6 +210,115 @@ public class LSMetricsScoring : MonoBehaviour
         // print scores
         Debug.Log("Stapled Anastomosis metrics scores: ");
         foreach (KeyValuePair<string, float> kvp in m_StapledAnastMetricsScores)
+            Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
+    }
+
+    /// <summary>
+    /// Update scores for final-closure by checking
+    ///     1) if the opening is fully secured based on #forceps grasping
+    ///     2) if the colon ends are fully grasped by the LS
+    ///     3) if LS crosses the cut-zone based on layerIdx for final closure
+    ///     4) if LS closed before button-pushing
+    ///     5) if LS button full-down
+    ///     6) if mesentery layer is clear based on the layerIdx for final closure
+    /// </summary>
+    /// <param name="bFinalClosure"></param> # if final-closure is done
+    /// <param name="numGraspingForceps"></param> #forceps used to grasp the colons openings
+    /// <param name="graspLength"></param> LS grasp length along x axis
+    /// <param name="fullClosureLayerIdx"></param> sphereJointModels' layerIdx for final-closure
+    /// <param name="bLSButtonPushing"></param> if the button is pushing now
+    /// <param name="bLSLocked"></param> if LS is locked
+    /// <param name="bLSButtonFullDown"></param> if LS button is full-down
+    public void updateFinalClosureScores(bool bFinalClosure, int numGraspingForceps, float graspLength, int fullClosureLayerIdx, 
+                                         bool bLSButtonPushing, bool bLSLocked, bool bLSButtonFullDown)
+    {
+        //"OpeningSecured"
+        if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
+        {
+            m_numOpeningSecuredForceps = numGraspingForceps;
+            switch(m_numOpeningSecuredForceps)
+            {
+                case 3:
+                    m_FinalClosureMetricsScores[m_FinalClosureMetrics[0]] = 5.0f;
+                    break;
+                case 2:
+                    m_FinalClosureMetricsScores[m_FinalClosureMetrics[0]] = 3.0f;
+                    break;
+                case 1:
+                    m_FinalClosureMetricsScores[m_FinalClosureMetrics[0]] = 2.0f;
+                    break;
+                case 0:
+                    m_FinalClosureMetricsScores[m_FinalClosureMetrics[0]] = 0.0f;
+                    break;
+            }
+        }
+
+        //"OpeningFullyGrasped"
+        if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
+        {
+            m_LSFullyGraspOpening = (graspLength >= m_LSFullyGraspLength) ? true : false;
+            if (m_LSFullyGraspOpening)
+            {
+                m_FinalClosureMetricsScores[m_FinalClosureMetrics[1]] = 5.0f;
+            }
+            else
+            {
+                m_FinalClosureMetricsScores[m_FinalClosureMetrics[1]] = 0.0f;
+                m_FinalClosurePass = false;
+            }
+        }
+
+        //"CutZoneCrossed"
+        if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
+        {
+            m_LSCutZoneCrossed = (fullClosureLayerIdx <= m_cutZoneLayerIdx) ? true : false;
+            if (m_LSCutZoneCrossed == true)
+                m_FinalClosureMetricsScores[m_FinalClosureMetrics[2]] = 0.0f;
+            else
+                m_FinalClosureMetricsScores[m_FinalClosureMetrics[2]] = 5.0f;
+        }
+
+        //"CloseLS"
+        if (bLSButtonPushing == true && m_LSFinalCloseEvaluated == false) //evaluate when LS is locked and starts button pushing
+        {
+            m_LSFinalClosureClosed = (bLSLocked == true) ? true : false;
+            m_LSFinalCloseEvaluated = true;
+            if (m_LSFinalClosureClosed == true)
+                m_FinalClosureMetricsScores[m_FinalClosureMetrics[3]] = 5.0f;
+            else
+                m_FinalClosureMetricsScores[m_FinalClosureMetrics[3]] = 0.0f;
+        }
+
+        //"FullyStapling"
+        if (bFinalClosure && m_FCFullStapleEvaluated == false) // evaluated when final-closure is just done
+        {
+            m_FCFullyStapled = bLSButtonFullDown;
+            m_FinalClosureMetricsScores[m_FinalClosureMetrics[4]] = (m_FCFullyStapled == true) ? 5.0f : 0.0f;
+            m_FCFullStapleEvaluated = true;
+        }
+
+        //"MesenteryClear"
+        if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
+        {
+            m_MesenteryCleared = (fullClosureLayerIdx < m_mesenteryLayerIdx) ? true : false;
+            if (m_MesenteryCleared == true)
+                m_FinalClosureMetricsScores[m_FinalClosureMetrics[5]] = 5.0f;
+            else
+            {
+                m_FinalClosureMetricsScores[m_FinalClosureMetrics[5]] = 0.0f;
+                m_FinalClosurePass = false;
+            }
+        }
+
+        // update total final-closure score
+        foreach (KeyValuePair<string, float> kvp in m_FinalClosureMetricsScores)
+        {
+            m_FinalClosureScore += kvp.Value;
+        }
+
+        // print scores
+        Debug.Log("Final-Closure metrics scores: ");
+        foreach (KeyValuePair<string, float> kvp in m_FinalClosureMetricsScores)
             Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
     }
 

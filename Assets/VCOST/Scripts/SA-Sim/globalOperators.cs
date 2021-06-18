@@ -29,10 +29,6 @@ public class globalOperators : MonoBehaviour
     public static int[] m_bInsert = { 0, 0 }; // 1 means top part inserted, 2 means bottom part
     public static float[] m_insertDepth = { 0, 0 }; // Unity world distance starting from colon opening position (scale from 0 to 1 for the full colon length)
     // LS stapling: Split & Join (Staple-Anastomosis)
-    public bool m_bStapling = false; // <== BUTTON PUSHING
-    public bool m_bLSButtonFullDown = false; // true: button full down/ false: button partially down <== BUTTON PUSHING
-    public bool m_bLSButtonPulling = false; // true: pulling the button back <== BUTTON PULLING
-    public bool m_bLSRemoving = false; // <== 
     public bool m_bSplit = false;
     public bool m_bJoin = false;
     public int[] m_layers2Split = { -1, -1 }; // same for both models
@@ -42,10 +38,12 @@ public class globalOperators : MonoBehaviour
     private int m_numSpherePairsProcesed = 0; // for opening secure
     private int m_numSecureOpenings;
     private int[] m_sphereIdx4EachOpening;// sphere currently being held for each opening
+    private int m_numHoldingForceps = 0; // #forceps holding the opening during final closure
     private List<List<int>> m_sphIndices4Secure = new List<List<int>>(); //[[opening0], [opening1], [opening2]]
     // Final closure
     private int m_layer2FinalClose = -1;
-    public bool m_bFinalClosure = false;
+    public bool m_bFinalClosure = false; // if the final-closure step is done
+    public float m_LSGraspLengthFinalClosure = 0.0f; // <== updated by LS interface 
 
     /// haptics device inputs
     private int m_numSurgTools = 0; // actual surgical tools in the scene
@@ -54,6 +52,12 @@ public class globalOperators : MonoBehaviour
 
     // Linear Stapler stuff
     public LinearStaplerTool lsController;
+    public bool m_bLSButtonPushing = false; // <== BUTTON PUSHING
+    public bool m_bLSButtonFullDown = false; // true: button full down/ false: button partially down <== BUTTON PUSHING
+    public bool m_bLSButtonPulling = false; // true: pulling the button back <== BUTTON PULLING
+    public bool m_bLSInserting = false; // <==
+    public bool m_bLSRemoving = false; // <== 
+    public bool m_bLSTransversing = false; // if LS is on transverse motion for final-closing <==
 
     // Scoring metrics
     private bool m_bEnableMetricsScoring = true;
@@ -604,6 +608,7 @@ public class globalOperators : MonoBehaviour
             /// find the forceps currently holding or grasping objs
             HapticSurgTools graspingForceps = null;
             HapticSurgTools holdingForceps = null;
+            m_numHoldingForceps = 0;
             foreach (KeyValuePair<string, HapticSurgTools> ele in m_hapticSurgTools)
             {
                 // check forceps only
@@ -617,9 +622,11 @@ public class globalOperators : MonoBehaviour
                             graspingForceps = m_hapticSurgTools[ele.Key];
                         }
                         // find the forceps currently holding
-                        if (holdingForceps == null && m_hapticSurgTools[ele.Key].curAction == HapticSurgTools.toolAction.holding)
+                        if (m_hapticSurgTools[ele.Key].curAction == HapticSurgTools.toolAction.holding)
                         {
-                            holdingForceps = m_hapticSurgTools[ele.Key];
+                            m_numHoldingForceps += 1;
+                            if (holdingForceps == null)
+                                holdingForceps = m_hapticSurgTools[ele.Key];
                         }
                     }
                 }
@@ -664,7 +671,7 @@ public class globalOperators : MonoBehaviour
 
             /// LS-Insertion 
             // [Haptic version]
-            if (lsController && !m_bStapling && !m_bJoin)
+            if (lsController && m_bLSInserting && !m_bJoin)
             {
                 if (m_bInsert[0] + m_bInsert[1] > 0)
                 {
@@ -717,13 +724,13 @@ public class globalOperators : MonoBehaviour
                 else
                     Debug.Log("Error: Cannot join as colons have not been split yet!");
             }
-            // [Haptic version]
+            // [Haptic version] <== need more work
             if (lsController)
             {
                 // check if the LS lever locked <==
                 bool bLSLocked = false; // lsController.levelLocked not accessible?
                 // stapled anastomosis
-                if (m_bStapling && m_bLSButtonPulling)
+                if (m_bLSButtonPushing && m_bLSButtonPulling)
                 {
                     if ((m_bInsert[0] + m_bInsert[1] > 0) && bLSLocked)
                     {
@@ -744,10 +751,10 @@ public class globalOperators : MonoBehaviour
                 // update metrics scoring
                 if (MetricsScoringManager)
                 {
-                    MetricsScoringManager.updateStapledAnastScores(m_bStapling, m_bLSButtonFullDown, m_bJoin, m_bLSRemoving, bLSLocked);
+                    MetricsScoringManager.updateStapledAnastScores(m_bLSButtonPushing, m_bLSButtonFullDown, m_bJoin, m_bLSRemoving, bLSLocked);
                 }
 
-                m_bStapling = false;
+                m_bLSButtonPushing = false;
             }
 
             // handle partial-split join: pull end-split vertices for both colon meshes together
@@ -762,6 +769,7 @@ public class globalOperators : MonoBehaviour
                 }
             }
 
+            /// Opening-Secure
             // 'H': opening-secure using forceps' holding action
             if (Input.GetKeyDown(KeyCode.H))
             {
@@ -806,6 +814,7 @@ public class globalOperators : MonoBehaviour
                 }
             }
 
+            /// Final-Closure
             // 'V': final close both colons using LS
             if (Input.GetKeyDown(KeyCode.V))
             {
@@ -826,6 +835,48 @@ public class globalOperators : MonoBehaviour
                     {
                         StapleLineManager.instance.LSSimStepFour(m_layer2FinalClose - 1);
                     }
+                }
+            }
+            // [Haptic version] <==
+            if (lsController)
+            {
+                if (m_bLSTransversing)
+                {
+                    // check if the LS lever locked <==
+                    bool bLSLocked = false; // lsController.levelLocked not accessible?
+                                            // stapled anastomosis
+                    
+                    // Final closure
+                    if (m_bLSButtonPushing && m_bLSButtonPulling)
+                    {
+                        if (!m_bJoin)
+                            Debug.Log("Error: Cannot conduct finalClosure as the colons have not joined yet!");
+                        else if (m_bFinalClosure)
+                            Debug.Log("Error: Cannot conduct finalClosure as that's already conducted!");
+                        else
+                        {
+                            if (m_layer2FinalClose <= 0 || m_layer2FinalClose >= 20)
+                            {
+                                Debug.Log("Error: Invalid final close layer!");
+                                return;
+                            }
+                            if (!finalClosure(m_layer2FinalClose))
+                                Debug.Log("Final Closure failed!");
+                            else
+                            {
+                                StapleLineManager.instance.LSSimStepFour(m_layer2FinalClose - 1);
+                            }
+                        }
+                    }
+
+                    // update metrics scores
+                    if (MetricsScoringManager)
+                    {
+                        MetricsScoringManager.updateFinalClosureScores(m_bFinalClosure, m_numHoldingForceps, m_LSGraspLengthFinalClosure,
+                                                                       m_layer2FinalClose, m_bLSButtonPushing, bLSLocked, m_bLSButtonFullDown);
+                    }
+
+                    m_bLSButtonPushing = false;
                 }
             }
         }
