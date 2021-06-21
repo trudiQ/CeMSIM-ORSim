@@ -42,6 +42,10 @@ namespace CEMSIM
                 {
                     displayName.GetComponent<TextMesh>().text = _name;
                 }
+                else
+                {
+                    Debug.LogWarning("username is null");
+                }
             }
         }
     }

@@ -33,6 +33,10 @@ namespace CEMSIM
                 {
                     displayName.GetComponent<TextMesh>().text = _name;
                 }
+                else
+                {
+                    Debug.LogWarning("username is null");
+                }
             }
 
             public void SetPosition(Vector3 _position, Quaternion _rotation)

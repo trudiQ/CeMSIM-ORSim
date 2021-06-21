@@ -300,9 +300,19 @@ namespace CEMSIM
                 NetworkOverlayMenu.Instance.Log($"Send player {id}: {_playerName} - {_role} into game");
 
                 if (_vr)
+                {
                     player = ServerNetworkManager.instance.InstantiatePlayerVR();
+                    player.GetComponent<ServerPlayerVR>().enabled = true;
+                }
                 else
+                {
                     player = ServerNetworkManager.instance.InstantiatePlayerDesktop();
+                }
+
+                PlayerManager playerManager = player.GetComponent<PlayerManager>();
+                if (playerManager != null)
+                    playerManager.enabled = false;
+
                 player.Initialize(id, _playerName, _role);
                 player.GetComponent<ServerPlayer>().SetDisplayName(_role + '-' + _playerName);
                 //player.GetComponent<TextMesh>().text = _playerName;

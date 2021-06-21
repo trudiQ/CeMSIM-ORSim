@@ -86,8 +86,11 @@ namespace CEMSIM
                     _player = Instantiate(playerPrefab, _position, _rotation);
                     // Child 1 is the username gameobject
                     // P.S. Only the prefab of other players has "username"
+                    _player.GetComponent<PlayerManager>().enabled = true;
                     _player.GetComponent<PlayerManager>().SetDisplayName(_username + '-' + _role);
-
+                    ServerPlayer serverPlayer = _player.GetComponent<ServerPlayerVR>();
+                    if (serverPlayer != null)
+                        serverPlayer.enabled = false;
 
                 }
 

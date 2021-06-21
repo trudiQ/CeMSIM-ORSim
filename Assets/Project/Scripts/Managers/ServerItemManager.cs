@@ -21,7 +21,7 @@ namespace CEMSIM{
 	    	if(itemList.Count != spawnPositionList.Count){
 	    		Debug.LogWarning("Warning: itemList and spawnPositionList do not have same size.");
 	    		while(itemList.Count>spawnPositionList.Count){
-	    			spawnPositionList.Add(new Vector3(1,1,1));
+	    			spawnPositionList.Add(new Vector3(0, 1.5f, 0));
 	    		}
 	    	}
 	    	CollectItems();
