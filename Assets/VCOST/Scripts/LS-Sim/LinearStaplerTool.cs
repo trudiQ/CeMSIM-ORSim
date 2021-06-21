@@ -47,10 +47,13 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public List<Transform> joinedColonForthLayerLowerSpheres;
     public List<Transform> joinedColonFifthLayerLowerSpheres;
     public List<Transform> joinedColonSixthLayerLowerSpheres;
-    public float lastPhaseToolTopMovingAxisDifference;
+    //public float lastPhaseToolTopMovingAxisDifference;
     public float lastPhaseToolBottomMovingAxisDifference; // During the last phase, how much the bottom tool should move down
     public float lastPhaseTipHorizontalProximityCondition; // How close the tip has to be to the joined colon center on the x axis to enter last phase moving plane
     public float lastPhaseBottomFurthestDistance; // How far end the movement plane far end can be from the colon opening
+    public float lsToolInsertDepthRecordTime; // How far back in time do we keep record the LS tool depth during insertion phase
+    public float lsToolMovingStateThreshold; // How much the tool depth has to move in the given time for it to be considered being inserting/removing
+    public float lsToolMovingStateThresholdTime; // The given time
 
     public bool handlePushed;
     public static bool leverLocked;
@@ -59,8 +62,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public float leverReading; // Sensor input for the locking level angle (1 should be the lock position)
     public bool isPushingHandle;
     public bool isPullingHandle; // Is user pulling handle (from sensor reading or key press)
-    public bool topHalfInserting; // Is top half inserting into colon ### May not be needed
-    public bool bottomHalfInserting;
+    public bool topHalfInserted; // Is top half inserting into colon ### May not be needed
+    public bool bottomHalfInserted;
     public Vector3 bottomPartRelativeTrackerPosition;
     public Quaternion bottomPartRelativeTrackerRotation;
     public Vector3 topPartRelativeTrackerPosition;
@@ -80,6 +83,21 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public Vector3 colonAopeningPos;
     public Vector3 colonBopeningPos;
     public List<float> insertionDepthInspector;
+    public bool isTopInserting; // Is user inserting LS top part into colon
+    public bool isTopRemoving;
+    public bool isBottomInserting;
+    public bool isBottomRemoving;
+    public bool isColonAInserting;
+    public bool isColonARemoving;
+    public bool isColonBInserting;
+    public bool isColonBRemoving;
+    //public bool isTopHalfMovingInCuttingPlane; // Is the top half tool locked onto the moving plane for the last cutting step
+    public bool isBottomHalfMovingInCuttingPlane; // Is the bottom half tool locked onto the moving plane for the last cutting step
+    public float bottomLastPhaseX; // The position difference on the x-axis from the mean joinedColonFirstLayerLowerSpheresPosition to bottom half position
+    public List<float> colonAInsertDepthRecord; // Record the tool insert depth inside colonA
+    public List<float> colonBInsertDepthRecord;
+    public List<float> insertDepthRecordTimeStamps;
+
     // Tool moving axis
     public List<Transform> topPartMovingAxisStart;
     public List<Transform> topPartMovingAxisEnd;
@@ -95,14 +113,14 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public Vector3 joinedColonForthLayerLowerSpheresPosition;
     public Vector3 joinedColonFifthLayerLowerSpheresPosition;
     public Vector3 joinedColonSixthLayerLowerSpheresPosition;
-    public bool isTopHalfMovingInCuttingPlane; // Is the top half tool locked onto the moving plane for the last cutting step
-    public bool isBottomHalfMovingInCuttingPlane; // Is the bottom half tool locked onto the moving plane for the last cutting step
+    public int lastPhaseLockedLayer;
 
     public void Start()
     {
         SaveToolLocalPositionRotation();
         insertionDepthInspector = new List<float>(globalOperators.m_insertDepth);
         simStates = 0;
+        canUserLockToolTransform = false;
     }
 
     void Update() //Checks status of knob, lever, and linear stapler in every frame
@@ -151,7 +169,11 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         insertionDepthInspector[0] = globalOperators.m_insertDepth[0];
         insertionDepthInspector[1] = globalOperators.m_insertDepth[1];
 
-        //Enabler();
+        // If top half is close to bottom half in the last phase then auto adjust it's alignment to always face up
+        if (simStates >= 2 && Vector3.Distance(topHalf.transform.position, bottomHalf.transform.position) < 0.5f && !topTransformLocked)
+        {
+            topHalf.transform.LookAt(topHalf.transform.position + Vector3.down);
+        }
     }
 
     private void LateUpdate()
@@ -163,14 +185,12 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         //colonBsecondLayerPos = GetPositionMean(colonBsecondLayerSpheres);
         //colonAlastLayerPos = GetPositionMean(colonAlastLayerSpheres);
         //colonBlastLayerPos = GetPositionMean(colonBlastLayerSpheres);
-        // Update tool moving axis info
-        topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
-        topPartMovingAxisEndPoint = GetPositionMean(topPartMovingAxisEnd);
-        bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
-        bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
 
         if (simStates == 1)
         {
+            // Update tool moving axis info
+            topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
+            topPartMovingAxisEndPoint = GetPositionMean(topPartMovingAxisEnd);
             topPartMovingAxisStartPoint += Vector3.up * joiningPhaseToolMovingAxisDifference;
             topPartMovingAxisEndPoint += Vector3.up * joiningPhaseToolMovingAxisDifference;
         }
@@ -229,16 +249,18 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             joinedColonSixthLayerLowerSpheresPosition += lastPhaseToolBottomMovingAxisDifference * Vector3.up;
             LockToolMovementInPlaneDuringLastStep(bottomHalf.transform, joinedColonFirstLayerLowerSpheresPosition, joinedColonSixthLayerLowerSpheresPosition);
         }
-        if (isTopHalfMovingInCuttingPlane)
-        {
-            joinedColonFirstLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
-            joinedColonSecondLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
-            joinedColonThirdLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
-            joinedColonForthLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
-            joinedColonFifthLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
-            joinedColonSixthLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
-            LockToolMovementInPlaneDuringLastStep(topHalf.transform, joinedColonFirstLayerLowerSpheresPosition, joinedColonSixthLayerLowerSpheresPosition);
-        }
+        //if (isTopHalfMovingInCuttingPlane)
+        //{
+        //    joinedColonFirstLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
+        //    joinedColonSecondLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
+        //    joinedColonThirdLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
+        //    joinedColonForthLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
+        //    joinedColonFifthLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
+        //    joinedColonSixthLayerLowerSpheresPosition += lastPhaseToolTopMovingAxisDifference * Vector3.up;
+        //    LockToolMovementInPlaneDuringLastStep(topHalf.transform, joinedColonFirstLayerLowerSpheresPosition, joinedColonSixthLayerLowerSpheresPosition);
+        //}
+
+        RecordToolInsertionStatus();
     }
 
     void FireKnobWithKeyboardInput()
@@ -292,7 +314,6 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     }
 
                     LockToolPartsTogether();
-                    canUserLockToolTransform = false;
                 }
             }
             //Locking lever opens if Y is pressed again and linear stapler is enabled
@@ -302,7 +323,6 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 print("Locking Lever is open.");
 
                 SeparateToolParts();
-                canUserLockToolTransform = true;
             }
 
             leverLocked = !leverLocked;
@@ -377,19 +397,34 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     /// </summary>
     public void LockToolPartsTogether()
     {
-        // If the tool is locked during insertion phase then dont let them come too much close together
-        if (simStates == 0)
-        {
-            bottomHalf.transform.parent = bottomPartLockingPosition;
-        }
-        else if (simStates < 2)
+        // If the tool is locked during insertion phase or last phase then dont let them come too much close together
+        if (globalOperators.m_bInsert[0] == 0 && !isBottomHalfMovingInCuttingPlane)
         {
             bottomHalf.transform.parent = bottomPartFullyLockingPosition;
         }
         else
         {
-            bottomHalf.transform.parent = bottomPartLastPhaseLockingPosition;
-            isTopHalfMovingInCuttingPlane = true; // When user lock tool parts together during last phase, put top tool part onto the moving plane
+            if (simStates == 0)
+            {
+                bottomHalf.transform.parent = bottomPartLockingPosition;
+            }
+            else if (simStates < 2)
+            {
+                bottomHalf.transform.parent = bottomPartFullyLockingPosition;
+            }
+            else
+            {
+                // Align top part to bottom part before lock bottom part onto top part
+                Vector3 bottomAttachLocalPosition = bottomPartLastPhaseLockingPosition.localPosition;
+                Vector3 topHalfToAttachPointRelativePosition = bottomPartLastPhaseLockingPosition.InverseTransformPoint(topHalf.transform.position);
+                bottomPartLastPhaseLockingPosition.position = bottomHalf.transform.position;
+                topHalf.transform.position = bottomPartLastPhaseLockingPosition.TransformPoint(topHalfToAttachPointRelativePosition);
+                bottomPartLastPhaseLockingPosition.localPosition = bottomAttachLocalPosition;
+                topHalf.transform.rotation = bottomHalf.transform.rotation;
+
+                bottomHalf.transform.parent = bottomPartLastPhaseLockingPosition;
+                //isTopHalfMovingInCuttingPlane = true; // When user lock tool parts together during last phase, put top tool part onto the moving plane
+            }
         }
 
         // Check if tool is locked onto colon, if yes freeze tool
@@ -409,9 +444,17 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     {
         bottomHalf.transform.parent = bottomPartFullyLockingPosition;
         bottomHalf.transform.localPosition = Vector3.zero;
+        bottomHalf.transform.localRotation = Quaternion.identity;
         simStates = 1; // Update the simulation step state
         topPartMovingAxisStart = joinedColonFirstLayerSpheres;
         topPartMovingAxisEnd = joinedColonLastLayerSpheres;
+        DisableBottomPartCollision();
+        DisableTopPartCollision();
+
+        if (topTransformLocked)
+        {
+            UnlockTopTransform();
+        }
     }
 
     /// <summary>
@@ -531,6 +574,36 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         controlledObject.LookAt(controlledObject.position + Vector3.down, Vector3.forward);
         //controlledObject.Rotate(0, -90 * Mathf.Sign(rotateUpDir.y), 0, Space.Self);
 
+        // Check which layer of sphere is the LS tool closest to
+        lastPhaseLockedLayer = 0;
+        float closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonFirstLayerLowerSpheresPosition.z);
+        bottomLastPhaseX = controlledObject.position.x - joinedColonFirstLayerLowerSpheresPosition.x;
+        if (Mathf.Abs(controlledObject.position.z - joinedColonSecondLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            lastPhaseLockedLayer = 1;
+            bottomLastPhaseX = controlledObject.position.x - joinedColonSecondLayerLowerSpheresPosition.x;
+        }
+        else if (Mathf.Abs(controlledObject.position.z - joinedColonThirdLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            lastPhaseLockedLayer = 2;
+            bottomLastPhaseX = controlledObject.position.x - joinedColonThirdLayerLowerSpheresPosition.x;
+        }
+        else if (Mathf.Abs(controlledObject.position.z - joinedColonForthLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            lastPhaseLockedLayer = 3;
+            bottomLastPhaseX = controlledObject.position.x - joinedColonForthLayerLowerSpheresPosition.x;
+        }
+        else if (Mathf.Abs(controlledObject.position.z - joinedColonFifthLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            lastPhaseLockedLayer = 4;
+            bottomLastPhaseX = controlledObject.position.x - joinedColonFifthLayerLowerSpheresPosition.x;
+        }
+        else if (Mathf.Abs(controlledObject.position.z - joinedColonSixthLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            lastPhaseLockedLayer = 5;
+            bottomLastPhaseX = controlledObject.position.x - joinedColonSixthLayerLowerSpheresPosition.x;
+        }
+
         return depth;
         //return objectNormalToStartDistance / movementRange;
     }
@@ -560,8 +633,11 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     if (Vector3.Angle(topHalf.transform.right, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) < angleDifferenceCondition)
                     {
                         globalOperators.m_bInsert[0] = 1;
-                        topHalfInserting = true;
+                        topHalfInserted = true;
                         EnableTopPartCollision();
+                        // Update tool moving axis info
+                        topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
+                        topPartMovingAxisEndPoint = GetPositionMean(topPartMovingAxisEnd);
                     }
                 }
 
@@ -572,8 +648,10 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     if (Vector3.Angle(bottomHalf.transform.right, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) < angleDifferenceCondition)
                     {
                         globalOperators.m_bInsert[0] = 2;
-                        bottomHalfInserting = true;
+                        bottomHalfInserted = true;
                         EnableBottomPartCollision();
+                        bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
+                        bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
                     }
                 }
 
@@ -589,8 +667,11 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     if (Vector3.Angle(topHalf.transform.right, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) < angleDifferenceCondition)
                     {
                         globalOperators.m_bInsert[1] = 1;
-                        topHalfInserting = true;
+                        topHalfInserted = true;
                         EnableTopPartCollision();
+                        // Update tool moving axis info
+                        topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
+                        topPartMovingAxisEndPoint = GetPositionMean(topPartMovingAxisEnd);
                     }
                 }
 
@@ -601,8 +682,10 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     if (Vector3.Angle(bottomHalf.transform.right, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) < angleDifferenceCondition)
                     {
                         globalOperators.m_bInsert[1] = 2;
-                        bottomHalfInserting = true;
+                        bottomHalfInserted = true;
                         EnableBottomPartCollision();
+                        bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
+                        bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
                     }
                 }
             }
@@ -616,7 +699,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 if (Vector3.Angle(colonAopeningPos - topHalfFrontTip.position, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) > 90)
                 {
                     globalOperators.m_bInsert[0] = 0;
-                    topHalfInserting = false;
+                    topHalfInserted = false;
 
                     // Put tool back to default local position and rotation
                     topHalf.transform.localPosition = topPartRelativeTrackerPosition;
@@ -633,7 +716,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 if (Vector3.Angle(colonAopeningPos - bottomHalfFrontTip.position, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) > 90)
                 {
                     globalOperators.m_bInsert[0] = 0;
-                    bottomHalfInserting = false;
+                    bottomHalfInserted = false;
 
                     // Put tool back to default local position and rotation
                     bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
@@ -650,7 +733,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 if (Vector3.Angle(colonBopeningPos - topHalfFrontTip.position, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) > 90)
                 {
                     globalOperators.m_bInsert[1] = 0;
-                    topHalfInserting = false;
+                    topHalfInserted = false;
 
                     // Put tool back to default local position and rotation
                     topHalf.transform.localPosition = topPartRelativeTrackerPosition;
@@ -667,7 +750,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 if (Vector3.Angle(colonBopeningPos - bottomHalfFrontTip.position, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) > 90)
                 {
                     globalOperators.m_bInsert[1] = 0;
-                    bottomHalfInserting = false;
+                    bottomHalfInserted = false;
 
                     // Put tool back to default local position and rotation
                     bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
@@ -698,6 +781,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             Vector3.Angle(bottomHalf.transform.right, Vector3.right) < angleDifferenceCondition)
         {
             isBottomHalfMovingInCuttingPlane = true;
+            canUserLockToolTransform = true;
         }
         // Check if bottom part exit cutting plane
         if (isBottomHalfMovingInCuttingPlane &&
@@ -705,6 +789,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             Mathf.Abs(bottomHalfFrontTip.position.z - joinedColonFirstLayerLowerSpheresPosition.z) > 0.75f * 0.5f)
         {
             isBottomHalfMovingInCuttingPlane = false;
+            canUserLockToolTransform = false;
 
             // Put tool back to default local position and rotation
             bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
@@ -774,6 +859,72 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         bottomHalf.transform.localPosition = bottomLocalPositionBeforeLock;
         bottomHalf.transform.localRotation = bottomLocalRotationBeforeLock;
         bottomTransformLocked = false;
+    }
+
+    /// <summary>
+    /// Update the tool insertion depth record and status
+    /// </summary>
+    public void RecordToolInsertionStatus()
+    {
+        // Record new data
+        insertDepthRecordTimeStamps.Add(Time.time);
+        colonAInsertDepthRecord.Add(globalOperators.m_insertDepth[0]);
+        colonBInsertDepthRecord.Add(globalOperators.m_insertDepth[1]);
+
+        // Remove data too old
+        int toRemove = insertDepthRecordTimeStamps.FindLastIndex(f => Time.time - f > 1);
+        colonAInsertDepthRecord.RemoveRange(0, toRemove + 1);
+        colonBInsertDepthRecord.RemoveRange(0, toRemove + 1);
+        insertDepthRecordTimeStamps.RemoveRange(0, toRemove + 1);
+
+        // Reset insertion states
+        isTopInserting = false;
+        isTopRemoving = false;
+        isBottomInserting = false;
+        isBottomRemoving = false;
+        isColonAInserting = false;
+        isColonARemoving = false;
+        isColonBInserting = false;
+        isColonBRemoving = false;
+
+        // Check insertion states
+        int toCompare = insertDepthRecordTimeStamps.FindLastIndex(f => Time.time - f > lsToolMovingStateThresholdTime);
+        if (globalOperators.m_insertDepth[0] - colonAInsertDepthRecord[toCompare] > lsToolMovingStateThreshold)
+        {
+            isColonAInserting = true;
+        }
+        if (globalOperators.m_insertDepth[0] - colonAInsertDepthRecord[toCompare] < -lsToolMovingStateThreshold)
+        {
+            isColonARemoving = true;
+        }
+        if (globalOperators.m_insertDepth[1] - colonBInsertDepthRecord[toCompare] > lsToolMovingStateThreshold)
+        {
+            isColonBInserting = true;
+        }
+        if (globalOperators.m_insertDepth[1] - colonBInsertDepthRecord[toCompare] < -lsToolMovingStateThreshold)
+        {
+            isColonBRemoving = true;
+        }
+        if (globalOperators.m_bInsert[0] == 1)
+        {
+            isTopInserting = isColonAInserting;
+            isTopRemoving = isColonARemoving;
+        }
+        if (globalOperators.m_bInsert[1] == 1)
+        {
+            isTopInserting = isColonBInserting;
+            isTopRemoving = isColonBRemoving;
+        }
+        if (globalOperators.m_bInsert[0] == 2)
+        {
+            isBottomInserting = isColonAInserting;
+            isBottomRemoving = isColonARemoving;
+        }
+        if (globalOperators.m_bInsert[1] == 2)
+        {
+            isBottomInserting = isColonBInserting;
+            isBottomRemoving = isColonBRemoving;
+        }
     }
 
     public Vector3 GetPositionMean(List<Transform> positions)
