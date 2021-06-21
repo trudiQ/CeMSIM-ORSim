@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using CEMSIM.Network;
 using CEMSIM.GameLogic;
-using CEMSIM.GameLogic;
 
 
 namespace CEMSIM{

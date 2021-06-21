@@ -104,47 +104,14 @@ namespace CEMSIM
                 if (GameManager.players.ContainsKey(_id))
                 {
                     //Player
-                    GameManager.players[_id].transform.position = _position;
-                    GameManager.players[_id].transform.rotation = _rotation;
-                    //Hands
-                    GameManager.players[_id].GetComponent<PlayerManager>().leftHandController.transform.position = _leftPosition;
-                    GameManager.players[_id].GetComponent<PlayerManager>().leftHandController.transform.rotation = _leftRotation;
-                    GameManager.players[_id].GetComponent<PlayerManager>().rightHandController.transform.position = _rightPosition;
-                    GameManager.players[_id].GetComponent<PlayerManager>().rightHandController.transform.rotation = _rightRotation;
-
-                    //GameManager.players[_id].transform.GetChild(3).transform.position = _rightPosition;
-                    //GameManager.players[_id].transform.GetChild(3).transform.rotation = _rightRotation;
-                    //GameManager.players[_id].transform.GetChild(2).transform.position = _leftPosition;
-                    //GameManager.players[_id].transform.GetChild(2).transform.rotation = _leftRotation;
-
+                    GameManager.players[_id].SetPosition(_position, _rotation);
+                    GameManager.players[_id].SetControllerPositions(_leftPosition, _leftRotation, _rightPosition, _rightRotation);
                 }
                 else
                 {
                     Debug.LogWarning($"Player {_id} has not been created yet");
                 }
 
-            }
-
-            /// <summary>
-            /// Update a player's rotation.
-            /// </summary>
-            /// <param name="_packet"></param>
-            public static void PlayerRotation(Packet _packet)
-            {
-                //int _id = _packet.ReadInt32();
-                //Quaternion _rotation = _packet.ReadQuaternion();
-
-                //Debug.Log($"Player {_id} rotation to {_rotation}");
-
-                //// update corresponding player's position
-                //if (GameManager.players.ContainsKey(_id))
-                //{
-                //    GameManager.players[_id].transform.rotation = _rotation;
-                //}
-                //else
-                //{
-                //    Debug.LogWarning($"Player {_id} has not been created yet");
-                //}
             }
 
             /// <summary>

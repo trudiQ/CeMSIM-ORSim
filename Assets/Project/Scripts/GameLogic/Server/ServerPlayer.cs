@@ -15,9 +15,11 @@ namespace CEMSIM
             public Roles role;
             public CharacterController controller;
 
-
+            [Header("Required")]
+            public GameObject body;
             public GameObject leftHandController;
             public GameObject rightHandController;
+            public GameObject displayName;
             // controller data
 
 
@@ -32,6 +34,14 @@ namespace CEMSIM
             {
                 // public the position to every client, but public the facing direction to all but the player
                 ServerSend.PlayerPosition(this);
+            }
+
+            public void SetDisplayName(string _name)
+            {
+                if (displayName != null)
+                {
+                    displayName.GetComponent<TextMesh>().text = _name;
+                }
             }
         }
     }

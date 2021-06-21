@@ -64,6 +64,8 @@ namespace CEMSIM
                 if (Enum.IsDefined(typeof(Roles), _role_i))
                     _role = (Roles)_role_i;
 
+                Debug.Log($"Spawning player {_id} - {_username} - {_role}");
+
 
                 if (_id == ClientInstance.instance.myId)
                 {
@@ -84,7 +86,7 @@ namespace CEMSIM
                     _player = Instantiate(playerPrefab, _position, _rotation);
                     // Child 1 is the username gameobject
                     // P.S. Only the prefab of other players has "username"
-                    _player.transform.GetChild(1).gameObject.GetComponent<TextMesh>().text = _username; 
+                    _player.GetComponent<PlayerManager>().SetDisplayName(_username + '-' + _role);
 
 
                 }

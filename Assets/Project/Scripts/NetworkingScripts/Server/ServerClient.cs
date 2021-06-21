@@ -304,7 +304,7 @@ namespace CEMSIM
                 else
                     player = ServerNetworkManager.instance.InstantiatePlayerDesktop();
                 player.Initialize(id, _playerName, _role);
-                player.transform.GetChild(1).gameObject.GetComponent<TextMesh>().text = _playerName; // Child 1 is the username
+                player.GetComponent<ServerPlayer>().SetDisplayName(_role + '-' + _playerName);
                 //player.GetComponent<TextMesh>().text = _playerName;
 
 
