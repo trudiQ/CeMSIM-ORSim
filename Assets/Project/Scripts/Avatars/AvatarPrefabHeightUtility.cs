@@ -27,7 +27,7 @@ public class AvatarPrefabHeightUtilityEditor : Editor
 
         AvatarPrefabHeightUtility heightUtility = (target as AvatarPrefabHeightUtility);
 
-        if (heightUtility.avatarRoot && heightUtility.avatarHead && GUILayout.Button("Calculate Height"))
+        if (!Application.isPlaying && heightUtility.avatarRoot && heightUtility.avatarHead && GUILayout.Button("Calculate Height"))
         {
             Undo.RecordObject(heightUtility, "Changed avatar height");
             heightUtility.CalculateHeight();
