@@ -94,7 +94,7 @@ namespace CEMSIM
             public ServerPlayer InstantiatePlayerVR()
             {
                 // initialize a player at the initial location and return the reference
-                return Instantiate(playerVRPrefab, new Vector3(0f, 1f, 0f), Quaternion.identity, playersContainer.transform).GetComponent<ServerPlayer>();
+                return Instantiate(playerVRPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity, playersContainer.transform).GetComponent<ServerPlayer>();
             }
 
 

@@ -122,6 +122,7 @@ namespace CEMSIM
                     using (Packet _packet = new Packet((int)ClientPackets.playerVRMovement))
                     {
                         // write avatar position
+
                         _packet.Write(_avatar.position);
                         _packet.Write(_avatar.rotation);
 
@@ -173,7 +174,7 @@ namespace CEMSIM
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);
 
-                    Debug.Log($"item {itemCon.id} pos {_item.transform.position}");
+                    //Debug.Log($"item {itemCon.id} pos {_item.transform.position}");
                     SendUDPData(_packet);
                 }
             }

@@ -248,7 +248,7 @@ namespace CEMSIM
                     {
                         int _packetLength = _packet.ReadInt32();
                         if (_data.Length - _packetLength != 4){
-                            Debug.LogWarning("UDP packet payload != packet size");
+                            Debug.LogWarning($"UDP packet payload{_packetLength} != packet size {_data.Length}");
                             return;
                         }
                         _data = _packet.ReadBytes(_packetLength);
