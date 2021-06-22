@@ -58,9 +58,10 @@ public class globalOperators : MonoBehaviour
     public bool m_bLSInserting = false; // <==
     public bool m_bLSRemoving = false; // <== 
     public bool m_bLSTransversing = false; // if LS is on transverse motion for final-closing <==
+    public bool m_bLSLocked = false;
 
     // Scoring metrics
-    private bool m_bEnableMetricsScoring = true;
+    private bool m_bEnableMetricsScoring = false;
     private LSMetricsScoring MetricsScoringManager = null;
 
     // Start is called before the first frame update
@@ -136,7 +137,7 @@ public class globalOperators : MonoBehaviour
         }
 
         // Find linear stapler controller
-        //lsController = FindObjectOfType<LinearStaplerTool>();
+        lsController = FindObjectOfType<LinearStaplerTool>();
 
         // Metrics scoring manager
         if (m_bEnableMetricsScoring)
@@ -600,6 +601,66 @@ public class globalOperators : MonoBehaviour
         return true;
     }
 
+    // get the final layer to split, m_layers2Split[1], based on LS tips positions
+    bool getLayer2SplitBasedonLS()
+    {
+        int layer2Split = -1;
+
+        Vector3 tipPos = lsController.topHalfFrontTip.position;
+
+        // check LS-top tip is within which sphereModel's which layer bbox
+        int whichColon = -1; // 0 or 1
+        if ((m_bInsert[0] != 1 && m_bInsert[1] != 1) || (m_bInsert[0] == 1 && m_bInsert[1] == 1))
+        {
+            Debug.Log("Error in getLayer2SplitBasedonLS: invalid m_bInsert values!");
+            return false;
+        }
+        
+        for (int i = 0; i < 2; i++)
+        {
+            if (m_bInsert[i] == 1)
+            {
+                whichColon = i;
+                break;
+            }
+        }
+
+        for (int j = 0; j < m_sphereJointModels[whichColon].m_numLayers; j++)
+        {
+            if (m_sphereJointModels[whichColon].m_layerBoundingBox[j].Contains(tipPos))
+            {
+                layer2Split = j;
+                break;
+            }
+        }
+
+        if (layer2Split == -1)
+        {
+            Debug.Log("Error in getLayer2SplitBasedonLS: invalid layer2Split!");
+            return false;
+        }
+
+        m_layers2Split[1] = layer2Split;
+        Debug.Log("layer2Split: " + layer2Split.ToString());
+
+        return true;
+    }
+
+    // update variables of LS
+    void synchLSStas()
+    {
+        if (lsController)
+        {
+            m_bLSButtonPushing = lsController.isPushingHandle;
+            m_bLSButtonPulling = lsController.isPushingHandle;
+            m_bLSButtonFullDown = lsController.handlePushed;
+            m_bLSInserting = (m_bInsert[0] > 0 || m_bInsert[1] > 0) ? true : false;
+            m_bLSRemoving = (lsController.isTopRemoving == true || lsController.isBottomRemoving == true);
+            m_bLSTransversing = lsController.isBottomHalfMovingInCuttingPlane;
+            m_bLSLocked = LinearStaplerTool.leverLocked;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -725,25 +786,26 @@ public class globalOperators : MonoBehaviour
                     Debug.Log("Error: Cannot join as colons have not been split yet!");
             }
             // [Haptic version] <== need more work
-            if (lsController)
+            if (lsController && !m_bJoin)
             {
-                // check if the LS lever locked <==
-                bool bLSLocked = false; // lsController.levelLocked not accessible?
                 // stapled anastomosis
-                if (m_bLSButtonPushing && m_bLSButtonPulling)
+                if (lsController.handleReading > 0.05 && lsController.isPullingHandle == true)
                 {
-                    if ((m_bInsert[0] + m_bInsert[1] > 0) && bLSLocked)
+                    if ((m_bInsert[0] * m_bInsert[1] > 0) && m_bLSLocked)
                     {
-                        // split
-                        split();
-                        // join
-                        if (m_bSplit)
+                        if (getLayer2SplitBasedonLS())// get the final layer to split
                         {
-                            if (join())
+                            // split
+                            split();
+                            // join
+                            if (m_bSplit)
                             {
-                                StapleLineManager.instance.LSSimStepThree(m_layers2Split[1]);
-                                if (lsController)
-                                    lsController.JoinColonToolLogic();
+                                if (join())
+                                {
+                                    StapleLineManager.instance.LSSimStepThree(m_layers2Split[1]);
+                                    if (lsController)
+                                        lsController.JoinColonToolLogic();
+                                }
                             }
                         }
                     }
@@ -751,7 +813,7 @@ public class globalOperators : MonoBehaviour
                 // update metrics scoring
                 if (MetricsScoringManager)
                 {
-                    MetricsScoringManager.updateStapledAnastScores(m_bLSButtonPushing, m_bLSButtonFullDown, m_bJoin, m_bLSRemoving, bLSLocked);
+                    MetricsScoringManager.updateStapledAnastScores(m_bLSButtonPushing, m_bLSButtonFullDown, m_bJoin, m_bLSRemoving, m_bLSLocked);
                 }
 
                 m_bLSButtonPushing = false;
@@ -842,12 +904,8 @@ public class globalOperators : MonoBehaviour
             {
                 if (m_bLSTransversing)
                 {
-                    // check if the LS lever locked <==
-                    bool bLSLocked = false; // lsController.levelLocked not accessible?
-                                            // stapled anastomosis
-
                     // Final closure
-                    if (m_bLSButtonPushing && m_bLSButtonPulling)
+                    if (m_bLSLocked == true && lsController.handleReading > 0.05 && lsController.isPullingHandle == true)
                     {
                         if (!m_bJoin)
                             Debug.Log("Error: Cannot conduct finalClosure as the colons have not joined yet!");
@@ -855,6 +913,7 @@ public class globalOperators : MonoBehaviour
                             Debug.Log("Error: Cannot conduct finalClosure as that's already conducted!");
                         else
                         {
+                            m_layer2FinalClose = lsController.lastPhaseLockedLayer;
                             if (m_layer2FinalClose <= 0 || m_layer2FinalClose >= 20)
                             {
                                 Debug.Log("Error: Invalid final close layer!");
@@ -873,12 +932,15 @@ public class globalOperators : MonoBehaviour
                     if (MetricsScoringManager)
                     {
                         MetricsScoringManager.updateFinalClosureScores(m_bFinalClosure, m_numHoldingForceps, m_LSGraspLengthFinalClosure,
-                                                                       m_layer2FinalClose, m_bLSButtonPushing, bLSLocked, m_bLSButtonFullDown);
+                                                                       m_layer2FinalClose, m_bLSButtonPushing, m_bLSLocked, m_bLSButtonFullDown);
                     }
 
                     m_bLSButtonPushing = false;
                 }
             }
+
+            // update LS status
+            synchLSStas();
         }
     }
 }
