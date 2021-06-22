@@ -42,7 +42,7 @@ public class globalOperators : MonoBehaviour
     private List<List<int>> m_sphIndices4Secure = new List<List<int>>(); //[[opening0], [opening1], [opening2]]
     // Final closure
     private int m_layer2FinalClose = -1;
-    public bool m_bFinalClosure = false; // if the final-closure step is done
+    public static bool m_bFinalClosure = false; // if the final-closure step is done
     public float m_LSGraspLengthFinalClosure = 0.0f; // <== updated by LS interface 
 
     /// haptics device inputs

@@ -121,6 +121,10 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         insertionDepthInspector = new List<float>(globalOperators.m_insertDepth);
         simStates = 0;
         canUserLockToolTransform = false;
+
+        colonAInsertDepthRecord = new List<float>();
+        colonBInsertDepthRecord = new List<float>();
+        insertDepthRecordTimeStamps = new List<float>();
     }
 
     void Update() //Checks status of knob, lever, and linear stapler in every frame
@@ -145,21 +149,21 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         }
 
         // Read key press for moving firing handle
-        if (Input.GetKey(KeyCode.Less))
+        if (Input.GetKey(KeyCode.UpArrow))
         {
             isPushingHandle = true;
-            handleReading = Mathf.Clamp01(handleReading - Time.deltaTime * firingHandleMoveSpeed);
+            handleReading = Mathf.Clamp01(handleReading + Time.deltaTime * firingHandleMoveSpeed);
         }
-        if (Input.GetKeyUp(KeyCode.Less))
+        if (Input.GetKeyUp(KeyCode.UpArrow))
         {
             isPushingHandle = false;
         }
-        if (Input.GetKey(KeyCode.Greater))
+        if (Input.GetKey(KeyCode.DownArrow))
         {
             isPullingHandle = true;
-            handleReading = Mathf.Clamp01(handleReading + Time.deltaTime * firingHandleMoveSpeed);
+            handleReading = Mathf.Clamp01(handleReading - Time.deltaTime * firingHandleMoveSpeed);
         }
-        if (Input.GetKeyUp(KeyCode.Greater))
+        if (Input.GetKeyUp(KeyCode.DownArrow))
         {
             isPullingHandle = false;
         }
@@ -170,7 +174,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         insertionDepthInspector[1] = globalOperators.m_insertDepth[1];
 
         // If top half is close to bottom half in the last phase then auto adjust it's alignment to always face up
-        if (simStates >= 2 && Vector3.Distance(topHalf.transform.position, bottomHalf.transform.position) < 0.5f && !topTransformLocked)
+        if (simStates >= 2 && Vector3.Distance(topHalf.transform.position, bottomHalf.transform.position) < 2 && !topTransformLocked)
         {
             topHalf.transform.LookAt(topHalf.transform.position + Vector3.down);
         }
@@ -304,13 +308,16 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 // If the tool parts are in valid locking position then lock the tools together
                 if (ValidateToolLockingCondition())
                 {
-                    if (bottomTransformLocked)
+                    if (!isBottomHalfMovingInCuttingPlane)
                     {
-                        UnlockBottomTransform();
-                    }
-                    if (topTransformLocked)
-                    {
-                        UnlockTopTransform();
+                        if (bottomTransformLocked)
+                        {
+                            UnlockBottomTransform();
+                        }
+                        if (topTransformLocked)
+                        {
+                            UnlockTopTransform();
+                        }
                     }
 
                     LockToolPartsTogether();
@@ -489,11 +496,28 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             UnlockTopTransform();
         }
 
-        bottomHalf.transform.parent = bottomTracker;
-        if (globalOperators.m_bInsert[0] != 2 && globalOperators.m_bInsert[1] != 2) // If the bottom part is not inserted in colon //### Maybe? or at last step moving plane
+        if (isBottomHalfMovingInCuttingPlane)
         {
-            bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
-            bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
+            if (bottomTransformLocked)
+            {
+                bottomHalf.transform.parent = null;
+            }
+            else
+            {
+                bottomHalf.transform.parent = bottomTracker;
+                bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
+                bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
+            }
+        }
+
+        if ((!bottomTransformLocked && !isBottomHalfMovingInCuttingPlane) || globalOperators.m_bFinalClosure)
+        {
+            bottomHalf.transform.parent = bottomTracker;
+            if (globalOperators.m_bInsert[0] != 2 && globalOperators.m_bInsert[1] != 2) // If the bottom part is not inserted in colon //### Maybe? or at last step moving plane
+            {
+                bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
+                bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
+            }
         }
     }
 
@@ -577,31 +601,36 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         // Check which layer of sphere is the LS tool closest to
         lastPhaseLockedLayer = 0;
         float closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonFirstLayerLowerSpheresPosition.z);
-        bottomLastPhaseX = controlledObject.position.x - joinedColonFirstLayerLowerSpheresPosition.x;
+        bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonFirstLayerLowerSpheresPosition.x;
         if (Mathf.Abs(controlledObject.position.z - joinedColonSecondLayerLowerSpheresPosition.z) < closestLayerDist)
         {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonSecondLayerLowerSpheresPosition.z);
             lastPhaseLockedLayer = 1;
-            bottomLastPhaseX = controlledObject.position.x - joinedColonSecondLayerLowerSpheresPosition.x;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonSecondLayerLowerSpheresPosition.x;
         }
-        else if (Mathf.Abs(controlledObject.position.z - joinedColonThirdLayerLowerSpheresPosition.z) < closestLayerDist)
+        if (Mathf.Abs(controlledObject.position.z - joinedColonThirdLayerLowerSpheresPosition.z) < closestLayerDist)
         {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonThirdLayerLowerSpheresPosition.z);
             lastPhaseLockedLayer = 2;
-            bottomLastPhaseX = controlledObject.position.x - joinedColonThirdLayerLowerSpheresPosition.x;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonThirdLayerLowerSpheresPosition.x;
         }
-        else if (Mathf.Abs(controlledObject.position.z - joinedColonForthLayerLowerSpheresPosition.z) < closestLayerDist)
+        if (Mathf.Abs(controlledObject.position.z - joinedColonForthLayerLowerSpheresPosition.z) < closestLayerDist)
         {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonForthLayerLowerSpheresPosition.z);
             lastPhaseLockedLayer = 3;
-            bottomLastPhaseX = controlledObject.position.x - joinedColonForthLayerLowerSpheresPosition.x;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonForthLayerLowerSpheresPosition.x;
         }
-        else if (Mathf.Abs(controlledObject.position.z - joinedColonFifthLayerLowerSpheresPosition.z) < closestLayerDist)
+        if (Mathf.Abs(controlledObject.position.z - joinedColonFifthLayerLowerSpheresPosition.z) < closestLayerDist)
         {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonFifthLayerLowerSpheresPosition.z);
             lastPhaseLockedLayer = 4;
-            bottomLastPhaseX = controlledObject.position.x - joinedColonFifthLayerLowerSpheresPosition.x;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonFifthLayerLowerSpheresPosition.x;
         }
-        else if (Mathf.Abs(controlledObject.position.z - joinedColonSixthLayerLowerSpheresPosition.z) < closestLayerDist)
+        if (Mathf.Abs(controlledObject.position.z - joinedColonSixthLayerLowerSpheresPosition.z) < closestLayerDist)
         {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonSixthLayerLowerSpheresPosition.z);
             lastPhaseLockedLayer = 5;
-            bottomLastPhaseX = controlledObject.position.x - joinedColonSixthLayerLowerSpheresPosition.x;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonSixthLayerLowerSpheresPosition.x;
         }
 
         return depth;
