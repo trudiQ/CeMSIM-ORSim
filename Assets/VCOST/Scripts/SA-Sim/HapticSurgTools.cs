@@ -499,7 +499,7 @@ public class HapticSurgTools : MonoBehaviour
 				else
 				{
 					// release the forceps from holding when the final closure is done
-					if (gOperators && gOperators.m_bFinalClosure)
+					if (gOperators && globalOperators.m_bFinalClosure)
 					{
 						releaseHoldTool();
 						bHolding = false;
