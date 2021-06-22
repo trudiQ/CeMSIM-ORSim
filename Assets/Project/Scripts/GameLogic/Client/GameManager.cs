@@ -83,11 +83,13 @@ namespace CEMSIM
                 else
                 {
                     // create player for another client
-                    _player = Instantiate(playerPrefab, _position, _rotation);
+                    _player = Instantiate(playerPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity);
                     // Child 1 is the username gameobject
                     // P.S. Only the prefab of other players has "username"
                     _player.GetComponent<PlayerManager>().enabled = true;
                     _player.GetComponent<PlayerManager>().SetDisplayName(_username + '-' + _role);
+                    _player.GetComponent<PlayerManager>().SetPosition(_position, _rotation);
+
                     ServerPlayer serverPlayer = _player.GetComponent<ServerPlayerVR>();
                     if (serverPlayer != null)
                         serverPlayer.enabled = false;
