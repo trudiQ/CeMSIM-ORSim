@@ -48,7 +48,7 @@ public class globalOperators : MonoBehaviour
     /// haptics device inputs
     private int m_numSurgTools = 0; // actual surgical tools in the scene
     private string[] m_surgToolNames = { "Forceps", "Forceps1", "Forceps2", "Scissors" };
-    private Dictionary<string,HapticSurgTools> m_hapticSurgTools = new Dictionary<string, HapticSurgTools>();
+    private Dictionary<string, HapticSurgTools> m_hapticSurgTools = new Dictionary<string, HapticSurgTools>();
 
     // Linear Stapler stuff
     public LinearStaplerTool lsController;
@@ -565,7 +565,7 @@ public class globalOperators : MonoBehaviour
                 for (int s = 0; s < numSpheresPerLayer; s++)
                 {
                     sphere = m_sphereJointModels[objIdx].m_sphereGameObjects[l, s];
-                    sphere.GetComponent<Rigidbody>().AddForce(liftVecs[l]);
+                    sphere.GetComponent<Rigidbody>().AddForce(liftVecs[l] * Time.deltaTime);
                 }
             }
         }
@@ -659,7 +659,7 @@ public class globalOperators : MonoBehaviour
                         {
                             StapleLineManager.instance.LSSimStepTwo(objIdx, LorR);
                             // update metrics scoring
-                            if (MetricsScoringManager) 
+                            if (MetricsScoringManager)
                             {
                                 bool bOpeningSecure = (graspingForceps != null) ? true : false;
                                 MetricsScoringManager.updateEnterotomyScores(objIdx, LorR, bOpeningSecure);
@@ -845,7 +845,7 @@ public class globalOperators : MonoBehaviour
                     // check if the LS lever locked <==
                     bool bLSLocked = false; // lsController.levelLocked not accessible?
                                             // stapled anastomosis
-                    
+
                     // Final closure
                     if (m_bLSButtonPushing && m_bLSButtonPulling)
                     {
