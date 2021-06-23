@@ -42,8 +42,8 @@ public class globalOperators : MonoBehaviour
     private List<List<int>> m_sphIndices4Secure = new List<List<int>>(); //[[opening0], [opening1], [opening2]]
     // Final closure
     private int m_layer2FinalClose = -1;
+    private bool m_bLSFullGraspFinalClosure = false;
     public static bool m_bFinalClosure = false; // if the final-closure step is done
-    public float m_LSGraspLengthFinalClosure = 0.0f; // <== updated by LS interface 
 
     /// haptics device inputs
     private int m_numSurgTools = 0; // actual surgical tools in the scene
@@ -60,6 +60,7 @@ public class globalOperators : MonoBehaviour
     public bool m_bLSTransversing = false; // if LS is on transverse motion for final-closing <==
     public bool m_bLSLocked = false;
     public float m_LSButtonValue = 0.0f;
+    public float m_LSGraspLengthFinalClosure = 0.0f;
 
     // Scoring metrics
     private bool m_bEnableMetricsScoring = false;
@@ -575,7 +576,7 @@ public class globalOperators : MonoBehaviour
         return true;
     }
 
-    bool finalClosure(int layerIdx)
+    bool finalClosure(int layerIdx, bool bFullGrasping = true)
     {
         if (m_numSphereModels <= 0)
         {
@@ -585,10 +586,14 @@ public class globalOperators : MonoBehaviour
 
         // conduct final-closure for both models at the same time
         List<bool> bFinalClosure = new List<bool>();
+        bool bHalfClosure = false;
         for (int objIdx = 0; objIdx < m_numSphereModels; objIdx++)
         {
             bFinalClosure.Add(false);
-            if (m_sphereJointModels[objIdx].closeupLayers(layerIdx))
+            bHalfClosure = false;
+            if (bFullGrasping == false && objIdx == 0)
+                bHalfClosure = true;
+            if (m_sphereJointModels[objIdx].closeupLayers(layerIdx, bHalfClosure))
                 bFinalClosure[bFinalClosure.Count - 1] = true;
             else
             {
@@ -665,10 +670,42 @@ public class globalOperators : MonoBehaviour
             m_layers2Split[1] = layer2Split;
         else
             m_layers2Split[1] = (int)Mathf.Ceil(layer2Split * m_LSButtonValue);
+
+        // safety check
+        if (m_layers2Split[1] < 3)
+            m_layers2Split[1] = 3;
+        else if (m_layers2Split[1] > 14)
+            m_layers2Split[1] = 14;
         
         Debug.Log("m_layers2Split: " + m_layers2Split[1].ToString());
 
         return true;
+    }
+
+    /// <summary>
+    /// During the final-closure stage, check if LS fully grasps both colons
+    ///     compare the LS tip with spheres of the given layer along x axis
+    ///     check sphereJointModel0 only
+    /// </summary>
+    /// <returns>True: LS fully grasps both colons; False: no </returns> 
+    bool checkLSFullGrasping()
+    {
+        Vector3 tipPos = lsController.bottomHalfFrontTip.position;
+        float xMinColon0 = float.MaxValue;
+        float tempX;
+        for (int i = 0; i < m_sphereJointModels[0].m_numSpheres; i++)
+        {
+            tempX = m_sphereJointModels[0].m_sphereGameObjects[m_layer2FinalClose, i].transform.position.x;
+            if (tempX < xMinColon0)
+                xMinColon0 = tempX;
+        }
+
+        float tipOffsetX = 0.96f; // dist from tip to staple-end position along x
+        m_bLSFullGraspFinalClosure = ((tipPos.x + tipOffsetX) <= xMinColon0) ? true : false;
+
+        Debug.Log("LS fully grasps both colons? " + m_bLSFullGraspFinalClosure);
+
+        return m_bLSFullGraspFinalClosure;
     }
 
     // update variables of LS
@@ -684,6 +721,7 @@ public class globalOperators : MonoBehaviour
             m_bLSTransversing = lsController.isBottomHalfMovingInCuttingPlane;
             m_bLSLocked = LinearStaplerTool.leverLocked;
             m_LSButtonValue = lsController.handleReading;
+            m_LSGraspLengthFinalClosure = lsController.bottomLastPhaseX;
         }
     }
 
@@ -928,7 +966,7 @@ public class globalOperators : MonoBehaviour
             // [Haptic version] <==
             if (lsController)
             {
-                if (m_bLSTransversing)
+                if (m_bLSTransversing && !m_bFinalClosure)
                 {
                     // Final closure
                     if (m_bLSLocked == true && lsController.handleReading > 0.05 && lsController.isPullingHandle == true)
@@ -945,11 +983,12 @@ public class globalOperators : MonoBehaviour
                                 Debug.Log("Error: Invalid final close layer!");
                                 return;
                             }
-                            if (!finalClosure(m_layer2FinalClose))
+                            bool bFullGrasping = checkLSFullGrasping();
+                            if (!finalClosure(m_layer2FinalClose, bFullGrasping))
                                 Debug.Log("Final Closure failed!");
                             else
                             {
-                                StapleLineManager.instance.LSSimStepFour(m_layer2FinalClose - 1);
+                                StapleLineManager.instance.LSSimStepFour(m_layer2FinalClose - 1, !bFullGrasping);
                             }
                         }
                     }
@@ -957,7 +996,7 @@ public class globalOperators : MonoBehaviour
                     // update metrics scores
                     if (MetricsScoringManager)
                     {
-                        MetricsScoringManager.updateFinalClosureScores(m_bFinalClosure, m_numHoldingForceps, m_LSGraspLengthFinalClosure,
+                        MetricsScoringManager.updateFinalClosureScores(m_bFinalClosure, m_numHoldingForceps, m_bLSFullGraspFinalClosure,
                                                                        m_layer2FinalClose, m_bLSButtonPushing, m_bLSLocked, m_bLSButtonFullDown);
                     }
 

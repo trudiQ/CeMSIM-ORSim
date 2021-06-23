@@ -239,6 +239,64 @@ public class sphereJointModel : MonoBehaviour
     }
 
     /// <summary>
+    /// Add fixed joints to connect spheres of the opposite positions in the same layer 
+    ///    to close up the layer; allow half close-up
+    /// Input:
+    ///     layerIdx: index of the layer to close up (defalt: first layer)
+    /// 
+    public bool closeupLayers(int layerIdx, bool bHalfCloseup = false)
+    {
+        int oppositeObjIdx = 0;
+        float distBottom2Top = 0.0f;
+        Vector3 vecBottom2Top;
+        GameObject tmpObj, oppositeObj;
+        sphereJointsInfo objJointsInfo;
+
+        for (int j = 0; j < m_numSpheres; j++)
+        {
+            tmpObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + layerIdx.ToString() + "_" + j.ToString());
+            objJointsInfo = tmpObj.GetComponent<sphereJointsInfo>();
+
+            // in-layer fixed joints to connect opposite sphere of the first layer (ADD DURING RUNTIME, AFTER BINDING IS DONE!!)
+            if (j >= 6 && j <= 13) // spheres on the top
+            {
+                if (bHalfCloseup == true && j >= 10)
+                    continue;
+
+                oppositeObjIdx = 9 - j; // spheres on the bottom
+                if (oppositeObjIdx < 0)
+                    oppositeObjIdx += m_numSpheres;
+                oppositeObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + layerIdx.ToString() + "_" + oppositeObjIdx.ToString());
+                if (tmpObj && oppositeObj)
+                {
+                    // move the two spheres to the middle point
+                    vecBottom2Top = tmpObj.transform.position - oppositeObj.transform.position; // bottom -> top
+                    vecBottom2Top.Normalize();
+                    distBottom2Top = Vector3.Distance(tmpObj.transform.position, oppositeObj.transform.position);
+                    tmpObj.transform.position = tmpObj.transform.position - 0.5f * distBottom2Top * vecBottom2Top;
+                    oppositeObj.transform.position = oppositeObj.transform.position + 0.5f * distBottom2Top * vecBottom2Top;
+                    // add fixed joint
+                    FixedJoint joint = tmpObj.AddComponent<FixedJoint>();
+                    joint.connectedBody = oppositeObj.GetComponent<Rigidbody>();
+                    // fill out joint info.
+                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 0] = objJointsInfo.m_inLayerJointNum;
+                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 1] = m_objIndex;
+                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 2] = layerIdx;
+                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 3] = oppositeObjIdx;
+                    objJointsInfo.m_inLayerJointNum += 1;
+                }
+                else
+                {
+                    Debug.Log("Error in 'closeupLayers'");
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
     /// Add fixed joints to connect one specific pair of spheres of the given layer 
     /// Input:
     ///     layerIdx: index of the layer to close up (defalt: first layer)

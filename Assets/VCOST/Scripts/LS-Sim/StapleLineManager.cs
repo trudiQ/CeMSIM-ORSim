@@ -198,6 +198,30 @@ namespace PaintIn3D
             lsSimStepFourShowStaplesOne[layer].SetActive(true);
         }
 
+        public void LSSimStepFour(int layer, bool notShowLeft = false, bool notShowRight = false)
+        {
+            foreach (StapleLineObject s in lsSimStepFourShowStaplesZero[layer].GetComponentsInChildren<StapleLineObject>(true))
+            {
+                s.ManualUpdate();
+            }
+            foreach (StapleLineObject s in lsSimStepFourShowStaplesOne[layer].GetComponentsInChildren<StapleLineObject>(true))
+            {
+                s.ManualUpdate();
+            }
+
+            lsSimStepFourShowStaplesZero[layer].SetActive(true);
+            lsSimStepFourShowStaplesOne[layer].SetActive(true);
+            for (int j = 0; j < lsSimStepFourShowStaplesZero[layer].transform.childCount; j++)
+            {
+                // not show left-side of staples
+                if (notShowLeft == true && (j < 4 || j > 38))
+                    lsSimStepFourShowStaplesZero[layer].transform.GetChild(j).gameObject.SetActive(false);
+                // not show right-side of staples
+                if (notShowRight == true && (j >= 4 && j <= 38))
+                    lsSimStepFourShowStaplesZero[layer].transform.GetChild(j).gameObject.SetActive(false);
+            }
+        }
+
         public void PaintBetweenTwoVectorsRaycast(Transform vectorAstart, Transform vectorAend, Transform vectorBstart, Transform vectorBend, Transform stapleObjectParent)
         {
             int stapleCount = 0;

@@ -67,7 +67,6 @@ public class LSMetricsScoring : MonoBehaviour
     bool m_MesenteryCleared = false; // if mesentery layers are clear after final-closure
     int m_cutZoneLayerIdx = 1; // sphereJointModel's layerIdx where final-closure is applied
     int m_mesenteryLayerIdx = 5; // sphereJointModel's layerIdx where mesentery begins to attach
-    float m_LSFullyGraspLength = 1.0f; // LS fully grasps both colon ends when grasp length >= this value
 
     // Start is called before the first frame update
     void Start()
@@ -224,12 +223,12 @@ public class LSMetricsScoring : MonoBehaviour
     /// </summary>
     /// <param name="bFinalClosure"></param> # if final-closure is done
     /// <param name="numGraspingForceps"></param> #forceps used to grasp the colons openings
-    /// <param name="graspLength"></param> LS grasp length along x axis
+    /// <param name="bLSFullGrasping"></param> if LS fully grasps both colons
     /// <param name="fullClosureLayerIdx"></param> sphereJointModels' layerIdx for final-closure
     /// <param name="bLSButtonPushing"></param> if the button is pushing now
     /// <param name="bLSLocked"></param> if LS is locked
     /// <param name="bLSButtonFullDown"></param> if LS button is full-down
-    public void updateFinalClosureScores(bool bFinalClosure, int numGraspingForceps, float graspLength, int fullClosureLayerIdx, 
+    public void updateFinalClosureScores(bool bFinalClosure, int numGraspingForceps, bool bLSFullGrasping, int fullClosureLayerIdx, 
                                          bool bLSButtonPushing, bool bLSLocked, bool bLSButtonFullDown)
     {
         //"OpeningSecured"
@@ -256,7 +255,7 @@ public class LSMetricsScoring : MonoBehaviour
         //"OpeningFullyGrasped"
         if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
         {
-            m_LSFullyGraspOpening = (graspLength >= m_LSFullyGraspLength) ? true : false;
+            m_LSFullyGraspOpening = bLSFullGrasping;
             if (m_LSFullyGraspOpening)
             {
                 m_FinalClosureMetricsScores[m_FinalClosureMetrics[1]] = 5.0f;
