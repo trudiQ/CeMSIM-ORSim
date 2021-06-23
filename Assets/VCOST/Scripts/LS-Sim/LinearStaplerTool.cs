@@ -57,6 +57,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public float lsToolMovingStateThreshold; // How much the tool depth has to move in the given time for it to be considered being inserting/removing
     public float lsToolMovingStateThresholdTime; // The given time
 
+    public Transform currentCalibratingHalf; // Which half of the tool is being calibrated;
+    public Vector3 currentCalibratingDirection; // Which direction (local position or local eulerangles) is being calibrated
+    public bool calibratingPosition; // Is the local position (true) or local eulerangles (false) being calibrated currently
     public bool handlePushed;
     public static bool leverLocked;
     public bool inAnimation; // Is the tool currently in any animation
@@ -138,6 +141,27 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             return;
         }
 
+        if (currentCalibratingHalf != null)
+        {
+            // If user release mouse from currently pushed calibrating button then stop calibrating
+            if (Input.GetMouseButtonUp(0))
+            {
+                currentCalibratingHalf = null;
+                return;
+            }
+
+            if (calibratingPosition)
+            {
+                Vector3 newPos = currentCalibratingHalf.localPosition + currentCalibratingDirection * calibrationMoveSpeed * Time.deltaTime;
+                currentCalibratingHalf.localPosition = newPos;
+            }
+            else
+            {
+                Vector3 newEuler = currentCalibratingHalf.localEulerAngles + currentCalibratingDirection * calibrationRotateSpeed * Time.deltaTime;
+                currentCalibratingHalf.localEulerAngles = newEuler;
+            }
+        }
+
         // Check user input for locking LS parts transform
         if (canUserLockToolTransform)
         {
@@ -176,8 +200,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         insertionDepthInspector[0] = globalOperators.m_insertDepth[0];
         insertionDepthInspector[1] = globalOperators.m_insertDepth[1];
 
-        // If top half is close to bottom half in the last phase then auto adjust it's alignment to always face up
-        if (simStates >= 2 && Vector3.Distance(topHalf.transform.position, bottomHalf.transform.position) < 2 && !topTransformLocked)
+        // If top half is close to bottom half in the last phase and is on the moving plane then auto adjust it's alignment to always face up
+        if (simStates >= 2 && Vector3.Distance(topHalf.transform.position, bottomHalf.transform.position) < 2 && !topTransformLocked && isBottomHalfMovingInCuttingPlane)
         {
             topHalf.transform.LookAt(topHalf.transform.position + Vector3.down);
         }
@@ -1017,75 +1041,75 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     /// <param name="direction"></param>
     public void MoveTopHalfLocalXPosition(int direction)
     {
-        Vector3 newPos = topHalf.transform.localPosition;
-        newPos.x += Time.deltaTime * direction * calibrationMoveSpeed;
-        topHalf.transform.localPosition = newPos;
+        currentCalibratingHalf = topHalf.transform;
+        calibratingPosition = true;
+        currentCalibratingDirection = Vector3.right * direction;
     }
     public void MoveTopHalfLocalYPosition(int direction)
     {
-        Vector3 newPos = topHalf.transform.localPosition;
-        newPos.y += Time.deltaTime * direction * calibrationMoveSpeed;
-        topHalf.transform.localPosition = newPos;
+        currentCalibratingHalf = topHalf.transform;
+        calibratingPosition = true;
+        currentCalibratingDirection = Vector3.up * direction;
     }
     public void MoveTopHalfLocalZPosition(int direction)
     {
-        Vector3 newPos = topHalf.transform.localPosition;
-        newPos.z += Time.deltaTime * direction * calibrationMoveSpeed;
-        topHalf.transform.localPosition = newPos;
+        currentCalibratingHalf = topHalf.transform;
+        calibratingPosition = true;
+        currentCalibratingDirection = Vector3.forward * direction;
     }
     public void MoveTopHalfLocalXEulerAngle(int direction)
     {
-        Vector3 newEuler = topHalf.transform.localEulerAngles;
-        newEuler.x += Time.deltaTime * direction * calibrationRotateSpeed;
-        topHalf.transform.localEulerAngles = newEuler;
+        currentCalibratingHalf = topHalf.transform;
+        calibratingPosition = false;
+        currentCalibratingDirection = Vector3.right * direction;
     }
     public void MoveTopHalfLocalYEulerAngle(int direction)
     {
-        Vector3 newEuler = topHalf.transform.localEulerAngles;
-        newEuler.y += Time.deltaTime * direction * calibrationRotateSpeed;
-        topHalf.transform.localEulerAngles = newEuler;
+        currentCalibratingHalf = topHalf.transform;
+        calibratingPosition = false;
+        currentCalibratingDirection = Vector3.up * direction;
     }
     public void MoveTopHalfLocalZEulerAngle(int direction)
     {
-        Vector3 newEuler = topHalf.transform.localEulerAngles;
-        newEuler.z += Time.deltaTime * direction * calibrationRotateSpeed;
-        topHalf.transform.localEulerAngles = newEuler;
+        currentCalibratingHalf = topHalf.transform;
+        calibratingPosition = false;
+        currentCalibratingDirection = Vector3.forward * direction;
     }
     public void MoveBottomHalfLocalXPosition(int direction)
     {
-        Vector3 newPos = bottomHalf.transform.localPosition;
-        newPos.x += Time.deltaTime * direction * calibrationMoveSpeed;
-        bottomHalf.transform.localPosition = newPos;
+        currentCalibratingHalf = bottomHalf.transform;
+        calibratingPosition = true;
+        currentCalibratingDirection = Vector3.right * direction;
     }
     public void MoveBottomHalfLocalYPosition(int direction)
     {
-        Vector3 newPos = bottomHalf.transform.localPosition;
-        newPos.y += Time.deltaTime * direction * calibrationMoveSpeed;
-        bottomHalf.transform.localPosition = newPos;
+        currentCalibratingHalf = bottomHalf.transform;
+        calibratingPosition = true;
+        currentCalibratingDirection = Vector3.up * direction;
     }
     public void MoveBottomHalfLocalZPosition(int direction)
     {
-        Vector3 newPos = bottomHalf.transform.localPosition;
-        newPos.z += Time.deltaTime * direction * calibrationMoveSpeed;
-        bottomHalf.transform.localPosition = newPos;
+        currentCalibratingHalf = bottomHalf.transform;
+        calibratingPosition = true;
+        currentCalibratingDirection = Vector3.forward * direction;
     }
     public void MoveBottomHalfLocalXEulerAngle(int direction)
     {
-        Vector3 newEuler = bottomHalf.transform.localEulerAngles;
-        newEuler.x += Time.deltaTime * direction * calibrationRotateSpeed;
-        bottomHalf.transform.localEulerAngles = newEuler;
+        currentCalibratingHalf = bottomHalf.transform;
+        calibratingPosition = false;
+        currentCalibratingDirection = Vector3.right * direction;
     }
     public void MoveBottomHalfLocalYEulerAngle(int direction)
     {
-        Vector3 newEuler = bottomHalf.transform.localEulerAngles;
-        newEuler.y += Time.deltaTime * direction * calibrationRotateSpeed;
-        bottomHalf.transform.localEulerAngles = newEuler;
+        currentCalibratingHalf = bottomHalf.transform;
+        calibratingPosition = false;
+        currentCalibratingDirection = Vector3.up * direction;
     }
     public void MoveBottomHalfLocalZEulerAngle(int direction)
     {
-        Vector3 newEuler = bottomHalf.transform.localEulerAngles;
-        newEuler.z += Time.deltaTime * direction * calibrationRotateSpeed;
-        bottomHalf.transform.localEulerAngles = newEuler;
+        currentCalibratingHalf = bottomHalf.transform;
+        calibratingPosition = false;
+        currentCalibratingDirection = Vector3.forward * direction;
     }
 
     /// <summary>
