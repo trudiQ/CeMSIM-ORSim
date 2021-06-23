@@ -367,7 +367,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     {
         if (simStates < 2)
         {
-            return Mathf.Abs(globalOperators.m_insertDepth[0] - globalOperators.m_insertDepth[1]) <= attachDepthDifference;
+            return Mathf.Abs(topHalf.transform.position.z - bottomHalf.transform.position.z) <= attachDepthDifference;
+            //return Mathf.Abs(globalOperators.m_insertDepth[0] - globalOperators.m_insertDepth[1]) <= attachDepthDifference;
         }
         else
         {
