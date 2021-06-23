@@ -59,10 +59,9 @@ namespace CEMSIM{
 				GameObject item = itemList[i];
 				ItemController itemCon = item.GetComponent<ItemController>();
 				Rigidbody rb = item.GetComponent<Rigidbody>();
-				// The following two lines are no longer needed for the new HVR system
-				//rb.isKinematic = true;					//Prevent client from changing the item's position & rotation
-				//rb.useGravity = false;
-				itemCon.id = id;
+                rb.isKinematic = true;					//Prevent client from changing the item's position & rotation
+                rb.useGravity = false;					
+                itemCon.id = id;
 				itemCon.ownerId = owner;
 			    id++;
 			}
