@@ -59,8 +59,8 @@ namespace CEMSIM{
 				GameObject item = itemList[i];
 				ItemController itemCon = item.GetComponent<ItemController>();
 				Rigidbody rb = item.GetComponent<Rigidbody>();
-                rb.isKinematic = true;					//Prevent client from changing the item's position & rotation
-                rb.useGravity = false;					
+                //rb.isKinematic = true;					// prevent client from changing the item's position & rotation // why when isKinematic=true, HVR items cannot be picked up? It worked for xrinteractable.
+                rb.useGravity = false;						// prevent an item from falling even though it is grabbed by a player.	
                 itemCon.id = id;
 				itemCon.ownerId = owner;
 			    id++;
