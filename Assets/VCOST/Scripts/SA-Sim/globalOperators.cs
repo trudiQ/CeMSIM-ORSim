@@ -59,6 +59,7 @@ public class globalOperators : MonoBehaviour
     public bool m_bLSRemoving = false; // <== 
     public bool m_bLSTransversing = false; // if LS is on transverse motion for final-closing <==
     public bool m_bLSLocked = false;
+    public float m_LSButtonValue = 0.0f;
 
     // Scoring metrics
     private bool m_bEnableMetricsScoring = false;
@@ -610,6 +611,7 @@ public class globalOperators : MonoBehaviour
 
         // check LS-top tip is within which sphereModel's which layer bbox
         int whichColon = -1; // 0 or 1
+        int layerNum;
         if ((m_bInsert[0] != 1 && m_bInsert[1] != 1) || (m_bInsert[0] == 1 && m_bInsert[1] == 1))
         {
             Debug.Log("Error in getLayer2SplitBasedonLS: invalid m_bInsert values!");
@@ -624,13 +626,29 @@ public class globalOperators : MonoBehaviour
                 break;
             }
         }
+        layerNum = m_sphereJointModels[whichColon].m_numLayers;
 
-        for (int j = 0; j < m_sphereJointModels[whichColon].m_numLayers; j++)
+        // condition 1: which layerBbox contains tipPos
+        int j;
+        for (j = 0; j < layerNum; j++)
         {
             if (m_sphereJointModels[whichColon].m_layerBoundingBox[j].Contains(tipPos))
             {
                 layer2Split = j;
-                break;
+                //break;
+            }
+        }
+
+        // condition 2: check z value
+        if (layer2Split == -1)
+        {
+            float layerAvgZ, layerAvgZ1;
+            for (j = 0; j < (layerNum - 1); j++)
+            {
+                layerAvgZ = 0.5f * (m_sphereJointModels[whichColon].m_layerBoundingBox[j].min.z + m_sphereJointModels[whichColon].m_layerBoundingBox[j].max.z);
+                layerAvgZ1 = 0.5f * (m_sphereJointModels[whichColon].m_layerBoundingBox[j + 1].min.z + m_sphereJointModels[whichColon].m_layerBoundingBox[j + 1].max.z);
+                if ((tipPos.z > layerAvgZ && tipPos.z <= layerAvgZ1) || ((j + 1) == (layerNum - 1) && tipPos.z > layerAvgZ1))
+                    layer2Split = j;
             }
         }
 
@@ -640,8 +658,15 @@ public class globalOperators : MonoBehaviour
             return false;
         }
 
-        m_layers2Split[1] = layer2Split;
         Debug.Log("layer2Split: " + layer2Split.ToString());
+
+        // incorporate button value
+        if (m_bLSButtonFullDown)
+            m_layers2Split[1] = layer2Split;
+        else
+            m_layers2Split[1] = (int)Mathf.Ceil(layer2Split * m_LSButtonValue);
+        
+        Debug.Log("m_layers2Split: " + m_layers2Split[1].ToString());
 
         return true;
     }
@@ -658,6 +683,7 @@ public class globalOperators : MonoBehaviour
             m_bLSRemoving = (lsController.isTopRemoving == true || lsController.isBottomRemoving == true);
             m_bLSTransversing = lsController.isBottomHalfMovingInCuttingPlane;
             m_bLSLocked = LinearStaplerTool.leverLocked;
+            m_LSButtonValue = lsController.handleReading;
         }
     }
 
@@ -789,7 +815,7 @@ public class globalOperators : MonoBehaviour
             if (lsController && !m_bJoin)
             {
                 // stapled anastomosis
-                if (lsController.handleReading > 0.05 && lsController.isPullingHandle == true)
+                if (m_LSButtonValue > 0.05 && lsController.isPullingHandle == true)
                 {
                     if ((m_bInsert[0] * m_bInsert[1] > 0) && m_bLSLocked)
                     {
