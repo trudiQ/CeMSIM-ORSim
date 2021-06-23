@@ -23,6 +23,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public Transform bottomPartDesignatedCalibrationReference;
     public List<Collider> topPartColliders;
     public List<Collider> bottomPartColliders;
+    public float calibrationMoveSpeed; // How fast the tool will move when user using UI button to move it around
+    public float calibrationRotateSpeed;
     // For LS tool insertion detection
     public List<Transform> colonAopenSpheres; // Spheres that will create the insertion opening on the colon0
     public List<Transform> colonBopenSpheres;
@@ -117,6 +119,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 
     public void Start()
     {
+        LoadStapleToolCalibrationData();
         SaveToolLocalPositionRotation();
         insertionDepthInspector = new List<float>(globalOperators.m_insertDepth);
         simStates = 0;
@@ -966,15 +969,123 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     }
 
     /// <summary>
-    /// Save and auto load user calibrated LS tool local position & rotation relative to the tracker transform
+    /// Save and auto load user calibrated LS tool local position & eulerangles relative to the tracker transform
     /// </summary>
     public void SaveStapleToolCalibrationData()
     {
-        //PlayerPrefs.SetFloat();
+        PlayerPrefs.SetFloat("TopHalfLocalPosX", topHalf.transform.localPosition.x);
+        PlayerPrefs.SetFloat("TopHalfLocalPosY", topHalf.transform.localPosition.y);
+        PlayerPrefs.SetFloat("TopHalfLocalPosZ", topHalf.transform.localPosition.z);
+        PlayerPrefs.SetFloat("TopHalfLocalEulerX", topHalf.transform.localEulerAngles.x);
+        PlayerPrefs.SetFloat("TopHalfLocalEulerY", topHalf.transform.localEulerAngles.y);
+        PlayerPrefs.SetFloat("TopHalfLocalEulerZ", topHalf.transform.localEulerAngles.z);
+        PlayerPrefs.SetFloat("BottomHalfLocalPosX", bottomHalf.transform.localPosition.x);
+        PlayerPrefs.SetFloat("BottomHalfLocalPosY", bottomHalf.transform.localPosition.y);
+        PlayerPrefs.SetFloat("BottomHalfLocalPosZ", bottomHalf.transform.localPosition.z);
+        PlayerPrefs.SetFloat("BottomHalfLocalEulerX", bottomHalf.transform.localEulerAngles.x);
+        PlayerPrefs.SetFloat("BottomHalfLocalEulerY", bottomHalf.transform.localEulerAngles.y);
+        PlayerPrefs.SetFloat("BottomHalfLocalEulerZ", bottomHalf.transform.localEulerAngles.z);
     }
     public void LoadStapleToolCalibrationData()
     {
+        Vector3 topHalfLocalPos = new Vector3();
+        topHalfLocalPos.x = PlayerPrefs.GetFloat("TopHalfLocalPosX");
+        topHalfLocalPos.y = PlayerPrefs.GetFloat("TopHalfLocalPosY");
+        topHalfLocalPos.z = PlayerPrefs.GetFloat("TopHalfLocalPosZ");
+        Vector3 topHalfLocalEuler = new Vector3();
+        topHalfLocalEuler.x = PlayerPrefs.GetFloat("TopHalfLocalEulerX");
+        topHalfLocalEuler.y = PlayerPrefs.GetFloat("TopHalfLocalEulerY");
+        topHalfLocalEuler.z = PlayerPrefs.GetFloat("TopHalfLocalEulerZ");
+        Vector3 bottomHalfLocalPos = new Vector3();
+        bottomHalfLocalPos.x = PlayerPrefs.GetFloat("BottomHalfLocalPosX");
+        bottomHalfLocalPos.y = PlayerPrefs.GetFloat("BottomHalfLocalPosY");
+        bottomHalfLocalPos.z = PlayerPrefs.GetFloat("BottomHalfLocalPosZ");
+        Vector3 bottomHalfLocalEuler = new Vector3();
+        bottomHalfLocalEuler.x = PlayerPrefs.GetFloat("BottomHalfLocalEulerX");
+        bottomHalfLocalEuler.y = PlayerPrefs.GetFloat("BottomHalfLocalEulerY");
+        bottomHalfLocalEuler.z = PlayerPrefs.GetFloat("BottomHalfLocalEulerZ");
 
+        topHalf.transform.localEulerAngles = topHalfLocalEuler;
+        topHalf.transform.localPosition = topHalfLocalPos;
+        bottomHalf.transform.localEulerAngles = bottomHalfLocalEuler;
+        bottomHalf.transform.localPosition = bottomHalfLocalPos;
+    }
+
+    /// <summary>
+    /// Adjust tool local position and eulerangles
+    /// </summary>
+    /// <param name="direction"></param>
+    public void MoveTopHalfLocalXPosition(int direction)
+    {
+        Vector3 newPos = topHalf.transform.localPosition;
+        newPos.x += Time.deltaTime * direction * calibrationMoveSpeed;
+        topHalf.transform.localPosition = newPos;
+    }
+    public void MoveTopHalfLocalYPosition(int direction)
+    {
+        Vector3 newPos = topHalf.transform.localPosition;
+        newPos.y += Time.deltaTime * direction * calibrationMoveSpeed;
+        topHalf.transform.localPosition = newPos;
+    }
+    public void MoveTopHalfLocalZPosition(int direction)
+    {
+        Vector3 newPos = topHalf.transform.localPosition;
+        newPos.z += Time.deltaTime * direction * calibrationMoveSpeed;
+        topHalf.transform.localPosition = newPos;
+    }
+    public void MoveTopHalfLocalXEulerAngle(int direction)
+    {
+        Vector3 newEuler = topHalf.transform.localEulerAngles;
+        newEuler.x += Time.deltaTime * direction * calibrationRotateSpeed;
+        topHalf.transform.localEulerAngles = newEuler;
+    }
+    public void MoveTopHalfLocalYEulerAngle(int direction)
+    {
+        Vector3 newEuler = topHalf.transform.localEulerAngles;
+        newEuler.y += Time.deltaTime * direction * calibrationRotateSpeed;
+        topHalf.transform.localEulerAngles = newEuler;
+    }
+    public void MoveTopHalfLocalZEulerAngle(int direction)
+    {
+        Vector3 newEuler = topHalf.transform.localEulerAngles;
+        newEuler.z += Time.deltaTime * direction * calibrationRotateSpeed;
+        topHalf.transform.localEulerAngles = newEuler;
+    }
+    public void MoveBottomHalfLocalXPosition(int direction)
+    {
+        Vector3 newPos = bottomHalf.transform.localPosition;
+        newPos.x += Time.deltaTime * direction * calibrationMoveSpeed;
+        bottomHalf.transform.localPosition = newPos;
+    }
+    public void MoveBottomHalfLocalYPosition(int direction)
+    {
+        Vector3 newPos = bottomHalf.transform.localPosition;
+        newPos.y += Time.deltaTime * direction * calibrationMoveSpeed;
+        bottomHalf.transform.localPosition = newPos;
+    }
+    public void MoveBottomHalfLocalZPosition(int direction)
+    {
+        Vector3 newPos = bottomHalf.transform.localPosition;
+        newPos.z += Time.deltaTime * direction * calibrationMoveSpeed;
+        bottomHalf.transform.localPosition = newPos;
+    }
+    public void MoveBottomHalfLocalXEulerAngle(int direction)
+    {
+        Vector3 newEuler = bottomHalf.transform.localEulerAngles;
+        newEuler.x += Time.deltaTime * direction * calibrationRotateSpeed;
+        bottomHalf.transform.localEulerAngles = newEuler;
+    }
+    public void MoveBottomHalfLocalYEulerAngle(int direction)
+    {
+        Vector3 newEuler = bottomHalf.transform.localEulerAngles;
+        newEuler.y += Time.deltaTime * direction * calibrationRotateSpeed;
+        bottomHalf.transform.localEulerAngles = newEuler;
+    }
+    public void MoveBottomHalfLocalZEulerAngle(int direction)
+    {
+        Vector3 newEuler = bottomHalf.transform.localEulerAngles;
+        newEuler.z += Time.deltaTime * direction * calibrationRotateSpeed;
+        bottomHalf.transform.localEulerAngles = newEuler;
     }
 
     /// <summary>
