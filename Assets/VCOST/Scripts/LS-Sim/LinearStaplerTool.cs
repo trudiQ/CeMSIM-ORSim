@@ -966,6 +966,18 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     }
 
     /// <summary>
+    /// Save and auto load user calibrated LS tool local position & rotation relative to the tracker transform
+    /// </summary>
+    public void SaveStapleToolCalibrationData()
+    {
+        //PlayerPrefs.SetFloat();
+    }
+    public void LoadStapleToolCalibrationData()
+    {
+
+    }
+
+    /// <summary>
     /// After user orient the real tool to the designated orientation, update the rotation on the tool model in Unity so that it matches up with the real tool
     /// </summary>
     [ShowInInspector]
