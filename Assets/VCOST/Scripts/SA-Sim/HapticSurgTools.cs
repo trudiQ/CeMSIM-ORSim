@@ -776,7 +776,7 @@ public class HapticSurgTools : MonoBehaviour
 
 		// tool-specific action determination 
 		//	make sure one action at a time
-		if (this.gameObject.name == "Forceps")
+		if (this.gameObject.name == "Forceps" || this.gameObject.name == "Forceps1" || this.gameObject.name == "Forceps2")
 		{
 			// priority: holding > grasping > touching > idle
 			if (bHolding)
