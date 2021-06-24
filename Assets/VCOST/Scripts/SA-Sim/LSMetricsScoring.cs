@@ -5,69 +5,68 @@ using UnityEngine;
 
 public class LSMetricsScoring : MonoBehaviour
 {
-    bool m_bPass = false;
-    float m_totalCompletionTime = 0.0f;
-    float m_totalScore = 0.0f;
+    public bool m_bPass = false;
+    public float m_totalCompletionTime = 0.0f;
+    public float m_totalScore = 0.0f;
     /// Enterotomy
     // metrics scores
-    float m_EnterotomyTime = 0.0f;
-    float m_EnterotomyScore = 0.0f;
-    string[] m_EnterotomyMetrics = { "OpenEnterotomyPoint", 
+    public float m_EnterotomyTime = 0.0f;
+    public float m_EnterotomyScore = 0.0f;
+    public string[] m_EnterotomyMetrics = { "OpenEnterotomyPoint", 
                                     "SecureEnterotomyPoint" };
-    Dictionary<string, float> m_EnterotomyMetricsScores = new Dictionary<string, float>();
+    public Dictionary<string, float> m_EnterotomyMetricsScores = new Dictionary<string, float>();
     // Variables used to determine scores (updated by external code)
-    float m_openAntiMesentCorner = 1.0f; // 1.0: all cut-corners are anti-mesentery; 0.0: at least one cut-corner is mesentery
-    int[] m_cornerCutSecured = { 0, 0 }; // for both colons, 0: not secured, 1: secured during cutting
+    public float m_openAntiMesentCorner = 1.0f; // 1.0: all cut-corners are anti-mesentery; 0.0: at least one cut-corner is mesentery
+    public int[] m_cornerCutSecured = { 0, 0 }; // for both colons, 0: not secured, 1: secured during cutting
 
     /// LS-Insertion
     // metrics scores
-    float m_LSInsertionTime = 0.0f;
-    float m_LSInsertionScore = 0.0f;
-    string[] m_LSInsertionMetrics = { "CloseLS",
+    public float m_LSInsertionTime = 0.0f;
+    public float m_LSInsertionScore = 0.0f;
+    public string[] m_LSInsertionMetrics = { "CloseLS",
                                       "SecureInsertionOpening" };
-    Dictionary<string, float> m_LSInsertionMetricsScores = new Dictionary<string, float>();
+    public Dictionary<string, float> m_LSInsertionMetricsScores = new Dictionary<string, float>();
     // Variables used to determine scores (updated by external code)
-    bool m_bLSInsertCloseEvaluated = false; // true: the 'CloseLS' metric already evaluated
-    bool m_bLSInsertionClosed = false; // true: LS sticks close at the momemnt stapling
-    int[] m_LSInsertionSecured = { 0, 0 }; // for both colons, 0: not secured, 1: secured during LS insertion
+    public bool m_bLSInsertCloseEvaluated = false; // true: the 'CloseLS' metric already evaluated
+    public bool m_bLSInsertionClosed = false; // true: LS sticks close at the momemnt stapling
+    public int[] m_LSInsertionSecured = { 0, 0 }; // for both colons, 0: not secured, 1: secured during LS insertion
 
     /// Staple-Anastomosis 
     // metrics scores
-    float m_StapledAnastTime = 0.0f;
-    float m_StapledAnastScore = 0.0f;
-    string[] m_StapledAnastMetrics = { "FullStapling",
+    public float m_StapledAnastTime = 0.0f;
+    public float m_StapledAnastScore = 0.0f;
+    public string[] m_StapledAnastMetrics = { "FullStapling",
                                        "LSOpenRemove" };
-    Dictionary<string, float> m_StapledAnastMetricsScores = new Dictionary<string, float>();
+    public Dictionary<string, float> m_StapledAnastMetricsScores = new Dictionary<string, float>();
     // Variables used to determine scores (udpated by external code)
-    bool m_bSAFullStaplingEvaluated = false;
-    bool m_bSAFullyStapled = false; // if LS fully stapled in SA (button full-down)
-    bool m_bLSOpenRemoveEvaluated = false;
-    bool m_bLSOpenBeforeRemoving = false; // if LS opened before removing from colons
+    public bool m_bSAFullStaplingEvaluated = false;
+    public bool m_bSAFullyStapled = false; // if LS fully stapled in SA (button full-down)
+    public bool m_bLSOpenRemoveEvaluated = false;
+    public bool m_bLSOpenBeforeRemoving = false; // if LS opened before removing from colons
 
     /// Final-Closure
-    bool m_FinalClosurePass = true;
+    public bool m_FinalClosurePass = true;
     // metrics scores
-    float m_FinalClosureTime = 0.0f;
-    float m_FinalClosureScore = 0.0f;
-    string[] m_FinalClosureMetrics = { "OpeningSecured",
+    public float m_FinalClosureTime = 0.0f;
+    public float m_FinalClosureScore = 0.0f;
+    public string[] m_FinalClosureMetrics = { "OpeningSecured",
                                        "OpeningFullyGrasped",
                                        "CutZoneCrossed",
                                        "CloseLS",
                                        "FullyStapling",
                                        "MesenteryClear" };
-    Dictionary<string, float> m_FinalClosureMetricsScores = new Dictionary<string, float>();
+    public Dictionary<string, float> m_FinalClosureMetricsScores = new Dictionary<string, float>();
     // Variables used to determine scores (updated by external code)
-    int m_numOpeningSecuredForceps = 0; // #forceps holds the opening during the final-closure
-    bool m_LSFullyGraspOpening = false; // if LS grasps both colon ends fully
-    bool m_LSCutZoneCrossed = true; // if LS places in the cut-zone to do the final-closure
-    bool m_LSFinalClosureClosed = false; // if LS fully closed before stapling
-    bool m_LSFinalCloseEvaluated = false;
-    bool m_FCFullyStapled = false; // if LS fully stapled in final-closure (button full-down)
-    bool m_FCFullStapleEvaluated = false;
-    bool m_MesenteryCleared = false; // if mesentery layers are clear after final-closure
-    int m_cutZoneLayerIdx = 1; // sphereJointModel's layerIdx where final-closure is applied
-    int m_mesenteryLayerIdx = 5; // sphereJointModel's layerIdx where mesentery begins to attach
-    float m_LSFullyGraspLength = 1.0f; // LS fully grasps both colon ends when grasp length >= this value
+    public int m_numOpeningSecuredForceps = 0; // #forceps holds the opening during the final-closure
+    public bool m_LSFullyGraspOpening = false; // if LS grasps both colon ends fully
+    public bool m_LSCutZoneCrossed = true; // if LS places in the cut-zone to do the final-closure
+    public bool m_LSFinalClosureClosed = false; // if LS fully closed before stapling
+    public bool m_LSFinalCloseEvaluated = false;
+    public bool m_FCFullyStapled = false; // if LS fully stapled in final-closure (button full-down)
+    public bool m_FCFullStapleEvaluated = false;
+    public bool m_MesenteryCleared = false; // if mesentery layers are clear after final-closure
+    public int m_cutZoneLayerIdx = 1; // sphereJointModel's layerIdx where final-closure is applied
+    public int m_mesenteryLayerIdx = 5; // sphereJointModel's layerIdx where mesentery begins to attach
 
     // Start is called before the first frame update
     void Start()
@@ -224,12 +223,12 @@ public class LSMetricsScoring : MonoBehaviour
     /// </summary>
     /// <param name="bFinalClosure"></param> # if final-closure is done
     /// <param name="numGraspingForceps"></param> #forceps used to grasp the colons openings
-    /// <param name="graspLength"></param> LS grasp length along x axis
+    /// <param name="bLSFullGrasping"></param> if LS fully grasps both colons
     /// <param name="fullClosureLayerIdx"></param> sphereJointModels' layerIdx for final-closure
     /// <param name="bLSButtonPushing"></param> if the button is pushing now
     /// <param name="bLSLocked"></param> if LS is locked
     /// <param name="bLSButtonFullDown"></param> if LS button is full-down
-    public void updateFinalClosureScores(bool bFinalClosure, int numGraspingForceps, float graspLength, int fullClosureLayerIdx, 
+    public void updateFinalClosureScores(bool bFinalClosure, int numGraspingForceps, bool bLSFullGrasping, int fullClosureLayerIdx, 
                                          bool bLSButtonPushing, bool bLSLocked, bool bLSButtonFullDown)
     {
         //"OpeningSecured"
@@ -256,7 +255,7 @@ public class LSMetricsScoring : MonoBehaviour
         //"OpeningFullyGrasped"
         if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
         {
-            m_LSFullyGraspOpening = (graspLength >= m_LSFullyGraspLength) ? true : false;
+            m_LSFullyGraspOpening = bLSFullGrasping;
             if (m_LSFullyGraspOpening)
             {
                 m_FinalClosureMetricsScores[m_FinalClosureMetrics[1]] = 5.0f;

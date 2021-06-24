@@ -122,7 +122,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 
     public void Start()
     {
-        LoadStapleToolCalibrationData();
+        //LoadStapleToolCalibrationData();
         SaveToolLocalPositionRotation();
         insertionDepthInspector = new List<float>(globalOperators.m_insertDepth);
         simStates = 0;
