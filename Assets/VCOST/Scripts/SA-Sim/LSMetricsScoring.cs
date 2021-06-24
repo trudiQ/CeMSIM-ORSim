@@ -204,7 +204,7 @@ public class LSMetricsScoring : MonoBehaviour
         }
 
         // "LSOpenRemove": LS unlocked when removing?
-        if (m_bLSRemoving == true && m_bLSOpenRemoveEvaluated == false)
+        if (bJoin == true && m_bLSRemoving == true && m_bLSOpenRemoveEvaluated == false)
         {
             m_bLSOpenBeforeRemoving = (bLSLocked == false) ? true : false;
             m_StapledAnastMetricsScores[m_StapledAnastMetrics[1]] = (m_bLSOpenBeforeRemoving == true) ? 5.0f : 0.0f;
@@ -237,14 +237,14 @@ public class LSMetricsScoring : MonoBehaviour
     /// <param name="numGraspingForceps"></param> #forceps used to grasp the colons openings
     /// <param name="bLSFullGrasping"></param> if LS fully grasps both colons
     /// <param name="fullClosureLayerIdx"></param> sphereJointModels' layerIdx for final-closure
-    /// <param name="bLSButtonPushing"></param> if the button is pushing now
+    /// <param name="bLSButton2Push"></param> if the button is about to push
     /// <param name="bLSLocked"></param> if LS is locked
     /// <param name="bLSButtonFullDown"></param> if LS button is full-down
     public void updateFinalClosureScores(bool bFinalClosure, int numGraspingForceps, bool bLSFullGrasping, int fullClosureLayerIdx, 
-                                         bool bLSButtonPushing, bool bLSLocked, bool bLSButtonFullDown)
+                                         bool bLSButton2Push, bool bLSLocked, bool bLSButtonFullDown)
     {
         //"OpeningSecured"
-        if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
+        if (bLSLocked == true)
         {
             m_numOpeningSecuredForceps = numGraspingForceps;
             switch(m_numOpeningSecuredForceps)
@@ -265,7 +265,7 @@ public class LSMetricsScoring : MonoBehaviour
         }
 
         //"OpeningFullyGrasped"
-        if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
+        if (bLSLocked == true)
         {
             m_LSFullyGraspOpening = bLSFullGrasping;
             if (m_LSFullyGraspOpening)
@@ -280,7 +280,7 @@ public class LSMetricsScoring : MonoBehaviour
         }
 
         //"CutZoneCrossed"
-        if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
+        if (bLSLocked == true)
         {
             m_LSCutZoneCrossed = (fullClosureLayerIdx <= m_cutZoneLayerIdx) ? true : false;
             if (m_LSCutZoneCrossed == true)
@@ -290,7 +290,7 @@ public class LSMetricsScoring : MonoBehaviour
         }
 
         //"CloseLS"
-        if (bLSButtonPushing == true && m_LSFinalCloseEvaluated == false) //evaluate when LS is locked and starts button pushing
+        if (bLSButton2Push == true && m_LSFinalCloseEvaluated == false)
         {
             m_LSFinalClosureClosed = (bLSLocked == true) ? true : false;
             m_LSFinalCloseEvaluated = true;
@@ -309,7 +309,7 @@ public class LSMetricsScoring : MonoBehaviour
         }
 
         //"MesenteryClear"
-        if (bLSButtonPushing == true && bLSLocked == true) //evaluate when LS is locked and starts button pushing
+        if (bLSLocked == true) //evaluate when LS is locked and starts button pushing
         {
             m_MesenteryCleared = (fullClosureLayerIdx < m_mesenteryLayerIdx) ? true : false;
             if (m_MesenteryCleared == true)
