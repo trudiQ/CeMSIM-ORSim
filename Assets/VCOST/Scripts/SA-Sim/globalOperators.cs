@@ -63,8 +63,8 @@ public class globalOperators : MonoBehaviour
     public float m_LSGraspLengthFinalClosure = 0.0f;
 
     // Scoring metrics
-    private bool m_bEnableMetricsScoring = false;
-    private LSMetricsScoring MetricsScoringManager = null;
+    public bool m_bEnableMetricsScoring = false;
+    public LSMetricsScoring MetricsScoringManager = null;
 
     // Start is called before the first frame update
     void Start()
