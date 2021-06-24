@@ -112,28 +112,32 @@ public class LSMetricsScoring : MonoBehaviour
             m_cornerCutSecured[objIdx] = 1;
 
         // Update scores
-        foreach (KeyValuePair<string, float> ele in m_EnterotomyMetricsScores)
+        foreach (string key in m_EnterotomyMetrics)
         {
-            if (ele.Key == m_EnterotomyMetrics[0]) // "OpenEnterotomyPoint"
+            if (key == m_EnterotomyMetrics[0]) // "OpenEnterotomyPoint"
             {
-                m_EnterotomyMetricsScores[ele.Key] = m_openAntiMesentCorner;
+                m_EnterotomyMetricsScores[key] = m_openAntiMesentCorner;
             }
-            else if (ele.Key == m_EnterotomyMetrics[1]) // "SecureEnterotomyPoint"
+            else if (key == m_EnterotomyMetrics[1]) // "SecureEnterotomyPoint"
             {
                 if ((m_cornerCutSecured[0] + m_cornerCutSecured[1]) == 2)
-                    m_EnterotomyMetricsScores[ele.Key] = 5.0f;
+                    m_EnterotomyMetricsScores[key] = 5.0f;
                 else if ((m_cornerCutSecured[0] + m_cornerCutSecured[1]) == 1)
-                    m_EnterotomyMetricsScores[ele.Key] = 2.0f;
+                    m_EnterotomyMetricsScores[key] = 2.0f;
                 else
-                    m_EnterotomyMetricsScores[ele.Key] = 0.0f;
+                    m_EnterotomyMetricsScores[key] = 0.0f;
             }
         }
-        m_EnterotomyScore = m_EnterotomyMetricsScores[m_EnterotomyMetrics[0]] * m_EnterotomyMetricsScores[m_EnterotomyMetrics[1]];
+        float score = m_EnterotomyMetricsScores[m_EnterotomyMetrics[0]] * m_EnterotomyMetricsScores[m_EnterotomyMetrics[1]];
 
         // print scores
-        Debug.Log("Enterotomy metrics scores: ");
-        foreach (KeyValuePair<string, float> kvp in m_EnterotomyMetricsScores)
-            Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
+        if (score != m_EnterotomyScore)
+        {
+            m_EnterotomyScore = score;
+            Debug.Log("Enterotomy metrics scores: ");
+            foreach (KeyValuePair<string, float> kvp in m_EnterotomyMetricsScores)
+                Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
+        }
     }
 
     /// <summary>
@@ -161,12 +165,16 @@ public class LSMetricsScoring : MonoBehaviour
             m_LSInsertionMetricsScores[m_LSInsertionMetrics[1]] = 0.0f;
 
         // total LS-Insertion score
-        m_LSInsertionScore = m_LSInsertionMetricsScores[m_LSInsertionMetrics[0]] + m_LSInsertionMetricsScores[m_LSInsertionMetrics[1]];
+        float score = m_LSInsertionMetricsScores[m_LSInsertionMetrics[0]] + m_LSInsertionMetricsScores[m_LSInsertionMetrics[1]];
 
         // print scores
-        Debug.Log("LS-Insertion metrics scores: ");
-        foreach (KeyValuePair<string, float> kvp in m_LSInsertionMetricsScores)
-            Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
+        if (score != m_LSInsertionScore)
+        {
+            m_LSInsertionScore = score;
+            Debug.Log("LS-Insertion metrics scores: ");
+            foreach (KeyValuePair<string, float> kvp in m_LSInsertionMetricsScores)
+                Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
+        }
     }
 
     /// <summary>
@@ -204,12 +212,16 @@ public class LSMetricsScoring : MonoBehaviour
         }
 
         // total Stapled Anastomosis score
-        m_StapledAnastScore = m_StapledAnastMetricsScores[m_StapledAnastMetrics[0]] + m_StapledAnastMetricsScores[m_StapledAnastMetrics[1]];
+        float score = m_StapledAnastMetricsScores[m_StapledAnastMetrics[0]] + m_StapledAnastMetricsScores[m_StapledAnastMetrics[1]];
 
         // print scores
-        Debug.Log("Stapled Anastomosis metrics scores: ");
-        foreach (KeyValuePair<string, float> kvp in m_StapledAnastMetricsScores)
-            Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
+        if (score != m_StapledAnastScore)
+        {
+            m_StapledAnastScore = score;
+            Debug.Log("Stapled Anastomosis metrics scores: ");
+            foreach (KeyValuePair<string, float> kvp in m_StapledAnastMetricsScores)
+                Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
+        }
     }
 
     /// <summary>
@@ -310,15 +322,20 @@ public class LSMetricsScoring : MonoBehaviour
         }
 
         // update total final-closure score
+        float score = 0.0f;
         foreach (KeyValuePair<string, float> kvp in m_FinalClosureMetricsScores)
         {
-            m_FinalClosureScore += kvp.Value;
+            score += kvp.Value;
         }
 
         // print scores
-        Debug.Log("Final-Closure metrics scores: ");
-        foreach (KeyValuePair<string, float> kvp in m_FinalClosureMetricsScores)
-            Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
+        if (score != m_FinalClosureScore)
+        {
+            m_FinalClosureScore = score;
+            Debug.Log("Final-Closure metrics scores: ");
+            foreach (KeyValuePair<string, float> kvp in m_FinalClosureMetricsScores)
+                Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
+        }
     }
 
     // Update is called once per frame

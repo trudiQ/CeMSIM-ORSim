@@ -142,8 +142,7 @@ public class globalOperators : MonoBehaviour
         lsController = FindObjectOfType<LinearStaplerTool>();
 
         // Metrics scoring manager
-        if (m_bEnableMetricsScoring)
-            MetricsScoringManager = FindObjectOfType<globalOperators>().GetComponent<LSMetricsScoring>();
+        MetricsScoringManager = FindObjectOfType<globalOperators>().GetComponent<LSMetricsScoring>();
     }
 
     /// <summary>
