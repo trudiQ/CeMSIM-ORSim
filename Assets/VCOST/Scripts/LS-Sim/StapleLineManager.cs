@@ -55,6 +55,9 @@ namespace PaintIn3D
         public static Dictionary<MeshFilter, List<Vector3>> updatingMeshDataVertices;
         public static Dictionary<MeshFilter, List<int>> meshDataTriangles;
 
+        public List<StapleLineObject> stapleObjectToEdit; // List of staple objects to edit the data by coping the data from another list of staple objects
+        public List<StapleLineObject> dataToCopy; // Staple objects to provide edited data for the original staple objects to receive
+
         private void Start()
         {
             instance = this;
@@ -78,8 +81,8 @@ namespace PaintIn3D
         [ShowInInspector]
         public void TestPaint()
         {
-            PaintBetweenTwoVectorsRaycast(twoRayStartStart, twoRayStartEnd, twoRayEndStart, twoRayEndEnd, stapleLineParent);
-            //PaintFromCircleRaycast(circleCenter.position, circleRadA.position - circleCenter.position, circleRadB.position - circleCenter.position, stapleLineParent);
+            //PaintBetweenTwoVectorsRaycast(twoRayStartStart, twoRayStartEnd, twoRayEndStart, twoRayEndEnd, stapleLineParent);
+            PaintFromCircleRaycast(circleCenter.position, circleRadA.position - circleCenter.position, circleRadB.position - circleCenter.position, stapleLineParent);
             //PaintAlongPlaneCollision(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle);
             //PaintAlongVertices(testPaint.Select(t => t.position).ToArray(), staplePainter, Vector3.one * brushSize, Vector3.zero);
         }
@@ -105,6 +108,49 @@ namespace PaintIn3D
             {
                 s.belongedObjet = meshTrans;
                 s.belongedObjectMeshFilter = mesh;
+            }
+        }
+
+        /// <summary>
+        /// Copy the staple object data from a list of staple objects to another list
+        /// If the edited list is shorter then it will only take as many from the data provider list
+        /// If the edited list is longer then the objects exceeding provider list object count will not be changed
+        /// </summary>
+        /// <param name="editBelongedObject"></param> Should the belonged mesh be edited
+        /// <param name="editTransformData"></param> Should the position/rotation data be edited
+        [ShowInInspector]
+        public void EditStapleObjectData(bool editBelongedObject, bool editTransformData)
+        {
+            if (editBelongedObject)
+            {
+                for (int i = 0; i < stapleObjectToEdit.Count; i++)
+                {
+                    if (i > dataToCopy.Count - 1)
+                    {
+                        break;
+                    }
+
+                    stapleObjectToEdit[i].belongedObjet = dataToCopy[i].belongedObjet;
+                    stapleObjectToEdit[i].belongedObjectMeshFilter = dataToCopy[i].belongedObjectMeshFilter;
+                }
+            }
+
+            if (editTransformData)
+            {
+                for (int i = 0; i < stapleObjectToEdit.Count; i++)
+                {
+                    if (i > dataToCopy.Count - 1)
+                    {
+                        break;
+                    }
+
+                    stapleObjectToEdit[i].belongedTriangleIndex = dataToCopy[i].belongedTriangleIndex;
+                    stapleObjectToEdit[i].positionWeight = dataToCopy[i].positionWeight;
+                    stapleObjectToEdit[i].upDirection = dataToCopy[i].upDirection;
+                    stapleObjectToEdit[i].vertA = dataToCopy[i].vertA;
+                    stapleObjectToEdit[i].vertB = dataToCopy[i].vertB;
+                    stapleObjectToEdit[i].vertC = dataToCopy[i].vertC;
+                }
             }
         }
 
@@ -170,7 +216,7 @@ namespace PaintIn3D
 
             int endStapleIdx = 5 * layerIdx - 1;
             int i, j;
-            for(i = 0; i < lsSimStepThreeShowStaples.Count; i++) // for each colon model
+            for (i = 0; i < lsSimStepThreeShowStaples.Count; i++) // for each colon model
             {
                 lsSimStepThreeShowStaples[i].SetActive(true);
                 for (j = 0; j < lsSimStepThreeShowStaples[i].transform.childCount; j++)
