@@ -52,14 +52,14 @@ public class globalOperators : MonoBehaviour
 
     // Linear Stapler stuff
     public LinearStaplerTool lsController;
-    public bool m_bLSButtonPushing = false; // <== BUTTON PUSHING
-    public bool m_bLSButtonFullDown = false; // true: button full down/ false: button partially down <== BUTTON PUSHING
-    public bool m_bLSButtonPulling = false; // true: pulling the button back <== BUTTON PULLING
-    public bool m_bLSInserting = false; // <==
-    public bool m_bLSRemoving = false; // <== 
-    public bool m_bLSTransversing = false; // if LS is on transverse motion for final-closing <==
-    public bool m_bLSLocked = false;
-    public float m_LSButtonValue = 0.0f;
+    public bool m_bLSButtonPushing = false; // true: button is pushing
+    public bool m_bLSButtonFullDown = false; // true: button full down/ false: button partially down
+    public bool m_bLSButtonPulling = false; // true: button is pulling
+    public bool m_bLSInserting = false; // true: LS is inserting (with motion)
+    public bool m_bLSRemoving = false; // true: LS is removing (with motion)
+    public bool m_bLSTransversing = false; // if LS is on transverse motion for final-closing
+    public bool m_bLSLocked = false; // true: LS is locked
+    public float m_LSButtonValue = 0.0f; // 0 ~ 1
     public float m_LSGraspLengthFinalClosure = 0.0f;
 
     // Scoring metrics
@@ -848,27 +848,24 @@ public class globalOperators : MonoBehaviour
                 else
                     Debug.Log("Error: Cannot join as colons have not been split yet!");
             }
-            // [Haptic version] <== need more work
-            if (lsController && !m_bJoin)
+            // [Haptic version]
+            if (lsController && (m_bInsert[0] * m_bInsert[1] > 0))
             {
                 // stapled anastomosis
-                if (m_LSButtonValue > 0.05 && lsController.isPullingHandle == true)
+                if (!m_bJoin &&  m_bLSLocked && m_LSButtonValue > 0.05 && lsController.isPullingHandle == true)
                 {
-                    if ((m_bInsert[0] * m_bInsert[1] > 0) && m_bLSLocked)
+                    if (getLayer2SplitBasedonLS())// get the final layer to split
                     {
-                        if (getLayer2SplitBasedonLS())// get the final layer to split
+                        // split
+                        split();
+                        // join
+                        if (m_bSplit)
                         {
-                            // split
-                            split();
-                            // join
-                            if (m_bSplit)
+                            if (join())
                             {
-                                if (join())
-                                {
-                                    StapleLineManager.instance.LSSimStepThree(m_layers2Split[1]);
-                                    if (lsController)
-                                        lsController.JoinColonToolLogic();
-                                }
+                                StapleLineManager.instance.LSSimStepThree(m_layers2Split[1]);
+                                if (lsController)
+                                    lsController.JoinColonToolLogic();
                             }
                         }
                     }
@@ -878,8 +875,6 @@ public class globalOperators : MonoBehaviour
                 {
                     MetricsScoringManager.updateStapledAnastScores(m_bLSButtonPushing, m_bLSButtonFullDown, m_bJoin, m_bLSRemoving, m_bLSLocked);
                 }
-
-                m_bLSButtonPushing = false;
             }
 
             // handle partial-split join: pull end-split vertices for both colon meshes together
@@ -962,32 +957,35 @@ public class globalOperators : MonoBehaviour
                     }
                 }
             }
-            // [Haptic version] <==
+            // [Haptic version]
             if (lsController)
             {
                 if (m_bLSTransversing && !m_bFinalClosure)
                 {
                     // Final closure
-                    if (m_bLSLocked == true && lsController.handleReading > 0.05 && lsController.isPullingHandle == true)
+                    bool LSButton2Push = (lsController.handleReading > 0.05 && lsController.isPullingHandle == true); // true if the button is about to push
+                    bool bFullGrasping = false;
+                    if (m_bLSLocked == true)
                     {
-                        if (!m_bJoin)
-                            Debug.Log("Error: Cannot conduct finalClosure as the colons have not joined yet!");
-                        else if (m_bFinalClosure)
-                            Debug.Log("Error: Cannot conduct finalClosure as that's already conducted!");
-                        else
+                        bFullGrasping = checkLSFullGrasping();
+                        if (LSButton2Push)
                         {
-                            m_layer2FinalClose = lsController.lastPhaseLockedLayer;
-                            if (m_layer2FinalClose <= 0 || m_layer2FinalClose >= 20)
-                            {
-                                Debug.Log("Error: Invalid final close layer!");
-                                return;
-                            }
-                            bool bFullGrasping = checkLSFullGrasping();
-                            if (!finalClosure(m_layer2FinalClose, bFullGrasping))
-                                Debug.Log("Final Closure failed!");
+                            if (!m_bJoin)
+                                Debug.Log("Error: Cannot conduct finalClosure as the colons have not joined yet!");
                             else
                             {
-                                StapleLineManager.instance.LSSimStepFour(m_layer2FinalClose - 1, !bFullGrasping);
+                                m_layer2FinalClose = lsController.lastPhaseLockedLayer;
+                                if (m_layer2FinalClose <= 0 || m_layer2FinalClose >= 20)
+                                {
+                                    Debug.Log("Error: Invalid final close layer!");
+                                    return;
+                                }
+                                if (!finalClosure(m_layer2FinalClose, bFullGrasping))
+                                    Debug.Log("Final Closure failed!");
+                                else
+                                {
+                                    StapleLineManager.instance.LSSimStepFour(m_layer2FinalClose - 1, !bFullGrasping);
+                                }
                             }
                         }
                     }
@@ -995,11 +993,18 @@ public class globalOperators : MonoBehaviour
                     // update metrics scores
                     if (MetricsScoringManager)
                     {
-                        MetricsScoringManager.updateFinalClosureScores(m_bFinalClosure, m_numHoldingForceps, m_bLSFullGraspFinalClosure,
-                                                                       m_layer2FinalClose, m_bLSButtonPushing, m_bLSLocked, m_bLSButtonFullDown);
+                        MetricsScoringManager.updateFinalClosureScores(m_bFinalClosure, m_numHoldingForceps, bFullGrasping,
+                                                                       m_layer2FinalClose, LSButton2Push, m_bLSLocked, m_bLSButtonFullDown);
                     }
+                }
+            }
 
-                    m_bLSButtonPushing = false;
+            // Evaluate the final score and time
+            if (lsController && MetricsScoringManager)
+            {
+                if (MetricsScoringManager.m_bFinalResultEvaluated == false && m_bFinalClosure == true) // <== or the sim stopped by the user
+                {
+                    MetricsScoringManager.evaluateLSCompletion();
                 }
             }
 
