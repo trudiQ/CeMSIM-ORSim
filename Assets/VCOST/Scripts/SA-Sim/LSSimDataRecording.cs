@@ -18,10 +18,12 @@ public class LSSimDataRecording : MonoBehaviour
     private string m_simDataFolderPath;
     private string m_toolMotionDataFolderPath;
 
+    // Sim data
+    public List<string> currentFrameSimData; // simulation data in current frame
+
     // Tool motion data
     public static Transform forcepsTip; // It will track the omni sphere if no forceps are picked up
     public Transform scissors;
-    //public float timeWhenSimulationStarted; // What's the real time since app start when user click on "Start" button on the start menu
     public List<string> currentFrameToolMotionData; // Tool motion data in current frame;
     public static int currentPickedForceps; // -1 means no forceps is picked up, record omni raw data (actually this always record omni (the one controls forceps) data)
 
@@ -152,6 +154,72 @@ public class LSSimDataRecording : MonoBehaviour
     }
 
     /// <summary>
+    /// Save real-time simulation data all at once when sim ends
+    /// </summary>
+    /// <param name="subjID"></param>
+    /// <param name="trialID"></param>
+    public void saveSimData(string subjID, string trialID)
+    {
+        // first row
+        List<string> simDataCategories = new List<string>();
+        simDataCategories.Add("Time");
+        simDataCategories.Add("Sim_State");
+        simDataCategories.Add("Which_Forceps");
+        simDataCategories.Add("Forceps_Action");
+        simDataCategories.Add("Scissors_Action");
+        simDataCategories.Add("LS_Action");
+        simDataCategories.Add("Corner_Cut");
+        simDataCategories.Add("InsertDep_left");
+        simDataCategories.Add("InsertDep_right");
+        simDataCategories.Add("SA_ButtonValue");
+        simDataCategories.Add("SA_LayerIdx");
+        simDataCategories.Add("FC_LayerIdx");
+        simDataCategories.Add("FC_GraspLen");
+        simDataCategories.Add("FC_ButtonValue");
+        m_simData.Insert(0, simDataCategories.ToArray());
+
+        // Data saving
+        string[][] output = new string[m_simData.Count][];
+        for (int i = 0; i < output.Length; i++)
+        {
+            output[i] = m_simData[i];
+        }
+
+        int length = output.GetLength(0);
+        string delimiter = ",";
+        StringBuilder strBuilder = new StringBuilder();
+        for (int index = 0; index < length; index++)
+            strBuilder.AppendLine(string.Join(delimiter, output[index]));
+
+        string filePath = m_simDataFolderPath + "simData_Subj" + subjID.ToString() + "_Trial" + trialID.ToString() + ".csv";
+        StreamWriter outStream = System.IO.File.CreateText(filePath);
+        outStream.Close();
+        File.AppendAllText(filePath, strBuilder.ToString());
+    }
+
+    /// <summary>
+    /// Record real-time simulation data 
+    /// </summary>
+    public void RecordSimulationData()
+    {
+        currentFrameSimData.Clear();
+        //"Time"
+        //"Sim_State"
+        //"Which_Forceps"
+        //"Forceps_Action"
+        //"Scissors_Action"
+        //"LS_Action"
+        //"Corner_Cut"
+        //"InsertDep_left"
+        //"InsertDep_right"
+        //"SA_ButtonValue"
+        //"SA_LayerIdx"
+        //"FC_LayerIdx"
+        //"FC_GraspLen"
+        //"FC_ButtonValue"
+    }
+
+    /// <summary>
     /// 
     /// </summary>
     /// <param name="subjID"></param>
@@ -223,11 +291,6 @@ public class LSSimDataRecording : MonoBehaviour
         StreamWriter outStream = System.IO.File.CreateText(filePath);
         outStream.Close();
         File.AppendAllText(filePath, strBuilder.ToString());
-    }
-
-    public void RecordSimulationData()
-    {
-
     }
 
     /// <summary>
@@ -305,7 +368,7 @@ public class LSSimDataRecording : MonoBehaviour
         }
 
         // Test data save
-        if (Input.GetKeyDown(KeyCode.Equals))
+        if (globalOperators.m_bSimEnd == true) //Input.GetKeyDown(KeyCode.Equals)
         {
             saveScoreData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);
             SaveMotionData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);

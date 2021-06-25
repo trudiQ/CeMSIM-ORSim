@@ -278,7 +278,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             joinedColonForthLayerLowerSpheresPosition += lastPhaseToolBottomMovingAxisDifference * Vector3.up;
             joinedColonFifthLayerLowerSpheresPosition += lastPhaseToolBottomMovingAxisDifference * Vector3.up;
             joinedColonSixthLayerLowerSpheresPosition += lastPhaseToolBottomMovingAxisDifference * Vector3.up;
-            LockToolMovementInPlaneDuringLastStep(bottomHalf.transform, joinedColonFirstLayerLowerSpheresPosition, joinedColonSixthLayerLowerSpheresPosition);
+            LockToolMovementInPlaneDuringLastStep(bottomHalf.transform, joinedColonFirstLayerLowerSpheresPosition, joinedColonFifthLayerLowerSpheresPosition);
         }
         //if (isTopHalfMovingInCuttingPlane)
         //{
@@ -392,12 +392,12 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     /// <returns></returns>
     public bool ValidateToolLockingCondition()
     {
-        if (simStates < 2)
-        {
-            return Mathf.Abs(topHalf.transform.position.z - bottomHalf.transform.position.z) <= attachDepthDifference;
-            //return Mathf.Abs(globalOperators.m_insertDepth[0] - globalOperators.m_insertDepth[1]) <= attachDepthDifference;
-        }
-        else
+        //if (simStates < 2)
+        //{
+        //    return Mathf.Abs(topHalf.transform.position.z - bottomHalf.transform.position.z) <= attachDepthDifference;
+        //    //return Mathf.Abs(globalOperators.m_insertDepth[0] - globalOperators.m_insertDepth[1]) <= attachDepthDifference;
+        //}
+        //else
         {
             return !attachValidators.Find(v => !v.isTogether);
         }
@@ -582,7 +582,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         //float objectNormalToStartDistance = Vector3.Dot(objectToStartVector, Vector3.Normalize(endPosition - startPosition));
         //controlledObject.position = startPosition + (endPosition - startPosition).normalized * objectNormalToStartDistance; // Place object on the direction vector
         //Debug.DrawLine(startPosition, controlledObject.position, Color.magenta, 3f);
-        float depth = (controlledObject.position.z - startPosition.z) / (endPosition.z - startPosition.z);
+        float depth = Mathf.Clamp((controlledObject.position.z - startPosition.z) / (endPosition.z - startPosition.z), -10, 1);
         controlledObject.position = Vector3.LerpUnclamped(startPosition, endPosition, depth);
 
         // See which movement segment the object should belong to

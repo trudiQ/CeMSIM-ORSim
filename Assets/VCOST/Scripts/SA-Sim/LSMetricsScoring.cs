@@ -75,12 +75,13 @@ public class LSMetricsScoring : MonoBehaviour
     public bool m_FCFullStapleEvaluated = false;
     public bool m_MesenteryCleared = false; // if mesentery layers are clear after final-closure
     public int m_cutZoneLayerIdx = 1; // sphereJointModel's layerIdx where final-closure is applied
-    public int m_mesenteryLayerIdx = 5; // sphereJointModel's layerIdx where mesentery begins to attach
+    public int m_mesenteryLayerIdx = 4; // sphereJointModel's layerIdx where mesentery begins to attach
 
     // Start is called before the first frame update
     void Start()
     {
         // initialize metrics scores
+        m_FinalClosurePass = false;
         for (int i = 0; i < m_EnterotomyMetrics.Length; i++)
         {
             m_EnterotomyMetricsScores.Add(m_EnterotomyMetrics[i], 0.0f);
