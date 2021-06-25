@@ -6,6 +6,7 @@ using UnityEngine;
 public class LSMetricsScoring : MonoBehaviour
 {
     public bool m_bPass = false;
+    public bool m_bFinalResultEvaluated = false;
     public float m_totalCompletionTime = 0.0f;
     public float m_totalScore = 0.0f;
     /// Enterotomy
@@ -336,6 +337,20 @@ public class LSMetricsScoring : MonoBehaviour
             foreach (KeyValuePair<string, float> kvp in m_FinalClosureMetricsScores)
                 Debug.Log("- " + kvp.Key + ": " + kvp.Value.ToString());
         }
+    }
+
+    public void evaluateLSCompletion()
+    {
+        // Pass?
+        m_bPass = m_FinalClosurePass;
+
+        // total score
+        m_totalScore = m_EnterotomyScore + m_LSInsertionScore + m_StapledAnastScore + m_FinalClosureScore;
+
+        // total completion time
+        m_totalCompletionTime = m_EnterotomyTime + m_LSInsertionTime + m_StapledAnastTime + m_FinalClosureTime;
+
+        m_bFinalResultEvaluated = true;
     }
 
     // Update is called once per frame

@@ -52,14 +52,14 @@ public class globalOperators : MonoBehaviour
 
     // Linear Stapler stuff
     public LinearStaplerTool lsController;
-    public bool m_bLSButtonPushing = false; // <== BUTTON PUSHING
-    public bool m_bLSButtonFullDown = false; // true: button full down/ false: button partially down <== BUTTON PUSHING
-    public bool m_bLSButtonPulling = false; // true: pulling the button back <== BUTTON PULLING
-    public bool m_bLSInserting = false; // <==
-    public bool m_bLSRemoving = false; // <== 
-    public bool m_bLSTransversing = false; // if LS is on transverse motion for final-closing <==
-    public bool m_bLSLocked = false;
-    public float m_LSButtonValue = 0.0f;
+    public bool m_bLSButtonPushing = false; // true: button is pushing
+    public bool m_bLSButtonFullDown = false; // true: button full down/ false: button partially down
+    public bool m_bLSButtonPulling = false; // true: button is pulling
+    public bool m_bLSInserting = false; // true: LS is inserting (with motion)
+    public bool m_bLSRemoving = false; // true: LS is removing (with motion)
+    public bool m_bLSTransversing = false; // if LS is on transverse motion for final-closing
+    public bool m_bLSLocked = false; // true: LS is locked
+    public float m_LSButtonValue = 0.0f; // 0 ~ 1
     public float m_LSGraspLengthFinalClosure = 0.0f;
 
     // Scoring metrics
@@ -848,7 +848,7 @@ public class globalOperators : MonoBehaviour
                 else
                     Debug.Log("Error: Cannot join as colons have not been split yet!");
             }
-            // [Haptic version] <== need more work
+            // [Haptic version]
             if (lsController && (m_bInsert[0] * m_bInsert[1] > 0))
             {
                 // stapled anastomosis
@@ -957,13 +957,13 @@ public class globalOperators : MonoBehaviour
                     }
                 }
             }
-            // [Haptic version] <==
+            // [Haptic version]
             if (lsController)
             {
                 if (m_bLSTransversing && !m_bFinalClosure)
                 {
                     // Final closure
-                    bool LSButton2Push = (lsController.handleReading > 0.05 && lsController.isPullingHandle == true);
+                    bool LSButton2Push = (lsController.handleReading > 0.05 && lsController.isPullingHandle == true); // true if the button is about to push
                     bool bFullGrasping = false;
                     if (m_bLSLocked == true)
                     {
@@ -996,6 +996,15 @@ public class globalOperators : MonoBehaviour
                         MetricsScoringManager.updateFinalClosureScores(m_bFinalClosure, m_numHoldingForceps, bFullGrasping,
                                                                        m_layer2FinalClose, LSButton2Push, m_bLSLocked, m_bLSButtonFullDown);
                     }
+                }
+            }
+
+            // Evaluate the final score and time
+            if (lsController && MetricsScoringManager)
+            {
+                if (MetricsScoringManager.m_bFinalResultEvaluated == false && m_bFinalClosure == true) // <== or the sim stopped by the user
+                {
+                    MetricsScoringManager.evaluateLSCompletion();
                 }
             }
 
