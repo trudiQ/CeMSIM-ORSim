@@ -14,8 +14,10 @@ public class LS_UIcontroller : MonoBehaviour
     public TMP_InputField subjIDinput;
     public TMP_InputField trialIDinput;
     #region Metrics
+    //Total
     public TMP_Text m_totalScore;
     public TMP_Text m_totalCompletionTime;
+    public TMP_Text m_Pass;
     //Enterotomy
     public TMP_Text openEnterotomyPoint;
     public TMP_Text secureEnterotomyPoint;
@@ -40,7 +42,6 @@ public class LS_UIcontroller : MonoBehaviour
     public TMP_Text mesenteryClear;
     public TMP_Text m_FinalClosureScore;
     public TMP_Text m_FinalClosureTime;
-    //Total
     #endregion
 
     /// <summary>
@@ -90,5 +91,10 @@ public class LS_UIcontroller : MonoBehaviour
         mesenteryClear.text = "  Mesentery Clear " + metricsManager.m_FinalClosureMetricsScores["MesenteryClear"];
         m_FinalClosureScore.text = "  Score " + metricsManager.m_FinalClosureScore;
         m_FinalClosureTime.text = "  Time " + metricsManager.m_FinalClosureTime.ToString("N3");
+
+        if (metricsManager.m_bFinalResultEvaluated)
+        {
+            m_Pass.text = metricsManager.m_bPass ? "Pass" : "Fail";
+        }
     }
 }

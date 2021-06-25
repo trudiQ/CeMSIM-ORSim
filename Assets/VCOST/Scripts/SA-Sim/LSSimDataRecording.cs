@@ -10,18 +10,20 @@ public class LSSimDataRecording : MonoBehaviour
     public bool m_bEnableDataRecording = true;
     private globalOperators gOperators = null;
     public LinearStaplerTool lsManager;
-    public Transform forcepsOmni;
-    public Transform scissors;
+
     private List<string[]> m_scoreData; // performance data
     private List<string[]> m_simData; // simulation data: state, action, metric related variables
     private List<string[]> m_toolMotionData; // motion data (position, orientation) of the tools: LS, forceps, scissors
-
     private string m_scoreDataFolderPath;
     private string m_simDataFolderPath;
     private string m_toolMotionDataFolderPath;
-    public float timeWhenSimulationStarted; // What's the real time since app start when user click on "Start" button on the start menu
+
+    // Tool motion data
+    public static Transform forcepsTip; // It will track the omni sphere if no forceps are picked up
+    public Transform scissors;
+    //public float timeWhenSimulationStarted; // What's the real time since app start when user click on "Start" button on the start menu
     public List<string> currentFrameToolMotionData; // Tool motion data in current frame;
-    public int currentPickedForceps; // -1 means no forceps is picked up, record omni raw data (actually this always record omni (the one controls forceps) data)
+    public static int currentPickedForceps; // -1 means no forceps is picked up, record omni raw data (actually this always record omni (the one controls forceps) data)
 
     public static string subjID;
     public static string trialID;
@@ -116,6 +118,20 @@ public class LSSimDataRecording : MonoBehaviour
         totalMetricsTime = ("Final-Closure Time", metricScoring.m_FinalClosureTime);
         saveMetricsData(metricScoring.m_FinalClosureMetricsScores, totalMetricsScore, totalMetricsTime);
 
+        // Final Result
+        string[] valueRow = new string[2];
+        valueRow[0] = "Total Score";
+        valueRow[1] = "" + metricScoring.m_totalScore;
+        m_scoreData.Add(valueRow);
+        valueRow = new string[2];
+        valueRow[0] = "Total Time";
+        valueRow[1] = "" + metricScoring.m_totalCompletionTime;
+        m_scoreData.Add(valueRow);
+        valueRow = new string[2];
+        valueRow[0] = "Pass/Fail";
+        valueRow[1] = (metricScoring.m_bPass == true) ? "P" : "F";
+        m_scoreData.Add(valueRow);
+
         // Data saving
         string[][] output = new string[m_scoreData.Count][];
         for (int i = 0; i < output.Length; i++)
@@ -209,6 +225,11 @@ public class LSSimDataRecording : MonoBehaviour
         File.AppendAllText(filePath, strBuilder.ToString());
     }
 
+    public void RecordSimulationData()
+    {
+
+    }
+
     /// <summary>
     /// Continuously recording tool motion data during the entire simulation
     /// </summary>
@@ -216,15 +237,15 @@ public class LSSimDataRecording : MonoBehaviour
     {
         // Add current frame motion data
         currentFrameToolMotionData.Clear();
-        currentFrameToolMotionData.Add((Time.realtimeSinceStartup - timeWhenSimulationStarted).ToString("N3")); // Time
+        currentFrameToolMotionData.Add((Time.time - globalOperators.m_startTime).ToString("N3")); // Time
         currentFrameToolMotionData.Add(currentPickedForceps.ToString()); // whichForceps
-        currentFrameToolMotionData.Add(forcepsOmni.position.x.ToString("N3")); // x_F
-        currentFrameToolMotionData.Add(forcepsOmni.position.y.ToString("N3")); // y_F
-        currentFrameToolMotionData.Add(forcepsOmni.position.z.ToString("N3")); // z_F
-        currentFrameToolMotionData.Add(forcepsOmni.rotation.x.ToString("N3")); // qx_F
-        currentFrameToolMotionData.Add(forcepsOmni.rotation.y.ToString("N3")); // qy_F
-        currentFrameToolMotionData.Add(forcepsOmni.rotation.z.ToString("N3")); // qz_F
-        currentFrameToolMotionData.Add(forcepsOmni.rotation.w.ToString("N3")); // qw_F
+        currentFrameToolMotionData.Add(forcepsTip.position.x.ToString("N3")); // x_F
+        currentFrameToolMotionData.Add(forcepsTip.position.y.ToString("N3")); // y_F
+        currentFrameToolMotionData.Add(forcepsTip.position.z.ToString("N3")); // z_F
+        currentFrameToolMotionData.Add(forcepsTip.rotation.x.ToString("N3")); // qx_F
+        currentFrameToolMotionData.Add(forcepsTip.rotation.y.ToString("N3")); // qy_F
+        currentFrameToolMotionData.Add(forcepsTip.rotation.z.ToString("N3")); // qz_F
+        currentFrameToolMotionData.Add(forcepsTip.rotation.w.ToString("N3")); // qw_F
         currentFrameToolMotionData.Add(scissors.position.x.ToString("N3")); // x_S
         currentFrameToolMotionData.Add(scissors.position.y.ToString("N3")); // y_S
         currentFrameToolMotionData.Add(scissors.position.z.ToString("N3")); // z_S
@@ -265,9 +286,20 @@ public class LSSimDataRecording : MonoBehaviour
         m_toolMotionData.Add(currentFrameToolMotionData.ToArray());
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tracked"></param>
+    /// <param name="index"></param>
+    public static void SwitchTrackedForceps(Transform tracked, int index)
+    {
+        forcepsTip = tracked;
+        currentPickedForceps = index;
+    }
+
     private void Update()
     {
-        if (globalOperators.m_bSimStart)
+        if (globalOperators.m_bSimStart && !globalOperators.m_bSimEnd)
         {
             RecordToolMotionData();
         }

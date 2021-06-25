@@ -70,7 +70,8 @@ public class globalOperators : MonoBehaviour
     public bool m_bEnableMetricsScoring = true;
     public LSMetricsScoring MetricsScoringManager = null;
     public static float m_startTime; // Record the time when user click "Start" button on start menu
-    public static bool m_bSimStart; //
+    public static bool m_bSimStart = false; // Start when the user clicks "Start"
+    public static bool m_bSimEnd = false; // manual end by the user by pressing space
 
     /// <summary>
     /// Start simulation logic
@@ -813,7 +814,7 @@ public class globalOperators : MonoBehaviour
                                 MetricsScoringManager.updateEnterotomyScores(objIdx, LorR, bOpeningSecure);
 
                                 // update completion time
-                                if (MetricsScoringManager.m_bEnterotomyTimeEvaluated == false 
+                                if (MetricsScoringManager.m_bEnterotomyTimeEvaluated == false
                                         && m_bCornerCutStarted && m_bCornerCut[0] && m_bCornerCut[1]) // completes when both corners are cut
                                 {
                                     MetricsScoringManager.m_EnterotomyTime = Time.time - MetricsScoringManager.m_EnterotomyStartTime;
@@ -847,7 +848,7 @@ public class globalOperators : MonoBehaviour
                             m_bLSInsertStarted = true;
                             Debug.Log("LSInsertion starts, startTime: " + MetricsScoringManager.m_EnterotomyStartTime.ToString());
                         }
-                        
+
                         if (m_bInsert[0] > 0)
                             MetricsScoringManager.updateLSInsertionScores(0, bOpeningSecure);
                         if (m_bInsert[1] > 0)
@@ -1085,10 +1086,16 @@ public class globalOperators : MonoBehaviour
             // Evaluate the final score and time
             if (lsController && MetricsScoringManager)
             {
-                if (MetricsScoringManager.m_bFinalResultEvaluated == false && m_bFinalClosure == true) // <== or the sim stopped by the user
+                if (MetricsScoringManager.m_bFinalResultEvaluated == false && (m_bFinalClosure == true || m_bSimEnd == true)) 
                 {
                     MetricsScoringManager.evaluateLSCompletion();
                 }
+            }
+
+            // Check user manual stop simulation
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                m_bSimEnd = true;
             }
 
             // update LS status

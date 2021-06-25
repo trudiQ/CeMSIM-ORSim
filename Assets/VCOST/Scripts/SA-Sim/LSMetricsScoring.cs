@@ -52,7 +52,7 @@ public class LSMetricsScoring : MonoBehaviour
     public bool m_bLSOpenBeforeRemoving = false; // if LS opened before removing from colons
 
     /// Final-Closure
-    public bool m_FinalClosurePass = true;
+    public bool m_FinalClosurePass = false;
     // metrics scores
     public bool m_FinalClosureTimeEvaluated = false;
     public float m_FinalClosureStartTime = 0.0f;
@@ -280,11 +280,11 @@ public class LSMetricsScoring : MonoBehaviour
             if (m_LSFullyGraspOpening)
             {
                 m_FinalClosureMetricsScores[m_FinalClosureMetrics[1]] = 5.0f;
+                m_FinalClosurePass = true;
             }
             else
             {
                 m_FinalClosureMetricsScores[m_FinalClosureMetrics[1]] = 0.0f;
-                m_FinalClosurePass = false;
             }
         }
 
@@ -322,11 +322,13 @@ public class LSMetricsScoring : MonoBehaviour
         {
             m_MesenteryCleared = (fullClosureLayerIdx < m_mesenteryLayerIdx) ? true : false;
             if (m_MesenteryCleared == true)
+            {
                 m_FinalClosureMetricsScores[m_FinalClosureMetrics[5]] = 5.0f;
+                m_FinalClosurePass = true;
+            }
             else
             {
                 m_FinalClosureMetricsScores[m_FinalClosureMetrics[5]] = 0.0f;
-                m_FinalClosurePass = false;
             }
         }
 
