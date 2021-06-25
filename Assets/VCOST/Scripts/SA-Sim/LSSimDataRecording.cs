@@ -132,6 +132,7 @@ public class LSSimDataRecording : MonoBehaviour
         string filePath = m_scoreDataFolderPath + "score_Subj" + subjID.ToString() + "_Trial" + trialID.ToString() + ".csv";
         StreamWriter outStream = System.IO.File.CreateText(filePath);
         outStream.Close();
+        File.AppendAllText(filePath, strBuilder.ToString());
     }
 
     /// <summary>
@@ -205,6 +206,7 @@ public class LSSimDataRecording : MonoBehaviour
         string filePath = m_toolMotionDataFolderPath + "motionData_Subj" + subjID.ToString() + "_Trial" + trialID.ToString() + ".csv";
         StreamWriter outStream = System.IO.File.CreateText(filePath);
         outStream.Close();
+        File.AppendAllText(filePath, strBuilder.ToString());
     }
 
     /// <summary>
@@ -263,8 +265,18 @@ public class LSSimDataRecording : MonoBehaviour
         m_toolMotionData.Add(currentFrameToolMotionData.ToArray());
     }
 
-    void update()
+    private void Update()
     {
+        if (globalOperators.m_bSimStart)
+        {
+            RecordToolMotionData();
+        }
 
+        // Test data save
+        if (Input.GetKeyDown(KeyCode.Equals))
+        {
+            saveScoreData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);
+            SaveMotionData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);
+        }
     }
 }
