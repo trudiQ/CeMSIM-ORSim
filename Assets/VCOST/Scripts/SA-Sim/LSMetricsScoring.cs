@@ -11,8 +11,10 @@ public class LSMetricsScoring : MonoBehaviour
     public float m_totalScore = 0.0f;
     /// Enterotomy
     // metrics scores
-    public float m_EnterotomyTime = 0.0f;
-    public float m_EnterotomyScore = 0.0f;
+    public bool m_bEnterotomyTimeEvaluated = false;
+    public float m_EnterotomyStartTime = 0.0f; 
+    public float m_EnterotomyTime = 0.0f; // Enterotomy completion time
+    public float m_EnterotomyScore = 0.0f; // Enterotomy total score
     public string[] m_EnterotomyMetrics = { "OpenEnterotomyPoint", 
                                     "SecureEnterotomyPoint" };
     public Dictionary<string, float> m_EnterotomyMetricsScores = new Dictionary<string, float>();
@@ -22,6 +24,8 @@ public class LSMetricsScoring : MonoBehaviour
 
     /// LS-Insertion
     // metrics scores
+    public bool m_bLSInsertionTimeEvaluated = false;
+    public float m_LSInsertionStartTime = 0.0f;
     public float m_LSInsertionTime = 0.0f;
     public float m_LSInsertionScore = 0.0f;
     public string[] m_LSInsertionMetrics = { "CloseLS",
@@ -34,6 +38,8 @@ public class LSMetricsScoring : MonoBehaviour
 
     /// Staple-Anastomosis 
     // metrics scores
+    public bool m_bStapledAnastTimeEvaluated = false;
+    public float m_StapledAnastStartTime = 0.0f;
     public float m_StapledAnastTime = 0.0f;
     public float m_StapledAnastScore = 0.0f;
     public string[] m_StapledAnastMetrics = { "FullStapling",
@@ -48,6 +54,8 @@ public class LSMetricsScoring : MonoBehaviour
     /// Final-Closure
     public bool m_FinalClosurePass = true;
     // metrics scores
+    public bool m_FinalClosureTimeEvaluated = false;
+    public float m_FinalClosureStartTime = 0.0f;
     public float m_FinalClosureTime = 0.0f;
     public float m_FinalClosureScore = 0.0f;
     public string[] m_FinalClosureMetrics = { "OpeningSecured",

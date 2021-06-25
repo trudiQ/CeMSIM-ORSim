@@ -9,7 +9,10 @@ using TMPro;
 public class LS_UIcontroller : MonoBehaviour
 {
     public LSMetricsScoring metricsManager; // Controller for getting the metrics for the simulation
+    public GameObject mainMenu;
     public GameObject metricsUI;
+    public TMP_InputField subjIDinput;
+    public TMP_InputField trialIDinput;
     #region Metrics
     public TMP_Text m_totalScore;
     public TMP_Text m_totalCompletionTime;
@@ -39,6 +42,23 @@ public class LS_UIcontroller : MonoBehaviour
     public TMP_Text m_FinalClosureTime;
     //Total
     #endregion
+
+    /// <summary>
+    /// Store user entered subject ID and trial ID on the start menu
+    /// </summary>
+    public void StoreID()
+    {
+        if (string.IsNullOrWhiteSpace(subjIDinput.text) || string.IsNullOrWhiteSpace(trialIDinput.text))
+        {
+            return;
+        }
+
+        LSSimDataRecording.subjID = subjIDinput.text;
+        LSSimDataRecording.trialID = trialIDinput.text;
+
+        globalOperators.SimStart();
+        mainMenu.SetActive(false); // Hide main menu
+    }
 
     // Update is called once per frame
     void Update()

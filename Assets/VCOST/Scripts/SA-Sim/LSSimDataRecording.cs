@@ -23,6 +23,9 @@ public class LSSimDataRecording : MonoBehaviour
     public List<string> currentFrameToolMotionData; // Tool motion data in current frame;
     public int currentPickedForceps; // -1 means no forceps is picked up, record omni raw data (actually this always record omni (the one controls forceps) data)
 
+    public static string subjID;
+    public static string trialID;
+
     void Start()
     {
         // initialize refs to other modules

@@ -21,14 +21,17 @@ public class globalOperators : MonoBehaviour
 
     /// opeartors related variables
     // Corner-cut (Enterotomy)
+    public bool m_bCornerCutStarted = false; // true: scissors touches the colon for the FIRST TIME; false: both required corners are cut
     public bool[] m_bCornerCut = { false, false }; // whether right-corner of left colon or left-corner of right colon is cut
     public (int, int)[] m_cornerSphereIdxRange; // predefined spheres at corners {(left-corner sphereIdx-range), (right-corner range)}
     public int[][] m_cutCornerSphereIndices = new int[2][]; // predefined spheres to be cut {left corner: [x1, x2, x3], right corner [y1, y2, y3]}
     public List<bool[]> m_LRCornerCutIdices = new List<bool[]>(); // {(objIdx0: left-corner, right-corner), (objIdx1: left-corner, right-corner)}
     // LS tool insertion
+    public bool m_bLSInsertStarted = false; // true: LS bInsert[0] * bInsert[1] > 0 for the first time; false: LS bLock==true, before button pushing
     public static int[] m_bInsert = { 0, 0 }; // 1 means top part inserted, 2 means bottom part
     public static float[] m_insertDepth = { 0, 0 }; // Unity world distance starting from colon opening position (scale from 0 to 1 for the full colon length)
     // LS stapling: Split & Join (Staple-Anastomosis)
+    public bool m_bSAStarted = false; // true: LS locked, about to push the button
     public bool m_bSplit = false;
     public bool m_bJoin = false;
     public int[] m_layers2Split = { -1, -1 }; // same for both models
@@ -41,6 +44,7 @@ public class globalOperators : MonoBehaviour
     private int m_numHoldingForceps = 0; // #forceps holding the opening during final closure
     private List<List<int>> m_sphIndices4Secure = new List<List<int>>(); //[[opening0], [opening1], [opening2]]
     // Final closure
+    public bool m_bFinalClosureStarted = false; // true: LS bottom part is just transversely placed
     private int m_layer2FinalClose = -1;
     private bool m_bLSFullGraspFinalClosure = false;
     public static bool m_bFinalClosure = false; // if the final-closure step is done
@@ -65,6 +69,17 @@ public class globalOperators : MonoBehaviour
     // Scoring metrics
     public bool m_bEnableMetricsScoring = true;
     public LSMetricsScoring MetricsScoringManager = null;
+    public static float m_startTime; // Record the time when user click "Start" button on start menu
+    public static bool m_bSimStart; //
+
+    /// <summary>
+    /// Start simulation logic
+    /// </summary>
+    public static void SimStart()
+    {
+        m_startTime = Time.time;
+        m_bSimStart = true;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -621,7 +636,7 @@ public class globalOperators : MonoBehaviour
             Debug.Log("Error in getLayer2SplitBasedonLS: invalid m_bInsert values!");
             return false;
         }
-        
+
         for (int i = 0; i < 2; i++)
         {
             if (m_bInsert[i] == 1)
@@ -675,7 +690,7 @@ public class globalOperators : MonoBehaviour
             m_layers2Split[1] = 3;
         else if (m_layers2Split[1] > 14)
             m_layers2Split[1] = 14;
-        
+
         Debug.Log("m_layers2Split: " + m_layers2Split[1].ToString());
 
         return true;
@@ -773,6 +788,15 @@ public class globalOperators : MonoBehaviour
             // [Haptics version]
             if (m_hapticSurgTools.Count > 0 && m_hapticSurgTools["Scissors"]) //scissors
             {
+                // Check if corner-cut (Enterotomy) starts, and start the timer
+                if (m_bCornerCutStarted == false && m_hapticSurgTools["Scissors"].curAction == HapticSurgTools.toolAction.touching)
+                {
+                    if (MetricsScoringManager)
+                        MetricsScoringManager.m_EnterotomyStartTime = Time.time;
+                    m_bCornerCutStarted = true;
+                    Debug.Log("Enterotomy starts, startTime: " + MetricsScoringManager.m_EnterotomyStartTime.ToString());
+                }
+
                 if (m_hapticSurgTools["Scissors"].curAction == HapticSurgTools.toolAction.cutting)
                 {
                     int objIdx = m_hapticSurgTools["Scissors"].cutSphereIdx[0];
@@ -787,6 +811,14 @@ public class globalOperators : MonoBehaviour
                             {
                                 bool bOpeningSecure = (graspingForceps != null) ? true : false;
                                 MetricsScoringManager.updateEnterotomyScores(objIdx, LorR, bOpeningSecure);
+
+                                // update completion time
+                                if (MetricsScoringManager.m_bEnterotomyTimeEvaluated == false 
+                                        && m_bCornerCutStarted && m_bCornerCut[0] && m_bCornerCut[1]) // completes when both corners are cut
+                                {
+                                    MetricsScoringManager.m_EnterotomyTime = Time.time - MetricsScoringManager.m_EnterotomyStartTime;
+                                    MetricsScoringManager.m_bEnterotomyTimeEvaluated = true;
+                                }
                             }
                         }
                     }
@@ -808,10 +840,26 @@ public class globalOperators : MonoBehaviour
                     // update metrics scoring
                     if (MetricsScoringManager)
                     {
+                        // check if LS-Insertion starts and start the timeer
+                        if (m_bLSInsertStarted == false)
+                        {
+                            MetricsScoringManager.m_LSInsertionStartTime = Time.time;
+                            m_bLSInsertStarted = true;
+                            Debug.Log("LSInsertion starts, startTime: " + MetricsScoringManager.m_EnterotomyStartTime.ToString());
+                        }
+                        
                         if (m_bInsert[0] > 0)
                             MetricsScoringManager.updateLSInsertionScores(0, bOpeningSecure);
                         if (m_bInsert[1] > 0)
                             MetricsScoringManager.updateLSInsertionScores(1, bOpeningSecure);
+
+                        // update completion time
+                        if (MetricsScoringManager.m_bLSInsertionTimeEvaluated == false && m_bLSInsertStarted
+                               && m_bLSLocked && m_bLSButtonPushing == true) // completes when LS locked and about to push button
+                        {
+                            MetricsScoringManager.m_LSInsertionTime = Time.time - MetricsScoringManager.m_LSInsertionStartTime;
+                            MetricsScoringManager.m_bLSInsertionTimeEvaluated = true;
+                        }
                     }
                 }
             }
@@ -852,7 +900,7 @@ public class globalOperators : MonoBehaviour
             if (lsController && (m_bInsert[0] * m_bInsert[1] > 0))
             {
                 // stapled anastomosis
-                if (!m_bJoin &&  m_bLSLocked && m_LSButtonValue > 0.05 && lsController.isPullingHandle == true)
+                if (!m_bJoin && m_bLSLocked && m_LSButtonValue > 0.05 && lsController.isPullingHandle == true)
                 {
                     if (getLayer2SplitBasedonLS())// get the final layer to split
                     {
@@ -873,7 +921,24 @@ public class globalOperators : MonoBehaviour
                 // update metrics scoring
                 if (MetricsScoringManager)
                 {
+                    // check if SA starts and start the timer
+                    if (m_bSAStarted == false && !m_bJoin && m_bLSLocked && m_bLSButtonPushing) // LS locked and start pushing button
+                    {
+                        MetricsScoringManager.m_StapledAnastStartTime = Time.time;
+                        m_bSAStarted = true;
+                        Debug.Log("SA starts, startTime: " + MetricsScoringManager.m_StapledAnastStartTime.ToString());
+                    }
+
                     MetricsScoringManager.updateStapledAnastScores(m_bLSButtonPushing, m_bLSButtonFullDown, m_bJoin, m_bLSRemoving, m_bLSLocked);
+                }
+            }
+            // update completion time: evaluated when SA operation is done, both LS completely removed from colons
+            if (lsController && m_bSAStarted == true && m_bJoin == true && (m_bInsert[0] + m_bInsert[1] == 0))
+            {
+                if (MetricsScoringManager && MetricsScoringManager.m_bStapledAnastTimeEvaluated == false)
+                {
+                    MetricsScoringManager.m_StapledAnastTime = Time.time - MetricsScoringManager.m_StapledAnastStartTime;
+                    MetricsScoringManager.m_bStapledAnastTimeEvaluated = true;
                 }
             }
 
@@ -993,8 +1058,26 @@ public class globalOperators : MonoBehaviour
                     // update metrics scores
                     if (MetricsScoringManager)
                     {
+                        // check if Final-Closure started and start the timer: LS's bottom part is just transversely placed
+                        if (m_bFinalClosureStarted == false)
+                        {
+                            MetricsScoringManager.m_FinalClosureStartTime = Time.time;
+                            m_bFinalClosureStarted = true;
+                            Debug.Log("Final-Closure starts, start time: " + MetricsScoringManager.m_FinalClosureStartTime.ToString());
+                        }
+
                         MetricsScoringManager.updateFinalClosureScores(m_bFinalClosure, m_numHoldingForceps, bFullGrasping,
                                                                        m_layer2FinalClose, LSButton2Push, m_bLSLocked, m_bLSButtonFullDown);
+
+                        // update completion time at soon as Final-Closure is just done
+                        if (m_bFinalClosure == true && m_bFinalClosureStarted == true)
+                        {
+                            if (MetricsScoringManager.m_FinalClosureTimeEvaluated == false)
+                            {
+                                MetricsScoringManager.m_FinalClosureTime = Time.time - MetricsScoringManager.m_FinalClosureStartTime;
+                                MetricsScoringManager.m_FinalClosureTimeEvaluated = true;
+                            }
+                        }
                     }
                 }
             }
