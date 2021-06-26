@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using System;
 
 /// <summary>
 /// Orignally derived from 'testSceneOperations.cs'
@@ -40,19 +41,19 @@ public class globalOperators : MonoBehaviour
     public bool m_bOpeningSecure = false;
     private int m_numSpherePairsProcesed = 0; // for opening secure
     private int m_numSecureOpenings;
-    private int[] m_sphereIdx4EachOpening;// sphere currently being held for each opening
+    public int[] m_sphereIdx4EachOpening;// sphere currently being held for each opening
     private int m_numHoldingForceps = 0; // #forceps holding the opening during final closure
     private List<List<int>> m_sphIndices4Secure = new List<List<int>>(); //[[opening0], [opening1], [opening2]]
     // Final closure
     public bool m_bFinalClosureStarted = false; // true: LS bottom part is just transversely placed
-    private int m_layer2FinalClose = -1;
+    public int m_layer2FinalClose = -1;
     private bool m_bLSFullGraspFinalClosure = false;
     public static bool m_bFinalClosure = false; // if the final-closure step is done
 
     /// haptics device inputs
     private int m_numSurgTools = 0; // actual surgical tools in the scene
-    private string[] m_surgToolNames = { "Forceps", "Forceps1", "Forceps2", "Scissors" };
-    private Dictionary<string, HapticSurgTools> m_hapticSurgTools = new Dictionary<string, HapticSurgTools>();
+    public string[] m_surgToolNames = { "Forceps", "Forceps1", "Forceps2", "Scissors" };
+    public Dictionary<string, HapticSurgTools> m_hapticSurgTools = new Dictionary<string, HapticSurgTools>();
 
     // Linear Stapler stuff
     public LinearStaplerTool lsController;
@@ -65,6 +66,7 @@ public class globalOperators : MonoBehaviour
     public bool m_bLSLocked = false; // true: LS is locked
     public float m_LSButtonValue = 0.0f; // 0 ~ 1
     public float m_LSGraspLengthFinalClosure = 0.0f;
+    public int[] m_LSStates; // update for each frame
 
     // Scoring metrics
     public bool m_bEnableMetricsScoring = true;
@@ -156,6 +158,7 @@ public class globalOperators : MonoBehaviour
 
         // Find linear stapler controller
         lsController = FindObjectOfType<LinearStaplerTool>();
+        m_LSStates = new int[] { 0, 0, 0, 0, 0, 0 }; // {inserting, removing, buttongPushing, buttonPulling, lock, transversing}
 
         // Metrics scoring manager
         MetricsScoringManager = FindObjectOfType<globalOperators>().GetComponent<LSMetricsScoring>();
@@ -737,6 +740,9 @@ public class globalOperators : MonoBehaviour
             m_bLSLocked = LinearStaplerTool.leverLocked;
             m_LSButtonValue = lsController.handleReading;
             m_LSGraspLengthFinalClosure = lsController.bottomLastPhaseX;
+            // record LS actions: {inserting, removing, buttongPushing, buttonPulling, lock, transversing}
+            m_LSStates = new int[] {Convert.ToInt32(m_bLSInserting), Convert.ToInt32(m_bLSRemoving), Convert.ToInt32(m_bLSButtonPushing),
+                                    Convert.ToInt32(m_bLSButtonPulling), Convert.ToInt32(m_bLSLocked), Convert.ToInt32(m_bLSTransversing)};
         }
     }
 
@@ -1034,18 +1040,18 @@ public class globalOperators : MonoBehaviour
                     if (m_bLSLocked == true)
                     {
                         bFullGrasping = checkLSFullGrasping();
+                        m_layer2FinalClose = lsController.lastPhaseLockedLayer;
+                        if (m_layer2FinalClose <= 0 || m_layer2FinalClose >= 20)
+                        {
+                            Debug.Log("Error: Invalid final close layer!");
+                            return;
+                        }
                         if (LSButton2Push)
                         {
                             if (!m_bJoin)
                                 Debug.Log("Error: Cannot conduct finalClosure as the colons have not joined yet!");
                             else
                             {
-                                m_layer2FinalClose = lsController.lastPhaseLockedLayer;
-                                if (m_layer2FinalClose <= 0 || m_layer2FinalClose >= 20)
-                                {
-                                    Debug.Log("Error: Invalid final close layer!");
-                                    return;
-                                }
                                 if (!finalClosure(m_layer2FinalClose, bFullGrasping))
                                     Debug.Log("Final Closure failed!");
                                 else

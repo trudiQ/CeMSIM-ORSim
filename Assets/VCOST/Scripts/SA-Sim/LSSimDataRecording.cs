@@ -11,6 +11,7 @@ public class LSSimDataRecording : MonoBehaviour
     private globalOperators gOperators = null;
     public LinearStaplerTool lsManager;
 
+    private bool m_bDataSaved;
     private List<string[]> m_scoreData; // performance data
     private List<string[]> m_simData; // simulation data: state, action, metric related variables
     private List<string[]> m_toolMotionData; // motion data (position, orientation) of the tools: LS, forceps, scissors
@@ -36,6 +37,7 @@ public class LSSimDataRecording : MonoBehaviour
         gOperators = FindObjectOfType<globalOperators>();
 
         // intialize data files to be exported 
+        m_bDataSaved = false;
         m_scoreData = new List<string[]>();
         m_simData = new List<string[]>();
         m_toolMotionData = new List<string[]>();
@@ -163,19 +165,24 @@ public class LSSimDataRecording : MonoBehaviour
         // first row
         List<string> simDataCategories = new List<string>();
         simDataCategories.Add("Time");
-        simDataCategories.Add("Sim_State");
-        simDataCategories.Add("Which_Forceps");
+        simDataCategories.Add("CornerCut_left");
+        simDataCategories.Add("CornerCut_right");
+        simDataCategories.Add("LS_Insertion_left");
+        simDataCategories.Add("LS_Insertion_right");
+        simDataCategories.Add("LS_SA");
+        simDataCategories.Add("HoldOpening");
+        simDataCategories.Add("FinalClosure");
         simDataCategories.Add("Forceps_Action");
+        simDataCategories.Add("Forceps1_Action");
+        simDataCategories.Add("Forceps2_Action");
         simDataCategories.Add("Scissors_Action");
         simDataCategories.Add("LS_Action");
-        simDataCategories.Add("Corner_Cut");
         simDataCategories.Add("InsertDep_left");
         simDataCategories.Add("InsertDep_right");
         simDataCategories.Add("SA_ButtonValue");
         simDataCategories.Add("SA_LayerIdx");
         simDataCategories.Add("FC_LayerIdx");
         simDataCategories.Add("FC_GraspLen");
-        simDataCategories.Add("FC_ButtonValue");
         m_simData.Insert(0, simDataCategories.ToArray());
 
         // Data saving
@@ -203,20 +210,28 @@ public class LSSimDataRecording : MonoBehaviour
     public void RecordSimulationData()
     {
         currentFrameSimData.Clear();
-        //"Time"
-        //"Sim_State"
-        //"Which_Forceps"
-        //"Forceps_Action"
-        //"Scissors_Action"
-        //"LS_Action"
-        //"Corner_Cut"
-        //"InsertDep_left"
-        //"InsertDep_right"
-        //"SA_ButtonValue"
-        //"SA_LayerIdx"
-        //"FC_LayerIdx"
-        //"FC_GraspLen"
-        //"FC_ButtonValue"
+        currentFrameSimData.Add((Time.time - globalOperators.m_startTime).ToString("N3")); //"Time"
+        currentFrameSimData.Add(gOperators.m_LRCornerCutIdices[0].ToString()); //"CornerCut_left"
+        currentFrameSimData.Add(gOperators.m_LRCornerCutIdices[1].ToString());//"CornerCut_right"
+        currentFrameSimData.Add(globalOperators.m_bInsert[0].ToString()); //"LSInsertion_left"
+        currentFrameSimData.Add(globalOperators.m_bInsert[1].ToString()); //"LSInsertion_right"
+        currentFrameSimData.Add(gOperators.m_bSAStarted.ToString()); //"LS_SA"
+        currentFrameSimData.Add(gOperators.m_sphereIdx4EachOpening.ToString()); //"HoldOpening"
+        currentFrameSimData.Add(gOperators.m_bFinalClosureStarted.ToString()); //"FinalClosure"
+        currentFrameSimData.Add(gOperators.m_hapticSurgTools[gOperators.m_surgToolNames[0]].curAction.ToString()); //"Forceps_Action"
+        currentFrameSimData.Add(gOperators.m_hapticSurgTools[gOperators.m_surgToolNames[1]].curAction.ToString());//"Forceps1_Action"
+        currentFrameSimData.Add(gOperators.m_hapticSurgTools[gOperators.m_surgToolNames[2]].curAction.ToString());//"Forceps2_Action"
+        currentFrameSimData.Add(gOperators.m_hapticSurgTools[gOperators.m_surgToolNames[3]].curAction.ToString());//"Scissors_Action"
+        currentFrameSimData.Add(gOperators.m_LSStates.ToString()); //"LS_Action"
+        currentFrameSimData.Add(globalOperators.m_insertDepth[0].ToString("N3")); //"InsertDep_left"
+        currentFrameSimData.Add(globalOperators.m_insertDepth[1].ToString("N3"));//"InsertDep_right"
+        currentFrameSimData.Add(gOperators.m_LSButtonValue.ToString("N3"));//"SA_ButtonValue"
+        currentFrameSimData.Add(gOperators.m_layers2Split[1].ToString()); //"SA_LayerIdx"
+        currentFrameSimData.Add(gOperators.m_layer2FinalClose.ToString()); //"FC_LayerIdx"
+        currentFrameSimData.Add(gOperators.m_LSGraspLengthFinalClosure.ToString()); //"FC_GraspLen"
+
+        // Add data to data set
+        m_simData.Add(currentFrameSimData.ToArray());
     }
 
     /// <summary>
@@ -365,13 +380,16 @@ public class LSSimDataRecording : MonoBehaviour
         if (globalOperators.m_bSimStart && !globalOperators.m_bSimEnd)
         {
             RecordToolMotionData();
+            RecordSimulationData();
         }
 
         // Test data save
-        if (globalOperators.m_bSimEnd == true) //Input.GetKeyDown(KeyCode.Equals)
+        if (globalOperators.m_bSimEnd == true && m_bDataSaved == false) //Input.GetKeyDown(KeyCode.Equals)
         {
             saveScoreData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);
+            saveSimData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);
             SaveMotionData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);
+            m_bDataSaved = true;
         }
     }
 }

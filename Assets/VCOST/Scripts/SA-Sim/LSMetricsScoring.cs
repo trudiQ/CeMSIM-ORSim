@@ -52,7 +52,7 @@ public class LSMetricsScoring : MonoBehaviour
     public bool m_bLSOpenBeforeRemoving = false; // if LS opened before removing from colons
 
     /// Final-Closure
-    public bool m_FinalClosurePass = false;
+    public bool[] m_FinalClosurePass = { false, false }; // {"OpeningFullyGrasped", "MesenteryClear"}
     // metrics scores
     public bool m_FinalClosureTimeEvaluated = false;
     public float m_FinalClosureStartTime = 0.0f;
@@ -81,7 +81,9 @@ public class LSMetricsScoring : MonoBehaviour
     void Start()
     {
         // initialize metrics scores
-        m_FinalClosurePass = false;
+        m_FinalClosurePass = new bool[] { false, false};
+        m_cutZoneLayerIdx = 1;
+        m_mesenteryLayerIdx = 4;
         for (int i = 0; i < m_EnterotomyMetrics.Length; i++)
         {
             m_EnterotomyMetricsScores.Add(m_EnterotomyMetrics[i], 0.0f);
@@ -281,7 +283,7 @@ public class LSMetricsScoring : MonoBehaviour
             if (m_LSFullyGraspOpening)
             {
                 m_FinalClosureMetricsScores[m_FinalClosureMetrics[1]] = 5.0f;
-                m_FinalClosurePass = true;
+                m_FinalClosurePass[0] = true;
             }
             else
             {
@@ -325,7 +327,7 @@ public class LSMetricsScoring : MonoBehaviour
             if (m_MesenteryCleared == true)
             {
                 m_FinalClosureMetricsScores[m_FinalClosureMetrics[5]] = 5.0f;
-                m_FinalClosurePass = true;
+                m_FinalClosurePass[1] = true;
             }
             else
             {
@@ -353,7 +355,7 @@ public class LSMetricsScoring : MonoBehaviour
     public void evaluateLSCompletion()
     {
         // Pass?
-        m_bPass = m_FinalClosurePass;
+        m_bPass = (m_FinalClosurePass[0] && m_FinalClosurePass[1]);
 
         // total score
         m_totalScore = m_EnterotomyScore + m_LSInsertionScore + m_StapledAnastScore + m_FinalClosureScore;
