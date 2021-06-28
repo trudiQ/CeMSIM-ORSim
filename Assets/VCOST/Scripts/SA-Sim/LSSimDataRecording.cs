@@ -15,9 +15,12 @@ public class LSSimDataRecording : MonoBehaviour
     private List<string[]> m_scoreData; // performance data
     private List<string[]> m_simData; // simulation data: state, action, metric related variables
     private List<string[]> m_toolMotionData; // motion data (position, orientation) of the tools: LS, forceps, scissors
+    private List<string[]> m_SJM0Data; // sphereJoint Model 0, (position, orientation) for each sphere
+    private List<string[]> m_SJM1Data; // sphereJoint Model 1, (position, orientation) for each sphere
     private string m_scoreDataFolderPath;
     private string m_simDataFolderPath;
     private string m_toolMotionDataFolderPath;
+    private string m_SJMDataFolderPath;
 
     // Sim data
     public List<string> currentFrameSimData; // simulation data in current frame
@@ -27,6 +30,10 @@ public class LSSimDataRecording : MonoBehaviour
     public Transform scissors;
     public List<string> currentFrameToolMotionData; // Tool motion data in current frame;
     public static int currentPickedForceps; // -1 means no forceps is picked up, record omni raw data (actually this always record omni (the one controls forceps) data)
+
+    // SphereJointModel data
+    public List<string> currentFrameSJM0Data; // sphereJointModel0's pos/rot data for each sphere in current frame
+    public List<string> currentFrameSJM1Data; // sphereJointModel1's pos/rot data for each sphere in current frame
 
     public static string subjID;
     public static string trialID;
@@ -41,12 +48,16 @@ public class LSSimDataRecording : MonoBehaviour
         m_scoreData = new List<string[]>();
         m_simData = new List<string[]>();
         m_toolMotionData = new List<string[]>();
+        m_SJM0Data = new List<string[]>();
+        m_SJM1Data = new List<string[]>();
 
         // initialize file paths
         string rootPath = Application.dataPath + "/VCOST/";
         m_scoreDataFolderPath = rootPath + "Score_Data/";
         m_simDataFolderPath = rootPath + "Realtime_Data/" + "Sim_Data/";
         m_toolMotionDataFolderPath = rootPath + "Realtime_Data/" + "ToolMotion_Data/";
+        m_SJMDataFolderPath = rootPath + "Realtime_Data/" + "SphereJointModel_Data/";
+
     }
 
     /// <summary>
@@ -211,18 +222,18 @@ public class LSSimDataRecording : MonoBehaviour
     {
         currentFrameSimData.Clear();
         currentFrameSimData.Add((Time.time - globalOperators.m_startTime).ToString("N3")); //"Time"
-        currentFrameSimData.Add(gOperators.m_LRCornerCutIdices[0].ToString()); //"CornerCut_left"
-        currentFrameSimData.Add(gOperators.m_LRCornerCutIdices[1].ToString());//"CornerCut_right"
+        currentFrameSimData.Add(string.Join("/", gOperators.m_LRCornerCutIdices[0])); //"CornerCut_left"[2]
+        currentFrameSimData.Add(string.Join("/", gOperators.m_LRCornerCutIdices[1]));//"CornerCut_right"[2]
         currentFrameSimData.Add(globalOperators.m_bInsert[0].ToString()); //"LSInsertion_left"
         currentFrameSimData.Add(globalOperators.m_bInsert[1].ToString()); //"LSInsertion_right"
         currentFrameSimData.Add(gOperators.m_bSAStarted.ToString()); //"LS_SA"
-        currentFrameSimData.Add(gOperators.m_sphereIdx4EachOpening.ToString()); //"HoldOpening"
+        currentFrameSimData.Add(string.Join("/", gOperators.m_sphereIdx4EachOpening)); //"HoldOpening"[3]
         currentFrameSimData.Add(gOperators.m_bFinalClosureStarted.ToString()); //"FinalClosure"
         currentFrameSimData.Add(gOperators.m_hapticSurgTools[gOperators.m_surgToolNames[0]].curAction.ToString()); //"Forceps_Action"
         currentFrameSimData.Add(gOperators.m_hapticSurgTools[gOperators.m_surgToolNames[1]].curAction.ToString());//"Forceps1_Action"
         currentFrameSimData.Add(gOperators.m_hapticSurgTools[gOperators.m_surgToolNames[2]].curAction.ToString());//"Forceps2_Action"
         currentFrameSimData.Add(gOperators.m_hapticSurgTools[gOperators.m_surgToolNames[3]].curAction.ToString());//"Scissors_Action"
-        currentFrameSimData.Add(gOperators.m_LSStates.ToString()); //"LS_Action"
+        currentFrameSimData.Add(string.Join("/", gOperators.m_LSStates)); //"LS_Action"[6]
         currentFrameSimData.Add(globalOperators.m_insertDepth[0].ToString("N3")); //"InsertDep_left"
         currentFrameSimData.Add(globalOperators.m_insertDepth[1].ToString("N3"));//"InsertDep_right"
         currentFrameSimData.Add(gOperators.m_LSButtonValue.ToString("N3"));//"SA_ButtonValue"
@@ -365,6 +376,104 @@ public class LSSimDataRecording : MonoBehaviour
     }
 
     /// <summary>
+    /// Save real-time simulation data all at once when sim ends
+    /// </summary>
+    /// <param name="subjID"></param>
+    /// <param name="trialID"></param>
+    public void saveSJMData(string subjID, string trialID, int objIdx)
+    {
+        // first row
+        List<string> SJMDataCategories = new List<string>();
+        SJMDataCategories.Add("Time");
+        if (gOperators.m_sphereJointModels[objIdx])
+        {
+            int layerNum = gOperators.m_sphereJointModels[objIdx].m_numLayers;
+            int sphereNum = gOperators.m_sphereJointModels[objIdx].m_numSpheres;
+            for (int i = 0; i < layerNum; i++)
+            {
+                for (int j = 0; j < sphereNum; j++)
+                {
+                    SJMDataCategories.Add(gOperators.m_sphereJointModels[objIdx].m_sphereGameObjects[i, j].name);
+                }
+            }
+        }
+        if (objIdx == 0)
+            m_SJM0Data.Insert(0, SJMDataCategories.ToArray());
+        else
+            m_SJM1Data.Insert(0, SJMDataCategories.ToArray());
+
+        // Data saving
+        string[][] output;
+        if (objIdx == 0)
+            output = new string[m_SJM0Data.Count][];
+        else 
+            output = new string[m_SJM1Data.Count][];
+        for (int i = 0; i < output.Length; i++)
+        {
+            if (objIdx == 0)
+                output[i] = m_SJM0Data[i];
+            else
+                output[i] = m_SJM1Data[i];
+        }
+
+        int length = output.GetLength(0);
+        string delimiter = ",";
+        StringBuilder strBuilder = new StringBuilder();
+        for (int index = 0; index < length; index++)
+            strBuilder.AppendLine(string.Join(delimiter, output[index]));
+
+        string filePath = m_SJMDataFolderPath;
+        if (objIdx == 0)
+            filePath += "sjm0_Subj" + subjID.ToString() + "_Trial" + trialID.ToString() + ".csv";
+        else
+            filePath += "sjm1_Subj" + subjID.ToString() + "_Trial" + trialID.ToString() + ".csv";
+        StreamWriter outStream = System.IO.File.CreateText(filePath);
+        outStream.Close();
+        File.AppendAllText(filePath, strBuilder.ToString());
+    }
+
+    /// <summary>
+    /// Record real-time sphereJointModel's sphere pos/rot data for all the spheres
+    /// </summary>
+    public void RecordSphereJointModelData(int objIdx, ref List<string> currentFrameData)
+    {
+        currentFrameData.Clear();
+        float[] posRot = new float[7]; // pos[3] + rot[4]
+        if (gOperators.m_sphereJointModels[objIdx])
+        {
+            int layerNum = gOperators.m_sphereJointModels[objIdx].m_numLayers;
+            int sphereNum = gOperators.m_sphereJointModels[objIdx].m_numSpheres;
+            currentFrameData.Add((Time.time - globalOperators.m_startTime).ToString("N3")); // Time
+            int i, j, k;
+            for (i = 0; i < layerNum; i++)
+            {
+                for (j = 0; j < sphereNum; j++)
+                {
+                    posRot[0] = gOperators.m_sphereJointModels[objIdx].m_sphereGameObjects[i, j].transform.position.x;
+                    posRot[1] = gOperators.m_sphereJointModels[objIdx].m_sphereGameObjects[i, j].transform.position.y;
+                    posRot[2] = gOperators.m_sphereJointModels[objIdx].m_sphereGameObjects[i, j].transform.position.z;
+                    posRot[3] = gOperators.m_sphereJointModels[objIdx].m_sphereGameObjects[i, j].transform.rotation.x;
+                    posRot[4] = gOperators.m_sphereJointModels[objIdx].m_sphereGameObjects[i, j].transform.rotation.y;
+                    posRot[5] = gOperators.m_sphereJointModels[objIdx].m_sphereGameObjects[i, j].transform.rotation.z;
+                    posRot[6] = gOperators.m_sphereJointModels[objIdx].m_sphereGameObjects[i, j].transform.rotation.w;
+                    // round to 2 decimal places
+                    for (k = 0; k < posRot.Length; k++)
+                    {
+                        posRot[k] = (float)Math.Round(posRot[k] * 100f) / 100f;
+                    }
+                    // join all pos/rot together as one string
+                    currentFrameData.Add(string.Join("/", posRot));
+                }
+            }
+            // Add data to data set
+            if (objIdx == 0)
+                m_SJM0Data.Add(currentFrameData.ToArray());
+            else
+                m_SJM1Data.Add(currentFrameData.ToArray());
+        }
+    }
+
+    /// <summary>
     /// 
     /// </summary>
     /// <param name="tracked"></param>
@@ -381,6 +490,8 @@ public class LSSimDataRecording : MonoBehaviour
         {
             RecordToolMotionData();
             RecordSimulationData();
+            //RecordSphereJointModelData(0, ref currentFrameSJM0Data);
+            //RecordSphereJointModelData(1, ref currentFrameSJM1Data);
         }
 
         // Test data save
@@ -389,6 +500,8 @@ public class LSSimDataRecording : MonoBehaviour
             saveScoreData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);
             saveSimData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);
             SaveMotionData(LSSimDataRecording.subjID, LSSimDataRecording.trialID);
+            //saveSJMData(LSSimDataRecording.subjID, LSSimDataRecording.trialID, 0);
+            //saveSJMData(LSSimDataRecording.subjID, LSSimDataRecording.trialID, 1);
             m_bDataSaved = true;
         }
     }
