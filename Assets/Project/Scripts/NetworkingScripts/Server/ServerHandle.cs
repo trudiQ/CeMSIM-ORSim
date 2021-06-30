@@ -216,11 +216,14 @@ namespace CEMSIM
                     Debug.Log(string.Format("Ownership of item {0} is given to player {1}.",_item_id.ToString(),_newOwner));
                 }
                 //If this item is currenly owned by other clients
+                // Update 06/30/2021 - We allow items to be passed from one person to anther
+                /*
                 if (currentOwner !=0 && currentOwner != _fromClient){
                     //Makes no change in ownership and reply with denial
                     ServerSend.OwnershipDenial(_fromClient, _item_id);
                     Debug.Log("Ownership denied.");
                 }
+                //*/
             }
 
 

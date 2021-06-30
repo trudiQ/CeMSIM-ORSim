@@ -20,11 +20,7 @@ namespace CEMSIM{
 	    // Update is called once per frame
 	    void FixedUpdate()
 	    {
-
-
 	    	SendOwnedItemStatus();
-
-
 	    }
 
 
@@ -53,7 +49,7 @@ namespace CEMSIM{
 	    	int owner = 0;
 			for (int i = 0; i < itemList.Count; i++)
 			{ 
-				Debug.Log(i);
+				//Debug.Log(i);
 				itemList[i] = Instantiate(itemList[i], new Vector3(0,0,0), Quaternion.identity);
 				itemList[i].transform.parent = transform;
 				GameObject item = itemList[i];
@@ -77,7 +73,7 @@ namespace CEMSIM{
 	    		//Send position to Server via UDP
 	    		ClientSend.SendItemPosition(item);
 	    		//Get Item Controller
-	    		ItemController itemCon = item.GetComponent<ItemController>();
+	    		//ItemController itemCon = item.GetComponent<ItemController>();
 	    		//Debug.Log("Sending item status:");
 	    		//Debug.Log(itemCon.ToString());
 	    		
