@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using CEMSIM.Network;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ namespace CEMSIM
             public int id;
             public string username;
             public Roles role;
+            public bool isClientSide;
+            public bool isVR;
 
             [Header("Required")]
             public GameObject body;
@@ -24,8 +27,55 @@ namespace CEMSIM
         	}
 
         	void FixedUpdate(){
-
+                if(isClientSide && id == ClientInstance.instance.myId)
+                {
+                    if (isVR)
+                    {
+                        ClientSend.PlayerVRMovement();
+                    }
+                    else
+                    {
+                        // Desktop user
+                        SendInputToServer();
+                    }
+                }
+                else
+                {
+                    // Server user
+                }
         	}
+
+
+            #region Desktop User Keyboard Inputs Collection
+            /// <summary>
+            /// Collect user's input control onto the player, and send the input to the server
+            /// </summary>
+            private void SendInputToServer()
+            {
+                bool[] _inputs = new bool[]
+                {
+                    Input.GetKey(KeyCode.W),
+                    Input.GetKey(KeyCode.S),
+                    Input.GetKey(KeyCode.A),
+                    Input.GetKey(KeyCode.D),
+                    Input.GetKey(KeyCode.Space), // for jump
+                };
+
+                ClientSend.PlayerDesktopMovement(_inputs);
+            }
+            #endregion
+
+            #region Set rig mode attributes
+            public void InitializePlayerManager(int _id, string _username, Roles _role, bool _isClientSide, bool _isVR)
+            {
+                id = _id;
+                username = _username;
+                role = _role;
+                isClientSide = _isClientSide;
+                isVR = _isVR;
+
+                SetDisplayName(_username);
+            }
 
             public void SetDisplayName(string _name)
             {
@@ -74,8 +124,9 @@ namespace CEMSIM
                 }
 
             }
+            #endregion
         }
 
-        
+
     }
 }

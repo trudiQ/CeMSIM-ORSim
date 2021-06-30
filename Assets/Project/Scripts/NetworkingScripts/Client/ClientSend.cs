@@ -112,7 +112,8 @@ namespace CEMSIM
                 if (GameManager.players.ContainsKey(ClientInstance.instance.myId))
                 {
                     // get the avatar position
-                    Transform _avatar = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera;
+                    //Transform _avatar = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera;
+                    Transform _avatar = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().body.transform;
 
                     // get the position of both VR controllers
                     Transform _lefthand = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().leftHandController.transform;

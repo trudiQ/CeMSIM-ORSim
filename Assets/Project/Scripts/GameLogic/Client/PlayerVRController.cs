@@ -14,7 +14,7 @@ namespace CEMSIM
 
             private void FixedUpdate()
             {
-                ClientSend.PlayerVRMovement();
+                //ClientSend.PlayerVRMovement();
             }
         }
     }

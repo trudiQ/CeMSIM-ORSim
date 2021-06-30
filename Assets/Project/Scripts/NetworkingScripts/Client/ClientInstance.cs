@@ -88,10 +88,20 @@ namespace CEMSIM
                 //string _username = "Player" + ClientInstance.instance.myId.ToString();
                 string _username = ClientInstance.instance.myUsername;
 
+                // configure the local player
+                GameManager.instance.localPlayerVR.GetComponent<PlayerManager>().InitializePlayerManager(
+                    ClientInstance.instance.myId,
+                    _username,
+                    ClientInstance.instance.role,
+                    true,   // at the client side?
+                    true    // VR player?
+                    );
+
+
                 //TO DO: ConnectOnStart is used for VR mode at the moment. 
                 //Add feature for entering in VR or desktop mode
                 ClientSend.SendSpawnRequest(_username, true, role);
-                GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
+                //GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
             }
 
             private void OnApplicationQuit()

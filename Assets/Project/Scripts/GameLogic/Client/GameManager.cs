@@ -57,6 +57,7 @@ namespace CEMSIM
             public void SpawnPlayer(int _id, string _username, int _role_i, Vector3 _position, Quaternion _rotation)
             {
                 GameObject _player;
+                bool _isVR = true;
 
                 // TODO: Currently, no difference when the client knows the role of any other client.
                 Roles _role = Roles.surgeon;
@@ -71,23 +72,24 @@ namespace CEMSIM
                 {
                     if (localPlayerVR.activeInHierarchy)
                     {
+                        _isVR = true;
                         _player = localPlayerVR;
-                        _player.GetComponent<PlayerVRController>().enabled = true;
+                        //_player.GetComponent<PlayerVRController>().enabled = true;
                     }
                     else
                     {
                         // create player for client
+                        _isVR = false;
                         _player = Instantiate(localPlayerPrefab, _position, _rotation);
                     }
                 }
                 else
                 {
                     // create player for another client
-                    _player = Instantiate(playerPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity);
-                    // Child 1 is the username gameobject
-                    // P.S. Only the prefab of other players has "username"
+                    _player = Instantiate(playerPrefab, new Vector3(_position.x, 0f, _position.z), Quaternion.identity);
+                    // Since the new rig model treats the initial y-axis as the floor, we should first spawn it to a coordinate with 0 as y-axis
+                    // then pull it to the correct position.
                     _player.GetComponent<PlayerManager>().enabled = true;
-                    _player.GetComponent<PlayerManager>().SetDisplayName(_username + '-' + _role);
                     _player.GetComponent<PlayerManager>().SetPosition(_position, _rotation);
 
                     ServerPlayer serverPlayer = _player.GetComponent<ServerPlayerVR>();
@@ -95,10 +97,7 @@ namespace CEMSIM
                         serverPlayer.enabled = false;
 
                 }
-
-                _player.GetComponent<PlayerManager>().id = _id;
-                _player.GetComponent<PlayerManager>().username = _username;
-
+                _player.GetComponent<PlayerManager>().InitializePlayerManager(_id, _username, _role, true, _isVR);
 
                 // record the player instance in the players dictionary
                 players.Add(_id, _player.GetComponent<PlayerManager>());
