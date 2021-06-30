@@ -14,6 +14,9 @@ public class AvatarComponents : MonoBehaviour
     public Transform rightControllerPosition;
     public Transform hmdPosition;
 
+    [Tooltip("Reference to the calibration script that sends the scale change event.")]
+    public AvatarHeightCalibration calibration;
+
     public void SetManagerComponents(HVRManager manager)
     {
         manager.PlayerController = playerController;
