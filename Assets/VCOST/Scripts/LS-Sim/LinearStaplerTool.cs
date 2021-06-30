@@ -50,13 +50,16 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public List<Transform> joinedColonForthLayerLowerSpheres;
     public List<Transform> joinedColonFifthLayerLowerSpheres;
     public List<Transform> joinedColonSixthLayerLowerSpheres;
-    //public float lastPhaseToolTopMovingAxisDifference;
     public float lastPhaseToolBottomMovingAxisDifference; // During the last phase, how much the bottom tool should move down
     public float lastPhaseTipHorizontalProximityCondition; // How close the tip has to be to the joined colon center on the x axis to enter last phase moving plane
     public float lastPhaseBottomFurthestDistance; // How far end the movement plane far end can be from the colon opening
     public float lsToolInsertDepthRecordTime; // How far back in time do we keep record the LS tool depth during insertion phase
     public float lsToolMovingStateThreshold; // How much the tool depth has to move in the given time for it to be considered being inserting/removing
     public float lsToolMovingStateThresholdTime; // The given time
+    // For simulate colon friction when inserting LS
+    public List<Rigidbody> colonAfrictionSpheres; // Spheres to add force while LS is moving inside to simulate friction
+    public List<Rigidbody> colonBfrictionSpheres;
+    public float frictionForceStrength;
 
     public Transform currentCalibratingHalf; // Which half of the tool is being calibrated;
     public Vector3 currentCalibratingDirection; // Which direction (local position or local eulerangles) is being calibrated
@@ -980,18 +983,22 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         if (globalOperators.m_insertDepth[0] - colonAInsertDepthRecord[toCompare] > lsToolMovingStateThreshold)
         {
             isColonAInserting = true;
+            colonAfrictionSpheres.ForEach(r => r.AddForce(Vector3.forward * frictionForceStrength, ForceMode.VelocityChange));
         }
         if (globalOperators.m_insertDepth[0] - colonAInsertDepthRecord[toCompare] < -lsToolMovingStateThreshold)
         {
             isColonARemoving = true;
+            colonAfrictionSpheres.ForEach(r => r.AddForce(Vector3.back * frictionForceStrength, ForceMode.VelocityChange));
         }
         if (globalOperators.m_insertDepth[1] - colonBInsertDepthRecord[toCompare] > lsToolMovingStateThreshold)
         {
             isColonBInserting = true;
+            colonBfrictionSpheres.ForEach(r => r.AddForce(Vector3.forward * frictionForceStrength, ForceMode.VelocityChange));
         }
         if (globalOperators.m_insertDepth[1] - colonBInsertDepthRecord[toCompare] < -lsToolMovingStateThreshold)
         {
             isColonBRemoving = true;
+            colonBfrictionSpheres.ForEach(r => r.AddForce(Vector3.back * frictionForceStrength, ForceMode.VelocityChange));
         }
         if (globalOperators.m_bInsert[0] == 1)
         {
