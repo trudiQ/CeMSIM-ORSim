@@ -116,7 +116,7 @@ namespace CEMSIM
                 Quaternion _rotation = _packet.ReadQuaternion();
 
                 //Debug.Log($"client{_fromClient}: move packet received.");
-                ServerPlayerDesktop fromPlayer = (ServerPlayerDesktop)ServerInstance.clients[_fromClient].player;
+                PlayerManager fromPlayer = (PlayerManager)ServerInstance.clients[_fromClient].player;
                 fromPlayer.SetInput(_inputs, _rotation);
             }
 
@@ -138,7 +138,7 @@ namespace CEMSIM
                 Quaternion _rightRotation = _packet.ReadQuaternion();
 
                 //Debug.Log($"client{_fromClient}: move packet received.");
-                ServerPlayerVR fromPlayer = (ServerPlayerVR)ServerInstance.clients[_fromClient].player;
+                PlayerManager fromPlayer = (PlayerManager)ServerInstance.clients[_fromClient].player;
                 fromPlayer.SetPosition(_position, _rotation);
                 fromPlayer.SetControllerPositions(_leftPosition, _leftRotation, _rightPosition, _rightRotation);
             }

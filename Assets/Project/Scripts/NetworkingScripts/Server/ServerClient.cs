@@ -19,7 +19,7 @@ namespace CEMSIM
             public int id;
             public TCP tcp;
             public UDP udp;
-            public ServerPlayer player;  // the player corresponding to the client machine
+            public PlayerManager player;  // the player corresponding to the client machine
 
             public ServerClient(int _id)
             {
@@ -288,7 +288,7 @@ namespace CEMSIM
             }
 
             // Spawn the player 
-            public void SendIntoGame(string _playerName, bool _vr, int _role_i)
+            public void SendIntoGame(string _username, bool _vr, int _role_i)
             {
                 
                 Roles _role = Roles.surgeon;
@@ -296,26 +296,12 @@ namespace CEMSIM
                 if (Enum.IsDefined(typeof(Roles), _role_i))
                     _role = (Roles)_role_i;
 
-                Debug.Log($"Send player {id}: {_playerName} - {_role} into game");
-                NetworkOverlayMenu.Instance.Log($"Send player {id}: {_playerName} - {_role} into game");
+                Debug.Log($"Send player {id}: {_username} - {_role} into game");
+                NetworkOverlayMenu.Instance.Log($"Send player {id}: {_username} - {_role} into game");
 
-                if (_vr)
-                {
-                    player = ServerNetworkManager.instance.InstantiatePlayerVR();
-                    player.GetComponent<ServerPlayerVR>().enabled = true;
-                }
-                else
-                {
-                    player = ServerNetworkManager.instance.InstantiatePlayerDesktop();
-                }
+                player = ServerNetworkManager.instance.InstantiatePlayer(_role);
 
-                PlayerManager playerManager = player.GetComponent<PlayerManager>();
-                if (playerManager != null)
-                    playerManager.enabled = false;
-
-                player.Initialize(id, _playerName, _role);
-                player.GetComponent<ServerPlayer>().SetDisplayName(_role + '-' + _playerName);
-                //player.GetComponent<TextMesh>().text = _playerName;
+                player.InitializePlayerManager(id, _username, _role, false, _vr);
 
 
                 // 1. inform all other players the creation of current player

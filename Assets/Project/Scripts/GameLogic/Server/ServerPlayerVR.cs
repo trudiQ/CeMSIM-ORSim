@@ -11,7 +11,7 @@ namespace CEMSIM
 
             public void FixedUpdate()
             {
-                SendToServer();
+                SendToClients();
             }
 
             public void SetPosition(Vector3 _position, Quaternion _rotation)

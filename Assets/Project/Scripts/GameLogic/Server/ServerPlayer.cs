@@ -30,10 +30,10 @@ namespace CEMSIM
                 role = (Roles)_role;
             }
 
-            public void SendToServer()
+            public void SendToClients()
             {
                 // public the position to every client, but public the facing direction to all but the player
-                ServerSend.PlayerPosition(this);
+                //ServerSend.PlayerPosition(this);
             }
 
             public void SetDisplayName(string _name)

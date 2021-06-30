@@ -19,7 +19,8 @@ namespace CEMSIM
             [Header("Player Prefabs")]
             public GameObject localPlayerVR;
             public GameObject localPlayerPrefab;
-            public GameObject playerPrefab;
+            //public GameObject playerPrefab;
+            public List<GameObject> playerPrefabs = new List<GameObject>();
 
             [Header("Events")]
             public GameObject roomLightButton;
@@ -86,15 +87,13 @@ namespace CEMSIM
                 else
                 {
                     // create player for another client
-                    _player = Instantiate(playerPrefab, new Vector3(_position.x, 0f, _position.z), Quaternion.identity);
+                    int _role_id = (int)_role - 1;
+                    _player = Instantiate(playerPrefabs[_role_id], new Vector3(_position.x, 0f, _position.z), _rotation);
                     // Since the new rig model treats the initial y-axis as the floor, we should first spawn it to a coordinate with 0 as y-axis
                     // then pull it to the correct position.
                     _player.GetComponent<PlayerManager>().enabled = true;
                     _player.GetComponent<PlayerManager>().SetPosition(_position, _rotation);
 
-                    ServerPlayer serverPlayer = _player.GetComponent<ServerPlayerVR>();
-                    if (serverPlayer != null)
-                        serverPlayer.enabled = false;
 
                 }
                 _player.GetComponent<PlayerManager>().InitializePlayerManager(_id, _username, _role, true, _isVR);

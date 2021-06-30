@@ -14,12 +14,12 @@ namespace CEMSIM
             public static ServerNetworkManager instance;
 
             [Header("Player Prefabs")]
-            public GameObject playerDesktopPrefab;  // associate to a player
-            public GameObject playerVRPrefab;       // associate to a player'
+            [Tooltip("The order of the prefabs should match the enumation order of Roles in GameConstants.cs")]
+            public List<GameObject> playerPrefabs = new List<GameObject>();
 
-            [Header("Player Spawning")]
-            public Vector3 spawnLocation;
-            public Vector3 spawnRotation;
+            //[Header("Player Spawning")]
+            //public Vector3 spawnLocation;
+            //public Vector3 spawnRotation;
 
             [Header("References")]
             public GameObject playersContainer;
@@ -81,20 +81,11 @@ namespace CEMSIM
             /// Call the instantiate function to create a player gameObject and return the reference.
             /// </summary>
             /// <returns></returns>
-            public ServerPlayer InstantiatePlayerDesktop()
+            public PlayerManager InstantiatePlayer(Roles role)
             {
                 // initialize a player at the initial location and return the reference
-                return Instantiate(playerDesktopPrefab, spawnLocation, Quaternion.Euler(spawnRotation), playersContainer.transform).GetComponent<ServerPlayer>();
-            }
-
-            /// <summary>
-            /// Call the instantiate function to create a player gameObject and return the reference.
-            /// </summary>
-            /// <returns></returns>
-            public ServerPlayer InstantiatePlayerVR()
-            {
-                // initialize a player at the initial location and return the reference
-                return Instantiate(playerVRPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity, playersContainer.transform).GetComponent<ServerPlayer>();
+                int role_idx = (int)role - 1;
+                return Instantiate(playerPrefabs[role_idx], ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, playersContainer.transform).GetComponent<PlayerManager>();
             }
 
 

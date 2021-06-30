@@ -105,7 +105,7 @@ namespace CEMSIM
             #endregion
 
 
-
+            #region Generate Server->Client Packets
             /// <summary>
             /// Send a welcome packet to a particular client
             /// </summary>
@@ -163,21 +163,23 @@ namespace CEMSIM
             /// </summary>
             /// <param name="_toClient"></param>
             /// <param name="_player"></param>
-            public static void SpawnPlayer(int _toClient, ServerPlayer _player)
+            public static void SpawnPlayer(int _toClient, PlayerManager _player)
             {
+                Transform _avatar = _player.body.transform;
+
                 using (Packet _packet = new Packet((int)ServerPackets.spawnPlayer))
                 {
                     _packet.Write(_player.id);
                     _packet.Write(_player.username);
                     _packet.Write((int)_player.role);
-                    _packet.Write(_player.transform.position);
-                    _packet.Write(_player.transform.rotation);
+                    _packet.Write(_avatar.position);
+                    _packet.Write(_avatar.rotation);
 
                     SendTCPData(_toClient, _packet, true);
                 }
             }
 
-            public static void PlayerPosition(ServerPlayer _player)
+            public static void PlayerPosition(PlayerManager _player)
             {
                 //TODO: Get rid of function GetChild
                 // get the position of both VR controllers
@@ -197,7 +199,7 @@ namespace CEMSIM
                     _packet.Write(_righthand.rotation);
 
                     //Do not update VR player position based on server
-                    if (_player is ServerPlayerVR)
+                    if (_player.isVR)
                         MulticastExceptOneUDPData(_player.id, _packet, true);
                     else
                         MulticastUDPData(_packet, true);
@@ -272,6 +274,7 @@ namespace CEMSIM
                 }
 
             }
+            #endregion
 
         }
     }

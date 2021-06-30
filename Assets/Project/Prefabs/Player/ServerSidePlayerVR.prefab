@@ -104,8 +104,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 96149062016454099}
-  - component: {fileID: 6223710378878656815}
   - component: {fileID: 3533384980780225323}
+  - component: {fileID: 1552058717063838082}
   m_Layer: 0
   m_Name: ServerSidePlayerVR
   m_TagString: Untagged
@@ -131,25 +131,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6223710378878656815
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2249737588974154139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17fefede29eb02f498045f265b178347, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 0
-  username: 
-  role: 0
-  controller: {fileID: 0}
-  body: {fileID: 2249737588974154139}
-  leftHandController: {fileID: 2758004835664741168}
-  rightHandController: {fileID: 7653967013784241883}
 --- !u!143 &3533384980780225323
 CharacterController:
   m_ObjectHideFlags: 0
@@ -168,6 +149,28 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1552058717063838082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2249737588974154139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aa03685e300d44259ed4f21a0122450, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0
+  username: 
+  role: 0
+  isClientSide: 0
+  isVR: 0
+  body: {fileID: 2249737588974154139}
+  leftHandController: {fileID: 2758004835664741168}
+  rightHandController: {fileID: 7653967013784241883}
+  displayName: {fileID: 2206288719371643863}
+  controller: {fileID: 3533384980780225323}
 --- !u!1 &5475423100755818000
 GameObject:
   m_ObjectHideFlags: 0

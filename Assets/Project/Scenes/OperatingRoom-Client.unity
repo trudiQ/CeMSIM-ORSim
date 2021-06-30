@@ -1833,6 +1833,7 @@ MonoBehaviour:
   leftHandController: {fileID: 320317819}
   rightHandController: {fileID: 1619101152}
   displayName: {fileID: 0}
+  controller: {fileID: 0}
 --- !u!1001 &630342978
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6092,48 +6093,6 @@ Transform:
   m_Father: {fileID: 505617245}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1574472394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1001 &1578539649
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8344,6 +8303,48 @@ MonoBehaviour:
   m_ObsoleteOverrideFieldOfView: 0
   m_ObsoleteFieldOfViewOverride: 90
   m_LocalReferencePosition: {x: 0, y: 0.99999994, z: 0.000000059604645}
+--- !u!114 &1904017046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &1935583956
 GameObject:
   m_ObjectHideFlags: 0
@@ -9246,14 +9247,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 0}
-      propertyPath: VRCamera
-      value: 
-      objectReference: {fileID: 1979537939}
-    - target: {fileID: 0}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4266605716345334145, guid: 19adec5798a7d264cacfa61e3a935658,
         type: 3}
       propertyPath: m_Name
@@ -9262,7 +9255,7 @@ PrefabInstance:
     - target: {fileID: 4266605716345334145, guid: 19adec5798a7d264cacfa61e3a935658,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4266605716345334165, guid: 19adec5798a7d264cacfa61e3a935658,
         type: 3}
@@ -9342,12 +9335,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1979537937}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1979537939 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4266605717578589185, guid: 19adec5798a7d264cacfa61e3a935658,
-    type: 3}
-  m_PrefabInstance: {fileID: 1979537937}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1991998765 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4266605716355362529, guid: 19adec5798a7d264cacfa61e3a935658,
@@ -9382,6 +9369,35 @@ PrefabInstance:
       propertyPath: roomLightButton
       value: 
       objectReference: {fileID: 756230763}
+    - target: {fileID: 656635448244917093, guid: 734354f356daf14488533d9cc91de39f,
+        type: 3}
+      propertyPath: playerPrefabs.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 656635448244917093, guid: 734354f356daf14488533d9cc91de39f,
+        type: 3}
+      propertyPath: playerPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 7382374205065532202, guid: f0fab8e983289dd409ce6d2e259f574b,
+        type: 3}
+    - target: {fileID: 656635448244917093, guid: 734354f356daf14488533d9cc91de39f,
+        type: 3}
+      propertyPath: playerPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 7382374205065532202, guid: f0fab8e983289dd409ce6d2e259f574b,
+        type: 3}
+    - target: {fileID: 656635448244917093, guid: 734354f356daf14488533d9cc91de39f,
+        type: 3}
+      propertyPath: playerPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 7382374205065532202, guid: f0fab8e983289dd409ce6d2e259f574b,
+        type: 3}
+    - target: {fileID: 656635448244917093, guid: 734354f356daf14488533d9cc91de39f,
+        type: 3}
+      propertyPath: playerPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 7382374205065532202, guid: f0fab8e983289dd409ce6d2e259f574b,
+        type: 3}
     - target: {fileID: 656635448244917094, guid: 734354f356daf14488533d9cc91de39f,
         type: 3}
       propertyPath: m_RootOrder
