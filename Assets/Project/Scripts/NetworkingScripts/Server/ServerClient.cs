@@ -83,7 +83,7 @@ namespace CEMSIM
                         {
                             if (ServerNetworkManager.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Send] TCP to {id} {PacketId.ServerPacketsInfo[_packet.GetPacketId()]}");
+                                Debug.Log($"[Send] TCP to {id} {(ServerPackets)_packet.GetPacketId()}");
                             }
                             
                             stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
@@ -166,7 +166,7 @@ namespace CEMSIM
 
                                 if (ServerNetworkManager.instance.printNetworkTraffic)
                                 {
-                                    Debug.Log($"[Recv] TCP {PacketId.ClientPacketsInfo[_packetId]} from {id}");
+                                    Debug.Log($"[Recv] TCP {(ClientPackets)_packetId} from {id}");
                                 }
                                 //NetworkOverlayMenu.Instance.Log($"Receive a packet with id {_packetId} from client {id}");
                                 // call proper handling function based on packet id
@@ -240,7 +240,7 @@ namespace CEMSIM
                         {
                             if (ServerNetworkManager.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Send] UDP to {id} {PacketId.ServerPacketsInfo[_packet.GetPacketId()]}");
+                                Debug.Log($"[Send] UDP to {id} {(ServerPackets)_packet.GetPacketId()}");
                             }
                             ServerInstance.SendUDPData(endPoint, _packet);
                         }
@@ -270,7 +270,7 @@ namespace CEMSIM
                             int _packetId = _packet.DigestClientHeader();
                             if (ServerNetworkManager.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Recv] UDP {PacketId.ClientPacketsInfo[_packetId]} from {id}");
+                                Debug.Log($"[Recv] UDP {(ClientPackets)_packetId} from {id}");
                             }
                             ServerInstance.packetHandlers[_packetId](id, _packet);
                         }

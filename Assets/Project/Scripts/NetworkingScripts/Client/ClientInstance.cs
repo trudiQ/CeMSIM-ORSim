@@ -64,9 +64,6 @@ namespace CEMSIM
             {
                 //ip = defaultIP;
 
-                // initialize the dictionary that maps packet id to packet description
-                PacketId.InitPacketIdDictionary();
-
                 //initialize TCP and UDP connections
                 Debug.Log($"Current server IP is {ip}");
                 tcp = new TCP();
@@ -190,7 +187,7 @@ namespace CEMSIM
                         {
                             if (ClientInstance.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Send] UDP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                                Debug.Log($"[Send] UDP {(ClientPackets)_packet.GetPacketId()}");
                             }
                             socket.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
                         }
@@ -262,7 +259,7 @@ namespace CEMSIM
                             int _packetId = _packet.DigestServerHeader();
                             if (ClientInstance.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Recv] UDP {PacketId.ServerPacketsInfo[_packetId]}");
+                                Debug.Log($"[Recv] UDP {(ServerPackets)_packetId}");
                             }
                             packetHandlers[_packetId](_packet);
                         }
@@ -369,7 +366,7 @@ namespace CEMSIM
                         {
                             if (ClientInstance.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Send] TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                                Debug.Log($"[Send] TCP {(ClientPackets)_packet.GetPacketId()}");
                             }
                             stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
                         }
@@ -425,7 +422,7 @@ namespace CEMSIM
 
                                 if (ClientInstance.instance.printNetworkTraffic)
                                 {
-                                    Debug.Log($"[Recv] TCP {PacketId.ServerPacketsInfo[_packetId]}");
+                                    Debug.Log($"[Recv] TCP {(ServerPackets)_packetId}");
                                 }
                                 // call proper handling function based on packet id
                                 packetHandlers[_packetId](_packet);
