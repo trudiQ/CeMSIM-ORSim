@@ -75,6 +75,9 @@ public class globalOperators : MonoBehaviour
     public static bool m_bSimStart = false; // Start when the user clicks "Start"
     public static bool m_bSimEnd = false; // manual end by the user by pressing space
 
+    // UI control
+    public LS_UIcontroller uiController;
+
     /// <summary>
     /// Start simulation logic
     /// </summary>

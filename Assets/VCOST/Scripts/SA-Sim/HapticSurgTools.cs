@@ -71,6 +71,10 @@ public class HapticSurgTools : MonoBehaviour
     //! Automatically called for initialization
     void Start()
     {
+        GameObject gOperatorsGO = GameObject.Find("globalOperators");
+        if (gOperatorsGO)
+            gOperators = gOperatorsGO.GetComponent<globalOperators>();
+
         // Initialize the haptic device
         HapticPlugin[] hapticDevices = (HapticPlugin[])FindObjectsOfType(typeof(HapticPlugin));
 
@@ -105,9 +109,6 @@ public class HapticSurgTools : MonoBehaviour
                                         this.gameObject.transform.rotation.z,
                                         this.gameObject.transform.rotation.w);
 
-            GameObject gOperatorsGO = GameObject.Find("globalOperators");
-            if (gOperatorsGO)
-                gOperators = gOperatorsGO.GetComponent<globalOperators>();
             if (this.gameObject.name == "Forceps" || this.gameObject.name == "Forceps1" || this.gameObject.name == "Forceps2")
             {
                 GameObject forcepswithhaptic = null;
@@ -478,6 +479,8 @@ public class HapticSurgTools : MonoBehaviour
                             seleHapticGO.SetActive(false);
                             bActive = false;
                             tool4Select[i].bActive = true;
+                            // Update tool status UI for forceps picked up
+                            gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(i), "Held by Omni");
                             tool4Select[i].bJustSwitch2Tool = true;
                             break;
                         }
@@ -588,12 +591,16 @@ public class HapticSurgTools : MonoBehaviour
                                 Debug.Log("Holding sphere: " + sphereIDs[0].ToString() + "," + sphereIDs[1].ToString() + "," + sphereIDs[2].ToString());
                                 if (tAnimations)
                                     tAnimations.CloseForceps(this.gameObject.name);
+                                // Update UI
+                                gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Grasping colon");
                             }
                             else
                             {
                                 holdSphereIDs = new int[] { -1, -1, -1 };
                                 bHolding = false;
                                 Debug.Log("Attemp holding sphere out of range; move forceps to colon edge");
+                                // Update UI
+                                gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Idle");
                             }
                         }
                         else
@@ -601,6 +608,8 @@ public class HapticSurgTools : MonoBehaviour
                             holdSphereIDs = new int[] { -1, -1, -1 };
                             bHolding = false;
                             Debug.Log("Attemp holding a non-sphere obj");
+                            // Update UI
+                            gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Idle");
                         }
 
                         // release the touching obj when holding
@@ -618,6 +627,8 @@ public class HapticSurgTools : MonoBehaviour
                         // disable forceps's haptics
                         toolHapticGO[0].SetActive(false);
                         bActive = false;
+                        // Update UI
+                        gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Idle");
                         seleSurgTool.bActive = true;
 
                         // Switch motion recording object back to omni
@@ -666,6 +677,23 @@ public class HapticSurgTools : MonoBehaviour
                         HapticPlugin.effects_startEffect(hapticDevice.configName, FXID);
                         bEffectStopped = false;
                     }
+
+                    // Update Tool UI
+                    switch (this.gameObject.name)
+                    {
+                        case "Forceps":
+                            gOperators.uiController.UpdateToolStatusText("forceps1", "Touching colon");
+                            break;
+                        case "Forceps1":
+                            gOperators.uiController.UpdateToolStatusText("forceps2", "Touching colon");
+                            break;
+                        case "Forceps2":
+                            gOperators.uiController.UpdateToolStatusText("forceps3", "Touching colon");
+                            break;
+                        case "Scissors":
+                            gOperators.uiController.UpdateToolStatusText("scissors", "Touching colon");
+                            break;
+                    }
                 }
                 else // bTouching == false
                 {
@@ -679,6 +707,23 @@ public class HapticSurgTools : MonoBehaviour
                     {
                         HapticPlugin.effects_stopEffect(hapticDevice.configName, FXID);
                         Debug.Log("effects_stopEffect: " + hapticDevice.configName + ", " + this.gameObject.name);
+                    }
+
+                    // Update Tool UI
+                    switch (this.gameObject.name)
+                    {
+                        case "Forceps":
+                            gOperators.uiController.UpdateToolStatusText("forceps1", "Held by Omni");
+                            break;
+                        case "Forceps1":
+                            gOperators.uiController.UpdateToolStatusText("forceps2", "Held by Omni");
+                            break;
+                        case "Forceps2":
+                            gOperators.uiController.UpdateToolStatusText("forceps3", "Held by Omni");
+                            break;
+                        case "Scissors":
+                            gOperators.uiController.UpdateToolStatusText("scissors", "Held by Omni");
+                            break;
                     }
                 }
             }
@@ -711,6 +756,9 @@ public class HapticSurgTools : MonoBehaviour
                     {
                         toolHapticGO[0].GetComponent<HapticPlugin>().hapticManipulator = this.gameObject;
                     }
+
+                    // Update Tool UI
+                    gOperators.uiController.UpdateToolStatusText("scissors", "Held by Omni");
                 }
             }
             else // bActivate == true: scissors are activated
@@ -784,6 +832,9 @@ public class HapticSurgTools : MonoBehaviour
                     {
                         toolHapticGO[0].GetComponent<HapticPlugin>().hapticManipulator = null;
                     }
+
+                    // Update Tool UI
+                    gOperators.uiController.UpdateToolStatusText("scissors", "Idle");
                 }
             }
         }
@@ -946,6 +997,9 @@ public class HapticSurgTools : MonoBehaviour
 
         joint = (FixedJoint)gameObject.AddComponent(typeof(FixedJoint));
         joint.connectedBody = body;
+
+        // Update UI
+        gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Grasping colon");
     }
     //! changes the layer of an object, and every child of that object.
     static void SetLayerRecursively(GameObject go, int layerNumber)
@@ -958,6 +1012,9 @@ public class HapticSurgTools : MonoBehaviour
     //! Stop grabbing an obhject. (Like opening a claw.) Normally called when the button is released. 
     void release()
     {
+        // Update UI
+        gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Held by Omni");
+
         if (grabbing == null) //Nothing to release
             return;
 

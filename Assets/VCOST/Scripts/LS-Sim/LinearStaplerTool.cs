@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 
 public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 {
+    public LS_UIcontroller uiController;
     public GameObject FiringHandle;
     public Transform firingHandleStartPosition;
     public Transform firingHandleEndPosition;
@@ -695,6 +696,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         // Update tool moving axis info
                         topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
                         topPartMovingAxisEndPoint = GetPositionMean(topPartMovingAxisEnd);
+
+                        // Update tool UI
+                        uiController.UpdateToolStatusText("lsTop", "Inserting in colon");
                     }
                 }
 
@@ -709,6 +713,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         EnableBottomPartCollision();
                         bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
                         bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
+
+                        // Update tool UI
+                        uiController.UpdateToolStatusText("lsBottom", "Inserting in colon");
                     }
                 }
 
@@ -729,6 +736,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         // Update tool moving axis info
                         topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
                         topPartMovingAxisEndPoint = GetPositionMean(topPartMovingAxisEnd);
+
+                        // Update tool UI
+                        uiController.UpdateToolStatusText("lsTop", "Inserting in colon");
                     }
                 }
 
@@ -743,6 +753,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         EnableBottomPartCollision();
                         bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
                         bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
+
+                        // Update tool UI
+                        uiController.UpdateToolStatusText("lsBottom", "Inserting in colon");
                     }
                 }
             }
@@ -763,6 +776,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     topHalf.transform.localRotation = topPartRelativeTrackerRotation;
 
                     DisableTopPartCollision();
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsTop", "Free");
                 }
             }
         }
@@ -780,6 +796,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
 
                     DisableBottomPartCollision();
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsBottom", "Free");
                 }
             }
         }
@@ -797,6 +816,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     topHalf.transform.localRotation = topPartRelativeTrackerRotation;
 
                     DisableTopPartCollision();
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsTop", "Free");
                 }
             }
         }
@@ -814,6 +836,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
 
                     DisableBottomPartCollision();
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsBottom", "Free");
                 }
             }
         }
@@ -839,6 +864,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         {
             isBottomHalfMovingInCuttingPlane = true;
             canUserLockToolTransform = true;
+
+            // Update tool UI
+            uiController.UpdateToolStatusText("lsBottom", "Close to colon opening");
         }
         // Check if bottom part exit cutting plane
         if (isBottomHalfMovingInCuttingPlane &&
@@ -851,6 +879,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             // Put tool back to default local position and rotation
             bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
             bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
+
+            // Update tool UI
+            uiController.UpdateToolStatusText("lsBottom", "Free");
         }
     }
 

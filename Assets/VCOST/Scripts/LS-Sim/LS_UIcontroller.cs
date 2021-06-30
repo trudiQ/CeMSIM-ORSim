@@ -43,6 +43,14 @@ public class LS_UIcontroller : MonoBehaviour
     public TMP_Text m_FinalClosureScore;
     public TMP_Text m_FinalClosureTime;
     #endregion
+    #region Tool Status
+    public TMP_Text forceps1; // Available status: Idle, Held by Omni, Touching colon, Grasping colon
+    public TMP_Text forceps2;
+    public TMP_Text forceps3;
+    public TMP_Text scissors; // Available status: Idle, Held by Omni, Touching colon
+    public TMP_Text lsTop; // Available status: Free, Inserting in colon, Close to colon opening
+    public TMP_Text lsBottom;
+    #endregion
 
     /// <summary>
     /// Store user entered subject ID and trial ID on the start menu
@@ -96,5 +104,55 @@ public class LS_UIcontroller : MonoBehaviour
         {
             m_Pass.text = metricsManager.m_bPass ? "Pass" : "Fail";
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="toolName"></param>
+    /// <param name="toolStatus"></param>
+    public void UpdateToolStatusText(string toolName, string toolStatus)
+    {
+        switch (toolName)
+        {
+            case "forceps1":
+                forceps1.text = "  " + toolStatus;
+                break;
+            case "forceps2":
+                forceps2.text = "  " + toolStatus;
+                break;
+            case "forceps3":
+                forceps3.text = "  " + toolStatus;
+                break;
+            case "scissors":
+                scissors.text = "  " + toolStatus;
+                break;
+            case "lsTop":
+                lsTop.text = "  " + toolStatus;
+                break;
+            case "lsBottom":
+                lsBottom.text = "  " + toolStatus;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="forcepsIndex"></param> The number in HapticSurgTools.cs
+    /// <returns></returns>
+    public static string GetForcepsNameForToolStatusUI(int forcepsIndex)
+    {
+        switch (forcepsIndex)
+        {
+            case 0:
+                return "forceps1";
+            case 1:
+                return "forceps2";
+            case 2:
+                return "forceps3";
+        }
+
+        return "";
     }
 }
