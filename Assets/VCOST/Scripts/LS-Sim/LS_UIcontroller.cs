@@ -51,6 +51,9 @@ public class LS_UIcontroller : MonoBehaviour
     public TMP_Text lsTop; // Available status: Free, Inserting in colon, Close to colon opening
     public TMP_Text lsBottom;
     #endregion
+    public TMP_Text physicsFPS;
+
+    public float lastFixedUpdate;
 
     /// <summary>
     /// Store user entered subject ID and trial ID on the start menu
@@ -104,6 +107,13 @@ public class LS_UIcontroller : MonoBehaviour
         {
             m_Pass.text = metricsManager.m_bPass ? "Pass" : "Fail";
         }
+    }
+
+    private void FixedUpdate()
+    {
+        // Calculate physics FPS
+        physicsFPS.text = Mathf.RoundToInt(1f / (Time.realtimeSinceStartup - lastFixedUpdate)).ToString();
+        lastFixedUpdate = Time.realtimeSinceStartup;
     }
 
     /// <summary>
