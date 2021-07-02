@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CEMSIM;
-
+using CEMSIM.GameLogic;
 
 public class ItemController : MonoBehaviour
 {
+    public int category;
     public int id;
     public int ownerId;
 
@@ -14,23 +15,13 @@ public class ItemController : MonoBehaviour
     } 
 
     public void GainOwnership(){
-    	GameObject itemManager = GameObject.Find("ItemManager");
+        ClientItemManager.instance.GainOwnership(gameObject);
     	Debug.Log($"Grabbing item {id}");
-    	ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent<ClientItemManager>();
-        if (CIM)
-        {
-            CIM.GainOwnership(gameObject);
-        }
     }
 
     public void DropOwnership(){
-    	GameObject itemManager = GameObject.Find("ItemManager");
-    	Debug.Log($"Release item {id}");
-    	ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent<ClientItemManager>();
-        if (CIM)
-        {
-            CIM.DropOwnership(gameObject);
-        }
+        ClientItemManager.instance.DropOwnership(gameObject);
+        Debug.Log($"Release item {id}");
     }
 }
 

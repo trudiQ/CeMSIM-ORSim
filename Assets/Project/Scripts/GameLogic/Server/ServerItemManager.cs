@@ -18,13 +18,8 @@ namespace CEMSIM{
 	    void Start()
 	    {
 	    	
-	    	if(itemList.Count != spawnPositionList.Count){
-	    		Debug.LogWarning("Warning: itemList and spawnPositionList do not have same size.");
-	    		while(itemList.Count>spawnPositionList.Count){
-	    			spawnPositionList.Add(new Vector3(0, 1.5f, 0));
-	    		}
-	    	}
-	    	CollectItems();
+	    	
+	    	InitializeItems();
 	    	
 	    }
 
@@ -39,7 +34,7 @@ namespace CEMSIM{
 	    	foreach(GameObject item in itemList){
 
 	    		//Brodcast item position via UDP
-	    		ServerSend.BroadcastItemPosition(item);
+	    		ServerSend.BroadcastItemState(item);
 	    		//Brodcast item owner via TCP
 	    		//*****TO DO: Brodcast ownership information via TCP********
 	    		
@@ -51,9 +46,19 @@ namespace CEMSIM{
 	    /// <summary>
         /// Add all items under ItemManager into list
         /// </summary>
-	    private void CollectItems(){
+	    private void InitializeItems(){
 	    	int id = 0;		// id of the item
 	    	int owner = 0; // owner 0 is the server, because user id starts with 1
+
+			if (itemList.Count != spawnPositionList.Count)
+			{
+				Debug.LogWarning("Warning: itemList and spawnPositionList do not have same size.");
+				while (itemList.Count > spawnPositionList.Count)
+				{
+					spawnPositionList.Add(new Vector3(0, 1.5f, 0));
+				}
+			}
+
 			for (int i = 0; i < itemList.Count; i++)
 			{ 
 				itemList[i] = Instantiate(itemList[i], spawnPositionList[i], Quaternion.identity);
@@ -76,6 +81,15 @@ namespace CEMSIM{
 	    	itemList[itemId].transform.position = position;
 			itemList[itemId].transform.rotation = rotation;
 		}
+
+
+
+
+
+
+
+
+
 
 	}
 }

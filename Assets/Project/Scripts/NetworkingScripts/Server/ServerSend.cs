@@ -231,7 +231,7 @@ namespace CEMSIM
                 }
             }
 
-            public static void BroadcastItemPosition(GameObject _item)
+            public static void BroadcastItemState(GameObject _item)
             {
                 ItemController itemCon = _item.GetComponent<ItemController>();
                 // ServerItemManager.cs calls this method to multicase an item's position

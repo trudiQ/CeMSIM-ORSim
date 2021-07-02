@@ -134,6 +134,7 @@ namespace CEMSIM
                 instance.isConnected = instance.tcp.isTCPConnected && instance.udp.isUDPConnected;
             }
 
+            #region UDP
 
             /// <summary>
             /// The UDP class used by the client.
@@ -286,7 +287,9 @@ namespace CEMSIM
                 }
 
             }
+            #endregion
 
+            #region TCP
             /// <summary>
             /// The TCP class used by the client.
             /// </summary>
@@ -474,6 +477,7 @@ namespace CEMSIM
 
                 }
             }
+            #endregion
 
             private static void InitializeClientData()
             {

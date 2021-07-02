@@ -87,7 +87,7 @@ namespace CEMSIM
                 else
                 {
                     // create player for another client
-                    int _role_id = (int)_role - 1;
+                    int _role_id = (int)_role;
                     _player = Instantiate(playerPrefabs[_role_id], new Vector3(_position.x, 0f, _position.z), _rotation);
                     // Since the new rig model treats the initial y-axis as the floor, we should first spawn it to a coordinate with 0 as y-axis
                     // then pull it to the correct position.

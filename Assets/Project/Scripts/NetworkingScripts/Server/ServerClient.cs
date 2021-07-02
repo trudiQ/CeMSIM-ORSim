@@ -290,19 +290,24 @@ namespace CEMSIM
             // Spawn the player 
             public void SendIntoGame(string _username, bool _vr, int _role_i)
             {
-                
+                // sanitize check
                 Roles _role = Roles.surgeon;
-
                 if (Enum.IsDefined(typeof(Roles), _role_i))
                     _role = (Roles)_role_i;
+
 
                 Debug.Log($"Send player {id}: {_username} - {_role} into game");
                 NetworkOverlayMenu.Instance.Log($"Send player {id}: {_username} - {_role} into game");
 
+                
+                // Send current environment state to newly added user
+                ServerNetworkManager.SendCurrentEnvironmentStates(id);
+
+                // Send current item information to the newly added user
+
+                // instantialize and configure a player 
                 player = ServerNetworkManager.instance.InstantiatePlayer(_role);
-
                 player.InitializePlayerManager(id, _username, _role, false, _vr);
-
 
                 // 1. inform all other players the creation of current player
                 foreach (ServerClient _client in ServerInstance.clients.Values)
@@ -316,7 +321,7 @@ namespace CEMSIM
                     }
                 }
 
-                // 2. inform the current player the existance of other players
+                // 2. inform the current player the existence of other players
                 foreach (ServerClient _client in ServerInstance.clients.Values)
                 {
                     if (_client.player != null)
@@ -325,8 +330,7 @@ namespace CEMSIM
                     }
                 }
 
-                // Send current environment state to newly added user
-                ServerNetworkManager.SendCurrentEnvironmentStates(id);
+                
 
 
             }

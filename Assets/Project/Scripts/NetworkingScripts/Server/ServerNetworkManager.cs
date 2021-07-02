@@ -84,7 +84,7 @@ namespace CEMSIM
             public PlayerManager InstantiatePlayer(Roles role)
             {
                 // initialize a player at the initial location and return the reference
-                int role_idx = (int)role - 1;
+                int role_idx = (int)role;
                 return Instantiate(playerPrefabs[role_idx], ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, playersContainer.transform).GetComponent<PlayerManager>();
             }
 
