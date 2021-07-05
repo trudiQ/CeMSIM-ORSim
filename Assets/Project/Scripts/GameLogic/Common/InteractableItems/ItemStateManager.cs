@@ -23,12 +23,15 @@ namespace CEMSIM
             protected int id;
             private StateList state;
 
-            public ItemStateManager(int _id=0)
+            public ItemStateManager()
             {
-                id = _id;
-
                 state = StateList.defaultState;
                 toolCategory = ToolType.simpleTool;
+            }
+
+            public virtual void initializeItem(int _id)
+            {
+                id = _id;
             }
 
 

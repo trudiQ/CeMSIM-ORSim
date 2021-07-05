@@ -18,17 +18,18 @@ namespace CEMSIM
 
             private StateList state;
 
-            public ScalpelStateManager(int _id)
+            public ScalpelStateManager()
             {
-                id = _id;
-
-
                 state = StateList.defaultState;
                 toolCategory = ToolType.scalpel;
 
                 Debug.Log($"Initialize {toolCategory} - {state}");
             }
 
+            public override void initializeItem(int _id)
+            {
+                base.initializeItem(_id);
+            }
 
             public override byte[] GetItemState()
             {

@@ -61,6 +61,7 @@ namespace CEMSIM
 
 				GameObject _item = Instantiate(itemLibrary[_itemTypeId], _position, _rotation);
 
+				_item.GetComponent<ItemController>().initialize(_itemId);
 				_item.GetComponent<ItemController>().DigestStateMessage(_remainderPacket);
 
 				if (_itemId >= itemList.Count)

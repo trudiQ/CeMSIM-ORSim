@@ -13,9 +13,9 @@ namespace CEMSIM
         {
             [Header("Item Information")]
             public ToolType toolType;
+            public int id;
 
             [HideInInspector]
-            public int id;
             public int ownerId;
 
             private ItemStateManager itemStateManager; // pointed to the specific controller
@@ -25,17 +25,23 @@ namespace CEMSIM
                 switch (toolType)
                 {
                     case ToolType.scalpel:
-                        itemStateManager = new ScalpelStateManager(id);
+                        itemStateManager = new ScalpelStateManager();
                         break;
                     case ToolType.decompressionNeedle:
-                        itemStateManager = new CatheterStateManager(id);
+                        itemStateManager = new CatheterStateManager();
                         break;
                     default:
-                        itemStateManager = new ItemStateManager(id);
+                        itemStateManager = new ItemStateManager();
                         break;
                 }
             }
 
+
+            public void initialize(int _id)
+            {
+                id = _id;
+                itemStateManager.initializeItem(_id);
+            }
 
             public byte[] GetItemState()
             {

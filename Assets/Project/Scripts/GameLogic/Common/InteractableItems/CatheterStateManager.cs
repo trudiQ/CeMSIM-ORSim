@@ -20,10 +20,8 @@ namespace CEMSIM
             }
             private StateList state;
          
-            public CatheterStateManager(int _id)
+            public CatheterStateManager()
             {
-                id = _id;
-
                 state = StateList.defaultState;
                 toolCategory = ToolType.decompressionNeedle;
 
@@ -31,7 +29,10 @@ namespace CEMSIM
 
             }
 
-
+            public override void initializeItem(int _id)
+            {
+                base.initializeItem(_id);
+            }
 
             public override byte[] GetItemState()
             {
