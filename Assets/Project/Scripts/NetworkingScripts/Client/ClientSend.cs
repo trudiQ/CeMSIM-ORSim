@@ -109,6 +109,11 @@ namespace CEMSIM
             /// <param name="_inputs"></param>
             public static void PlayerVRMovement()
             {
+                if (!ClientInstance.instance.isReady)
+                {
+                    // Current user is not ready for position updating. Maybe in the delayed spawning stage.
+                    return;
+                }
                 if (GameManager.players.ContainsKey(ClientInstance.instance.myId))
                 {
                     // get the avatar position

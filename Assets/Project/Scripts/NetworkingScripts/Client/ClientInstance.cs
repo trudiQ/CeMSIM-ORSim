@@ -33,6 +33,9 @@ namespace CEMSIM
             public bool printNetworkTraffic = false;        // True: print out the inbound and outbound traffic in console.
 
 
+            [HideInInspector]
+            public bool isReady = false;                    // whether the client instance is ready to be controlled 
+
             public TCP tcp;
             public UDP udp;
 
@@ -79,6 +82,10 @@ namespace CEMSIM
                     //Delays the Spawn request to ensure the client is connected
                     StartCoroutine(DelaySpawnRequest());
                 }
+                else
+                {
+                    isReady = true;
+                }
             }
 
 
@@ -88,6 +95,7 @@ namespace CEMSIM
                 //string _username = "Player" + ClientInstance.instance.myId.ToString();
                 string _username = ClientInstance.instance.myUsername;
 
+                isReady = true;
                 // configure the local player
                 GameManager.instance.localPlayerVR.GetComponent<PlayerManager>().InitializePlayerManager(
                     ClientInstance.instance.myId,

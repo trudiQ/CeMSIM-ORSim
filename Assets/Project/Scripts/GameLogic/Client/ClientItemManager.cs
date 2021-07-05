@@ -12,6 +12,7 @@ namespace CEMSIM
 			public static ClientItemManager instance;
 
 			[Header("Library of all tool prefebs")]
+			[Tooltip("The order of prefabs should match the declaraction of Enum ToolType in GameLogic:GameConstants::ToolType")]
 			public List<GameObject> itemLibrary = new List<GameObject>(); // A library 
 
 			[HideInInspector]
@@ -49,10 +50,14 @@ namespace CEMSIM
 			public void InitializeItem(int _listSize, int _itemId, int _itemTypeId, Vector3 _position, Quaternion _rotation, Packet _remainderPacket)
             {
 
+
 				if(_itemTypeId >= itemLibrary.Count)
                 {
 					Debug.LogError($"Server asked to spawn an item{_itemTypeId} which is now in the library");
                 }
+
+				Debug.Log($"Spawning {_itemId+1}/{_listSize} item - {_itemTypeId} @ {_position}");
+
 
 				GameObject _item = Instantiate(itemLibrary[_itemTypeId], _position, _rotation);
 
@@ -86,10 +91,18 @@ namespace CEMSIM
 			/// 
 			public void UpdateItemState(int _itemId, Vector3 _position, Quaternion _rotation, Packet _remainderPacket)
 			{
-				itemList[_itemId].transform.position = _position;
-				itemList[_itemId].transform.rotation = _rotation;
+				if(_itemId < itemList.Count)
+                {
+					itemList[_itemId].transform.position = _position;
+					itemList[_itemId].transform.rotation = _rotation;
 
-				itemList[_itemId].GetComponent<ItemController>().DigestStateMessage(_remainderPacket);
+					itemList[_itemId].GetComponent<ItemController>().DigestStateMessage(_remainderPacket);
+				}
+                else
+                {
+					// The current client hasn't fully synchronized the item list from the server. Give it some time.
+                }
+				
 
 			}
 
@@ -126,7 +139,7 @@ namespace CEMSIM
 			{
 				foreach (GameObject item in ownedItemList)
 				{
-
+					//Debug.Log($"Sending item {item.GetComponent<ItemController>().id}:");
 					//Send position to Server via UDP
 					ClientSend.SendItemPosition(item, true);
 					//Get Item Controller
