@@ -599,8 +599,9 @@ GameObject:
   m_Component:
   - component: {fileID: 416510376350864571}
   - component: {fileID: 2245238327069258678}
+  - component: {fileID: 3412279450922633533}
   m_Layer: 0
-  m_Name: Surgeon012M_IKRig
+  m_Name: Surgeon012M_VRRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -638,12 +639,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58163db067e9a384ab91a835df8c6a2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isLocalUser: 1
   playerController: {fileID: 416510378125903361}
   rigCamera: {fileID: 416510378296766942}
-  leftControllerPosition: {fileID: 6845964400436906270}
-  rightControllerPosition: {fileID: 6146057208384844087}
-  hmdPosition: {fileID: 416510378296766942}
-  calibration: {fileID: 0}
+  calibration: {fileID: 5824222527732855497}
+  floor: {fileID: 416510378125903388}
+  camera: {fileID: 416510378296766942}
+--- !u!114 &3412279450922633533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416510376350864564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bd9f27177ec41541a2e674f60647c42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftController: {fileID: 6845964400436906270}
+  rightController: {fileID: 6146057208384844087}
+  hmd: {fileID: 416510378296766942}
+  calibration: {fileID: 5824222527732855497}
 --- !u!1 &416510376501762010
 GameObject:
   m_ObjectHideFlags: 0
@@ -11275,6 +11292,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31ab8e9bafebd0540a5effeb65d6c60a, type: 3}
+--- !u!114 &5824222527732855497 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6139453264284634880, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
+    type: 3}
+  m_PrefabInstance: {fileID: 423465568458538441}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 846e931ca7075954fb4fc58005db1ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &5145360047709184471 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4793956473566993438, guid: 31ab8e9bafebd0540a5effeb65d6c60a,

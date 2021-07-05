@@ -574,6 +574,48 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.02062987, y: 0.020419883, z: 0.029681643}
   m_Center: {x: 0.00000011891728, y: 0.00000053578145, z: 0.0065320544}
+--- !u!114 &55305642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &71506670
 GameObject:
   m_ObjectHideFlags: 0
@@ -7815,6 +7857,8 @@ GameObject:
   m_Component:
   - component: {fileID: 764332393}
   - component: {fileID: 764332394}
+  - component: {fileID: 764332396}
+  - component: {fileID: 764332395}
   m_Layer: 0
   m_Name: XRRigSpawner
   m_TagString: Untagged
@@ -7848,11 +7892,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f95c8dd74c9f06e42abc816b66c21a37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeAvatar: 1
+  activeAvatar: 0
   manager: {fileID: 475894680706154936}
+  userHeightUtility: {fileID: 764332396}
+  avatarNetworkedComponents: {fileID: 764332395}
   avatars:
   - {fileID: 6149437513744750517, guid: 1ceb41317f1532143b0fe7113de25d2b, type: 3}
   - {fileID: 416510376350864564, guid: 2734b4b51f812cd4591ccbb64d53eeef, type: 3}
+--- !u!114 &764332395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764332392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bd9f27177ec41541a2e674f60647c42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftController: {fileID: 0}
+  rightController: {fileID: 0}
+  hmd: {fileID: 0}
+  calibration: {fileID: 0}
+--- !u!114 &764332396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764332392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be1d6f3a36fb51b458321fca303c5eed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floor: {fileID: 0}
+  camera: {fileID: 0}
 --- !u!1 &766149609 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6809296874051328657, guid: a16fdc41eca38aa47a5df4e6ba38274f,
@@ -16416,48 +16492,6 @@ BoxCollider:
     type: 3}
   m_PrefabInstance: {fileID: 6868921889328467708}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1728590691
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &1731186779
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,36 +4,46 @@ using UnityEngine;
 using HurricaneVR.Framework.Core;
 using UnityEditor;
 
+[RequireComponent(typeof(UserHeightUtility))]
 public class AvatarSwapper : MonoBehaviour
 {
     public int activeAvatar = 0;
     public HVRManager manager;
+    public UserHeightUtility userHeightUtility;
+    public AvatarNetworkedComponents avatarNetworkedComponents;
     public List<GameObject> avatars = new List<GameObject>();
     public GameObject spawnedAvatar { get; private set; }
 
-    void Start()
+    void Awake()
     {
+        if (!userHeightUtility)
+            userHeightUtility = GetComponent<UserHeightUtility>();
+
+        if (!avatarNetworkedComponents)
+            avatarNetworkedComponents = GetComponent<AvatarNetworkedComponents>();
+
         SpawnAvatar(activeAvatar);
     }
 
     // Create the chosen avatar and remove the current avatar
     public void SpawnAvatar(int newIndex)
     {
-        GameObject temp = Instantiate(original: avatars[newIndex], parent: gameObject.transform);
-        GameObject.Destroy(spawnedAvatar);
-
-        try
-        {
-            AvatarComponents components = spawnedAvatar.GetComponent<AvatarComponents>();
-            components.SetManagerComponents(manager);
-        }
-        catch
-        {
-            Debug.LogWarning("AvatarComponents script not available on the spawned avatar.");
-        }
-        
-        spawnedAvatar = temp;
+        Destroy(spawnedAvatar);
+        spawnedAvatar = Instantiate(original: avatars[newIndex], parent: gameObject.transform);
         activeAvatar = newIndex;
+
+        AvatarComponents components = spawnedAvatar.GetComponent<AvatarComponents>();
+
+        if (avatarNetworkedComponents)
+        {
+            avatarNetworkedComponents.DeepCopy(spawnedAvatar.GetComponent<AvatarNetworkedComponents>());
+        }
+
+        components.SetManagerComponents(manager);
+        components.PrepareAvatar(userHeightUtility);
+
+        userHeightUtility.floor = components.floor;
+        userHeightUtility.camera = components.camera;
     }
 }
 
