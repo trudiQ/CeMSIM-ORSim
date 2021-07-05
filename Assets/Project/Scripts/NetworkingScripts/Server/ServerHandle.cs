@@ -163,10 +163,10 @@ namespace CEMSIM
 
 
             /// <summary>
-            /// Update an item's position as instructed in packet
+            /// Update an item's position and state as instructed in packet
             /// </summary>
             /// <param name="_packet"></param>
-            public static void ItemPosition(int _fromClient, Packet _packet)
+            public static void ItemState(int _fromClient, Packet _packet)
             {
                 // interpret the packet
                 int _item_id = _packet.ReadInt32();
@@ -175,14 +175,12 @@ namespace CEMSIM
 
 
                 // Update item position
-                GameObject itemManager = GameObject.Find("ItemManager");
-                ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
                 //Ignore if the client is not the owner of the item
-                if (SIM.itemList[_item_id].GetComponent<ItemController>().ownerId != _fromClient){   
+                if (ServerItemManager.instance.itemList[_item_id].GetComponent<ItemController>().ownerId != _fromClient){   
                     Debug.Log(string.Format("client {0} attempted to update pos on item {1} but ignored by server",_fromClient,_item_id));
                     return;
                 }
-                SIM.UpdateItemPosition(_item_id, _position, _rotation);
+                ServerItemManager.instance.UpdateItemState(_item_id, _position, _rotation, _packet);
             }
 
             /// <summary>
@@ -193,10 +191,8 @@ namespace CEMSIM
             {
                 int _item_id = _packet.ReadInt32();
                 int _newOwner = _packet.ReadInt32();
-                GameObject itemManager = GameObject.Find("ItemManager");
-                ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
 
-                GameObject item = SIM.itemList[_item_id];
+                GameObject item = ServerItemManager.instance.itemList[_item_id];
                 ItemController itemCon = item.GetComponent<ItemController>();
                 int currentOwner = item.GetComponent<ItemController>().ownerId;
                 //This item is currently not owned by anyone\ or owned by the incoming client

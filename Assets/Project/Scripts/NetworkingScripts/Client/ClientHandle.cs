@@ -142,21 +142,30 @@ namespace CEMSIM
                 ClientSend.SendHeartBeatResponseTCP(sendTicks);
             }
 
+            public static void ItemList(Packet _packet)
+            {
+                int _listSize = _packet.ReadInt32();
+                int _itemId = _packet.ReadInt32();
+                int _itemTypeId = _packet.ReadInt32();
+                Vector3 _position = _packet.ReadVector3();
+                Quaternion _rotation = _packet.ReadQuaternion();
+
+                ClientItemManager.instance.InitializeItem(_listSize, _itemId, _itemTypeId, _position, _rotation, _packet);
+            }
+
             /// <summary>
             /// Update an item's position as instructed in packet
             /// </summary>
             /// <param name="_packet"></param>
-            public static void ItemPosition(Packet _packet)
+            public static void ItemState(Packet _packet)
             {
                 // interpret the packet
-                int _item_id = _packet.ReadInt32();
+                int _itemId = _packet.ReadInt32();
                 Vector3 _position = _packet.ReadVector3();
                 Quaternion _rotation = _packet.ReadQuaternion();
 
                 // update item
-                GameObject itemManager = GameObject.Find("ItemManager");
-                ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
-                CIM.UpdateItemPosition(_item_id, _position, _rotation);
+                ClientItemManager.instance.UpdateItemState(_itemId, _position, _rotation, _packet);
             }
 
 
@@ -167,9 +176,7 @@ namespace CEMSIM
             public static void OwnershipDenial(Packet _packet)
             {
                 int _item_id = _packet.ReadInt32();
-                GameObject itemManager = GameObject.Find("ItemManager");
-                ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
-                CIM.DropOwnership(CIM.itemList[_item_id]);
+                ClientItemManager.instance.DropOwnership(_item_id);
             }
 
 

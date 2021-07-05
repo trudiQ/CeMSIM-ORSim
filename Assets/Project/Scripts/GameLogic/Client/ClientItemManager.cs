@@ -11,7 +11,11 @@ namespace CEMSIM
 		{
 			public static ClientItemManager instance;
 
-			public List<GameObject> itemList = new List<GameObject>();  //This List contains all items to be instantiated. To use: drag gameobject into the list in Unity IDE
+			[Header("Library of all tool prefebs")]
+			public List<GameObject> itemLibrary = new List<GameObject>(); // A library 
+
+			[HideInInspector]
+			private List<GameObject> itemList = new List<GameObject>();  //This List contains all items in the scene
 			private List<GameObject> ownedItemList = new List<GameObject>();        //This List contains all items owned by this client
 
 
@@ -33,7 +37,6 @@ namespace CEMSIM
 			// Start is called before the first frame update
 			void Start()
 			{
-				CollectItems();
 			}
 
 			// Update is called once per frame
@@ -43,18 +46,50 @@ namespace CEMSIM
 			}
 
 
+			public void InitializeItem(int _listSize, int _itemId, int _itemTypeId, Vector3 _position, Quaternion _rotation, Packet _remainderPacket)
+            {
+
+				if(_itemTypeId >= itemLibrary.Count)
+                {
+					Debug.LogError($"Server asked to spawn an item{_itemTypeId} which is now in the library");
+                }
+
+				GameObject _item = Instantiate(itemLibrary[_itemTypeId], _position, _rotation);
+
+				_item.GetComponent<ItemController>().DigestStateMessage(_remainderPacket);
+
+				if (_itemId >= itemList.Count)
+				{
+					// Count == _itemId means the current packet indicates the next item that should be added to the list
+					// if Count < _itemId, then there may be some gameobjects that are missed (or come in random order).
+					// Create empty gameobjects as place holder.
+					for (int i = itemList.Count; i < _itemId; i++)
+					{
+						itemList.Add(new GameObject()); // add empty gameObject
+					}
+					itemList.Add(_item);
+				}
+				else
+				{
+					itemList[_itemId] = _item;
+				}
+
+			}
+
 
 			/// <summary>
-			/// Update an item's position and rotation
+			/// Update an item's position, rotation, and detailed state
 			/// </summary>
 			/// <param name="itemID"> The id of the item to be updated </param>
 			/// <param name="position"> The vector3 position of the item </param>
 			/// <param name="position"> The vector3 position of the item </param>
 			/// 
-			public void UpdateItemPosition(int itemId, Vector3 position, Quaternion rotation)
+			public void UpdateItemState(int _itemId, Vector3 _position, Quaternion _rotation, Packet _remainderPacket)
 			{
-				itemList[itemId].transform.position = position;
-				itemList[itemId].transform.rotation = rotation;
+				itemList[_itemId].transform.position = _position;
+				itemList[_itemId].transform.rotation = _rotation;
+
+				itemList[_itemId].GetComponent<ItemController>().DigestStateMessage(_remainderPacket);
 
 			}
 
@@ -93,7 +128,7 @@ namespace CEMSIM
 				{
 
 					//Send position to Server via UDP
-					ClientSend.SendItemPosition(item);
+					ClientSend.SendItemPosition(item, true);
 					//Get Item Controller
 					//ItemController itemCon = item.GetComponent<ItemController>();
 					//Debug.Log("Sending item status:");
@@ -102,29 +137,38 @@ namespace CEMSIM
 				}
 			}
 
-			public void GainOwnership(GameObject item)
+			public void GainOwnership(int _itemId)
 			{
-				ItemController itemCon = item.GetComponent<ItemController>();
-				//Update item's ownerId
-				itemCon.ownerId = ClientInstance.instance.myId;
-				//Add item to owned list
-				ownedItemList.Add(item);
+				GameObject _item = itemList[_itemId];
+				_item.GetComponent<ItemController>().ownerId = ClientInstance.instance.myId;
+				ownedItemList.Add(_item);
 				//Send ownership request to user
-				ClientSend.SendOnwershipChange(item);
+				ClientSend.SendOnwershipChange(_item);
 			}
 
-			public void DropOwnership(GameObject item)
+			/// <summary>
+			/// When the player actively drops the item, the function informs the server the ownership change.
+			/// </summary>
+			/// <param name="_itemId"></param>
+			public void DropOwnership(int _itemId)
 			{
-				ItemController itemCon = item.GetComponent<ItemController>();
-				//Update item's ownerID to 0 (not owned)
-				itemCon.ownerId = 0;
-				//Drop item from ownedItemList
-				ownedItemList.Remove(item);
+				GameObject _item = itemList[_itemId];
+				_item.GetComponent<ItemController>().ownerId = 0;
+				
+				ownedItemList.Remove(_item);
 				//Send drop ownership notification to server
-				ClientSend.SendOnwershipChange(item);
+				ClientSend.SendOnwershipChange(_item);
 			}
 
-
+			public void TransferOwnership(GameObject item, int _toId)
+            {
+				ItemController itemCon = item.GetComponent<ItemController>();
+				itemCon.ownerId = _toId;
+				if (_toId != ClientInstance.instance.myId)
+                {
+					ownedItemList.Remove(item);
+				}
+            }
 
 
 
