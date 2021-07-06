@@ -173,11 +173,10 @@ namespace CEMSIM
             /// An item's ownership request sent by this client is denied by server, update ownership info accordingly
             /// </summary>
             /// <param name="_packet"></param>
-            public static void OwnershipDenial(Packet _packet)
+            public static void OwnershipDeprivation(Packet _packet)
             {
-                int _item_id = _packet.ReadInt32();
-                int _toId = _packet.ReadInt32();
-                ClientItemManager.instance.DropOwnership(_item_id, _toId);
+                int _itemId = _packet.ReadInt32();
+                ClientItemManager.instance.DropOwnership(_itemId, false);
             }
 
 

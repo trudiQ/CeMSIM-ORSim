@@ -272,15 +272,13 @@ namespace CEMSIM
             /// <summary>
             /// Tell the current owner to pass the item's ownership to new user
             /// </summary>
-            /// <param name="_fromClient"></param>
-            /// <param name="item_id"></param>
             /// <param name="_toClient"></param>
-            public static void OwnershipDenial(int _fromClient, int item_id, int _toClient)              //Deny a clien's ownership via TCP
+            /// <param name="_itemId"></param>
+            public static void ownershipDeprivation(int _toClient, int _itemId)              //Deny a clien's ownership via TCP
             {
-                using (Packet _packet = new Packet((int)ServerPackets.ownershipDenial))
+                using (Packet _packet = new Packet((int)ServerPackets.ownershipDeprivation))
                 {
-                    _packet.Write(item_id);
-                    _packet.Write(_toClient);
+                    _packet.Write(_itemId);
                     SendTCPData(_toClient, _packet);
                 }
             }

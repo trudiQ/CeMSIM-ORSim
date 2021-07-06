@@ -189,15 +189,14 @@ namespace CEMSIM
                 }
             }
 
-            public static void SendOnwershipChange(GameObject _item)                          //Send Item rotation to server via TCP
+            public static void SendOnwershipChange(GameObject _item, bool _toGrab)                          //Send Item rotation to server via TCP
             {
                 using (Packet _packet = new Packet((int)ClientPackets.itemOwnershipChange))
                 {
                     ItemController itemCon = _item.GetComponent<ItemController>();
                     _packet.Write(itemCon.id);
-                    _packet.Write(itemCon.ownerId);
+                    _packet.Write(_toGrab); // if ownerId = 0, it only means that the user release the item. The true owner may not be user 0 (server)
                     SendTCPData(_packet);
-                    //Debug.Log($"[Send] Pack ID :{ (int)ClientPackets.itemOwnershipChange } TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
                 }
 
             }

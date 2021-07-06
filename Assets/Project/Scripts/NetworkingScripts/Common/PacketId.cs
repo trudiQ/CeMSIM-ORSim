@@ -22,7 +22,7 @@ namespace CEMSIM
             heartBeatDetectionUDP, // a packet containing the server's system time. used to check whether the target client is alive and get the round-trip-time.
             heartBeatDetectionTCP, 
             itemState,       //update of item position
-            ownershipDenial,    //TCP packet that denies a client's request to an item's ownership
+            ownershipDeprivation,    //TCP packet that denies a client's request to an item's ownership
             environmentState,   // carry the environment state information (not player state)
             itemList,           // inform client the list of items in the current simulation scene
         }

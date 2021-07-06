@@ -76,7 +76,7 @@ namespace CEMSIM
 
             public void DropOwnership()
             {
-                ClientItemManager.instance.DropOwnership(id);
+                ClientItemManager.instance.DropOwnership(id, true);
                 Debug.Log($"Release item {id}");
             }
         }

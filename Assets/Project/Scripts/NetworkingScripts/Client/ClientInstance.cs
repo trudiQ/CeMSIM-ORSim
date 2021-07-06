@@ -500,7 +500,7 @@ namespace CEMSIM
                     { (int)ServerPackets.heartBeatDetectionTCP, ClientHandle.HeartBeatDetectionTCP},
                     { (int)ServerPackets.heartBeatDetectionUDP, ClientHandle.HeartBeatDetectionUDP},
                     { (int)ServerPackets.itemState, ClientHandle.ItemState},
-                    { (int)ServerPackets.ownershipDenial, ClientHandle.OwnershipDenial},
+                    { (int)ServerPackets.ownershipDeprivation, ClientHandle.OwnershipDeprivation},
                     { (int)ServerPackets.environmentState, ClientHandle.EnvironmentState},
                     { (int)ServerPackets.itemList, ClientHandle.ItemList},
             };

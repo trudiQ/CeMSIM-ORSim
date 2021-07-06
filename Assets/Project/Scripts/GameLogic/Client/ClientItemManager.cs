@@ -148,57 +148,54 @@ namespace CEMSIM
 			public void GainOwnership(int _itemId)
 			{
 				GameObject _item = itemList[_itemId];
-				_item.GetComponent<ItemController>().ownerId = ClientInstance.instance.myId;
-				ownedItemList.Add(_itemId);
-
+				ItemController _itemCon = _item.GetComponent<ItemController>();
 				Rigidbody rb = _item.GetComponent<Rigidbody>();
 
-				rb.isKinematic = false;                  //allow changing the item position
+
+				_itemCon.ownerId = ClientInstance.instance.myId;
+
+				ownedItemList.Add(_itemId);
+
+				//Allow changing the item position
+				rb.isKinematic = false;                  
 				rb.useGravity = true;				
 
 				//Send ownership request to user
-				ClientSend.SendOnwershipChange(_item);
+				ClientSend.SendOnwershipChange(_item, true);
+				Debug.Log($"Acquire item {_itemId} - {_itemCon.toolType}")
 			}
 
 			/// <summary>
 			/// When the player actively drops the item, the function informs the server the ownership change.
 			/// </summary>
 			/// <param name="_itemId"></param>
-			public void DropOwnership(int _itemId, int _toId=0)
+			public void DropOwnership(int _itemId, bool _informServer=true)
 			{
 				GameObject _item = itemList[_itemId];
-				_item.GetComponent<ItemController>().ownerId = _toId;
+				ItemController _itemCon = _item.GetComponent<ItemController>();
+				Rigidbody rb = _item.GetComponent<Rigidbody>();
+
+
+				_itemCon.ownerId = 0;// since the client doesn't care who is the owner, Set it to user 0 (server)
 				
 				ownedItemList.Remove(_itemId);
 
-				Rigidbody rb = _item.GetComponent<Rigidbody>();
-
-				rb.isKinematic = true;                  //Prevent client's physics system from changing the item's position & rotation
+				//Prevent client's physics system from changing the item's position & rotation
+				rb.isKinematic = true;                  
 				rb.useGravity = false;
 
-				//Send drop ownership notification to server
-				ClientSend.SendOnwershipChange(_item);
+                if (_informServer)
+                {
+					//Send drop ownership notification to server
+					ClientSend.SendOnwershipChange(_item, false);
+					Debug.Log($"Release item {_itemId} - {_itemCon.toolType}");
+				}
+                else
+                {
+					Debug.Log($"Lost item {_itemId} - {_itemCon.toolType}");
+				}
+				
 			}
-
-			//public void TransferOwnership(int _itemId, int _toId)
-   //         {
-			//	GameObject _item = itemList[_itemId];
-			//	ItemController itemCon = _item.GetComponent<ItemController>();
-			//	itemCon.ownerId = _toId;
-			//	if (_toId != ClientInstance.instance.myId)
-			//		ownedItemList.Remove(_itemId);
-   //         }
-
-
-
-
-
-
-
-
-
-
-
 
 		}
 	}
