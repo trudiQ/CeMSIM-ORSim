@@ -1289,12 +1289,12 @@ MonoBehaviour:
   - {fileID: 73736165590697624, guid: 6c242d58454bdee4abb7c8962aa6a0ab, type: 3}
   - {fileID: 2859993663175746912, guid: 8c3477511a7c59c42b465abc48aadf37, type: 3}
   - {fileID: 73736165590697624, guid: 6c242d58454bdee4abb7c8962aa6a0ab, type: 3}
-  - {fileID: 2859993663175746912, guid: 8c3477511a7c59c42b465abc48aadf37, type: 3}
+  - {fileID: 4699764462105373251, guid: 4511e234cbb246348ba19048fbc11317, type: 3}
   spawnPositionList:
   - {x: 1.612, y: 1.283, z: -2.827}
   - {x: 1.612, y: 1.612, z: -2.6}
   - {x: 1.512, y: 1.612, z: -2.827}
-  - {x: 1.512, y: 1.612, z: -2.6}
+  - {x: 1.712, y: 1.612, z: -2.6}
 --- !u!1 &394107631
 GameObject:
   m_ObjectHideFlags: 0
@@ -1488,6 +1488,48 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 450936184}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &463181825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &480915605
 GameObject:
   m_ObjectHideFlags: 0
@@ -1593,48 +1635,6 @@ Transform:
   m_Father: {fileID: 1158019259}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &523778048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &539581134
 GameObject:
   m_ObjectHideFlags: 0

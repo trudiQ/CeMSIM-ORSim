@@ -162,7 +162,7 @@ namespace CEMSIM
 
 				//Send ownership request to user
 				ClientSend.SendOnwershipChange(_item, true);
-				Debug.Log($"Acquire item {_itemId} - {_itemCon.toolType}")
+				Debug.Log($"Acquire item {_itemId} - {_itemCon.toolType}");
 			}
 
 			/// <summary>
