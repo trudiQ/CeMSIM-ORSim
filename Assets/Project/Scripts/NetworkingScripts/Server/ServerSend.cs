@@ -231,18 +231,41 @@ namespace CEMSIM
                 }
             }
 
-            public static void BroadcastItemState(GameObject _item)
+            public static void BroadcastItemState(GameObject _item, bool isUDP)
             {
-                ItemController itemCon = _item.GetComponent<ItemController>();
+                ItemController _itemCon = _item.GetComponent<ItemController>();
                 // ServerItemManager.cs calls this method to multicase an item's position
-                using (Packet _packet = new Packet((int)ServerPackets.itemPositionUDP))
+                using (Packet _packet = new Packet((int)ServerPackets.itemState))
                 {
-                    _packet.Write(itemCon.id);
+                    _packet.Write(_itemCon.id);
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);
-                    MulticastExceptOneUDPData(itemCon.ownerId, _packet);                  //Does not update data to owner
-                }
+                    _packet.Write(_itemCon.GetItemState());
 
+                    if (isUDP)
+                        MulticastExceptOneUDPData(_itemCon.ownerId, _packet);                  //Does not update data to owner
+                    else
+                        MulticastExceptOneTCPData(_itemCon.ownerId, _packet);
+                }
+            }
+
+            public static void SendInitialItemState(int _toClient, GameObject _item)
+            {
+                ItemController _itemCon = _item.GetComponent<ItemController>();
+                // ServerItemManager.cs calls this method to multicase an item's position
+                using (Packet _packet = new Packet((int)ServerPackets.itemList))
+                {
+                    _packet.Write(ServerItemManager.instance.GetItemNum());     // different from BroadcastItemState
+                    _packet.Write(_itemCon.id);
+                    _packet.Write((int)_itemCon.toolType);                      // different from BroadcastItemState
+                    _packet.Write(_itemCon.ownerId);                            // different from BroadcastItemState
+
+                    _packet.Write(_item.transform.position);
+                    _packet.Write(_item.transform.rotation);
+                    _packet.Write(_itemCon.GetItemState());
+
+                    SendTCPData(_toClient, _packet);                            // different from BroadcastItemState
+                }
             }
 
 
@@ -274,6 +297,9 @@ namespace CEMSIM
                 }
 
             }
+
+            
+
             #endregion
 
         }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2859993663175746919}
   - component: {fileID: 2859993663175746913}
   - component: {fileID: 2859993663175746918}
+  - component: {fileID: -4020753161370314712}
   m_Layer: 0
   m_Name: DecompressionNeedle
   m_TagString: Untagged
@@ -128,10 +129,34 @@ MonoBehaviour:
       m_Calls: []
   Grabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -4020753161370314712}
+        m_TargetAssemblyTypeName: ItemController, Assembly-CSharp
+        m_MethodName: GainOwnership
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Released:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -4020753161370314712}
+        m_TargetAssemblyTypeName: ItemController, Assembly-CSharp
+        m_MethodName: DropOwnership
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HoverEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -202,6 +227,21 @@ MonoBehaviour:
   FullStabbed:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &-4020753161370314712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2859993663175746912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67c6afe863156074bbfca5a6745c4b7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toolType: 2
+  id: 0
+  ownerId: 0
 --- !u!1 &3146049557252895567
 GameObject:
   m_ObjectHideFlags: 0

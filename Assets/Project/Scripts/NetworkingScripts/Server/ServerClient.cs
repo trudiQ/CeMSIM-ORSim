@@ -30,6 +30,7 @@ namespace CEMSIM
             }
 
 
+            #region TCP
             /// <summary>
             /// TCP connection between client-server
             /// </summary>
@@ -208,7 +209,10 @@ namespace CEMSIM
                 }
 
             }
+            #endregion
 
+
+            #region UDP
             /// <summary>
             /// UDP connection between client-server
             /// </summary>
@@ -304,6 +308,7 @@ namespace CEMSIM
                 ServerNetworkManager.SendCurrentEnvironmentStates(id);
 
                 // Send current item information to the newly added user
+                ServerItemManager.SendCurrentItemList(id);
 
                 // instantialize and configure a player 
                 player = ServerNetworkManager.instance.InstantiatePlayer(_role);
@@ -354,6 +359,7 @@ namespace CEMSIM
                 });
                     
             }
+            #endregion
 
         }
     }

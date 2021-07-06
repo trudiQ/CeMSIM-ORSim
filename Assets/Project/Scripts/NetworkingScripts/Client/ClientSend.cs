@@ -109,6 +109,11 @@ namespace CEMSIM
             /// <param name="_inputs"></param>
             public static void PlayerVRMovement()
             {
+                if (!ClientInstance.instance.isReady)
+                {
+                    // Current user is not ready for position updating. Maybe in the delayed spawning stage.
+                    return;
+                }
                 if (GameManager.players.ContainsKey(ClientInstance.instance.myId))
                 {
                     // get the avatar position
@@ -166,17 +171,21 @@ namespace CEMSIM
             /// Send the latest position of the interactable item (owned by the client) to the server.
             /// </summary>
             /// <param name="_item"></param>
-            public static void SendItemPosition(GameObject _item)                             //Send Item position to server via UDP
+            public static void SendItemPosition(GameObject _item, bool isUDP)                             //Send Item position to server via UDP
             {
                 ItemController itemCon = _item.GetComponent<ItemController>();
-                using (Packet _packet = new Packet((int)ClientPackets.itemPositionUDP))
+                using (Packet _packet = new Packet((int)ClientPackets.itemState))
                 {
                     _packet.Write(itemCon.id);
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);
+                    
+                    if (isUDP)
+                        SendUDPData(_packet);
+                    else
+                        SendTCPData(_packet);
 
-                    //Debug.Log($"item {itemCon.id} pos {_item.transform.position}");
-                    SendUDPData(_packet);
+
                 }
             }
 

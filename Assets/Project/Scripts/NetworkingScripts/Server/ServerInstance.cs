@@ -171,7 +171,7 @@ namespace CEMSIM
                     { (int)ClientPackets.playerVRMovement, ServerHandle.PlayerVRMovement},
                     { (int)ClientPackets.heartBeatDetectionTCP, ServerHandle.HeartBeatDetectionTCP},
                     { (int)ClientPackets.heartBeatDetectionUDP, ServerHandle.HeartBeatDetectionUDP},
-                    { (int)ClientPackets.itemPositionUDP, ServerHandle.ItemPosition},
+                    { (int)ClientPackets.itemState, ServerHandle.ItemState},
                     { (int)ClientPackets.itemOwnershipChange, ServerHandle.ItemOwnershipChange},
                     { (int)ClientPackets.environmentState, ServerHandle.EnvironmentState},
                 };

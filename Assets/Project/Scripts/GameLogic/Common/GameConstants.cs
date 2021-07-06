@@ -15,10 +15,11 @@ namespace CEMSIM
             circulatingNurse,
         }
 
-        public enum ToolCategory
+        public enum ToolType
         {
-            scalpel=0,
-            decompressionNeedle=1,
+            simpleTool=0,       // a tool doesn't have any difformation behavior
+            scalpel,
+            decompressionNeedle,
         }
     }
 }
