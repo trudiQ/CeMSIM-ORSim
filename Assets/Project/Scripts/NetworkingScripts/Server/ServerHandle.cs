@@ -213,13 +213,13 @@ namespace CEMSIM
                 }
                 //If this item is currenly owned by other clients
                 // Update 06/30/2021 - We allow items to be passed from one person to anther
-                /*
                 if (currentOwner !=0 && currentOwner != _fromClient){
                     //Makes no change in ownership and reply with denial
-                    ServerSend.OwnershipDenial(_fromClient, _item_id);
+
+                    //ServerSend.OwnershipDenial(_fromClient, _item_id);
+                    ServerSend.OwnershipDenial(currentOwner, _item_id, _fromClient);// tell the current owner to pass the ownership to _fromClient
                     Debug.Log("Ownership denied.");
                 }
-                //*/
             }
 
 

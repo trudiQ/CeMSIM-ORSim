@@ -176,7 +176,8 @@ namespace CEMSIM
             public static void OwnershipDenial(Packet _packet)
             {
                 int _item_id = _packet.ReadInt32();
-                ClientItemManager.instance.DropOwnership(_item_id);
+                int _toId = _packet.ReadInt32();
+                ClientItemManager.instance.DropOwnership(_item_id, _toId);
             }
 
 

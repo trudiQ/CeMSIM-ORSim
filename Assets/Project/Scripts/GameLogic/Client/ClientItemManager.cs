@@ -17,7 +17,7 @@ namespace CEMSIM
 
 			[HideInInspector]
 			private List<GameObject> itemList = new List<GameObject>();  //This List contains all items in the scene
-			private List<GameObject> ownedItemList = new List<GameObject>();        //This List contains all items owned by this client
+			private List<int> ownedItemList = new List<int>();        //This List contains all items owned by this client
 
 
 			private void Awake()
@@ -132,22 +132,16 @@ namespace CEMSIM
 				}
 			}
 
+			
 
 			/// <summary>
 			/// Send Item status that is owned by this client
 			/// </summary>
 			private void SendOwnedItemStatus()
 			{
-				foreach (GameObject item in ownedItemList)
+				foreach (int _itemId in ownedItemList)
 				{
-					//Debug.Log($"Sending item {item.GetComponent<ItemController>().id}:");
-					//Send position to Server via UDP
-					ClientSend.SendItemPosition(item, true);
-					//Get Item Controller
-					//ItemController itemCon = item.GetComponent<ItemController>();
-					//Debug.Log("Sending item status:");
-					//Debug.Log(itemCon.ToString());
-
+					ClientSend.SendItemPosition(itemList[_itemId], true);
 				}
 			}
 
@@ -155,7 +149,13 @@ namespace CEMSIM
 			{
 				GameObject _item = itemList[_itemId];
 				_item.GetComponent<ItemController>().ownerId = ClientInstance.instance.myId;
-				ownedItemList.Add(_item);
+				ownedItemList.Add(_itemId);
+
+				Rigidbody rb = _item.GetComponent<Rigidbody>();
+
+				rb.isKinematic = false;                  //allow changing the item position
+				rb.useGravity = true;				
+
 				//Send ownership request to user
 				ClientSend.SendOnwershipChange(_item);
 			}
@@ -164,25 +164,30 @@ namespace CEMSIM
 			/// When the player actively drops the item, the function informs the server the ownership change.
 			/// </summary>
 			/// <param name="_itemId"></param>
-			public void DropOwnership(int _itemId)
+			public void DropOwnership(int _itemId, int _toId=0)
 			{
 				GameObject _item = itemList[_itemId];
-				_item.GetComponent<ItemController>().ownerId = 0;
+				_item.GetComponent<ItemController>().ownerId = _toId;
 				
-				ownedItemList.Remove(_item);
+				ownedItemList.Remove(_itemId);
+
+				Rigidbody rb = _item.GetComponent<Rigidbody>();
+
+				rb.isKinematic = true;                  //Prevent client's physics system from changing the item's position & rotation
+				rb.useGravity = false;
+
 				//Send drop ownership notification to server
 				ClientSend.SendOnwershipChange(_item);
 			}
 
-			public void TransferOwnership(GameObject item, int _toId)
-            {
-				ItemController itemCon = item.GetComponent<ItemController>();
-				itemCon.ownerId = _toId;
-				if (_toId != ClientInstance.instance.myId)
-                {
-					ownedItemList.Remove(item);
-				}
-            }
+			//public void TransferOwnership(int _itemId, int _toId)
+   //         {
+			//	GameObject _item = itemList[_itemId];
+			//	ItemController itemCon = _item.GetComponent<ItemController>();
+			//	itemCon.ownerId = _toId;
+			//	if (_toId != ClientInstance.instance.myId)
+			//		ownedItemList.Remove(_itemId);
+   //         }
 
 
 
