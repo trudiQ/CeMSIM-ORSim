@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CEMSIM.Network;
+using HurricaneVR.Framework.Core;
 
 namespace CEMSIM
 {
@@ -192,6 +193,7 @@ namespace CEMSIM
 				}
                 else
                 {
+					_item.GetComponent<HVRGrabbable>().ForceRelease();    // force the user to release the item.
 					Debug.Log($"Lost item {_itemId} - {_itemCon.toolType}");
 				}
 				
