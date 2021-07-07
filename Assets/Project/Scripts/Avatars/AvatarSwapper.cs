@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using HurricaneVR.Framework.Core;
 using UnityEditor;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(UserHeightUtility))]
 public class AvatarSwapper : MonoBehaviour
@@ -14,6 +15,8 @@ public class AvatarSwapper : MonoBehaviour
     public List<GameObject> avatars = new List<GameObject>();
     public GameObject spawnedAvatar { get; private set; }
 
+    public UnityEvent<int> OnAvatarSwapped;
+
     void Awake()
     {
         if (!userHeightUtility)
@@ -22,13 +25,14 @@ public class AvatarSwapper : MonoBehaviour
         if (!avatarNetworkedComponents)
             avatarNetworkedComponents = GetComponent<AvatarNetworkedComponents>();
 
-        SpawnAvatar(activeAvatar);
+        SwapAvatar(activeAvatar);
     }
 
     // Create the chosen avatar and remove the current avatar
-    public void SpawnAvatar(int newIndex)
+    public void SwapAvatar(int newIndex)
     {
         Destroy(spawnedAvatar);
+
         spawnedAvatar = Instantiate(original: avatars[newIndex], parent: gameObject.transform);
         activeAvatar = newIndex;
 
@@ -44,6 +48,8 @@ public class AvatarSwapper : MonoBehaviour
 
         userHeightUtility.floor = components.floor;
         userHeightUtility.camera = components.camera;
+
+        OnAvatarSwapped.Invoke(activeAvatar);
     }
 }
 
@@ -64,7 +70,7 @@ public class AvatarSwapperEditor : Editor
             avatarIndex = EditorGUILayout.IntField(label: "Avatar Index", value: avatarIndex);
 
             if (GUILayout.Button("Swap"))
-                (target as AvatarSwapper).SpawnAvatar(avatarIndex);
+                (target as AvatarSwapper).SwapAvatar(avatarIndex);
         }
             
     }

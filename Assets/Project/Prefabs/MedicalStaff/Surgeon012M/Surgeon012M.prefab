@@ -68,7 +68,7 @@ GameObject:
   - component: {fileID: 3585309525256310504}
   - component: {fileID: 9173825636887028578}
   - component: {fileID: 8347755142249095887}
-  - component: {fileID: 6139453264284634880}
+  - component: {fileID: 7809926315062337812}
   m_Layer: 0
   m_Name: Surgeon012M
   m_TagString: Untagged
@@ -202,8 +202,8 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
       positionWeight: 0
       rotationWeight: 0
-      bendGoalWeight: 0
-      swivelOffset: 130
+      bendGoalWeight: 1
+      swivelOffset: 0
       bendToTargetWeight: 0.5
       legLengthMlp: 1
       stretchCurve:
@@ -219,8 +219,8 @@ MonoBehaviour:
       bendGoal: {fileID: 0}
       positionWeight: 0
       rotationWeight: 0
-      bendGoalWeight: 0
-      swivelOffset: -130
+      bendGoalWeight: 1
+      swivelOffset: 0
       bendToTargetWeight: 0.5
       legLengthMlp: 1
       stretchCurve:
@@ -354,8 +354,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   avatarFloor: {fileID: 3976951455342604275}
   avatarEyes: {fileID: 6183961331224375060}
-  height: 1.6124701
---- !u!114 &6139453264284634880
+  height: 1.61247
+--- !u!114 &7809926315062337812
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -368,6 +368,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ik: {fileID: 3585309525256310504}
+  avatarHeightUtility: {fileID: 8347755142249095887}
+  heightAdjustmentMultiplier: 1.05
   userHeightUtility: {fileID: 0}
   OnAvatarHeightChanged:
     m_PersistentCalls:
@@ -423,8 +425,8 @@ MonoBehaviour:
   SphereRadius: 0.008
   FingerTipOnly: 0
   Hand: {fileID: 5359592898834830456}
-  OpenPose: {fileID: 11400000, guid: 46f58696455b0074ba70645e91bb422c, type: 2}
-  ClosedPose: {fileID: 11400000, guid: 5b6bbb3dfa4a4384aae687bf36227ebe, type: 2}
+  OpenPose: {fileID: 0}
+  ClosedPose: {fileID: 0}
   Palm: {fileID: 0}
   DrawSpheres: 0
   DrawTips: 0
@@ -633,8 +635,8 @@ MonoBehaviour:
   SphereRadius: 0.008
   FingerTipOnly: 0
   Hand: {fileID: 3356837489756998786}
-  OpenPose: {fileID: 11400000, guid: 46f58696455b0074ba70645e91bb422c, type: 2}
-  ClosedPose: {fileID: 11400000, guid: 5b6bbb3dfa4a4384aae687bf36227ebe, type: 2}
+  OpenPose: {fileID: 0}
+  ClosedPose: {fileID: 0}
   Palm: {fileID: 0}
   DrawSpheres: 0
   DrawTips: 0

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using HurricaneVR.Framework.Core.Player;
 using HurricaneVR.Framework.Core;
+using System.Linq;
 
 public class AvatarComponents : MonoBehaviour
 {
@@ -28,15 +31,16 @@ public class AvatarComponents : MonoBehaviour
 
     public void PrepareAvatar(UserHeightUtility userHeightUtility)
     {
-        // Need to set grab helper player controller manually since it is empty before the avatar spawns
-        GrabHelper[] grabHelpers = FindObjectsOfType<GrabHelper>();
-
-        foreach (GrabHelper helper in grabHelpers)
-            helper.player = playerController;
-
-        if (calibration)
+        if (isLocalUser)
         {
-            calibration.userHeightUtility = userHeightUtility;
+            // Need to set grab helper player controller manually since it is empty before the avatar spawns
+            GrabHelper[] grabHelpers = FindObjectsOfType<GrabHelper>();
+
+            foreach (GrabHelper helper in grabHelpers)
+                helper.player = playerController;
         }
+        
+        if (calibration)
+            calibration.userHeightUtility = userHeightUtility;
     }
 }

@@ -11,11 +11,11 @@ public class UserHeightUtility : MonoBehaviour
     [Tooltip("The object that follows the user camera.")]
     public new Transform camera;
 
-    public float userHeight;
+    public float height;
 
     public float CalculateUserHeight()
     {
-        return userHeight = camera.position.y - floor.position.y;
+        return height = camera.position.y - floor.position.y;
     }
 }
 
