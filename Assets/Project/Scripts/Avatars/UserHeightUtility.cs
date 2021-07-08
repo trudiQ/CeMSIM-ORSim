@@ -13,9 +13,9 @@ public class UserHeightUtility : MonoBehaviour
 
     public float height;
 
-    public float CalculateUserHeight()
+    public void CalculateUserHeight()
     {
-        return height = camera.position.y - floor.position.y;
+        height = camera.position.y - floor.position.y;
     }
 }
 

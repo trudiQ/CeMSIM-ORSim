@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using HurricaneVR.Framework.Core.Player;
 using HurricaneVR.Framework.Core;
-using System.Linq;
+using HurricaneVR.Framework.Core.UI;
 
 public class AvatarComponents : MonoBehaviour
 {
@@ -19,28 +17,24 @@ public class AvatarComponents : MonoBehaviour
     public AvatarHeightCalibration calibration;
     public Transform floor;
     public new Transform camera;
+    public HVRUIPointer leftPointer;
+    public HVRUIPointer rightPointer;
 
-    public void SetManagerComponents(HVRManager manager)
+    public void SetHVRComponents(HVRManager manager, HVRInputModule uiInputModule)
     {
         if (isLocalUser)
         {
             manager.PlayerController = playerController;
             manager.Camera = rigCamera;
-        }
-    }
 
-    public void PrepareAvatar(UserHeightUtility userHeightUtility)
-    {
-        if (isLocalUser)
-        {
+            uiInputModule.AddPointer(leftPointer);
+            uiInputModule.AddPointer(rightPointer);
+
             // Need to set grab helper player controller manually since it is empty before the avatar spawns
             GrabHelper[] grabHelpers = FindObjectsOfType<GrabHelper>();
 
             foreach (GrabHelper helper in grabHelpers)
                 helper.player = playerController;
         }
-        
-        if (calibration)
-            calibration.userHeightUtility = userHeightUtility;
     }
 }
