@@ -168,7 +168,7 @@ namespace CEMSIM
                 }
                 else
                 {
-                    Debug.LogWarning("username is null");
+                    Debug.LogWarning("Username is null. Maybe the player controlled avatar");
                 }
             }
 

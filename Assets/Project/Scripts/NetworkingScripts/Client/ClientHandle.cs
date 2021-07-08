@@ -147,6 +147,7 @@ namespace CEMSIM
                 int _listSize = _packet.ReadInt32();
                 int _itemId = _packet.ReadInt32();
                 int _itemTypeId = _packet.ReadInt32();
+
                 Vector3 _position = _packet.ReadVector3();
                 Quaternion _rotation = _packet.ReadQuaternion();
 

@@ -258,7 +258,7 @@ namespace CEMSIM
                     _packet.Write(ServerItemManager.instance.GetItemNum());     // different from BroadcastItemState
                     _packet.Write(_itemCon.id);
                     _packet.Write((int)_itemCon.toolType);                      // different from BroadcastItemState
-                    _packet.Write(_itemCon.ownerId);                            // different from BroadcastItemState
+                    //_packet.Write(_itemCon.ownerId);                          // the newly spawned user cannot hold an item. So no need to transmit this value
 
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);

@@ -60,7 +60,7 @@ namespace CEMSIM
 				Debug.Log($"Spawning {_itemId+1}/{_listSize} item - {_itemTypeId} @ {_position}");
 
 
-				GameObject _item = Instantiate(itemLibrary[_itemTypeId], _position, _rotation);
+				GameObject _item = Instantiate(itemLibrary[_itemTypeId], _position, _rotation);	// create item
 
 				_item.GetComponent<ItemController>().initialize(_itemId);
 				_item.GetComponent<ItemController>().DigestStateMessage(_remainderPacket);
@@ -146,7 +146,7 @@ namespace CEMSIM
 				}
 			}
 
-			public void GainOwnership(int _itemId)
+			public void GainOwnership(int _itemId, bool _informServer = true)
 			{
 				GameObject _item = itemList[_itemId];
 				ItemController _itemCon = _item.GetComponent<ItemController>();
@@ -159,10 +159,13 @@ namespace CEMSIM
 
 				//Allow changing the item position
 				rb.isKinematic = false;                  
-				rb.useGravity = true;				
+				rb.useGravity = true;
 
-				//Send ownership request to user
-				ClientSend.SendOnwershipChange(_item, true);
+				if (_informServer)
+				{
+					//Send ownership request to user
+					ClientSend.SendOnwershipChange(_item, true);
+				}
 				Debug.Log($"Acquire item {_itemId} - {_itemCon.toolType}");
 			}
 
