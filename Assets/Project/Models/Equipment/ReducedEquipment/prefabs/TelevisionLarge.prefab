@@ -108,7 +108,7 @@ Transform:
   m_Children:
   - {fileID: 3182515203022574413}
   m_Father: {fileID: 9013383871209495048}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1512833073057627169
 GameObject:
@@ -225,7 +225,7 @@ Transform:
   - {fileID: 3739913494393848440}
   - {fileID: 2541070290203689035}
   m_Father: {fileID: 9013383871209495048}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2198406861300660743
 GameObject:
@@ -319,13 +319,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219cc7226c69e4c579a98c358c94df1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 65579587812496491}
+  source: {fileID: 0}
   dataFieldIndex: 6
   prefix: 
   suffix: 
   multiplier: 1
   decimals: 0
   frequency: 0
+  manualOffset: 0
+  currentValue: 0
 --- !u!1 &2792113857448080690
 GameObject:
   m_ObjectHideFlags: 0
@@ -418,13 +420,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219cc7226c69e4c579a98c358c94df1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 65579587812496491}
+  source: {fileID: 0}
   dataFieldIndex: 2
   prefix: 
   suffix: 
   multiplier: 1
   decimals: 0
   frequency: 0
+  manualOffset: 0
+  currentValue: 0
 --- !u!1 &3157933208558090772
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,13 +521,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219cc7226c69e4c579a98c358c94df1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 65579587812496491}
+  source: {fileID: 0}
   dataFieldIndex: 7
   prefix: 
   suffix: 
   multiplier: 100
   decimals: 0
   frequency: 0
+  manualOffset: 0
+  currentValue: 0
 --- !u!1 &3546597759178899443
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,7 +658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8eaae667ea3624bfea5015979b2fda5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 65579587812496491}
+  source: {fileID: 0}
   dataFieldIndex: 11
   thickness: 1.5
   color: {r: 1, g: 1, b: 0, a: 1}
@@ -1182,7 +1188,6 @@ Transform:
   m_LocalPosition: {x: -2.7919998, y: 1.4729999, z: 6.123}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 3019977698735969734}
   - {fileID: 3773231225687568268}
   - {fileID: 7044826034265759717}
   m_Father: {fileID: 0}
@@ -1346,53 +1351,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &6013152884413233037
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3019977698735969734}
-  - component: {fileID: 65579587812496491}
-  m_Layer: 0
-  m_Name: PulseEngineDriver
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3019977698735969734
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6013152884413233037}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 9013383871209495048}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &65579587812496491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6013152884413233037}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdfdba46e29c84808aadcd3e01268ce2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  data: {fileID: 0}
-  initialStateFile: {fileID: 4900000, guid: 3177f1218e0d42f42ac2f750a3150815, type: 3}
-  serializationFormat: 1
-  timeStep: 0.02
 --- !u!1 &6328423524789407838
 GameObject:
   m_ObjectHideFlags: 0
@@ -1857,7 +1815,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8eaae667ea3624bfea5015979b2fda5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 65579587812496491}
+  source: {fileID: 0}
   dataFieldIndex: 3
   thickness: 1.5
   color: {r: 1, g: 0, b: 0, a: 1}
@@ -2055,13 +2013,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219cc7226c69e4c579a98c358c94df1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 65579587812496491}
+  source: {fileID: 0}
   dataFieldIndex: 4
   prefix: (
   suffix: )
   multiplier: 1
   decimals: 0
   frequency: 0
+  manualOffset: 0
+  currentValue: 0
 --- !u!1 &7194327251437698028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2188,7 +2148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8eaae667ea3624bfea5015979b2fda5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 65579587812496491}
+  source: {fileID: 0}
   dataFieldIndex: 1
   thickness: 1.5
   color: {r: 0, g: 1, b: 0, a: 1}
@@ -2560,13 +2520,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219cc7226c69e4c579a98c358c94df1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 65579587812496491}
+  source: {fileID: 0}
   dataFieldIndex: 5
   prefix: 
   suffix: /
   multiplier: 1
   decimals: 0
   frequency: 0
+  manualOffset: 0
+  currentValue: 0
 --- !u!1 &8653212767794213074
 GameObject:
   m_ObjectHideFlags: 0
