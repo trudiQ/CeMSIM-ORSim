@@ -1,0 +1,582 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76ba10686dc0c4e2e80f9fb400a2c220, type: 3}
+  m_Name: HSA_SmallIntestine
+  m_EditorClassIdentifier: 
+  m_Empty: 0
+  m_ActiveParticleCount: 16
+  m_InitialActiveParticleCount: 16
+  _bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0.24, y: 0.08, z: 0.08}
+  positions:
+  - {x: -0.24, y: -0.08, z: -0.08}
+  - {x: -0.24, y: -0.08, z: 0.08}
+  - {x: -0.24, y: 0.08, z: -0.08}
+  - {x: -0.24, y: 0.08, z: 0.08}
+  - {x: -0.08, y: -0.08, z: -0.08}
+  - {x: -0.08, y: -0.08, z: 0.08}
+  - {x: -0.08, y: 0.08, z: -0.08}
+  - {x: -0.08, y: 0.08, z: 0.08}
+  - {x: 0.08, y: -0.08, z: -0.08}
+  - {x: 0.08, y: -0.08, z: 0.08}
+  - {x: 0.08, y: 0.08, z: -0.08}
+  - {x: 0.08, y: 0.08, z: 0.08}
+  - {x: 0.24, y: -0.08, z: -0.08}
+  - {x: 0.24, y: -0.08, z: 0.08}
+  - {x: 0.24, y: 0.08, z: -0.08}
+  - {x: 0.24, y: 0.08, z: 0.08}
+  restPositions:
+  - {x: -0.24, y: -0.08, z: -0.08, w: 1}
+  - {x: -0.24, y: -0.08, z: 0.08, w: 1}
+  - {x: -0.24, y: 0.08, z: -0.08, w: 1}
+  - {x: -0.24, y: 0.08, z: 0.08, w: 1}
+  - {x: -0.08, y: -0.08, z: -0.08, w: 1}
+  - {x: -0.08, y: -0.08, z: 0.08, w: 1}
+  - {x: -0.08, y: 0.08, z: -0.08, w: 1}
+  - {x: -0.08, y: 0.08, z: 0.08, w: 1}
+  - {x: 0.08, y: -0.08, z: -0.08, w: 1}
+  - {x: 0.08, y: -0.08, z: 0.08, w: 1}
+  - {x: 0.08, y: 0.08, z: -0.08, w: 1}
+  - {x: 0.08, y: 0.08, z: 0.08, w: 1}
+  - {x: 0.24, y: -0.08, z: -0.08, w: 1}
+  - {x: 0.24, y: -0.08, z: 0.08, w: 1}
+  - {x: 0.24, y: 0.08, z: -0.08, w: 1}
+  - {x: 0.24, y: 0.08, z: 0.08, w: 1}
+  orientations:
+  - {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+  - {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+  - {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+  - {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0, y: 1, z: 0, w: 0}
+  - {x: 0, y: 0, z: 0, w: 1}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0, y: 1, z: 0, w: 0}
+  - {x: 0, y: 0, z: 0, w: 1}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0, y: 1, z: 0, w: 0}
+  - {x: 0, y: 0, z: 0, w: 1}
+  restOrientations:
+  - {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+  - {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+  - {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+  - {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0, y: 1, z: 0, w: 0}
+  - {x: 0, y: 0, z: 0, w: 1}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0, y: 1, z: 0, w: 0}
+  - {x: 0, y: 0, z: 0, w: 1}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  - {x: 0, y: 1, z: 0, w: 0}
+  - {x: 0, y: 0, z: 0, w: 1}
+  velocities:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  angularVelocities:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  invMasses:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  invRotationalMasses:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  phases: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  principalRadii:
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  - {x: 0.111999996, y: 0.111999996, z: 0.111999996}
+  colors:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  points: 
+  edges: 
+  triangles: 
+  distanceConstraintsData:
+    batches: []
+  bendConstraintsData:
+    batches: []
+  skinConstraintsData:
+    batches: []
+  tetherConstraintsData:
+    batches: []
+  stretchShearConstraintsData:
+    batches: []
+  bendTwistConstraintsData:
+    batches: []
+  shapeMatchingConstraintsData:
+    batches:
+    - m_IDs: 0000000001000000
+      m_IDToIndex: 0000000001000000
+      m_ConstraintCount: 2
+      m_ActiveConstraintCount: 2
+      m_InitialActiveConstraintCount: 2
+      particleIndices:
+        serializedContents: 00000000010000000200000003000000040000000500000006000000070000000c00000008000000090000000a0000000b0000000d0000000e0000000f000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 0000000008000000
+      numIndices:
+        serializedContents: 0800000008000000
+      explicitGroup:
+        serializedContents: 0000000000000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 0000000001000000
+      m_IDToIndex: 0000000001000000
+      m_ConstraintCount: 2
+      m_ActiveConstraintCount: 2
+      m_InitialActiveConstraintCount: 2
+      particleIndices:
+        serializedContents: 01000000000000000200000003000000040000000500000006000000070000000d00000008000000090000000a0000000b0000000c0000000e0000000f000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 0000000008000000
+      numIndices:
+        serializedContents: 0800000008000000
+      explicitGroup:
+        serializedContents: 0000000000000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 0000000001000000
+      m_IDToIndex: 0000000001000000
+      m_ConstraintCount: 2
+      m_ActiveConstraintCount: 2
+      m_InitialActiveConstraintCount: 2
+      particleIndices:
+        serializedContents: 02000000000000000100000003000000040000000500000006000000070000000e00000008000000090000000a0000000b0000000c0000000d0000000f000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 0000000008000000
+      numIndices:
+        serializedContents: 0800000008000000
+      explicitGroup:
+        serializedContents: 0000000000000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 0000000001000000
+      m_IDToIndex: 0000000001000000
+      m_ConstraintCount: 2
+      m_ActiveConstraintCount: 2
+      m_InitialActiveConstraintCount: 2
+      particleIndices:
+        serializedContents: 03000000000000000100000002000000040000000500000006000000070000000f00000008000000090000000a0000000b0000000c0000000d0000000e000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 0000000008000000
+      numIndices:
+        serializedContents: 0800000008000000
+      explicitGroup:
+        serializedContents: 0000000000000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 00000000
+      m_IDToIndex: 00000000
+      m_ConstraintCount: 1
+      m_ActiveConstraintCount: 1
+      m_InitialActiveConstraintCount: 1
+      particleIndices:
+        serializedContents: 040000000000000001000000020000000300000005000000060000000700000008000000090000000a0000000b000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 00000000
+      numIndices:
+        serializedContents: 0c000000
+      explicitGroup:
+        serializedContents: 00000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 00000000
+      m_IDToIndex: 00000000
+      m_ConstraintCount: 1
+      m_ActiveConstraintCount: 1
+      m_InitialActiveConstraintCount: 1
+      particleIndices:
+        serializedContents: 050000000000000001000000020000000300000004000000060000000700000008000000090000000a0000000b000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 00000000
+      numIndices:
+        serializedContents: 0c000000
+      explicitGroup:
+        serializedContents: 00000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 00000000
+      m_IDToIndex: 00000000
+      m_ConstraintCount: 1
+      m_ActiveConstraintCount: 1
+      m_InitialActiveConstraintCount: 1
+      particleIndices:
+        serializedContents: 060000000000000001000000020000000300000004000000050000000700000008000000090000000a0000000b000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 00000000
+      numIndices:
+        serializedContents: 0c000000
+      explicitGroup:
+        serializedContents: 00000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 00000000
+      m_IDToIndex: 00000000
+      m_ConstraintCount: 1
+      m_ActiveConstraintCount: 1
+      m_InitialActiveConstraintCount: 1
+      particleIndices:
+        serializedContents: 070000000000000001000000020000000300000004000000050000000600000008000000090000000a0000000b000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 00000000
+      numIndices:
+        serializedContents: 0c000000
+      explicitGroup:
+        serializedContents: 00000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 00000000
+      m_IDToIndex: 00000000
+      m_ConstraintCount: 1
+      m_ActiveConstraintCount: 1
+      m_InitialActiveConstraintCount: 1
+      particleIndices:
+        serializedContents: 0800000004000000050000000600000007000000090000000a0000000b0000000c0000000d0000000e0000000f000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 00000000
+      numIndices:
+        serializedContents: 0c000000
+      explicitGroup:
+        serializedContents: 00000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 00000000
+      m_IDToIndex: 00000000
+      m_ConstraintCount: 1
+      m_ActiveConstraintCount: 1
+      m_InitialActiveConstraintCount: 1
+      particleIndices:
+        serializedContents: 0900000004000000050000000600000007000000080000000a0000000b0000000c0000000d0000000e0000000f000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 00000000
+      numIndices:
+        serializedContents: 0c000000
+      explicitGroup:
+        serializedContents: 00000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 00000000
+      m_IDToIndex: 00000000
+      m_ConstraintCount: 1
+      m_ActiveConstraintCount: 1
+      m_InitialActiveConstraintCount: 1
+      particleIndices:
+        serializedContents: 0a0000000400000005000000060000000700000008000000090000000b0000000c0000000d0000000e0000000f000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 00000000
+      numIndices:
+        serializedContents: 0c000000
+      explicitGroup:
+        serializedContents: 00000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+    - m_IDs: 00000000
+      m_IDToIndex: 00000000
+      m_ConstraintCount: 1
+      m_ActiveConstraintCount: 1
+      m_InitialActiveConstraintCount: 1
+      particleIndices:
+        serializedContents: 0b0000000400000005000000060000000700000008000000090000000a0000000c0000000d0000000e0000000f000000
+      lambdas:
+        serializedContents: []
+      firstIndex:
+        serializedContents: 00000000
+      numIndices:
+        serializedContents: 0c000000
+      explicitGroup:
+        serializedContents: 00000000
+      materialParameters:
+        serializedContents:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+      restComs:
+        serializedContents: []
+      coms:
+        serializedContents: []
+      orientations:
+        serializedContents: []
+  aerodynamicConstraintsData:
+    batches: []
+  chainConstraintsData:
+    batches: []
+  volumeConstraintsData:
+    batches: []
+  groups: []
+  inputMesh: {fileID: -1910012351598245489, guid: 5615c9c9fa7c4ab45862b4e1d06426a1,
+    type: 3}
+  scale: {x: 1, y: 1, z: 1}
+  particleRadius: 0.1
+  particleOverlap: 0.2
+  shapeSmoothing: 0.5
+  anisotropyNeighborhood: 0.2
+  maxAnisotropy: 3
+  softClusterRadius: 0.3
+  oneSided: 0
+  areaContribution: []
