@@ -10,6 +10,7 @@ using UnityEngine.Events;
 public class AvatarSwapper : MonoBehaviour
 {
     public int activeAvatar = 0;
+    private int chosenAvatar;
     public HVRManager manager;
     public HVRInputModule uiInputModule;
     public UserHeightUtility userHeightUtility;
@@ -17,46 +18,61 @@ public class AvatarSwapper : MonoBehaviour
     public List<GameObject> avatars = new List<GameObject>();
     public GameObject spawnedAvatar { get; private set; }
 
+    private AvatarComponents currentAvatarComponents;
+
     public UnityEvent<int> OnAvatarSwapped;
 
     void Awake()
     {
-        if (!userHeightUtility)
+        if(!userHeightUtility)
             userHeightUtility = GetComponent<UserHeightUtility>();
 
-        if (!avatarNetworkedComponents)
+        if(!avatarNetworkedComponents)
             avatarNetworkedComponents = GetComponent<AvatarNetworkedComponents>();
 
         SwapAvatar(activeAvatar);
     }
 
-    // Create the chosen avatar and remove the current avatar
-    public void SwapAvatar(int newIndex)
+    // Stores values given by UI elements
+    public void ChooseAvatar(int index)
     {
-        Destroy(spawnedAvatar);
+        chosenAvatar = index;
+    }
 
-        spawnedAvatar = Instantiate(original: avatars[newIndex], 
-                                    parent: gameObject.transform, 
-                                    position: transform.position,
-                                    rotation: transform.rotation);
-        activeAvatar = newIndex;
-
-        AvatarComponents components = spawnedAvatar.GetComponent<AvatarComponents>();
-
-        if (avatarNetworkedComponents)
+    // Create the chosen avatar and remove the current avatar
+    public void SwapAvatar(int index)
+    {
+        if(index >= 0 && index < avatars.Count)
         {
-            avatarNetworkedComponents.DeepCopy(spawnedAvatar.GetComponent<AvatarNetworkedComponents>());
+            currentAvatarComponents?.RemoveComponents();
+            Destroy(spawnedAvatar);
+
+            spawnedAvatar = Instantiate(original: avatars[index],
+                                        parent: gameObject.transform,
+                                        position: transform.position,
+                                        rotation: transform.rotation);
+            activeAvatar = index;
+
+            currentAvatarComponents = spawnedAvatar.GetComponent<AvatarComponents>();
+            avatarNetworkedComponents?.DeepCopy(spawnedAvatar.GetComponent<AvatarNetworkedComponents>());
+            currentAvatarComponents.SetHVRComponents(manager, uiInputModule);
+            currentAvatarComponents.SetUserHeightUtility(userHeightUtility);
+
+            userHeightUtility.floor = currentAvatarComponents.floor;
+            userHeightUtility.camera = currentAvatarComponents.camera;
+
+            OnAvatarSwapped.Invoke(activeAvatar);
         }
+        else
+        {
+            Debug.LogError("Chosen avatar index out of bounds.");
+        }
+    }
 
-        components.SetHVRComponents(manager, uiInputModule);
-
-        if(components.calibration)
-            components.calibration.userHeightUtility = userHeightUtility;
-
-        userHeightUtility.floor = components.floor;
-        userHeightUtility.camera = components.camera;
-
-        OnAvatarSwapped.Invoke(activeAvatar);
+    // Method to be called from UI elements without parameters
+    public void SwapToChosenAvatar()
+    {
+        SwapAvatar(chosenAvatar);
     }
 }
 

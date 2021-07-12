@@ -22,19 +22,32 @@ public class AvatarComponents : MonoBehaviour
 
     public void SetHVRComponents(HVRManager manager, HVRInputModule uiInputModule)
     {
-        if (isLocalUser)
-        {
-            manager.PlayerController = playerController;
-            manager.Camera = rigCamera;
+        manager.PlayerController = playerController;
+        manager.Camera = rigCamera;
 
-            uiInputModule.AddPointer(leftPointer);
-            uiInputModule.AddPointer(rightPointer);
+        // Manually set the input module components so the UI manager can receive events from the hands
+        leftPointer.InputModule = uiInputModule;
+        rightPointer.InputModule = uiInputModule;
+        uiInputModule.AddPointer(leftPointer);
+        uiInputModule.AddPointer(rightPointer);
 
-            // Need to set grab helper player controller manually since it is empty before the avatar spawns
-            GrabHelper[] grabHelpers = FindObjectsOfType<GrabHelper>();
+        // Need to set grab helper player controller manually since it is empty before the avatar spawns
+        GrabHelper[] grabHelpers = FindObjectsOfType<GrabHelper>();
 
-            foreach (GrabHelper helper in grabHelpers)
-                helper.player = playerController;
-        }
+        foreach (GrabHelper helper in grabHelpers)
+            helper.player = playerController;
+    }
+
+    public void RemoveComponents()
+    {
+        // Manually remove the input module reference to the pointer
+        leftPointer.Remove();
+        rightPointer.Remove();
+    }
+
+    public void SetUserHeightUtility(UserHeightUtility utility)
+    {
+        if (calibration)
+            calibration.userHeightUtility = utility;
     }
 }
