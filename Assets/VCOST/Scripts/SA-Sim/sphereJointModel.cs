@@ -36,6 +36,7 @@ public class sphereJointModel : MonoBehaviour
     public GameObject m_sphereJointModel;
     [HideInInspector]
     public Bounds[] m_layerBoundingBox; //[m_numLayers], Bounds: Vector3 min,max
+    public float maxSphereVelocity;
 
     public Vector3 getOriginalSpherePos(int i, int j)
     {
@@ -114,7 +115,7 @@ public class sphereJointModel : MonoBehaviour
             layer_i.transform.parent = m_sphereJointModel.transform;
 
             // joints
-            int otherObjIdx = 0; 
+            int otherObjIdx = 0;
             GameObject tmpObj;
             GameObject[] otherObjects = new GameObject[m_numJoints];
             GameObject[] preLayerObjs = new GameObject[m_numLayerJoints];
@@ -741,6 +742,19 @@ public class sphereJointModel : MonoBehaviour
         //        }
         //    }
         //}
+    }
+
+    private void FixedUpdate()
+    {
+        // Limit colon joint sphere velocity
+        for (int l = 0; l < m_numLayers; l++)
+        {
+            for (int s = 0; s < m_numSpheres; s++)
+            {
+                m_sphereGameObjects[l, s].GetComponent<Rigidbody>().velocity = m_sphereGameObjects[l, s].GetComponent<Rigidbody>().velocity.normalized *
+                    Mathf.Clamp(m_sphereGameObjects[l, s].GetComponent<Rigidbody>().velocity.magnitude, 0, maxSphereVelocity);
+            }
+        }
     }
 
     private void Start()
