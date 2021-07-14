@@ -126,7 +126,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 
     public void Start()
     {
-        //LoadStapleToolCalibrationData();
+        LoadStapleToolCalibrationData();
         SaveToolLocalPositionRotation();
         insertionDepthInspector = new List<float>(globalOperators.m_insertDepth);
         simStates = 0;
@@ -1066,6 +1066,12 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         bottomHalfLocalEuler.x = PlayerPrefs.GetFloat("BottomHalfLocalEulerX");
         bottomHalfLocalEuler.y = PlayerPrefs.GetFloat("BottomHalfLocalEulerY");
         bottomHalfLocalEuler.z = PlayerPrefs.GetFloat("BottomHalfLocalEulerZ");
+
+        // Don't load data if there is no data
+        if (topHalfLocalEuler == Vector3.zero)
+        {
+            return;
+        }
 
         topHalf.transform.localEulerAngles = topHalfLocalEuler;
         topHalf.transform.localPosition = topHalfLocalPos;

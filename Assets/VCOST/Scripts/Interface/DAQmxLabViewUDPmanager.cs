@@ -1,32 +1,21 @@
-﻿/*
- 
-    -----------------------
-    UDP-Receive (send to)
-    -----------------------
-    // [url]http://msdn.microsoft.com/de-de/library/bb979228.aspx#ID0E3BAC[/url]
-   
-   
-    // > receive
-    // 127.0.0.1 : 8051
-   
-    // send
-    // nc -u 127.0.0.1 8051
- 
-*/
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
-
 using System;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using System.Linq;
 
-public class UDPReceive : MonoBehaviour
+/// <summary>
+/// Manage the NI DAQmx data sending from LabView through UDP connection
+/// 
+/// Some code are from https://forum.unity.com/threads/simple-udp-implementation-send-read-via-mono-c.15900/
+/// </summary>
+public class DAQmxLabViewUDPmanager : MonoBehaviour
 {
-
     // receiving Thread
     Thread receiveThread;
 
@@ -39,15 +28,14 @@ public class UDPReceive : MonoBehaviour
 
     // infos
     public string lastReceivedUDPPacket = "";
-    //[ShowInInspector]
-    //public Stack<string> allReceivedUDPPackets; // clean up this from time to time!
 
-    public static Dictionary<int, float> readings; // readings from LabView UDP connection, key is port number, value is reading
+    public static List<float> readings; // Readings from LabView UDP connection, ordered by user's LabView .vi design
+    public List<float> readingsObserver; // Show the readings
 
     // start from shell
     private static void Main()
     {
-        UDPReceive receiveObj = new UDPReceive();
+        DAQmxLabViewUDPmanager receiveObj = new DAQmxLabViewUDPmanager();
         receiveObj.init();
 
         string text = "";
@@ -60,28 +48,27 @@ public class UDPReceive : MonoBehaviour
     // start from unity3d
     public void Start()
     {
-
         init();
+
+        readings = new List<float>();
+        readingsObserver = new List<float>();
     }
 
     // OnGUI
-    void OnGUI()
-    {
-        Rect rectObj = new Rect(40, 10, 200, 400);
-        GUIStyle style = new GUIStyle();
-        style.alignment = TextAnchor.UpperLeft;
-        GUI.Box(rectObj, "# UDPReceive\n127.0.0.1 " + port + " #\n"
-                    + "shell> nc -u 127.0.0.1 : " + port + " \n"
-                    + "\nLast Packet: \n" + lastReceivedUDPPacket
-                    + "\n\nAll Messages: \n" //+ allReceivedUDPPackets
-                , style);
-    }
+    //void OnGUI()
+    //{
+    //    Rect rectObj = new Rect(40, 10, 200, 400);
+    //    GUIStyle style = new GUIStyle();
+    //    style.alignment = TextAnchor.UpperLeft;
+    //    GUI.Box(rectObj, "# UDPReceive\n127.0.0.1 " + port + " #\n"
+    //                + "shell> nc -u 127.0.0.1 : " + port + " \n"
+    //                + "\nLast Packet: \n" + lastReceivedUDPPacket
+    //                + "\n\nAll Messages: \n", style);
+    //}
 
     // init
     private void init()
     {
-        //allReceivedUDPPackets = new Stack<string>(100);
-
         // Endpunkt definieren, von dem die Nachrichten gesendet werden.
         print("UDPSend.init()");
 
@@ -92,12 +79,6 @@ public class UDPReceive : MonoBehaviour
         print("Sending to 127.0.0.1 : " + port);
         print("Test-Sending to this Port: nc -u 127.0.0.1  " + port + "");
 
-
-        // ----------------------------
-        // Abhören
-        // ----------------------------
-        // Lokalen Endpunkt definieren (wo Nachrichten empfangen werden).
-        // Einen neuen Thread für den Empfang eingehender Nachrichten erstellen.
         receiveThread = new Thread(
             new ThreadStart(ReceiveData));
         receiveThread.IsBackground = true;
@@ -128,9 +109,14 @@ public class UDPReceive : MonoBehaviour
                 // latest UDPpacket
                 lastReceivedUDPPacket = text;
 
-                // ....
-                //allReceivedUDPPackets.Push(text);
-
+                // Parse data
+                readings.Clear();
+                string[] parsedData = lastReceivedUDPPacket.Split('_');
+                foreach (string d in parsedData)
+                {
+                    readings.Add(float.Parse(d));
+                }
+                readingsObserver = readings;
             }
             catch (Exception err)
             {
@@ -143,7 +129,6 @@ public class UDPReceive : MonoBehaviour
     // cleans up the rest
     public string getLatestUDPPacket()
     {
-        //allReceivedUDPPackets = "";
         return lastReceivedUDPPacket;
     }
 
