@@ -129,8 +129,9 @@ namespace HurricaneVR.Framework.Core.UI
                 var pressDir = (eventData.pointerPressRaycast.worldPosition - cameraPos).normalized;
                 var currentDir = (eventData.pointerCurrentRaycast.worldPosition - cameraPos).normalized;
                 var dragThresholdMet = Vector3.Dot(pressDir, currentDir) < Mathf.Cos(Mathf.Deg2Rad * (AngleDragThreshold));
-                //if (!dragThresholdMet)
-                //    return;
+
+                if (!dragThresholdMet)
+                    return;
 
                 ExecuteEvents.Execute(eventData.pointerDrag, eventData, ExecuteEvents.beginDragHandler);
                 eventData.dragging = true;
