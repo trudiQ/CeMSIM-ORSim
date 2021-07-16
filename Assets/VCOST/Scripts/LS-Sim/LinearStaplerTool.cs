@@ -26,6 +26,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public List<Collider> bottomPartColliders;
     public float calibrationMoveSpeed; // How fast the tool will move when user using UI button to move it around
     public float calibrationRotateSpeed;
+    public Transform calibrateRotationParent; // When calibrating tool rotation, the tool will be put under this object
+    public Transform calibratingToolOriginalParent;
     // For LS tool insertion detection
     public List<Transform> colonAopenSpheres; // Spheres that will create the insertion opening on the colon0
     public List<Transform> colonBopenSpheres;
@@ -147,9 +149,16 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 
         if (currentCalibratingHalf != null)
         {
+            // If just started calibration
+            if (currentCalibratingHalf.parent != calibrateRotationParent)
+            {
+                BeginCalibrateRotation();
+            }
+
             // If user release mouse from currently pushed calibrating button then stop calibrating
             if (Input.GetMouseButtonUp(0))
             {
+                EndCalibrateRotation();
                 currentCalibratingHalf = null;
                 return;
             }
@@ -161,8 +170,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             }
             else
             {
-                Vector3 newEuler = currentCalibratingHalf.localEulerAngles + currentCalibratingDirection * calibrationRotateSpeed * Time.deltaTime;
-                currentCalibratingHalf.localEulerAngles = newEuler;
+                Quaternion newRot = Quaternion.Euler(calibrateRotationParent.eulerAngles + currentCalibratingDirection * calibrationRotateSpeed * Time.deltaTime);
+                calibrateRotationParent.rotation = newRot;
             }
         }
 
@@ -1154,6 +1163,20 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         currentCalibratingHalf = bottomHalf.transform;
         calibratingPosition = false;
         currentCalibratingDirection = Vector3.forward * direction;
+    }
+    /// <summary>
+    /// Things to do when begin and end calibrating rotation
+    /// </summary>
+    public void BeginCalibrateRotation()
+    {
+        calibratingToolOriginalParent = currentCalibratingHalf.parent;
+        calibrateRotationParent.position = currentCalibratingHalf.position;
+        calibrateRotationParent.rotation = Quaternion.identity;
+        currentCalibratingHalf.parent = calibrateRotationParent;
+    }
+    public void EndCalibrateRotation()
+    {
+        currentCalibratingHalf.parent = calibratingToolOriginalParent;
     }
 
     /// <summary>

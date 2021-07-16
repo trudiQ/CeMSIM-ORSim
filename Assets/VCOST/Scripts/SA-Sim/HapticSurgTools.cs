@@ -314,7 +314,7 @@ public class HapticSurgTools : MonoBehaviour
             int numSpheres;
             float distance;
             float minDistance = float.MaxValue;
-            float touchDistThreshold = gOperators.m_sphereJointModels[0].m_sphereRadius + 0.5f;
+            float touchDistThreshold = gOperators.m_sphereJointModels[0].m_sphereRadius + 1f;
             int[] clostestSphereID = new int[] { -1, -1, -1 };
             for (i = 0; i < numSphereJointModels; i++)
             {
