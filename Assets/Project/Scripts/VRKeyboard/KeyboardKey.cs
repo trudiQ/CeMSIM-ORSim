@@ -8,17 +8,25 @@ public abstract class KeyboardKey : MonoBehaviour
 {
     public UnityEvent<KeyboardKey> OnKeyPressed;
 
-    // Modifiers active
-    protected bool shiftModifierActive = false;
-    protected bool capsModifierActive = false;
-    protected bool ctrlModifierActive = false;
+    // Modifiers active (these will be the same across all keys)
+    protected static bool shiftModifierActive = false;
+    protected static bool capsModifierActive = false;
+    protected static bool ctrlModifierActive = false;
+    protected static bool altModifierActive = false;
 
     // Messages sent when the controller receives a modifier press
-    public abstract void Shift(bool state);
-    public abstract void Caps(bool state);
-    public abstract void Ctrl(bool state);
+    public abstract void ModifierToggled(KeyboardModifier.ModifierType type);
+    protected abstract void Shift();
+    protected abstract void Caps();
+    protected abstract void Ctrl();
+    protected abstract void Alt();
 
+    public static void ToggleShiftState() { shiftModifierActive = !shiftModifierActive; }
+    public static void ToggleCapsState() { capsModifierActive = !capsModifierActive; }
+    public static void ToggleCtrlState() { ctrlModifierActive = !ctrlModifierActive; }
+    public static void ToggleAltState() { altModifierActive = !altModifierActive; }
+    
     // General methods
     public abstract string GetText();
-    public abstract void Pressed();
+    public void Pressed() { OnKeyPressed.Invoke(this); }
 }

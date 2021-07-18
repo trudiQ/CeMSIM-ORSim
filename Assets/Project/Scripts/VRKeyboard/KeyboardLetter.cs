@@ -12,43 +12,104 @@ public class KeyboardLetter : KeyboardKey
     public Text lowercaseText;
     public Text uppercaseText;
 
+    public bool isCtrlHotkey;
+    public bool isAltHotkey;
+    public bool isComboHotkey;
+    public Color ctrlColor = Color.green;
+    public Color altColor = Color.red;
+    public Color comboColor = Color.magenta;
+    private Color baseColor;
+
     void Start()
     {
-        lowercaseText.text = lowercaseCharacter.ToString(); // will not do anything if var letter is already lowercase
-        uppercaseText.text = uppercaseCharacter.ToString(); // will not do anything if var letter is already uppercase
+        baseColor = lowercaseText.color;
+
+        lowercaseText.text = lowercaseCharacter.ToString();
+        uppercaseText.text = uppercaseCharacter.ToString();
 
         lowercaseText.gameObject.SetActive(true);
         uppercaseText.gameObject.SetActive(false);
     }
 
-    public override void Shift(bool state)
+    public override void ModifierToggled(KeyboardModifier.ModifierType type)
     {
-        shiftModifierActive = state;
-
-        lowercaseText.gameObject.SetActive(!state);
-        uppercaseText.gameObject.SetActive(state);
+        switch (type)
+        {
+            case KeyboardModifier.ModifierType.Shift:
+                Shift();
+                break;
+            case KeyboardModifier.ModifierType.Caps:
+                Caps();
+                break;
+            case KeyboardModifier.ModifierType.Ctrl:
+                Ctrl();
+                break;
+            case KeyboardModifier.ModifierType.Alt:
+                Alt();
+                break;
+            default:
+                break;
+        }
     }
 
-    public override void Caps(bool state)
+    protected override void Shift()
     {
-        capsModifierActive = state;
-
-        lowercaseText.gameObject.SetActive(!state);
-        uppercaseText.gameObject.SetActive(state);
+        lowercaseText.gameObject.SetActive(!(shiftModifierActive ^ capsModifierActive));
+        uppercaseText.gameObject.SetActive(shiftModifierActive ^ capsModifierActive);
     }
 
-    public override void Ctrl(bool state)
+    protected override void Caps()
     {
-        ctrlModifierActive = state;
+        lowercaseText.gameObject.SetActive(!(shiftModifierActive ^ capsModifierActive));
+        uppercaseText.gameObject.SetActive(shiftModifierActive ^ capsModifierActive);
+    }
+
+    protected override void Ctrl()
+    {
+        bool useAltColor = isAltHotkey && altModifierActive && !ctrlModifierActive;
+        bool useCtrlColor = isCtrlHotkey && ctrlModifierActive && !altModifierActive;
+        bool useComboColor = isComboHotkey && altModifierActive && ctrlModifierActive;
+        
+        Color newColor = useComboColor ? comboColor :          // If it is a combo hotkey, use combo color
+                        (useCtrlColor ? ctrlColor :            // If it is a ctrl hotkey and alt isnt active, use ctrl color
+                        (useAltColor ? altColor : baseColor)); // If it is an alt hotkey and ctrl isnt active, use combo color, otherwise use base
+
+        if (capsModifierActive)
+        {
+            lowercaseText.color = newColor;
+            uppercaseText.color = newColor;
+        }
+        else
+        {
+            lowercaseText.color = newColor;
+            uppercaseText.color = newColor;
+        }
+    }
+
+    protected override void Alt()
+    {
+        bool useAltColor = isAltHotkey && altModifierActive && !ctrlModifierActive;
+        bool useCtrlColor = isCtrlHotkey && ctrlModifierActive && !altModifierActive;
+        bool useComboColor = isComboHotkey && altModifierActive && ctrlModifierActive;
+
+        Color newColor = useComboColor ? comboColor :          // If it is a combo hotkey, use combo color
+                        (useCtrlColor ? ctrlColor :            // If it is a ctrl hotkey and alt isnt active, use ctrl color
+                        (useAltColor ? altColor : baseColor)); // If it is an alt hotkey and ctrl isnt active, use combo color, otherwise use base
+
+        if (altModifierActive)
+        {
+            lowercaseText.color = newColor;
+            uppercaseText.color = newColor;
+        }
+        else
+        {
+            lowercaseText.color = newColor;
+            uppercaseText.color = newColor;
+        }
     }
 
     public override string GetText()
     {
         return (shiftModifierActive ^ capsModifierActive ? uppercaseCharacter : lowercaseCharacter).ToString();
-    }
-
-    public override void Pressed()
-    {
-        OnKeyPressed.Invoke(this);
     }
 }
