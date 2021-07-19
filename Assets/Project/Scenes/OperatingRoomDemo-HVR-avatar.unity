@@ -150,6 +150,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentGrabbable: {fileID: 947139998}
+--- !u!114 &2996003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &7599974 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6529854744614514558, guid: a16fdc41eca38aa47a5df4e6ba38274f,
@@ -5341,7 +5383,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: IP Address / Hostname
+  m_Text: 'IP Address / Hostname:'
 --- !u!222 &529838222
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8484,48 +8526,6 @@ CapsuleCollider:
   m_Height: 0.0032678663
   m_Direction: 1
   m_Center: {x: 1.8490037e-10, y: 0.0016339298, z: 0.00002038953}
---- !u!114 &627468782
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &628469182
 GameObject:
   m_ObjectHideFlags: 0
@@ -14454,7 +14454,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 123.7193, y: 24.43486}
+  m_SizeDelta: {x: 126, y: 24.43486}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1182571374
 MonoBehaviour:
@@ -17795,6 +17795,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1560747336}
   m_CullTransparentMesh: 0
+--- !u!4 &1561252991 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
+    type: 3}
+  m_PrefabInstance: {fileID: 509575795323756351}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1563436817 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4342039073045603730, guid: 2dcebe6e071d1be4d8e9b251432a53b1,
@@ -22302,7 +22308,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1867216388
 GameObject:
@@ -25334,15 +25340,16 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2034360170}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 2.105, y: 1.261, z: -1.26}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 3.75, y: 1.734, z: -1.26}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1030546778}
   - {fileID: 332160198}
+  - {fileID: 1561252991}
   m_Father: {fileID: 0}
   m_RootOrder: 14
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &2034360172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28964,7 +28971,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 2034360171}
     m_Modifications:
     - target: {fileID: 12202584176653014, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
@@ -30886,6 +30893,26 @@ PrefabInstance:
       propertyPath: activeTextfield
       value: 
       objectReference: {fileID: 1195549599}
+    - target: {fileID: 6190965416661018670, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
+        type: 3}
+      propertyPath: inputFields.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6190965416661018670, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
+        type: 3}
+      propertyPath: inputFields.Array.data[0]
+      value: 
+      objectReference: {fileID: 1195549599}
+    - target: {fileID: 6190965416661018670, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
+        type: 3}
+      propertyPath: inputFields.Array.data[1]
+      value: 
+      objectReference: {fileID: 1182571374}
+    - target: {fileID: 6190965416661018670, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
+        type: 3}
+      propertyPath: inputFields.Array.data[2]
+      value: 
+      objectReference: {fileID: 2007780854}
     - target: {fileID: 6229331447731415158, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_ConnectedAnchor.x
@@ -31524,52 +31551,52 @@ PrefabInstance:
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_RootOrder
-      value: 17
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.107
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.884
+      value: -0.897
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.76
+      value: -0.428
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: 0.9848078
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0.17364825
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.97629607
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.21643952
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -25
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8679303436082471555, guid: 02e5c7d0dd432bf4db8e8c111925bea5,
         type: 3}

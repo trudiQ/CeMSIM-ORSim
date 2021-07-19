@@ -27,12 +27,6 @@ public class KeyboardModifier : KeyboardKey
             case ModifierType.Caps:
                 Caps();
                 break;
-            case ModifierType.Ctrl:
-                Ctrl();
-                break;
-            case ModifierType.Alt:
-                Alt();
-                break;
             default:
                 break;
         }
@@ -40,6 +34,7 @@ public class KeyboardModifier : KeyboardKey
 
     protected override void Shift()
     {
+        // Toggle the color of the key
         if (modifierType == ModifierType.Shift)
         {
             if (active = shiftModifierActive)
@@ -54,32 +49,10 @@ public class KeyboardModifier : KeyboardKey
         // Only one caps button
     }
 
-    protected override void Ctrl()
-    {
-        if (modifierType == ModifierType.Ctrl)
-        {
-            if (active = ctrlModifierActive)
-                label.color = activeColor;
-            else
-                label.color = baseColor;
-        }
-    }
-
-    protected override void Alt()
-    {
-        if (modifierType == ModifierType.Alt)
-        {
-            if (active = altModifierActive)
-                label.color = activeColor;
-            else
-                label.color = baseColor;
-        }
-    }
-
     public override string GetText()
     {
         return modifierType.ToString();
     }
 
-    public enum ModifierType { Shift, Caps, Ctrl, Alt, Tab, Enter, Backspace } // Modifiers available limited to this list
+    public enum ModifierType { Shift, Caps, Tab, Clear, Backspace, Paste, Next, Previous } // Modifiers available limited to this list
 }

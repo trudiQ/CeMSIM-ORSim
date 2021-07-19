@@ -11,9 +11,11 @@ public class KeyboardController : MonoBehaviour
     public List<KeyboardKey> keys { get; private set; }
     public Collider baseCollider;
 
-    public InputField activeTextfield;
+    public List<InputField> inputFields;
 
     private UnityEvent<KeyboardModifier.ModifierType> OnModifierToggled = new UnityEvent<KeyboardModifier.ModifierType>();
+    private LinkedList<InputField> inputFieldNavigation;
+    private InputField currentField;
 
     void Start()
     {
@@ -22,6 +24,7 @@ public class KeyboardController : MonoBehaviour
 
         keys = new List<KeyboardKey>(GetComponentsInChildren<KeyboardKey>());
 
+        // Bind the key press events to the controller and controller message events to each key
         foreach (KeyboardKey key in keys)
         {
             inputModule.UICanvases.Add(key.GetComponentInChildren<Canvas>());
@@ -30,19 +33,29 @@ public class KeyboardController : MonoBehaviour
             OnModifierToggled.AddListener(key.ModifierToggled);
         }
 
+        // Prevent the keys from colliding with the base
         Collider[] keyColliders = GetComponentsInChildren<Collider>();
 
         foreach (var collider in keyColliders)
         {
             Physics.IgnoreCollision(baseCollider, collider);
         }
+
+        // Add each text field to the queue
+        inputFieldNavigation = new LinkedList<InputField>();
+
+        foreach (InputField inputField in inputFields)
+            inputFieldNavigation.AddLast(inputField);
+
+        currentField = inputFieldNavigation.First.Value;
+        currentField.Select();
     }
 
     public void KeyPressed(KeyboardKey key)
     {
         string keyValue = key.GetText();
 
-        if (activeTextfield)
+        if (currentField)
         {
             switch (keyValue)
             {
@@ -54,28 +67,78 @@ public class KeyboardController : MonoBehaviour
                     KeyboardKey.ToggleCapsState();
                     OnModifierToggled.Invoke(KeyboardModifier.ModifierType.Caps);
                     break;
-                case "Ctrl":
-                    KeyboardKey.ToggleCtrlState();
-                    OnModifierToggled.Invoke(KeyboardModifier.ModifierType.Ctrl);
-                    break;
-                case "Alt":
-                    KeyboardKey.ToggleAltState();
-                    OnModifierToggled.Invoke(KeyboardModifier.ModifierType.Alt);
-                    break;
                 case "Tab":
-                    // Insert a tab character
+                    currentField.text += '\t';
                     break;
-                case "Enter":
-                    // Insert a newline or confirm
+                case "Clear":
+                    currentField.text = "";
                     break;
                 case "Backspace":
-                    activeTextfield.text = activeTextfield.text.Remove(activeTextfield.text.Length - 1, 1);
+                    if(currentField.text.Length > 0)
+                        currentField.text = currentField.text.Remove(currentField.text.Length - 1, 1);
+                    break;
+                case "Paste":
+                    currentField.text += GUIUtility.systemCopyBuffer;
+                    break;
+                case "Previous":
+                    currentField.DeactivateInputField();
+                    currentField = CycleNavigationBackward();
+                    break;
+                case "Next":
+                    currentField.DeactivateInputField();
+                    currentField = CycleNavigationForward();
                     break;
                 default:
-                    activeTextfield.text += keyValue;
+                    currentField.text += keyValue;
                     break;
             }
+
+            StartCoroutine(ManuallyActivateInputField(currentField));
         }
+    }
+
+    private IEnumerator ManuallyActivateInputField(InputField field)
+    {
+        field.ActivateInputField();
+        field.Select();
+
+        yield return 0; // Wait until the start of next frame to update the caret position
+                        // Updating its position in the same frame does not work
+
+        field.MoveTextEnd(false);
+    }
+
+    public InputField CycleNavigationForward()
+    {
+        // Put the last value in the list to the front
+        inputFieldNavigation.AddLast(inputFieldNavigation.First.Value);
+        inputFieldNavigation.RemoveFirst();
+
+        return inputFieldNavigation.First.Value;
+    }
+
+    public InputField CycleNavigationBackward()
+    {
+        // Put the first value in the list to the back
+        inputFieldNavigation.AddFirst(inputFieldNavigation.Last.Value);
+        inputFieldNavigation.RemoveLast();
+
+        return inputFieldNavigation.First.Value;
+    }
+
+    // Change the current field to a specifiec one, reorder the list
+    public void SetCurrentInputField(InputField newField)
+    {
+        if (inputFieldNavigation.Find(newField) != null)
+        {
+            while (inputFieldNavigation.First.Value != newField)
+                CycleNavigationForward();
+
+            currentField = inputFieldNavigation.First.Value;
+            currentField.Select();
+        }
+        else
+            Debug.LogWarning("Keyboard does not contain the selected InputField.");
     }
 
     private void OnDestroy()

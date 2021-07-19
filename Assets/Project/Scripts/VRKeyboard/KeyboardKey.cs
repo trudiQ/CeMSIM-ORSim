@@ -11,20 +11,14 @@ public abstract class KeyboardKey : MonoBehaviour
     // Modifiers active (these will be the same across all keys)
     protected static bool shiftModifierActive = false;
     protected static bool capsModifierActive = false;
-    protected static bool ctrlModifierActive = false;
-    protected static bool altModifierActive = false;
 
-    // Messages sent when the controller receives a modifier press
+    // Messages sent when the controller receives a modifier press, toggle modifiers need implementation for visual effects
     public abstract void ModifierToggled(KeyboardModifier.ModifierType type);
     protected abstract void Shift();
     protected abstract void Caps();
-    protected abstract void Ctrl();
-    protected abstract void Alt();
 
     public static void ToggleShiftState() { shiftModifierActive = !shiftModifierActive; }
     public static void ToggleCapsState() { capsModifierActive = !capsModifierActive; }
-    public static void ToggleCtrlState() { ctrlModifierActive = !ctrlModifierActive; }
-    public static void ToggleAltState() { altModifierActive = !altModifierActive; }
     
     // General methods
     public abstract string GetText();
