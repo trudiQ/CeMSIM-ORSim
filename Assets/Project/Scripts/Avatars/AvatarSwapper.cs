@@ -9,13 +9,22 @@ using UnityEngine.Events;
 [RequireComponent(typeof(UserHeightUtility))]
 public class AvatarSwapper : MonoBehaviour
 {
-    public int activeAvatar = 0;
-    private int chosenAvatar;
+    [Header("Components")]
     public HVRManager manager;
     public HVRInputModule uiInputModule;
     public UserHeightUtility userHeightUtility;
     public AvatarNetworkedComponents avatarNetworkedComponents;
-    public List<GameObject> avatars = new List<GameObject>();
+
+    [Header("Avatars")]
+    public List<RoleAvatarList> avatarLists; // needs to replace the previous avatar list
+    public int defaultRole = 0;
+    public int defaultAvatar = 0;
+    public int selectedRole { get; private set; }
+    //public CEMSIM.GameLogic.Roles selectedRole { get; private set; }
+    public int selectedAvatar { get; private set; }
+    private int activeRole;
+    //public CEMSIM.GameLogic.Roles activeRole;
+    private int activeAvatar;
     public GameObject spawnedAvatar { get; private set; }
 
     private AvatarComponents currentAvatarComponents;
@@ -30,55 +39,74 @@ public class AvatarSwapper : MonoBehaviour
         if(!avatarNetworkedComponents)
             avatarNetworkedComponents = GetComponent<AvatarNetworkedComponents>();
 
-        SwapAvatar(activeAvatar);
+        selectedRole = defaultRole;
+        selectedAvatar = defaultAvatar;
     }
 
-    // Stores values given by UI elements
+    private void Start()
+    {
+        SwapToSelectedAvatar();
+    }
+
+    public void ChooseRole(int index)
+    {
+        // selectedRole = (CEMSIM.GameLogic.Roles)index;
+        selectedRole = index;
+    }
+
     public void ChooseAvatar(int index)
     {
-        chosenAvatar = index;
+        selectedAvatar = index;
     }
 
     // Create the chosen avatar and remove the current avatar
-    public void SwapAvatar(int index)
+    public void SwapAvatar(int roleIndex, int avatarIndex)
     {
-        if(index >= 0 && index < avatars.Count)
+        if (roleIndex >= 0 && roleIndex < avatarLists.Count)
         {
-            currentAvatarComponents?.RemoveComponents();
-            Destroy(spawnedAvatar);
+            if (avatarIndex >= 0 && avatarIndex < avatarLists[roleIndex].avatars.Length)
+            {
+                currentAvatarComponents?.RemoveComponents();
+                Destroy(spawnedAvatar);
 
-            spawnedAvatar = Instantiate(original: avatars[index],
-                                        parent: gameObject.transform,
-                                        position: transform.position,
-                                        rotation: transform.rotation);
-            activeAvatar = index;
+                activeRole = roleIndex;
+                activeAvatar = avatarIndex;
 
-            currentAvatarComponents = spawnedAvatar.GetComponent<AvatarComponents>();
-            avatarNetworkedComponents?.DeepCopy(spawnedAvatar.GetComponent<AvatarNetworkedComponents>());
-            currentAvatarComponents.SetHVRComponents(manager, uiInputModule);
-            currentAvatarComponents.SetUserHeightUtility(userHeightUtility);
+                GameObject newPrefab = avatarLists[roleIndex].avatars[avatarIndex].avatarPrefab;
 
-            userHeightUtility.floor = currentAvatarComponents.floor;
-            userHeightUtility.camera = currentAvatarComponents.camera;
+                spawnedAvatar = Instantiate(original: newPrefab,
+                                            parent: gameObject.transform,
+                                            position: transform.position,
+                                            rotation: transform.rotation);
 
-            OnAvatarSwapped.Invoke(activeAvatar);
+                currentAvatarComponents = spawnedAvatar.GetComponent<AvatarComponents>();
+                avatarNetworkedComponents?.DeepCopy(spawnedAvatar.GetComponent<AvatarNetworkedComponents>());
+                currentAvatarComponents.SetHVRComponents(manager, uiInputModule);
+                currentAvatarComponents.SetUserHeightUtility(userHeightUtility);
+
+                userHeightUtility.floor = currentAvatarComponents.floor;
+                userHeightUtility.camera = currentAvatarComponents.camera;
+
+                OnAvatarSwapped.Invoke(activeAvatar);
+            }
+            else
+                Debug.Log("Chosen avatar index out of bounds.");
         }
         else
-        {
-            Debug.LogError("Chosen avatar index out of bounds.");
-        }
+            Debug.LogError("Chosen role index out of bounds.");
     }
 
     // Method to be called from UI elements without parameters
-    public void SwapToChosenAvatar()
+    public void SwapToSelectedAvatar()
     {
-        SwapAvatar(chosenAvatar);
+        SwapAvatar(selectedRole, selectedAvatar);
     }
 }
 
 [CustomEditor(typeof(AvatarSwapper))]
 public class AvatarSwapperEditor : Editor
 {
+    private int roleIndex;
     private int avatarIndex;
 
     public override void OnInspectorGUI()
@@ -90,10 +118,11 @@ public class AvatarSwapperEditor : Editor
             Rect rect = EditorGUILayout.GetControlRect(false, 1);
             EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
 
+            roleIndex = EditorGUILayout.IntField(label: "Role Index", value: roleIndex);
             avatarIndex = EditorGUILayout.IntField(label: "Avatar Index", value: avatarIndex);
 
             if (GUILayout.Button("Swap"))
-                (target as AvatarSwapper).SwapAvatar(avatarIndex);
+                (target as AvatarSwapper).SwapAvatar(roleIndex, avatarIndex);
         }
             
     }
