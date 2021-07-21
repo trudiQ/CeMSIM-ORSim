@@ -16,15 +16,15 @@ public class AvatarSwapper : MonoBehaviour
     public AvatarNetworkedComponents avatarNetworkedComponents;
 
     [Header("Avatars")]
-    public List<RoleAvatarList> avatarLists; // needs to replace the previous avatar list
+    public List<RoleAvatarList> avatarLists;
     public int defaultRole = 0;
     public int defaultAvatar = 0;
     public int selectedRole { get; private set; }
     //public CEMSIM.GameLogic.Roles selectedRole { get; private set; }
     public int selectedAvatar { get; private set; }
-    private int activeRole;
+    public int activeRole { get; private set; }
     //public CEMSIM.GameLogic.Roles activeRole;
-    private int activeAvatar;
+    public int activeAvatar { get; private set; }
     public GameObject spawnedAvatar { get; private set; }
 
     private AvatarComponents currentAvatarComponents;
