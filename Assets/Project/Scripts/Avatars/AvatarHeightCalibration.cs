@@ -20,7 +20,7 @@ public class AvatarHeightCalibration : MonoBehaviour
     private float startingFootDistance;
     private float startingStepThreshold;
 
-    public UnityEvent<float> OnAvatarHeightChanged; // Sends new avatar scale, foot distance, and step threshold 
+    public UnityEvent<float> onAvatarHeightChanged; // Sends new avatar scale, foot distance, and step threshold 
                                                     // as a single multiplier when calibrated. Made to send client data to server
 
     void Start()
@@ -44,7 +44,7 @@ public class AvatarHeightCalibration : MonoBehaviour
         calibrationScaleMultiplier = newScale;
         Calibrate(calibrationScaleMultiplier);
 
-        OnAvatarHeightChanged.Invoke(calibrationScaleMultiplier);
+        onAvatarHeightChanged.Invoke(calibrationScaleMultiplier);
     }
 
     // Use a given height scale to resize the avatar, used for resizing avatar on server/non-local client

@@ -7908,7 +7908,10 @@ MonoBehaviour:
   leftController: {fileID: 0}
   rightController: {fileID: 0}
   hmd: {fileID: 0}
-  calibration: {fileID: 0}
+  heightCalibration: {fileID: 0}
+  onAvatarHeightChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &764332396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16874,7 +16877,7 @@ Transform:
   m_LocalScale: {x: 1.0000002, y: 1, z: 1.0000002}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1822759417
 GameObject:
@@ -23337,7 +23340,7 @@ PrefabInstance:
     - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
         type: 3}
       propertyPath: m_RootOrder
-      value: 13
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
         type: 3}
@@ -58576,11 +58579,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8559559515984770935, guid: 9d6d38dd46d8ca64484583050961f706,
-        type: 3}
-      propertyPath: m_Text
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8559559516319834828, guid: 9d6d38dd46d8ca64484583050961f706,
         type: 3}

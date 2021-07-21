@@ -7,11 +7,11 @@ using UnityEngine.Events;
 public class AvatarLookatCalibration : MonoBehaviour
 {
     public UserHeightUtility heightUtility;
+    public RoleMenu menu;
     public GameObject focusReticlePrefab;
     public UnityEngine.UI.Button calibrateButton;
-    public Dropdown avatarDropdown;
-    public float distance = 2f;
-    public float focusThreshold = 2f;
+    public float reticleDistance = 2f;
+    public float focusThresholdAngle = 2f;
     public float timerDuration = 3f;
 
     private Transform focusReticle;
@@ -27,7 +27,7 @@ public class AvatarLookatCalibration : MonoBehaviour
         {
             // Move the reticle directly in front of the camera but on a horizontal plane aligned with its y position
             Vector3 horizontalForward = Vector3.ProjectOnPlane(heightUtility.camera.forward, Vector3.up).normalized;
-            focusReticle.position = heightUtility.camera.transform.position + horizontalForward * distance;
+            focusReticle.position = heightUtility.camera.transform.position + horizontalForward * reticleDistance;
 
             focusReticle.LookAt(heightUtility.camera.transform); // Aim the reticle at the camera
             
@@ -56,7 +56,7 @@ public class AvatarLookatCalibration : MonoBehaviour
 
             // Get the forward axis of the camera so the reticle can be spawned directly in front
             Vector3 horizontalForward = Vector3.ProjectOnPlane(heightUtility.camera.forward, Vector3.up).normalized;
-            Vector3 startPos = heightUtility.camera.transform.position + horizontalForward * distance;
+            Vector3 startPos = heightUtility.camera.transform.position + horizontalForward * reticleDistance;
 
             focusReticle = Instantiate(original: focusReticlePrefab,
                                        position: startPos,
@@ -74,7 +74,7 @@ public class AvatarLookatCalibration : MonoBehaviour
         // Find the angle between where the camera is pointing and the reticle
         float angle = Vector3.Angle(reticleHorizontalBackward, heightUtility.camera.transform.forward);
 
-        return angle < focusThreshold;
+        return angle < focusThresholdAngle;
     }
 
     // Countdown for time user focused on the reticle
@@ -104,6 +104,6 @@ public class AvatarLookatCalibration : MonoBehaviour
 
         // Reactivate the calibrate button and allow avatar swapping
         calibrateButton.interactable = true;
-        avatarDropdown.interactable = true;
+        menu.SetRoleDropdownsInteractable(true);
     }
 }

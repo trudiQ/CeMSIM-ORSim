@@ -1398,12 +1398,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heightUtility: {fileID: 0}
+  menu: {fileID: 1464157868187090644}
   focusReticlePrefab: {fileID: 7800091427663770437, guid: d119bb8b87e3c054da60e011d5606fe9,
     type: 3}
   calibrateButton: {fileID: 8559559516793882273}
-  avatarDropdown: {fileID: 8559559516446174042}
-  distance: 2
-  focusThreshold: 2
+  reticleDistance: 2
+  focusThresholdAngle: 2
   timerDuration: 3
 --- !u!114 &1464157868187090644
 MonoBehaviour:
@@ -1421,8 +1421,25 @@ MonoBehaviour:
   roleDropdown: {fileID: 8559559516446174042}
   dropdownPrefab: {fileID: 530804188665728697, guid: 97faec8165fb9d848873a9589db7b185,
     type: 3}
-  spawnParent: {fileID: 1921331776830950131}
+  dropdownParent: {fileID: 1921331776830950131}
+  nameField: {fileID: 8559559516356278872}
+  mirrorButton: {fileID: 5997466794620603094}
   swapButton: {fileID: 8559559517416550454}
+  ipHostnameField: {fileID: 8559559516369502889}
+  portField: {fileID: 8559559516634747953}
+  connectButton: {fileID: 8559559517298060754}
+  onNameChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onIpHostnameChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onPortChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onConnect:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8559559516793882275
 GameObject:
   m_ObjectHideFlags: 0
@@ -3688,7 +3705,7 @@ PrefabInstance:
     - target: {fileID: 530804188665728697, guid: 97faec8165fb9d848873a9589db7b185,
         type: 3}
       propertyPath: m_Name
-      value: AvatarDropdown
+      value: RoleDropdown
       objectReference: {fileID: 0}
     - target: {fileID: 530804188665728702, guid: 97faec8165fb9d848873a9589db7b185,
         type: 3}

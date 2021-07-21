@@ -29,7 +29,8 @@ public class AvatarSwapper : MonoBehaviour
 
     private AvatarComponents currentAvatarComponents;
 
-    public UnityEvent<int> OnAvatarSwapped;
+    //public UnityEvent<CEMSIM.GameLogic.Roles, int> OnAvatarSwapped;
+    public UnityEvent<int, int> OnAvatarSwapped;
 
     void Awake()
     {
@@ -87,7 +88,7 @@ public class AvatarSwapper : MonoBehaviour
                 userHeightUtility.floor = currentAvatarComponents.floor;
                 userHeightUtility.camera = currentAvatarComponents.camera;
 
-                OnAvatarSwapped.Invoke(activeAvatar);
+                OnAvatarSwapped.Invoke(activeRole, activeAvatar);
             }
             else
                 Debug.Log("Chosen avatar index out of bounds.");
