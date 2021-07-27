@@ -15,17 +15,20 @@ public class AvatarPreview : MonoBehaviour
 
     public void Preview(GameObject prefab)
     {
+        if (currentAvatar)
+            Destroy(currentAvatar);
+
         if (prefab)
         {
-            if (currentAvatar)
-                Destroy(currentAvatar);
-
             currentAvatar = Instantiate(prefab, spawnPosition);
             currentIK = currentAvatar.GetComponentInChildren<VRIK>();
 
-            currentIK.solver.spine.headTarget = headTarget;
-            currentIK.solver.leftArm.target = leftHandTarget;
-            currentIK.solver.rightArm.target = rightHandTarget;
+            if (currentIK)
+            {
+                currentIK.solver.spine.headTarget = headTarget;
+                currentIK.solver.leftArm.target = leftHandTarget;
+                currentIK.solver.rightArm.target = rightHandTarget;
+            }
         }
     }
 }

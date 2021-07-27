@@ -39,13 +39,16 @@ public class AvatarHeightCalibration : MonoBehaviour
 
     public void Calibrate()
     {
-        // New scale is based on the height difference between the user height and avatar height
-        float newScale = userHeightUtility.height / avatarHeightUtility.height;
+        if(userHeightUtility && avatarHeightUtility)
+        {
+            // New scale is based on the height difference between the user height and avatar height
+            float newScale = userHeightUtility.height / avatarHeightUtility.height;
 
-        calibrationScaleMultiplier = newScale;
-        Calibrate(calibrationScaleMultiplier);
+            calibrationScaleMultiplier = newScale;
+            Calibrate(calibrationScaleMultiplier);
 
-        onAvatarHeightChanged.Invoke(calibrationScaleMultiplier);
+            onAvatarHeightChanged.Invoke(calibrationScaleMultiplier);
+        }
     }
 
     // Use a given height scale to resize the avatar, used for resizing avatar on server/non-local client
