@@ -37,7 +37,6 @@ public class RoleMenu : MonoBehaviour
         // Subscribe to events when values change or buttons are pressed
         nameField.onValueChanged.AddListener(onNameChanged.Invoke);             // Name change
         roleDropdown.onValueChanged.AddListener(ChooseRole);                    // Role change
-        previewButton.onClick.AddListener(ChangePreview);                       // Avatar preview
         ipHostnameField.onValueChanged.AddListener(onIpHostnameChanged.Invoke); // IP / Hostname change
         portField.onValueChanged.AddListener(onPortChanged.Invoke);             // Port change
         connectButton.onClick.AddListener(onConnect.Invoke);                    // Connect pressed
@@ -62,6 +61,7 @@ public class RoleMenu : MonoBehaviour
             { 
                 ChooseAvatar(value);
                 SwapAvatar();
+                ChangePreview();
             }); // To swap avatars on selection
 
             avatarDropdowns.Add(dropdown);
