@@ -36,7 +36,12 @@ public class RoleMenu : MonoBehaviour
     {
         // Subscribe to events when values change or buttons are pressed
         nameField.onValueChanged.AddListener(onNameChanged.Invoke);             // Name change
-        roleDropdown.onValueChanged.AddListener(ChooseRole);                    // Role change
+
+        roleDropdown.onValueChanged.AddListener((value) => {
+            ChooseRoleAndAvatar(value, 0);
+            SwapAvatar();
+        });                                                                     // Role change
+
         ipHostnameField.onValueChanged.AddListener(onIpHostnameChanged.Invoke); // IP / Hostname change
         portField.onValueChanged.AddListener(onPortChanged.Invoke);             // Port change
         connectButton.onClick.AddListener(onConnect.Invoke);                    // Connect pressed
@@ -101,7 +106,6 @@ public class RoleMenu : MonoBehaviour
 
             activeAvatarDropdown.value = 0; // Make sure new dropdown has the same value as the selected role
             activeAvatarDropdown.RefreshShownValue();
-            ChooseAvatar(0);
         }
     }
 
