@@ -124,8 +124,8 @@ public class RoleMenu : MonoBehaviour
 
     public void ChangePreview()
     {
-        int selectedRole = avatarSwapper.activeRole;
-        int selectedAvatar = avatarSwapper.activeAvatar;
+        int selectedRole = avatarSwapper.selectedRole;
+        int selectedAvatar = avatarSwapper.selectedAvatar;
 
         GameObject previewPrefab = avatarSwapper.avatarLists[selectedRole].avatars[selectedAvatar].previewPrefab;
 
