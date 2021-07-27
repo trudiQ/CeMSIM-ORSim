@@ -9,7 +9,6 @@ public class KeyboardController : MonoBehaviour
 {
     public HVRInputModule inputModule;
     public List<KeyboardKey> keys { get; private set; }
-    public Collider baseCollider;
 
     public List<InputField> inputFields;
 
@@ -31,14 +30,6 @@ public class KeyboardController : MonoBehaviour
             key.OnKeyPressed.AddListener(KeyPressed);
 
             OnModifierToggled.AddListener(key.ModifierToggled);
-        }
-
-        // Prevent the keys from colliding with the base
-        Collider[] keyColliders = GetComponentsInChildren<Collider>();
-
-        foreach (var collider in keyColliders)
-        {
-            Physics.IgnoreCollision(baseCollider, collider);
         }
 
         // Add each text field to the queue

@@ -7,4 +7,5 @@ public class RoleAvatar : ScriptableObject
 {
     public string avatarName;
     public GameObject avatarPrefab;
+    public GameObject previewPrefab;
 }

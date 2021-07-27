@@ -25,7 +25,7 @@ public class AvatarHeightCalibration : MonoBehaviour
 
     void Start()
     {
-        if(!avatarHeightUtility)
+        if (!avatarHeightUtility)
             avatarHeightUtility = GetComponentInChildren<AvatarPrefabHeightUtility>();
 
         // Store the initial data for later use
@@ -33,7 +33,8 @@ public class AvatarHeightCalibration : MonoBehaviour
         startingFootDistance = ik.solver.locomotion.footDistance;
         startingStepThreshold = ik.solver.locomotion.stepThreshold;
 
-        Calibrate();
+        if (avatarHeightUtility)
+            Calibrate();
     }
 
     public void Calibrate()

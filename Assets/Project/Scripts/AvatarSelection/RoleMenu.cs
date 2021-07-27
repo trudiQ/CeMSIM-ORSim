@@ -15,11 +15,12 @@ public class RoleMenu : MonoBehaviour
 
     [Header("Event Components")]
     public InputField nameField;
-    public UnityEngine.UI.Button mirrorButton;
-    public UnityEngine.UI.Button swapButton;
+    public UnityEngine.UI.Button previewButton;
+    public AvatarPreview preview;
     public InputField ipHostnameField;
     public InputField portField;
     public UnityEngine.UI.Button connectButton;
+    
 
     private List<Dropdown> avatarDropdowns = new List<Dropdown>();
     private GameObject activeAvatarDropdownObject;
@@ -35,8 +36,8 @@ public class RoleMenu : MonoBehaviour
     {
         // Subscribe to events when values change or buttons are pressed
         nameField.onValueChanged.AddListener(onNameChanged.Invoke);             // Name change
-        swapButton.onClick.AddListener(avatarSwapper.SwapToSelectedAvatar);     // Avatar swap
         roleDropdown.onValueChanged.AddListener(ChooseRole);                    // Role change
+        previewButton.onClick.AddListener(ChangePreview);                       // Avatar preview
         ipHostnameField.onValueChanged.AddListener(onIpHostnameChanged.Invoke); // IP / Hostname change
         portField.onValueChanged.AddListener(onPortChanged.Invoke);             // Port change
         connectButton.onClick.AddListener(onConnect.Invoke);                    // Connect pressed
@@ -56,7 +57,13 @@ public class RoleMenu : MonoBehaviour
             dropdown.RefreshShownValue();
 
             dropdown.gameObject.SetActive(false);
-            dropdown.onValueChanged.AddListener(ChooseAvatar);
+
+            dropdown.onValueChanged.AddListener( (value) => 
+            { 
+                ChooseAvatar(value);
+                SwapAvatar();
+            }); // To swap avatars on selection
+
             avatarDropdowns.Add(dropdown);
         }
 
@@ -74,8 +81,7 @@ public class RoleMenu : MonoBehaviour
         foreach (Dropdown dropdown in avatarDropdowns)
             dropdown.interactable = state;
 
-        mirrorButton.interactable = state;
-        swapButton.interactable = state;
+        previewButton.interactable = state;
     }
 
     public void ChooseRole(int index)
@@ -114,5 +120,15 @@ public class RoleMenu : MonoBehaviour
     public void SwapAvatar()
     {
         avatarSwapper.SwapToSelectedAvatar();
+    }
+
+    public void ChangePreview()
+    {
+        int selectedRole = avatarSwapper.activeRole;
+        int selectedAvatar = avatarSwapper.activeAvatar;
+
+        GameObject previewPrefab = avatarSwapper.avatarLists[selectedRole].avatars[selectedAvatar].previewPrefab;
+
+        preview.Preview(previewPrefab);
     }
 }
