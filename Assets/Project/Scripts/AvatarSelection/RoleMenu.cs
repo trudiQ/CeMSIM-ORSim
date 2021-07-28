@@ -40,6 +40,7 @@ public class RoleMenu : MonoBehaviour
         roleDropdown.onValueChanged.AddListener((value) => {
             ChooseRoleAndAvatar(value, 0);
             SwapAvatar();
+            ChangePreview();
         });                                                                     // Role change
 
         ipHostnameField.onValueChanged.AddListener(onIpHostnameChanged.Invoke); // IP / Hostname change
