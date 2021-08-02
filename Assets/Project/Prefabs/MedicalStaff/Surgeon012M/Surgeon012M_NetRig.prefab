@@ -135,9 +135,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6093432488152574866}
+  - component: {fileID: 4992894034439557988}
   - component: {fileID: 8610027036500353431}
   - component: {fileID: 2025798070291876022}
+  - component: {fileID: 3966000708489071645}
+  - component: {fileID: 2862195559505665234}
   m_Layer: 0
   m_Name: Username
   m_TagString: Untagged
@@ -145,20 +147,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6093432488152574866
-Transform:
+--- !u!224 &4992894034439557988
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4517632408022737988}
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
-  m_LocalPosition: {x: -1.7319994, y: 0.356, z: 0.23899986}
+  m_LocalPosition: {x: 0, y: 0, z: 0.23899986}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6059145864346375746}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -1.7319994, y: 0.356}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &8610027036500353431
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -166,7 +173,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4517632408022737988}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -222,6 +229,48 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+--- !u!222 &3966000708489071645
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4517632408022737988}
+  m_CullTransparentMesh: 0
+--- !u!114 &2862195559505665234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4517632408022737988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 5538ba514d9273a459ed9bc3898fc7ea, type: 2}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Username
 --- !u!1 &6022350211667813747
 GameObject:
   m_ObjectHideFlags: 0
@@ -310,7 +359,7 @@ Transform:
   m_LocalPosition: {x: 0.01, y: -0.056, z: -0.142}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 6093432488152574866}
+  - {fileID: 4992894034439557988}
   m_Father: {fileID: 3325467944457296081}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -382,6 +431,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 181035518621399958}
     m_Modifications:
+    - target: {fileID: 3585309525256310504, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
+        type: 3}
+      propertyPath: solver.leftArm.target
+      value: 
+      objectReference: {fileID: 6059145865466291504}
+    - target: {fileID: 3585309525256310504, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
+        type: 3}
+      propertyPath: solver.rightArm.target
+      value: 
+      objectReference: {fileID: 6059145864201829409}
+    - target: {fileID: 3585309525256310504, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
+        type: 3}
+      propertyPath: solver.spine.headTarget
+      value: 
+      objectReference: {fileID: 6059145864346375746}
     - target: {fileID: 4793956473566993433, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
         type: 3}
       propertyPath: m_Name
