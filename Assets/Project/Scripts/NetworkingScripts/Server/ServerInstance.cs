@@ -164,6 +164,7 @@ namespace CEMSIM
                     { (int)ClientPackets.invalidPacket, ServerHandle.InvalidPacketResponse},
                     { (int)ClientPackets.welcome, ServerHandle.Welcome},
                     { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
+                    { (int)ClientPackets.welcomeUDP, ServerHandle.WelcomeUDP },
                     { (int)ClientPackets.pingTCP, ServerHandle.PingTCP},
                     { (int)ClientPackets.pingUDP, ServerHandle.PingUDP},
                     { (int)ClientPackets.spawnRequest, ServerHandle.SpawnRequest},

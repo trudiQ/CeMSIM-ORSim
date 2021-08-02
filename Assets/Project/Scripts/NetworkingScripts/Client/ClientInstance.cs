@@ -15,6 +15,11 @@ namespace CEMSIM
         {
             public static ClientInstance instance;
 
+
+            [Header("Menu Object")]
+            public GameObject PCConnectMenu;
+            public GameObject VRConnectMenu;
+
             [Header("Network Configurations")]
             public static int dataBufferSize = ClientNetworkConstants.DATA_BUFFER_SIZE;
 
@@ -25,6 +30,7 @@ namespace CEMSIM
             public int port = ClientNetworkConstants.SERVER_PORT;
 
             [Header("Player Configurations")]
+            //public bool isVR = true;
             public int myId = 0;
             public string myUsername = "DEFAULT_USERNAME";
             public Roles role=Roles.surgeon;
@@ -76,22 +82,25 @@ namespace CEMSIM
                 {
                     //To do: Handle this in XR & Menu Manager Instances
                     // disable the manu and request to enter the OR
-                    ClientPCConnetMenu.Instance.gameObject.SetActive(false);
-                    ClientInstance.instance.ConnectToServer(ip, port);
+                    PCConnectMenu?.SetActive(false);
+                    VRConnectMenu?.SetActive(true);
+                    //ClientInstance.instance.ConnectToServer(ip, port);
 
                     //Delays the Spawn request to ensure the client is connected
-                    StartCoroutine(DelaySpawnRequest());
+                    //StartCoroutine(DelaySpawnRequest());
                 }
                 else
                 {
+                    PCConnectMenu?.SetActive(true);
+                    VRConnectMenu?.SetActive(false);
                     isReady = true;
                 }
             }
 
 
-            IEnumerator DelaySpawnRequest()
+            public IEnumerator DelaySpawnRequest(float _seconds=5f)
             {
-                yield return new WaitForSeconds(5f);
+                yield return new WaitForSeconds(_seconds);
                 //string _username = "Player" + ClientInstance.instance.myId.ToString();
                 string _username = ClientInstance.instance.myUsername;
 
@@ -108,6 +117,7 @@ namespace CEMSIM
 
                 //TO DO: ConnectOnStart is used for VR mode at the moment. 
                 //Add feature for entering in VR or desktop mode
+                
                 ClientSend.SendSpawnRequest(_username, true, role);
                 //GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
             }
@@ -137,9 +147,10 @@ namespace CEMSIM
             /// <summary>
             /// Check whether TCP and UDP are ready
             /// </summary>
-            public void CheckConnection()
+            public bool CheckConnection()
             {
                 instance.isConnected = instance.tcp.isTCPConnected && instance.udp.isUDPConnected;
+                return instance.isConnected;
             }
 
             #region UDP
@@ -181,13 +192,15 @@ namespace CEMSIM
                     socket.BeginReceive(ReceiveCallback, null);
 
                     // send a welcome packet
-                    using (Packet _packet = new Packet((int)ClientPackets.welcome))
-                    {
-                        // since user id has already been added to the packet, no need to manually add it again.
-                        SendData(_packet);
-                    }
+                    //using (Packet _packet = new Packet((int)ClientPackets.welcome))
+                    //{
+                    //    // since user id has already been added to the packet, no need to manually add it again.
+                    //    SendData(_packet);
+                    //}
 
-                    isUDPConnected = true;
+                    ClientSend.WelcomeUDP();
+
+                    //isUDPConnected = true;
                     instance.CheckConnection();
                 }
 
@@ -492,6 +505,7 @@ namespace CEMSIM
                 packetHandlers = new Dictionary<int, PacketHandler>() {
                     { (int)ServerPackets.invalidPacket, ClientHandle.InvalidPacketResponse},
                     { (int)ServerPackets.welcome, ClientHandle.Welcome },
+                    { (int)ServerPackets.welcomeUDP, ClientHandle.WelcomeUDP },
                     { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
                     { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
                     { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },

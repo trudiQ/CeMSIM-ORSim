@@ -41,6 +41,11 @@ namespace CEMSIM
                 ClientInstance.instance.CheckConnection();
             }
 
+            public static void WelcomeUDP(Packet)
+            {
+                ClientInstance.instance.udp.isUDPConnected = true;
+            }
+
             /// <summary>
             /// Handle the TCP ping response from the server.
             /// </summary>

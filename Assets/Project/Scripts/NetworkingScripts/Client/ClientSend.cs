@@ -50,6 +50,14 @@ namespace CEMSIM
                 }
             }
 
+            public static void WelcomeUDP()
+            {
+                using(Packet _packet = new Packet((int)ClientPackets.welcomeUDP))
+                {
+                    SendUDPData(_packet);
+                }
+            }
+
             public static void SendTCPPing(string _msg = "")
             {
                 using (Packet _packet = new Packet((int)ClientPackets.pingTCP))

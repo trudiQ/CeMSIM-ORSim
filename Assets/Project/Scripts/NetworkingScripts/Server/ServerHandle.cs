@@ -22,6 +22,7 @@ namespace CEMSIM
             {
                 // Do nothing, because the "Welcome" packet is the first packet sent by the client through UDP
                 // It is used to verify the establishment of UDP connection
+                Debug.Log($"Welcome packet from {_fromClient}");
             }
 
             public static void WelcomeReceived(int _fromClient, Packet _packet)
@@ -40,6 +41,11 @@ namespace CEMSIM
                     return;
                 }
 
+            }
+
+            public static void WelcomeUDP(int _fromClient, Packet packet)
+            {
+                ServerSend.WelcomeUDP(_fromClient);
             }
 
             public static void PingUDP(int _fromClient, Packet _packet)

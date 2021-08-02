@@ -127,6 +127,15 @@ namespace CEMSIM
                 }
             }
 
+            public static void WelcomeUDP(int _toClient)
+            {
+                using(Packet _packet = new Packet((int)ServerPackets.welcomeUDP))
+                {
+                    _packet.Write(_toClient);
+                    SendUDPData(_toClient, _packet, true);
+                }
+            }
+
             /// <summary>
             /// Reply client's TCP ping
             /// </summary>

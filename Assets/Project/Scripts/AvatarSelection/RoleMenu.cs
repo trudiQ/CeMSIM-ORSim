@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using CEMSIM.GameLogic;
+using CEMSIM.Network;
 
 public class RoleMenu : MonoBehaviour
 {
@@ -34,6 +36,12 @@ public class RoleMenu : MonoBehaviour
 
     void Start()
     {
+        // Set initial values to each field 
+        nameField.text = ClientInstance.instance.myUsername;
+        ipHostnameField.text = ClientInstance.instance.ip;
+        portField.text = ClientInstance.instance.port.ToString();
+
+
         // Subscribe to events when values change or buttons are pressed
         nameField.onValueChanged.AddListener(onNameChanged.Invoke);             // Name change
 
@@ -135,5 +143,34 @@ public class RoleMenu : MonoBehaviour
         GameObject previewPrefab = avatarSwapper.avatarLists[selectedRole].avatars[selectedAvatar].previewPrefab;
 
         preview.Preview(previewPrefab);
+    }
+
+    public void OnConnectClick()
+    {
+
+        connectButton.GetComponentInChildren<Text>().text = "Connecting";
+        //connectButton.GetComponent<Selectable>().interactable = !ClientInstance.instance.isConnected;
+        connectButton.GetComponent<Selectable>().interactable = false;
+        string _ip = ipHostnameField.text;
+        int _port = int.Parse(portField.text);
+        ClientInstance.instance.SetUsername(nameField.text);
+        ClientInstance.instance.ConnectToServer(_ip, _port);
+
+        StartCoroutine(DelayConnect());
+
+    }
+
+
+
+    IEnumerator DelayConnect()
+    {
+        yield return new WaitForSeconds(5f);
+        Debug.Log($"Connection {ClientInstance.instance.CheckConnection()}");
+        this.gameObject.SetActive(!ClientInstance.instance.isConnected); //conceal the menu if connected
+        connectButton.GetComponent<Selectable>().interactable = !ClientInstance.instance.isConnected;
+        if (ClientInstance.instance.isConnected)
+        {
+            ClientInstance.instance.DelaySpawnRequest(1f);
+        }
     }
 }
