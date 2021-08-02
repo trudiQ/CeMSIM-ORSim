@@ -115,6 +115,8 @@ public class RoleMenu : MonoBehaviour
 
             activeAvatarDropdown.value = 0; // Make sure new dropdown has the same value as the selected role
             activeAvatarDropdown.RefreshShownValue();
+
+            ClientInstance.instance.role = (Roles)index;
         }
     }
 
@@ -153,24 +155,43 @@ public class RoleMenu : MonoBehaviour
         connectButton.GetComponent<Selectable>().interactable = false;
         string _ip = ipHostnameField.text;
         int _port = int.Parse(portField.text);
+
+
         ClientInstance.instance.SetUsername(nameField.text);
         ClientInstance.instance.ConnectToServer(_ip, _port);
 
-        StartCoroutine(DelayConnect());
+        StartCoroutine(ClientInstance.instance.DelaySpawnRequest(1f));
+       
+        StartCoroutine(DelayDestroy());
 
     }
 
 
 
-    IEnumerator DelayConnect()
+    IEnumerator DelayDestroy()
     {
-        yield return new WaitForSeconds(5f);
-        Debug.Log($"Connection {ClientInstance.instance.CheckConnection()}");
-        this.gameObject.SetActive(!ClientInstance.instance.isConnected); //conceal the menu if connected
-        connectButton.GetComponent<Selectable>().interactable = !ClientInstance.instance.isConnected;
-        if (ClientInstance.instance.isConnected)
-        {
-            ClientInstance.instance.DelaySpawnRequest(1f);
-        }
+        yield return new WaitForSeconds(3f);
+
+        this.gameObject.SetActive(false);
+
+        //Debug.Log($"Connection {ClientInstance.instance.CheckConnection()}");
+        //this.gameObject.SetActive(!ClientInstance.instance.isConnected); //conceal the menu if connected
+        //connectButton.GetComponent<Selectable>().interactable = !ClientInstance.instance.isConnected;
+        //if (ClientInstance.instance.CheckConnection())
+        //{
+        //    Debug.Log($"user id {ClientInstance.instance.myId}");
+        //    StartCoroutine(ClientInstance.instance.DelaySpawnRequest(1f));
+        //    GameManager.instance.localPlayerVR.GetComponent<PlayerManager>().InitializePlayerManager(
+        //            ClientInstance.instance.myId,
+        //            nameField.text,
+        //            ClientInstance.instance.role,
+        //            true,   // at the client side?
+        //            true    // VR player?
+        //            );
+        //}
+        //else
+        //{
+        //    connectButton.GetComponentInChildren<Text>().text = "Reconnection";
+        //}
     }
 }

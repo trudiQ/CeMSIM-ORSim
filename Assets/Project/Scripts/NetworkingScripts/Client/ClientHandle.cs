@@ -34,16 +34,18 @@ namespace CEMSIM
                 ClientSend.WelcomeReceived();
 
                 // connect udp 
-                ClientInstance.instance.udp.Connect(((IPEndPoint)ClientInstance.instance.tcp.socket.Client.LocalEndPoint).Port);
+                //ClientInstance.instance.udp.Connect(((IPEndPoint)ClientInstance.instance.tcp.socket.Client.LocalEndPoint).Port);
 
                 // Mark TCP ready-to-use
                 ClientInstance.instance.tcp.isTCPConnected = true;
                 ClientInstance.instance.CheckConnection();
             }
 
-            public static void WelcomeUDP(Packet)
+            public static void WelcomeUDP(Packet _packet)
             {
+                Debug.Log("UDP connection success");
                 ClientInstance.instance.udp.isUDPConnected = true;
+                ClientInstance.instance.CheckConnection();
             }
 
             /// <summary>

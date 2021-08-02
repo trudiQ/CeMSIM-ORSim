@@ -105,6 +105,7 @@ namespace CEMSIM
                 string _username = ClientInstance.instance.myUsername;
 
                 isReady = true;
+                Debug.Log("Reach Here");
                 // configure the local player
                 GameManager.instance.localPlayerVR.GetComponent<PlayerManager>().InitializePlayerManager(
                     ClientInstance.instance.myId,
@@ -167,6 +168,7 @@ namespace CEMSIM
                 public UDP()
                 {
                     isUDPConnected = false;
+                    ClientInstance.instance.CheckConnection();
                 }
 
                 /// <summary>
@@ -183,10 +185,11 @@ namespace CEMSIM
                         _ip = Dns.GetHostAddresses(instance.ip)[0];
                     }
 
-                    Debug.Log($"UDP is connecting to the server with ip:{instance.ip} {_ip}");
                     endPoint = new IPEndPoint(_ip, instance.port);
 
+                    Debug.Log($"Create UDP socket");
                     socket = new UdpClient(_localPort);
+                    Debug.Log($"Connecting via UDP to the server with ip:{instance.ip} {_ip}");
                     socket.Connect(endPoint);
 
                     socket.BeginReceive(ReceiveCallback, null);
@@ -277,7 +280,7 @@ namespace CEMSIM
                     {
                         int _packetLength = _packet.ReadInt32();
                         if (_data.Length - _packetLength != 4){
-                            Debug.LogWarning($"UDP packet payload{_packetLength} != packet size {_data.Length}");
+                            Debug.LogWarning($"UDP packet payload {_packetLength} != packet size {_data.Length}");
                             return;
                         }
                         _data = _packet.ReadBytes(_packetLength);
