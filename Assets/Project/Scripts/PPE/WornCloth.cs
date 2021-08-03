@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using HurricaneVR.Framework.Core.Grabbers;
+using HurricaneVR.Framework.Core;
 
 [RequireComponent(typeof(Collider))]
 [System.Serializable]
@@ -13,16 +16,14 @@ public class WornCloth : MonoBehaviour
     public Vector3 offset; // Position offset from the object's origin to the center of the mesh
     public bool isActive { get; private set; }
 
-    // Events that trigger when the user grabs within the collider
-    public delegate void OnWornClothInteractedSteam(Hand hand);
-    public OnWornClothInteractedSteam onWornClothInteractedSteam;
+    // Events that trigger when the user grabs the object
+    public UnityEvent<HVRHandGrabber, HVRGrabbable> onWornClothInteracted;
 
-    private Interactable steamInteractable;
+    private HVRGrabbable grabbable;
 
     void Start()
     {
-        xrInteractable = GetComponent<XRSimpleInteractable>();
-        steamInteractable = GetComponent<Interactable>();
+        grabbable = GetComponent<HVRGrabbable>();
     }
 
     // Returns the position in the world where the offset of the object would be
@@ -43,26 +44,8 @@ public class WornCloth : MonoBehaviour
         isActive = state;
     }
 
-    // XR method for when the object is selected
-    public void OnSelectEnter(XRBaseInteractor interactor)
-    {
-        if (isActive)
-        {
-            Debug.Log("Worn cloth grabbed");
-            onWornClothInteractedXR.Invoke(interactor);
-        }
-        
-    }
-
-    // XR method for when the object stops being selected
-    public void OnSelectExit(XRBaseInteractor interactor)
-    {
-        if (isActive)
-            onWornClothInteractedXR.Invoke(interactor);
-    }
-
     // Steam method that updates while the hand is within the collider
-    private void HandHoverUpdate(Hand hand)
+    /*private void HandHoverUpdate(Hand hand)
     {
         if (isActive)
         {
@@ -71,6 +54,18 @@ public class WornCloth : MonoBehaviour
             if (hand.AttachedObjects.Count == 0 && startingGrabType == GrabTypes.Pinch)
                 onWornClothInteractedSteam.Invoke(hand);
         }
+    }*/
+
+    // Method to be called when the HVRGrabbable is grabbed
+    public void Grabbed(HVRHandGrabber grabber, HVRGrabbable grabbable)
+    {
+        
+    }
+
+    // Method to be called when the HVRGrabbable is released
+    public void Released(HVRHandGrabber grabber, HVRGrabbable grabbable)
+    {
+        
     }
 
     // Show the offset position as a sphere when the object is selected

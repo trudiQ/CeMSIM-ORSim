@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using HurricaneVR.Framework.Core.Grabbers;
+using HurricaneVR.Framework.Core;
 
 public class InteractableClothController : MonoBehaviour
 {
@@ -45,11 +47,11 @@ public class ClothPair
     public void Initialize(InteractableCloth pairedCloth)
     {
         sceneCloth = pairedCloth;
-        pairedCloth.throwable.SetState(!snapOnGrab);
+        //pairedCloth.SetGrabbableState(!snapOnGrab);
         SetModelClothActive(equipAtStart);
 
-        modelCloth.onWornClothInteractedSteam += OnWornClothInteractedSteam;
-        sceneCloth.onSceneClothInteractedSteam += OnSceneClothInteractedSteam;
+        modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted);
+        sceneCloth.onSceneClothInteracted.AddListener(OnSceneClothInteracted);
     }
 
     // Toggles the active state of both cloth
@@ -128,7 +130,7 @@ public class ClothPair
     }
 
     // Event for when the scene cloth is interacted with by a SteamVR controller
-    private void OnSceneClothInteractedSteam(Hand hand)
+    /*private void OnSceneClothInteractedSteam(Hand hand)
     {
         if (snapOnGrab)
             ToggleModelCloth();
@@ -141,5 +143,19 @@ public class ClothPair
 
         if(!snapOnGrab)
             sceneCloth.ManualAttachToHandSteam(hand);
+    }*/
+
+    private void OnSceneClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
+    {
+        if (snapOnGrab)
+            ToggleModelCloth();
+    }
+
+    private void OnWornClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
+    {
+        ToggleModelCloth();
+
+        if (!snapOnGrab)
+            sceneCloth.ManualGrab(grabber);
     }
 }

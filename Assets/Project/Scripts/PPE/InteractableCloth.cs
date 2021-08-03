@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core;
 
-[RequireComponent(typeof(ToggleThrowable))]
 [RequireComponent(typeof(Collider))]
 [System.Serializable]
 public class InteractableCloth : MonoBehaviour
@@ -14,16 +14,16 @@ public class InteractableCloth : MonoBehaviour
     public bool isBeingGrabbed = false;
     public bool isActive { get; private set; }
 
-    public delegate void OnSceneClothInteracted(Hand hand);
-    public OnSceneClothInteracted onSceneClothInteractedSteam;
+    public UnityEvent<HVRHandGrabber, HVRGrabbable> onSceneClothInteracted;
 
     //private Hand connectedSteamHand; // Steam hand
-    private HVRGrabberBase connectedHand;
-    public ToggleThrowable throwable { get; private set; }
+    private HVRHandGrabber connectedHand;
+    //public ToggleThrowable throwable { get; private set; }
+    private HVRGrabbable grabbable;
 
     void Start()
     {
-        throwable = GetComponent<ToggleThrowable>();
+        grabbable = GetComponent<HVRGrabbable>();
     }
 
     // Returns the position in the world where the offset of the object would be
@@ -43,7 +43,7 @@ public class InteractableCloth : MonoBehaviour
     {
         if (!state)
         {
-            StopGrab();
+            //StopGrab();
 
             if (parent)
             {
@@ -60,6 +60,7 @@ public class InteractableCloth : MonoBehaviour
     }
 
     // Forces the release of the object from a hand
+    /*
     private void StopGrab()
     {
         if(connectedSteamHand)
@@ -100,26 +101,31 @@ public class InteractableCloth : MonoBehaviour
     public void ManualAttachToHandSteam(Hand hand)
     {
         hand.AttachObject(gameObject, GrabTypes.Pinch, throwable.attachmentFlags);
-    }
+    }*/
 
     // Method to be called when the HVRGrabbable is grabbed
-    public void Grabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
+    public void Grabbed(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
         connectedHand = grabber;
         isBeingGrabbed = true;
     }
 
     // Method to be called when the HVRGrabbable is released
-    public void Released(HVRGrabberBase grabber, HVRGrabbable grabbable)
+    public void Released(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
         connectedHand = null;
         isBeingGrabbed = false;
     }
 
     // Manually grab the object
-    public void ManualGrab()
+    public void ManualGrab(HVRHandGrabber grabber)
     {
+        grabber.TryGrab(grabbable);
+    }
 
+    public void SetGrabbableState(bool state)
+    {
+        grabbable.enabled = state;
     }
 
     // Show the offset position as a sphere when the object is selected
