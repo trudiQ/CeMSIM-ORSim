@@ -60,6 +60,13 @@ public class ClothPair
         SetModelClothActive(!modelCloth.isActive);
     }
 
+    // Toggles between snapping and grabbing
+    public void ToggleGrabSnap()
+    {
+        sceneCloth.SetGrabbableState(snapOnGrab);
+        snapOnGrab = !snapOnGrab;
+    }
+
     // Sets the model cloth to a specific state, sets the model and scene cloth to opposite state
     public void SetModelClothActive(bool state)
     {
