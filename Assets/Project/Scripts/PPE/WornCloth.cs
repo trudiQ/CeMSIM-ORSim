@@ -6,6 +6,7 @@ using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core;
 
 [RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(HVRInteractable))]
 [System.Serializable]
 public class WornCloth : MonoBehaviour
 {
@@ -19,11 +20,11 @@ public class WornCloth : MonoBehaviour
     // Events that trigger when the user grabs the object
     public UnityEvent<HVRHandGrabber, HVRGrabbable> onWornClothInteracted;
 
-    private HVRGrabbable grabbable;
+    private HVRInteractable interactable;
 
     void Start()
     {
-        grabbable = GetComponent<HVRGrabbable>();
+        interactable = GetComponent<HVRInteractable>();
     }
 
     // Returns the position in the world where the offset of the object would be
@@ -44,28 +45,13 @@ public class WornCloth : MonoBehaviour
         isActive = state;
     }
 
-    // Steam method that updates while the hand is within the collider
-    /*private void HandHoverUpdate(Hand hand)
+    // Calls the event when this object is interacted with
+    public void Interacted(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
         if (isActive)
         {
-            GrabTypes startingGrabType = hand.GetGrabStarting();
-
-            if (hand.AttachedObjects.Count == 0 && startingGrabType == GrabTypes.Pinch)
-                onWornClothInteractedSteam.Invoke(hand);
+            onWornClothInteracted.Invoke(grabber, grabbable);
         }
-    }*/
-
-    // Method to be called when the HVRGrabbable is grabbed
-    public void Grabbed(HVRHandGrabber grabber, HVRGrabbable grabbable)
-    {
-        
-    }
-
-    // Method to be called when the HVRGrabbable is released
-    public void Released(HVRHandGrabber grabber, HVRGrabbable grabbable)
-    {
-        
     }
 
     // Show the offset position as a sphere when the object is selected

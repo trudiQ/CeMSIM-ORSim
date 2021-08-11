@@ -6,6 +6,7 @@ using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core;
 
 [RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(HVRInteractable))]
 [System.Serializable]
 public class InteractableCloth : MonoBehaviour
 {
@@ -14,16 +15,14 @@ public class InteractableCloth : MonoBehaviour
     public bool isBeingGrabbed = false;
     public bool isActive { get; private set; }
 
-    public UnityEvent<HVRHandGrabber, HVRGrabbable> onSceneClothInteracted;
+    public UnityEvent<HVRHandGrabber, HVRInteractable> onSceneClothInteracted;
 
-    //private Hand connectedSteamHand; // Steam hand
     private HVRHandGrabber connectedHand;
-    //public ToggleThrowable throwable { get; private set; }
-    private HVRGrabbable grabbable;
+    private HVRInteractable interactable;
 
     void Start()
     {
-        grabbable = GetComponent<HVRGrabbable>();
+        interactable = GetComponent<HVRInteractable>();
     }
 
     // Returns the position in the world where the offset of the object would be
@@ -43,7 +42,7 @@ public class InteractableCloth : MonoBehaviour
     {
         if (!state)
         {
-            //StopGrab();
+            StopGrab();
 
             if (parent)
             {
@@ -59,59 +58,17 @@ public class InteractableCloth : MonoBehaviour
         isActive = state;
     }
 
-    // Forces the release of the object from a hand
-    /*
-    private void StopGrab()
-    {
-        if(connectedSteamHand)
-            connectedSteamHand.DetachObject(gameObject);
-
-        isBeingGrabbed = false;
-    }
-
-    // Steam method that updates while the hand is within the collider
-    private void HandHoverUpdate(Hand hand)
-    {
-        if (!isActive) return;
-
-        GrabTypes startingGrabType = hand.GetGrabStarting();
-
-        if (hand.AttachedObjects.Count == 0 && startingGrabType == GrabTypes.Pinch)
-        {
-            connectedSteamHand = hand;
-            onSceneClothInteractedSteam.Invoke(hand);
-        }
-    }
-
-    // Steam method for when an object is grabbed
-    private void OnAttachedToHand(Hand hand)
-    {
-        connectedSteamHand = hand;
-        isBeingGrabbed = true;
-    }
-
-    // Steam method for when an object is released
-    private void OnDetachedFromHand(Hand hand)
-    {
-        connectedSteamHand = null;
-        isBeingGrabbed = false;
-    }
-
-    // Manually attach an object to the Steam hand
-    public void ManualAttachToHandSteam(Hand hand)
-    {
-        hand.AttachObject(gameObject, GrabTypes.Pinch, throwable.attachmentFlags);
-    }*/
-
-    // Method to be called when the HVRGrabbable is grabbed
-    public void Grabbed(HVRHandGrabber grabber, HVRGrabbable grabbable)
+    // Stores the hand grabbing this object
+    public void Grabbed(HVRHandGrabber grabber, HVRInteractable interactable)
     {
         connectedHand = grabber;
         isBeingGrabbed = true;
+
+        onSceneClothInteracted.Invoke(grabber, interactable);
     }
 
-    // Method to be called when the HVRGrabbable is released
-    public void Released(HVRHandGrabber grabber, HVRGrabbable grabbable)
+    // Removes the reference to the grabbing hand
+    public void Released(HVRHandGrabber grabber, HVRInteractable interactable)
     {
         connectedHand = null;
         isBeingGrabbed = false;
@@ -120,12 +77,22 @@ public class InteractableCloth : MonoBehaviour
     // Manually grab the object
     public void ManualGrab(HVRHandGrabber grabber)
     {
-        grabber.TryGrab(grabbable);
+        grabber.TryGrab(interactable);
     }
 
+    // Forces the release of the object from a hand
+    public void StopGrab()
+    {
+        if (connectedHand)
+            interactable.ForceRelease();
+
+        isBeingGrabbed = false;
+    }
+
+    // Enables or disables the object from being grabbed
     public void SetGrabbableState(bool state)
     {
-        grabbable.enabled = state;
+        interactable.grabbable = state;
     }
 
     // Show the offset position as a sphere when the object is selected

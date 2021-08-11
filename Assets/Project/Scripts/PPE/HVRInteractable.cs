@@ -9,6 +9,7 @@ public class HVRInteractable : HVRGrabbable
     [Header("Interactable Options")]
     [Tooltip("A toggle that makes this object either grabbable or interactable.")]
     public bool grabbable = false;
+    public VRGrabberEvent Interacted = new VRGrabberEvent();
 
     protected override void OnGrabbed(HVRGrabberBase grabber)
     {
@@ -16,7 +17,7 @@ public class HVRInteractable : HVRGrabbable
             base.OnGrabbed(grabber);
         else if (grabber.IsHandGrabber)
         {
-            HandGrabbed.Invoke(grabber as HVRHandGrabber, this);
+            Interacted.Invoke(grabber as HVRHandGrabber, this);
             ForceRelease();
         }
     }

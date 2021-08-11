@@ -47,7 +47,7 @@ public class ClothPair
     public void Initialize(InteractableCloth pairedCloth)
     {
         sceneCloth = pairedCloth;
-        //pairedCloth.SetGrabbableState(!snapOnGrab);
+        pairedCloth.SetGrabbableState(!snapOnGrab);
         SetModelClothActive(equipAtStart);
 
         modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted);
@@ -128,22 +128,6 @@ public class ClothPair
 
         return angle <= angleThreshold;
     }
-
-    // Event for when the scene cloth is interacted with by a SteamVR controller
-    /*private void OnSceneClothInteractedSteam(Hand hand)
-    {
-        if (snapOnGrab)
-            ToggleModelCloth();
-    }
-
-    // Event for when the worn cloth is interacted with by a SteamVR controller
-    private void OnWornClothInteractedSteam(Hand hand)
-    {
-        ToggleModelCloth();
-
-        if(!snapOnGrab)
-            sceneCloth.ManualAttachToHandSteam(hand);
-    }*/
 
     private void OnSceneClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
