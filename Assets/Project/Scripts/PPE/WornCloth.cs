@@ -5,7 +5,6 @@ using UnityEngine.Events;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core;
 
-[RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(HVRInteractable))]
 [System.Serializable]
 public class WornCloth : MonoBehaviour
