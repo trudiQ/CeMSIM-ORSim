@@ -177,6 +177,8 @@ namespace CEMSIM
                     { (int)ClientPackets.itemPositionUDP, ServerHandle.ItemPosition},
                     { (int)ClientPackets.itemOwnershipChange, ServerHandle.ItemOwnershipChange},
                     { (int)ClientPackets.environmentState, ServerHandle.EnvironmentState},
+                    { (int)ClientPackets.voiceChatUDP, ServerHandle.VoiceChatDataUDP},
+                    { (int)ClientPackets.voiceChatTCP, ServerHandle.VoiceChatDataTCP},
                 };
 
                 Debug.Log("Initialized Server Data");

@@ -21,9 +21,11 @@ namespace CEMSIM
             playerDisconnected, // inform player the disconnection of another player
             heartBeatDetectionUDP, // a packet containing the server's system time. used to check whether the target client is alive and get the round-trip-time.
             heartBeatDetectionTCP, 
-            itemPositionUDP,     //UDP update of item position
-            ownershipDenial,     //TCP packet that denies a client's request to an item's ownership
-            environmentState,    // carry the environment state information (not player state)
+            itemPositionUDP,    // UDP update of item position
+            ownershipDenial,    // TCP packet that denies a client's request to an item's ownership
+            environmentState,   // carry the environment state information (not player state)
+            voiceChatTCP,       // reliable voice chat data 
+            voiceChatUDP,       // unreliable voice chat data
         }
 
         /// <summary>
@@ -44,6 +46,8 @@ namespace CEMSIM
             itemPositionUDP,     //UDP update of item position
             itemOwnershipChange, //TCP update of item's ownership
             environmentState,    // carry the environment state information (not player state)
+            voiceChatTCP,       // reliable voice chat data 
+            voiceChatUDP,       // unreliable voice chat data
         }
 
 
@@ -71,6 +75,8 @@ namespace CEMSIM
                 ServerPacketsInfo.Add(10, "itemPositionUDP");
                 ServerPacketsInfo.Add(11, "ownershipDenial");
                 ServerPacketsInfo.Add(12, "environmentState");
+                ServerPacketsInfo.Add(13, "voiceChatTCP");
+                ServerPacketsInfo.Add(14, "voiceChatUDP");
 
                 ClientPacketsInfo.Add(1, "invalidPacket");
                 ClientPacketsInfo.Add(2, "welcome");
@@ -85,6 +91,9 @@ namespace CEMSIM
                 ClientPacketsInfo.Add(11, "itemPositionUDP");
                 ClientPacketsInfo.Add(12, "itemOwnershipChange");
                 ClientPacketsInfo.Add(13, "environmentState");
+                ClientPacketsInfo.Add(14, "voiceChatTCP");
+                ClientPacketsInfo.Add(15, "voiceChatUDP");
+
             }
 
         }

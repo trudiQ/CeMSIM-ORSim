@@ -229,6 +229,17 @@ namespace CEMSIM
                 ServerNetworkManager.handleEventPacket(_fromClient, _eventId, _packet);
             }
 
+            public static void VoiceChatDataUDP(int _fromClient, Packet _packet)
+            {
+                int voiceDataLength = _packet.ReadInt32();
+                byte[] voiceDataTCP = _packet.ReadBytes(voiceDataLength);
+            }
+
+            public static void VoiceChatDataTCP(int _fromClient, Packet _packet)
+            {
+                int voiceDataLength = _packet.ReadInt32();
+                byte[] voiceDataTCP = _packet.ReadBytes(voiceDataLength);
+            }
 
         }
     }

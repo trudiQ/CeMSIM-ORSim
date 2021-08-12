@@ -478,6 +478,8 @@ namespace CEMSIM
                     { (int)ServerPackets.itemPositionUDP, ClientHandle.ItemPosition},
                     { (int)ServerPackets.ownershipDenial, ClientHandle.OwnershipDenial},
                     { (int)ServerPackets.environmentState, ClientHandle.EnvironmentState},
+                    { (int)ServerPackets.voiceChatTCP, ClientHandle.VoiceChatDataTCP},
+                    { (int)ServerPackets.voiceChatUDP, ClientHandle.VoiceChatDataUDP},
             };
 
                 Debug.Log("Client Data Initialization Complete.");

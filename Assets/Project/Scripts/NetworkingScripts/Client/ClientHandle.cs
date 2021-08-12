@@ -211,7 +211,17 @@ namespace CEMSIM
                 GameManager.handleEventPacket(_eventId, _packet);
             }
 
+            public static void VoiceChatDataUDP(Packet _packet)
+            {
+                int voiceDataLength = _packet.ReadInt32();
+                byte[] voiceDataTCP = _packet.ReadBytes(voiceDataLength);
+            }
 
+            public static void VoiceChatDataTCP(Packet _packet)
+            {
+                int voiceDataLength = _packet.ReadInt32();
+                byte[] voiceDataTCP = _packet.ReadBytes(voiceDataLength);
+            }
 
         }
     }
