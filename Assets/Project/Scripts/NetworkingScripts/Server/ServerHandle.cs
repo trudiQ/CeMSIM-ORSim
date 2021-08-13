@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.GameLogic;
+using System;
 
 namespace CEMSIM
 {
@@ -229,16 +230,13 @@ namespace CEMSIM
                 ServerNetworkManager.handleEventPacket(_fromClient, _eventId, _packet);
             }
 
-            public static void VoiceChatDataUDP(int _fromClient, Packet _packet)
+            public static void VoiceChatData(int _fromClient, Packet _packet)
             {
-                int voiceDataLength = _packet.ReadInt32();
-                byte[] voiceDataTCP = _packet.ReadBytes(voiceDataLength);
-            }
-
-            public static void VoiceChatDataTCP(int _fromClient, Packet _packet)
-            {
-                int voiceDataLength = _packet.ReadInt32();
-                byte[] voiceDataTCP = _packet.ReadBytes(voiceDataLength);
+                ArraySegment<byte> _voiceData = _packet.ReadByteArraySegment();
+                if (ServerNetworkManager.instance.dissonanceServer != null)
+                    ServerNetworkManager.instance.dissonanceServer.NetworkReceivedPacket(_fromClient, _voiceData); // any dissonance data, TCP/UDP, voice/message
+                else
+                    Debug.LogWarning("DissonanceServer has not been configured");
             }
 
         }

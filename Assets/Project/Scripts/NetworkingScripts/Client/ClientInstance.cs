@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using UnityEngine;
 
 using CEMSIM.GameLogic;
+using CEMSIM.VoiceChat;
 
 namespace CEMSIM
 {
@@ -28,6 +29,8 @@ namespace CEMSIM
             [Header("Traffic Visualization")]
             public bool printNetworkTraffic = false;        // True: print out the inbound and outbound traffic in console.
 
+
+            public CeMSIMWrapClient dissonanceClient = null; // bind to the Dissonance:BaseClient:CeMSIMWrapClient object
 
             public TCP tcp;
             public UDP udp;
@@ -478,8 +481,7 @@ namespace CEMSIM
                     { (int)ServerPackets.itemPositionUDP, ClientHandle.ItemPosition},
                     { (int)ServerPackets.ownershipDenial, ClientHandle.OwnershipDenial},
                     { (int)ServerPackets.environmentState, ClientHandle.EnvironmentState},
-                    { (int)ServerPackets.voiceChatTCP, ClientHandle.VoiceChatDataTCP},
-                    { (int)ServerPackets.voiceChatUDP, ClientHandle.VoiceChatDataUDP},
+                    { (int)ServerPackets.voiceChatData, ClientHandle.VoiceChatData},
             };
 
                 Debug.Log("Client Data Initialization Complete.");

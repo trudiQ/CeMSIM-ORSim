@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 using CEMSIM.GameLogic;
 
 namespace CEMSIM
@@ -205,26 +205,17 @@ namespace CEMSIM
             }
             #endregion
 
-            public static void SendVoiceChatData(byte[] _voiceData, bool _isUDP=true)
+            public static void SendVoiceChatData(ArraySegment<byte> _voiceData, bool _isUDP=true)
             {
-                if (_isUDP)
+                using (Packet _packet = new Packet((int)ClientPackets.voiceChatData))
                 {
-                    using (Packet _packet = new Packet((int)ClientPackets.voiceChatUDP))
-                    {
-                        _packet.Write(_voiceData.Length);
-                        _packet.Write(_voiceData);
+                    _packet.Write(_voiceData);
+                    if (_isUDP)
                         SendUDPData(_packet);
-                    }
-                }
-                else
-                {
-                    using (Packet _packet = new Packet((int)ClientPackets.voiceChatTCP))
-                    {
-                        _packet.Write(_voiceData.Length);
-                        _packet.Write(_voiceData);
+                    else
                         SendTCPData(_packet);
-                    }
                 }
+               
             }
 
         }

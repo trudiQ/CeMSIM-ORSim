@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
@@ -211,17 +212,15 @@ namespace CEMSIM
                 GameManager.handleEventPacket(_eventId, _packet);
             }
 
-            public static void VoiceChatDataUDP(Packet _packet)
+            public static void VoiceChatData(Packet _packet)
             {
-                int voiceDataLength = _packet.ReadInt32();
-                byte[] voiceDataTCP = _packet.ReadBytes(voiceDataLength);
+                ArraySegment<byte> _voiceData = _packet.ReadByteArraySegment();
+                if (ClientInstance.instance.dissonanceClient != null)
+                    ClientInstance.instance.dissonanceClient.NetworkReceivedPacket(_voiceData); // any data, either TCP/UDP voice/message
+                else
+                    Debug.LogWarning("DissonanceClient has not been configured");
             }
 
-            public static void VoiceChatDataTCP(Packet _packet)
-            {
-                int voiceDataLength = _packet.ReadInt32();
-                byte[] voiceDataTCP = _packet.ReadBytes(voiceDataLength);
-            }
 
         }
     }

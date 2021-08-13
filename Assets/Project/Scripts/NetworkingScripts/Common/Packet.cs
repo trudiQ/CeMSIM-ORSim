@@ -239,6 +239,13 @@ namespace CEMSIM
                 buffer.AddRange(_value);
             }
 
+            public void Write(ArraySegment<byte> _value)
+            {
+                Write(_value.Count);
+                Write(_value.Array);
+            }
+
+
             /// <summary>
             /// Convert a short variable to bytes and add bytes to buffer
             /// </summary>
@@ -368,6 +375,12 @@ namespace CEMSIM
                 {
                     throw new Exception($"No space in buffer for {_length} length of 'bytes'");
                 }
+            }
+
+            public ArraySegment<byte> ReadByteArraySegment(bool _moveReadPos = true)
+            {
+                int _length = ReadInt32();
+                return new ArraySegment<byte>(ReadBytes(_length));
             }
 
             public Int16 ReadInt16(bool _moveReadPos = true)

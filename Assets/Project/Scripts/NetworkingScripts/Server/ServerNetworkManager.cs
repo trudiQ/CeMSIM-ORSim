@@ -4,6 +4,7 @@ using UnityEngine;
 
 using CEMSIM.GameLogic;
 using System;
+using CEMSIM.VoiceChat;
 
 namespace CEMSIM
 {
@@ -31,6 +32,9 @@ namespace CEMSIM
 
             [Header("Environment")]
             public GameObject roomLightButton;
+
+
+            public CeMSIMWrapServer dissonanceServer = null; // bind to the Dissonance:BaseClient:CeMSIMWrapServer object
 
             // event management
             private delegate void eventHandler(int _fromClient, Packet _packet);

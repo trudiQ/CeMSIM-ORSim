@@ -24,8 +24,7 @@ namespace CEMSIM
             itemPositionUDP,    // UDP update of item position
             ownershipDenial,    // TCP packet that denies a client's request to an item's ownership
             environmentState,   // carry the environment state information (not player state)
-            voiceChatTCP,       // reliable voice chat data 
-            voiceChatUDP,       // unreliable voice chat data
+            voiceChatData,       // voice chat data 
         }
 
         /// <summary>
@@ -46,8 +45,7 @@ namespace CEMSIM
             itemPositionUDP,     //UDP update of item position
             itemOwnershipChange, //TCP update of item's ownership
             environmentState,    // carry the environment state information (not player state)
-            voiceChatTCP,       // reliable voice chat data 
-            voiceChatUDP,       // unreliable voice chat data
+            voiceChatData,       // voice chat data 
         }
 
 
@@ -75,8 +73,7 @@ namespace CEMSIM
                 ServerPacketsInfo.Add(10, "itemPositionUDP");
                 ServerPacketsInfo.Add(11, "ownershipDenial");
                 ServerPacketsInfo.Add(12, "environmentState");
-                ServerPacketsInfo.Add(13, "voiceChatTCP");
-                ServerPacketsInfo.Add(14, "voiceChatUDP");
+                ServerPacketsInfo.Add(13, "voiceChatData");
 
                 ClientPacketsInfo.Add(1, "invalidPacket");
                 ClientPacketsInfo.Add(2, "welcome");
@@ -91,8 +88,7 @@ namespace CEMSIM
                 ClientPacketsInfo.Add(11, "itemPositionUDP");
                 ClientPacketsInfo.Add(12, "itemOwnershipChange");
                 ClientPacketsInfo.Add(13, "environmentState");
-                ClientPacketsInfo.Add(14, "voiceChatTCP");
-                ClientPacketsInfo.Add(15, "voiceChatUDP");
+                ClientPacketsInfo.Add(14, "voiceChatData");
 
             }
 
