@@ -49,7 +49,8 @@ namespace CEMSIM
                         if (ClientInstance.instance.isConnected)
                         {
                             // Running as a dissonance client
-                            RunAsClient(Unit.None);
+                            if(Mode != NetworkMode.Client)
+                                RunAsClient(Unit.None);
                         }
                         else
                         {
@@ -60,7 +61,8 @@ namespace CEMSIM
                     {
                         // This instance is running at the server side.
                         // Running as a dedicated server
-                        RunAsDedicatedServer(Unit.None);
+                        if(Mode != NetworkMode.DedicatedServer)
+                            RunAsDedicatedServer(Unit.None);
                     }
                 }
 
