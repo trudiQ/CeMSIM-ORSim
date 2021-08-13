@@ -17,13 +17,15 @@ public class WornCloth : MonoBehaviour
     public bool isActive { get; private set; }
 
     // Events that trigger when the user grabs the object
-    public UnityEvent<HVRHandGrabber, HVRGrabbable> onWornClothInteracted;
+    public VRInteractableEvent onWornClothInteracted;
 
     private HVRInteractable interactable;
 
     void Start()
     {
         interactable = GetComponent<HVRInteractable>();
+
+        interactable.Interacted.AddListener(Interacted);
     }
 
     // Returns the position in the world where the offset of the object would be
@@ -45,7 +47,7 @@ public class WornCloth : MonoBehaviour
     }
 
     // Calls the event when this object is interacted with
-    public void Interacted(HVRHandGrabber grabber, HVRGrabbable grabbable)
+    public void Interacted(HVRHandGrabber grabber, HVRInteractable grabbable)
     {
         if (isActive)
         {

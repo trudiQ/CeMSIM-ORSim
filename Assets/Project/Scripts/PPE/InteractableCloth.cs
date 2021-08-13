@@ -14,7 +14,7 @@ public class InteractableCloth : MonoBehaviour
     public bool isBeingGrabbed = false;
     public bool isActive { get; private set; }
 
-    public UnityEvent<HVRHandGrabber, HVRInteractable> onSceneClothInteracted;
+    public UnityEvent<HVRHandGrabber, HVRGrabbable> onSceneClothInteracted;
 
     private HVRHandGrabber connectedHand;
     private HVRInteractable interactable;
@@ -22,6 +22,10 @@ public class InteractableCloth : MonoBehaviour
     void Start()
     {
         interactable = GetComponent<HVRInteractable>();
+
+        interactable.HandGrabbed.AddListener(Grabbed);
+        interactable.HandReleased.AddListener(Released);
+        interactable.Interacted.AddListener(Interacted);
     }
 
     // Returns the position in the world where the offset of the object would be
@@ -58,7 +62,7 @@ public class InteractableCloth : MonoBehaviour
     }
 
     // Stores the hand grabbing this object
-    public void Grabbed(HVRHandGrabber grabber, HVRInteractable interactable)
+    public void Grabbed(HVRHandGrabber grabber, HVRGrabbable interactable)
     {
         connectedHand = grabber;
         isBeingGrabbed = true;
@@ -67,10 +71,16 @@ public class InteractableCloth : MonoBehaviour
     }
 
     // Removes the reference to the grabbing hand
-    public void Released(HVRHandGrabber grabber, HVRInteractable interactable)
+    public void Released(HVRHandGrabber grabber, HVRGrabbable interactable)
     {
         connectedHand = null;
         isBeingGrabbed = false;
+    }
+
+    // Just calls the interacted event
+    public void Interacted(HVRHandGrabber grabber, HVRInteractable interactable)
+    {
+        onSceneClothInteracted.Invoke(grabber, interactable);
     }
 
     // Manually grab the object
