@@ -23,9 +23,9 @@ namespace CEMSIM
 
             private void Start()
             {
-                IPField.text = ClientNetworkConstants.SERVER_IP;
-                portField.text = ClientNetworkConstants.SERVER_PORT + "";
-                usernameField.text = GameLogic.ClientGameConstants.CLIENT_DEFAULT_USERNAME;
+                IPField.text = ClientInstance.instance.ip;
+                portField.text = ClientInstance.instance.port + "";
+                usernameField.text = ClientInstance.instance.myUsername;
 
             }
 
@@ -34,7 +34,12 @@ namespace CEMSIM
 
             private void Update()
             {
+                ClientInstance.instance.CheckConnection();
                 enterButton.GetComponent<Selectable>().interactable = ClientInstance.instance.isConnected;
+                if (!ClientInstance.instance.isConnected)
+                {
+                    Debug.Log($"UDP:{ClientInstance.instance.udp.isUDPConnected} TCP: {ClientInstance.instance.tcp.isTCPConnected}");
+                }
             }
 
             /// <summary>
