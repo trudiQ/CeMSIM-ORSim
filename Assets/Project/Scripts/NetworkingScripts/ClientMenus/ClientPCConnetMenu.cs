@@ -38,7 +38,7 @@ namespace CEMSIM
                 enterButton.GetComponent<Selectable>().interactable = ClientInstance.instance.isConnected;
                 if (!ClientInstance.instance.isConnected)
                 {
-                    Debug.Log($"UDP:{ClientInstance.instance.udp.isUDPConnected} TCP: {ClientInstance.instance.tcp.isTCPConnected}");
+                    //Debug.Log($"UDP:{ClientInstance.instance.udp.isUDPConnected} TCP: {ClientInstance.instance.tcp.isTCPConnected}");
                 }
             }
 

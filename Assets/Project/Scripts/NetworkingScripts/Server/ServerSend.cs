@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.GameLogic;
+using System;
 
 namespace CEMSIM
 {
@@ -271,18 +272,17 @@ namespace CEMSIM
 
             }
 
-            public static void SendVoiceChatData(int _fromClient, byte[] _voiceData, bool _isUDP = true)
+            public static void SendVoiceChatData(int _toClient, ArraySegment<byte> _voiceData, bool _isUDP = true)
             {
                 using (Packet _packet = new Packet((int)ClientPackets.voiceChatData))
                 {
-                    _packet.Write(_voiceData.Length);
                     _packet.Write(_voiceData);
                     if (_isUDP)
-                        MulticastExceptOneUDPData(_fromClient, _packet);
+                        SendUDPData(_toClient, _packet);
                     else
-                        MulticastExceptOneTCPData(_fromClient, _packet);
+                        SendTCPData(_toClient, _packet);
                 }
-                
+
             }
 
         }

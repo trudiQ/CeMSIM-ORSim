@@ -35,7 +35,7 @@ namespace CEMSIM
                 ClientSend.WelcomeReceived();
 
                 // connect udp 
-                ClientInstance.instance.udp.Connect(((IPEndPoint)ClientInstance.instance.tcp.socket.Client.LocalEndPoint).Port);
+                //ClientInstance.instance.udp.Connect(((IPEndPoint)ClientInstance.instance.tcp.socket.Client.LocalEndPoint).Port);
 
                 // Mark TCP ready-to-use
                 ClientInstance.instance.tcp.isTCPConnected = true;
@@ -216,7 +216,15 @@ namespace CEMSIM
             {
                 ArraySegment<byte> _voiceData = _packet.ReadByteArraySegment();
                 if (ClientInstance.instance.dissonanceClient != null)
-                    ClientInstance.instance.dissonanceClient.NetworkReceivedPacket(_voiceData); // any data, either TCP/UDP voice/message
+                {
+                    var id = ClientInstance.instance.dissonanceClient.NetworkReceivedPacket(_voiceData); // any data, either TCP/UDP voice/message
+                    if (id.HasValue)
+                        Debug.Log($"id = {id.Value}");
+                    else
+                    {
+                        Debug.Log("No id");
+                    }
+                }
                 else
                     Debug.LogWarning("DissonanceClient has not been configured");
             }

@@ -234,7 +234,7 @@ namespace CEMSIM
             {
                 ArraySegment<byte> _voiceData = _packet.ReadByteArraySegment();
                 if (ServerNetworkManager.instance.dissonanceServer != null)
-                    ServerNetworkManager.instance.dissonanceServer.NetworkReceivedPacket(_fromClient, _voiceData); // any dissonance data, TCP/UDP, voice/message
+                    ServerNetworkManager.instance.dissonanceServer.PacketDelivered(_fromClient, _voiceData); // any dissonance data, TCP/UDP, voice/message
                 else
                     Debug.LogWarning("DissonanceServer has not been configured");
             }

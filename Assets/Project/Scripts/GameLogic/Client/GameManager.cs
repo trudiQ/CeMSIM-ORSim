@@ -4,6 +4,7 @@ using UnityEngine;
 
 using CEMSIM.Network;
 using System;
+using CEMSIM.VoiceChat;
 
 namespace CEMSIM
 {
@@ -71,6 +72,8 @@ namespace CEMSIM
                         // create player for client
                         _player = Instantiate(localPlayerPrefab, _position, _rotation);
                     }
+                    ClientInstance.instance.dissonanceClient.Connect();
+                    Debug.Log("Connect to dissonance server");
                 }
                 else
                 {
@@ -88,6 +91,8 @@ namespace CEMSIM
 
                 // record the player instance in the players dictionary
                 players.Add(_id, _player.GetComponent<PlayerManager>());
+
+
             }
 
 

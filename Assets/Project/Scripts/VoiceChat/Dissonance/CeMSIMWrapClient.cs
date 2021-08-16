@@ -11,14 +11,23 @@ namespace CEMSIM
     {
         public class CeMSIMWrapClient : BaseClient<CeMSIMWrapServer, CeMSIMWrapClient, int>
         {
+            private CeMSIMCommsNetwork comm;
+
             public CeMSIMWrapClient(CeMSIMCommsNetwork network) : base(network)
             {
                 // do nothing, because CeMSIMWrapClient is purely a wrap up class.
+                comm = network;
             }
 
             public override void Connect()
             {
-                // do nothing.
+                Connected();
+                Debug.Log("dissonance client connected");
+            }
+
+            public override void Disconnect()
+            {
+                base.Disconnect();
             }
 
             protected override void ReadMessages()
