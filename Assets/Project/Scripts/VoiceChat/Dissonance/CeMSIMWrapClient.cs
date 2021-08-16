@@ -9,14 +9,15 @@ namespace CEMSIM
 {
     namespace VoiceChat
     {
-        public class CeMSIMWrapClient : BaseClient<CeMSIMWrapServer, CeMSIMWrapClient, int>
+        public class CEMSIMWrapClient : BaseClient<CEMSIMWrapServer, CEMSIMWrapClient, int>
         {
-            private CeMSIMCommsNetwork comm;
-
-            public CeMSIMWrapClient(CeMSIMCommsNetwork network) : base(network)
+            private CEMSIMCommsNetwork comm;
+            public bool printNetworkTraffic = false;
+            public CEMSIMWrapClient(CEMSIMCommsNetwork network) : base(network)
             {
                 // do nothing, because CeMSIMWrapClient is purely a wrap up class.
                 comm = network;
+                printNetworkTraffic = network.printNetworkTraffic;
             }
 
             public override void Connect()
@@ -39,12 +40,24 @@ namespace CEMSIM
 
             protected override void SendReliable(ArraySegment<byte> _voiceChatData)
             {
+                if (printNetworkTraffic)
+                    Debug.Log("[VoiceChat] Sending TCP packet");
                 ClientSend.SendVoiceChatData(_voiceChatData, false);
             }
 
             protected override void SendUnreliable(ArraySegment<byte> _voiceChatData)
             {
+                if (printNetworkTraffic)
+                    Debug.Log("[VoiceChat] Sending UDP packet");
                 ClientSend.SendVoiceChatData(_voiceChatData, true);
+            }
+
+            public ushort? PacketDelivered(ArraySegment<byte> packet)
+            {
+                //Skip events we don't care about
+                if (printNetworkTraffic)
+                    Debug.Log($"[VoiceChat] Receive packet from the server");
+                return NetworkReceivedPacket(packet);
             }
         }
     }

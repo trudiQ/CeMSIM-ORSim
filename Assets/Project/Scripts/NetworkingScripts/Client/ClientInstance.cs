@@ -30,7 +30,7 @@ namespace CEMSIM
             public bool printNetworkTraffic = false;        // True: print out the inbound and outbound traffic in console.
 
 
-            public CeMSIMWrapClient dissonanceClient = null; // bind to the Dissonance:BaseClient:CeMSIMWrapClient object
+            public CEMSIMWrapClient dissonanceClient = null; // bind to the Dissonance:BaseClient:CeMSIMWrapClient object
 
             public TCP tcp;
             public UDP udp;

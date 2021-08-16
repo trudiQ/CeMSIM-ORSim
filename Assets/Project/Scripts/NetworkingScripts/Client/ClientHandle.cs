@@ -217,16 +217,8 @@ namespace CEMSIM
                 ArraySegment<byte> _voiceData = _packet.ReadByteArraySegment();
                 if (ClientInstance.instance.dissonanceClient != null)
                 {
-                    var id = ClientInstance.instance.dissonanceClient.NetworkReceivedPacket(_voiceData); // any data, either TCP/UDP voice/message
-                    if (id.HasValue)
-                        Debug.Log($"id = {id.Value}");
-                    else
-                    {
-                        Debug.Log("No id");
-                    }
+                    ClientInstance.instance.dissonanceClient.PacketDelivered(_voiceData); // any data, either TCP/UDP voice/message
                 }
-                else
-                    Debug.LogWarning("DissonanceClient has not been configured");
             }
 
 

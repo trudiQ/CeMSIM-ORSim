@@ -10,12 +10,14 @@ namespace CEMSIM
 {
     namespace VoiceChat
     {
-        public class CeMSIMWrapServer : BaseServer<CeMSIMWrapServer, CeMSIMWrapClient, int>
+        public class CEMSIMWrapServer : BaseServer<CEMSIMWrapServer, CEMSIMWrapClient, int>
         {
-            private CeMSIMCommsNetwork comm;
-            public CeMSIMWrapServer(CeMSIMCommsNetwork network)
+            private CEMSIMCommsNetwork comm;
+            public bool printNetworkTraffic;
+            public CEMSIMWrapServer(CEMSIMCommsNetwork network)
             {
                 comm = network;
+                printNetworkTraffic = network.printNetworkTraffic;
                 // do nothing because CeMSIMWrapServer is merely a wrap up class.
             }
 
@@ -25,20 +27,18 @@ namespace CEMSIM
             }
 
 
-            protected override void SendReliable(int connection, ArraySegment<byte> packet)
+            protected override void SendReliable(int _toClient, ArraySegment<byte> packet)
             {
-                //throw new NotImplementedException();
-                int _toClient = connection; // Not sure. Need double check
-                Debug.Log($"[VoiceChat] Sending TCP packet to {_toClient} ");
+                if(printNetworkTraffic)
+                    Debug.Log($"[VoiceChat] Sending TCP packet to {_toClient} ");
 
                 ServerSend.SendVoiceChatData(_toClient, packet, false);
             }
 
-            protected override void SendUnreliable(int connection, ArraySegment<byte> packet)
+            protected override void SendUnreliable(int _toClient, ArraySegment<byte> packet)
             {
-                //throw new NotImplementedException();
-                int _toClient = connection; // Not sure. Placeholder
-                Debug.Log($"[VoiceChat] Sending TCP packet to {_toClient} ");
+                if (printNetworkTraffic)
+                    Debug.Log($"[VoiceChat] Sending UDP packet to {_toClient} ");
 
                 ServerSend.SendVoiceChatData(_toClient, packet, true);
             }
@@ -56,7 +56,8 @@ namespace CEMSIM
             public void PacketDelivered(int _fromClient, ArraySegment<byte> packet)
             {
                 //Skip events we don't care about
-                Debug.Log($"[VoiceChat] Receive packet from client {_fromClient}");
+                if (printNetworkTraffic)
+                    Debug.Log($"[VoiceChat] Receive packet from client {_fromClient}");
                 NetworkReceivedPacket(_fromClient, packet);
             }
 

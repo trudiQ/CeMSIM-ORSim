@@ -11,30 +11,30 @@ namespace CEMSIM
 {
     namespace VoiceChat
     {
-        public class CeMSIMCommsNetwork : BaseCommsNetwork<CeMSIMWrapServer, CeMSIMWrapClient, int, Unit, Unit>
+        public class CEMSIMCommsNetwork : BaseCommsNetwork<CEMSIMWrapServer, CEMSIMWrapClient, int, Unit, Unit>
         {
             #region Fields and Parameters
             public bool isClientSide;   // decide whether the current instance is going to act as a client or dedicated server.
+            public bool printNetworkTraffic; // 
             #endregion
 
 
-            protected override CeMSIMWrapClient CreateClient([CanBeNull] Unit connectionParameters)
+            protected override CEMSIMWrapClient CreateClient([CanBeNull] Unit connectionParameters)
             {
                 //throw new System.NotImplementedException();
-                ClientInstance.instance.dissonanceClient = new CeMSIMWrapClient(this);
+                ClientInstance.instance.dissonanceClient = new CEMSIMWrapClient(this);
                 return ClientInstance.instance.dissonanceClient;
             }
 
-            protected override CeMSIMWrapServer CreateServer([CanBeNull] Unit connectionParameters)
+            protected override CEMSIMWrapServer CreateServer([CanBeNull] Unit connectionParameters)
             {
                 //throw new System.NotImplementedException();
-                ServerNetworkManager.instance.dissonanceServer = new CeMSIMWrapServer(this);
+                ServerNetworkManager.instance.dissonanceServer = new CEMSIMWrapServer(this);
                 return ServerNetworkManager.instance.dissonanceServer;
             }
 
             protected override void Initialize()
             {
-
                 base.Initialize();
             }
 
@@ -49,8 +49,13 @@ namespace CEMSIM
                         if (ClientInstance.instance.isConnected)
                         {
                             // Running as a dissonance client
-                            if(Mode != NetworkMode.Client)
+                            if (Mode != NetworkMode.Client)
+                            {
+                                if (printNetworkTraffic)
+                                    Debug.Log("[VoiceChat] Running as a client");
                                 RunAsClient(Unit.None);
+
+                            }
                         }
                         else
                         {
@@ -59,10 +64,14 @@ namespace CEMSIM
                     }
                     else
                     {
-                        // This instance is running at the server side.
-                        // Running as a dedicated server
-                        if(Mode != NetworkMode.DedicatedServer)
-                            RunAsDedicatedServer(Unit.None);
+                            // This instance is running at the server side.
+                            // Running as a dedicated server
+                            if (Mode != NetworkMode.DedicatedServer)
+                            {
+                                if (printNetworkTraffic)
+                                    Debug.Log("[VoiceChat] Running as a Server");
+                                RunAsDedicatedServer(Unit.None);
+                            }
                     }
                 }
 
