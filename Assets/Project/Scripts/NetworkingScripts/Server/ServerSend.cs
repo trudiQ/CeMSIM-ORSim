@@ -274,7 +274,7 @@ namespace CEMSIM
 
             public static void SendVoiceChatData(int _toClient, ArraySegment<byte> _voiceData, bool _isUDP = true)
             {
-                using (Packet _packet = new Packet((int)ClientPackets.voiceChatData))
+                using (Packet _packet = new Packet((int)ServerPackets.voiceChatData))
                 {
                     _packet.Write(_voiceData);
                     if (_isUDP)

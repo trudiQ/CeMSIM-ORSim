@@ -143,7 +143,10 @@ namespace CEMSIM
                 // extract packet id
                 id = ReadInt32();
                 if (!Enum.IsDefined(typeof(ServerPackets), id))
+                {
+                    Debug.LogWarning($"[Network] Receive an unknown packet with id {id}");
                     id = (int)ServerPackets.invalidPacket;
+                }
 
                 return id;
             }
@@ -156,7 +159,10 @@ namespace CEMSIM
                 // extract packet id
                 id = ReadInt32();
                 if (!Enum.IsDefined(typeof(ClientPackets), id))
+                {
+                    Debug.LogWarning($"[Network] Receive an unknown packet with id {id}");
                     id = (int)ClientPackets.invalidPacket;
+                }
 
                 return id;
             }
