@@ -86,7 +86,7 @@ public class InteractableCloth : MonoBehaviour
     // Manually grab the object
     public void ManualGrab(HVRHandGrabber grabber)
     {
-        grabber.TryGrab(interactable);
+        Debug.Log(grabber.TryGrab(interactable, true));
     }
 
     // Forces the release of the object from a hand
