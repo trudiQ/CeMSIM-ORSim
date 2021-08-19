@@ -19,8 +19,12 @@ public class InteractableCloth : MonoBehaviour
     private HVRHandGrabber connectedHand;
     private HVRInteractable interactable;
 
+    private Rigidbody rb;
+
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
+
         interactable = GetComponent<HVRInteractable>();
 
         interactable.HandGrabbed.AddListener(Grabbed);
@@ -102,6 +106,10 @@ public class InteractableCloth : MonoBehaviour
     public void SetGrabbableState(bool state)
     {
         interactable.grabbable = state;
+        interactable.Stationary = !state;
+
+        if (rb)
+            rb.isKinematic = !state;
     }
 
     // Show the offset position as a sphere when the object is selected

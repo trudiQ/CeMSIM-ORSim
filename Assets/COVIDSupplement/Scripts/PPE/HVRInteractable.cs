@@ -18,8 +18,13 @@ public class HVRInteractable : HVRGrabbable
             base.OnGrabbed(grabber);
         else if (grabber.IsHandGrabber)
         {
-            Interacted.Invoke(grabber as HVRHandGrabber, this);
             ForceRelease();
+            Interacted.Invoke(grabber as HVRHandGrabber, this);
+        }
+        else // This is separated in case different actions need to be done to a grabber that isn't a hand grabber
+        {
+            ForceRelease();
+            Interacted.Invoke(grabber as HVRHandGrabber, this);
         }
     }
 }
