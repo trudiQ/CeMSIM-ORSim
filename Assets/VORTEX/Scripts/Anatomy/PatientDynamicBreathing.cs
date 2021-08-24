@@ -129,19 +129,9 @@ public class PatientDynamicBreathing : MonoBehaviour
 
      private void ControlVentilatorSounds()
      {
-         if(inflation > 10 && inflation < 90 /*&& (endTriggered || beginningTriggered)*/)
+         if(inflation > 10 && inflation < 90)
          {
-             if(inflationDifference > 0.0001)
-             {
-                 if(!inflating)
-                 {
-                     inflating = true;
-                     beginningTriggered = false;
-                     endTriggered = false;
-                     audioPlayer.Play(audioPlayer.deflate);
-                 }
-             }
-             else if(inflationDifference < -0.0001f)
+             if(inflationDifference < -0.0001f)
              {
                  if(!inflating)
                  {
@@ -155,26 +145,10 @@ public class PatientDynamicBreathing : MonoBehaviour
          else if((int)inflation == 0 && inflating)
          {
              inflating = false;
-             //audioPlayer.Play(audioPlayer.beginning);
          }
          else if((int)inflation == 100 && inflating)
          {
              inflating = false;
-             //audioPlayer.Play(audioPlayer.end);
          }
-         // else if( inflation < 2 && !beginningTriggered)
-         // {
-         //     inflating = false;
-         //     audioPlayer.audioSource.Stop();
-         //     endTriggered = true;
-         //     audioPlayer.Play(audioPlayer.beginning);
-         // }
-         // else if(inflation > 98 && !endTriggered)
-         // {
-         //     inflating = false;
-         //     audioPlayer.audioSource.Stop();
-         //     endTriggered = true;
-         //     audioPlayer.Play(audioPlayer.end);
-         // }
      }
 }

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DisplaysUI
-  m_Shader: {fileID: -6465566751694194690, guid: 9be5d7d9f7ff5fe4fb3823a67e40b679,
+  m_Name: AlarmLightBase
+  m_Shader: {fileID: -6465566751694194690, guid: f4e1711fedfef544ba8e14e85632f66d,
     type: 3}
   m_ShaderKeywords: _BLENDMODE_ALPHA _ENABLE_FOG_ON_TRANSPARENT _SURFACE_TYPE_TRANSPARENT
   m_LightmapFlags: 4
@@ -112,6 +112,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Vector1_85B7D83E: 2.19
+    - Vector1_88F24C94: 0.1
+    - Vector1_B8149A2A: 0.2
+    - Vector1_BD533CEE: 0.722
+    - Vector1_C60A251D: 0.708
     - _AORemapMax: 1
     - _AORemapMin: 0
     - _ATDistance: 1
@@ -187,9 +192,8 @@ Material:
     - _PPDMinSamples: 5
     - _PPDPrimitiveLength: 1
     - _PPDPrimitiveWidth: 1
-    - _ReceivesSSR: 0
+    - _ReceivesSSR: 1
     - _RefractionModel: 0
-    - _RenderQueueType: 5
     - _RequireSplitLighting: 0
     - _SSRefractionProjectionModel: 0
     - _Smoothness: 0.5
@@ -200,10 +204,10 @@ Material:
     - _SpecularOcclusionMode: 1
     - _SrcBlend: 1
     - _StencilRef: 0
-    - _StencilRefDepth: 0
+    - _StencilRefDepth: 8
     - _StencilRefDistortionVec: 4
-    - _StencilRefGBuffer: 2
-    - _StencilRefMV: 32
+    - _StencilRefGBuffer: 10
+    - _StencilRefMV: 40
     - _StencilWriteMask: 6
     - _StencilWriteMaskDepth: 8
     - _StencilWriteMaskDistortionVec: 4
@@ -234,9 +238,10 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 0
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - Color_38879BCF: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 0.50980395}
+    - _BaseColor: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
@@ -251,7 +256,7 @@ Material:
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
---- !u!114 &4946067744593634462
+--- !u!114 &6213968037555836995
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

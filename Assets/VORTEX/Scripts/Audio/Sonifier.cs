@@ -6,6 +6,7 @@ using UnityEngine.Audio;
 public class Sonifier : MonoBehaviour
 {
     public PulseDataNumberRenderer dataSource;
+    public float thresholdValue;
     public float currentValue = 0;
     private float lastValue = 0;
     private AudioPlayer audioPlayer;
@@ -51,9 +52,9 @@ public class Sonifier : MonoBehaviour
 
     void Sonifiy()
     {
-        float difference = 97 - currentValue;
-        float normalizedValue = (currentValue / 97);
-        if(currentValue < 97)
+        // float difference = thresholdValue - currentValue;
+        float normalizedValue = (currentValue / thresholdValue);
+        if(currentValue < thresholdValue)
         {
            normalizedValue = normalizedValue - .2f;
         }

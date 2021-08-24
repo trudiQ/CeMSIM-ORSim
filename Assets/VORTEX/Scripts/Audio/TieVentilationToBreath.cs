@@ -5,26 +5,26 @@ using UnityEngine;
 public class TieVentilationToBreath : AudioPlayer
 {
     public bool paused = false;
-    public AudioClip  inflate, deflate;
-
+    public AudioClip  inflate;
+    
     public void Play(AudioClip clip)
     {
         if(clip.Equals(inflate))
         {
-                audioSource.clip = inflate;
+            audioSource.clip = inflate;
             if(!audioSource.isPlaying)
             {
                 audioSource.Play();
             }
         }
-        else if(clip.Equals(deflate))
-        {
-            audioSource.clip = deflate;
-            if(!audioSource.isPlaying)
-            {
-                audioSource.Play();
-            }
-        }
+        // else if(clip.Equals(deflate))
+        // {
+        //     audioSource.clip = deflate;
+        //     if(!audioSource.isPlaying)
+        //     {
+        //         audioSource.Play();
+        //     }
+        // }
     }
 
     public override void Initialize()
