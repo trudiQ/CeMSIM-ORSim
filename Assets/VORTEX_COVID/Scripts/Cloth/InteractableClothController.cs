@@ -158,6 +158,7 @@ public class ClothPair
     {
         float angle = Quaternion.Angle(modelCloth.GetRotation(), sceneCloth.GetRotation());
 
+        Debug.Log(angle);
         return angle <= angleThreshold;
     }
 
