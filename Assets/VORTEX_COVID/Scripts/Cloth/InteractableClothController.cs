@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core;
+using UnityEngine.Events;
 
 public class InteractableClothController : MonoBehaviour
 {
@@ -19,7 +20,20 @@ public class InteractableClothController : MonoBehaviour
         foreach(ClothPair pair in clothingPairs)
         {
             InteractableCloth match = clothingFound.Find((x) => x.clothName == pair.clothName);
-            pair.Initialize(match, playerCollidersToIgnore);
+
+            pair.Initialize(match);
+            pair.IgnorePlayerCollision(playerCollidersToIgnore);
+        }
+
+        // After setting up every pair, ignore collision between scene and model cloth (includes self collision)
+        // This process includes 4 nested for loops, O(n*n*m*s)
+        // n = number of cloth pairs, m = number of model colliders, s = number of scene colliders
+        foreach(ClothPair pair in clothingPairs)
+        {
+            foreach(ClothPair innerPair in clothingPairs)
+            {
+                pair.IgnoreOtherCollision(innerPair);
+            }
         }
     }
 
@@ -42,40 +56,55 @@ public class ClothPair
     public bool equipAtStart = false;
     public bool snapOnGrab = false; // Snap to/from the model when grabbed
 
+    public UnityEvent OnEquip;
+    public UnityEvent OnUnequip;
+
     private bool movedOutOfThresholdAfterUnequip = true;
 
-    // Pair the cloth objects and subscribe to the grab event
-    public void Initialize(InteractableCloth pairedCloth, Collider[] playerColliders)
-    {
-        sceneCloth = pairedCloth;
-        pairedCloth.SetGrabbableState(!snapOnGrab);
-        SetModelClothActive(equipAtStart);
-        IgnoreSelfAndPlayerCollision(playerColliders);
+    public Collider[] modelClothColliders { get; private set; }
+    public Collider[] sceneClothColliders { get; private set; }
 
-        modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted);
-        sceneCloth.onSceneClothInteracted.AddListener(OnSceneClothInteracted);
+    public void Initialize(InteractableCloth pairedCloth)
+    {
+        sceneCloth = pairedCloth; // Pair the cloth objects
+        pairedCloth.SetGrabbableState(!snapOnGrab); // Toggle the cloth between grabbable and interactable based on snap
+        SetModelClothActive(equipAtStart);
+
+        modelClothColliders = modelCloth.gameObject.GetComponentsInChildren<Collider>(); // Get all colliders from the model cloth
+        sceneClothColliders = sceneCloth.gameObject.GetComponentsInChildren<Collider>(); // Get all colliders from the scene cloth
+
+        // Make sure any events are triggered based on what is equipped at start
+        if (equipAtStart)
+            OnEquip.Invoke();
+        else
+            OnUnequip.Invoke();
+
+        modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted); // Subscribe to the grab event
+        sceneCloth.onSceneClothInteracted.AddListener(OnSceneClothInteracted); // Subscribe to the grab event
     }
 
-    public void IgnoreSelfAndPlayerCollision(Collider[] playerColliders)
+    // Ignore collision between player colliders and scene PPE
+    public void IgnorePlayerCollision(Collider[] playerColliders)
     {
-        Collider[] modelClothColliders = modelCloth.gameObject.GetComponentsInChildren<Collider>();
-        Collider[] sceneClothColliders = sceneCloth.gameObject.GetComponentsInChildren<Collider>();
-
-        foreach (Collider modelCollider in modelClothColliders)
-        {
-            foreach(Collider sceneCollider in sceneClothColliders)
-            {
-                Physics.IgnoreCollision(modelCollider, sceneCollider); // Ignore collision with model and scene cloth colliders if both are active
-            }
-        }
-
-        foreach(Collider collider in playerColliders)
+        foreach (Collider collider in playerColliders)
         {
             foreach (Collider modelCollider in modelClothColliders)
-                Physics.IgnoreCollision(modelCollider, collider); // Ignore collision between player colliders and model PPE
-            
+                Physics.IgnoreCollision(modelCollider, collider);
+
             foreach (Collider sceneCollider in sceneClothColliders)
-                Physics.IgnoreCollision(sceneCollider, collider); // Ignore collision between player colliders and scene PPE
+                Physics.IgnoreCollision(sceneCollider, collider);
+        }
+    }
+
+    // Ignore the collision between scene cloth and an other pair's worn cloth
+    public void IgnoreOtherCollision(ClothPair other)
+    {
+        foreach(Collider sceneCollider in sceneClothColliders)
+        {
+            foreach(Collider modelCollider in other.modelClothColliders)
+            {
+                Physics.IgnoreCollision(sceneCollider, modelCollider);
+            }
         }
     }
 
@@ -127,6 +156,7 @@ public class ClothPair
                 if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
                 {
                     ToggleModelCloth();
+                    OnEquip.Invoke();
                 }
                 else if (!InThresholdDistance())
                 {
@@ -158,7 +188,6 @@ public class ClothPair
     {
         float angle = Quaternion.Angle(modelCloth.GetRotation(), sceneCloth.GetRotation());
 
-        Debug.Log(angle);
         return angle <= angleThreshold;
     }
 
@@ -171,6 +200,7 @@ public class ClothPair
     private void OnWornClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
         ToggleModelCloth();
+        OnUnequip.Invoke();
 
         if (!snapOnGrab)
             sceneCloth.ManualGrab(grabber);

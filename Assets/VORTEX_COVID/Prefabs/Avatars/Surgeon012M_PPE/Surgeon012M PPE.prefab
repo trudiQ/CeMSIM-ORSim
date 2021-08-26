@@ -20,6 +20,12 @@ MonoBehaviour:
     angleThreshold: 30
     equipAtStart: 0
     snapOnGrab: 0
+    OnEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Face Mask
     modelCloth: {fileID: 8031531629380253345}
     sceneCloth: {fileID: 0}
@@ -27,6 +33,12 @@ MonoBehaviour:
     angleThreshold: 30
     equipAtStart: 0
     snapOnGrab: 0
+    OnEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Face Shield
     modelCloth: {fileID: 4075115526609744779}
     sceneCloth: {fileID: 0}
@@ -34,6 +46,12 @@ MonoBehaviour:
     angleThreshold: 30
     equipAtStart: 0
     snapOnGrab: 0
+    OnEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Glove L
     modelCloth: {fileID: 2079312983292132197}
     sceneCloth: {fileID: 0}
@@ -41,6 +59,36 @@ MonoBehaviour:
     angleThreshold: 30
     equipAtStart: 0
     snapOnGrab: 0
+    OnEquip:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 717936660643659203}
+          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_MethodName: SetActive
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    OnUnequip:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 717936660643659203}
+          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_MethodName: SetActive
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
   - clothName: Glove R
     modelCloth: {fileID: 8741970884564131272}
     sceneCloth: {fileID: 0}
@@ -48,6 +96,36 @@ MonoBehaviour:
     angleThreshold: 30
     equipAtStart: 0
     snapOnGrab: 0
+    OnEquip:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 577500951106978599}
+          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_MethodName: SetActive
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    OnUnequip:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 577500951106978599}
+          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_MethodName: SetActive
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
   - clothName: Shoe Cover L
     modelCloth: {fileID: 5519295297746832923}
     sceneCloth: {fileID: 0}
@@ -55,6 +133,12 @@ MonoBehaviour:
     angleThreshold: 30
     equipAtStart: 0
     snapOnGrab: 0
+    OnEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Shoe Cover R
     modelCloth: {fileID: 4618687342090711787}
     sceneCloth: {fileID: 0}
@@ -62,6 +146,12 @@ MonoBehaviour:
     angleThreshold: 30
     equipAtStart: 0
     snapOnGrab: 0
+    OnEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   playerCollidersToIgnore: []
 --- !u!1001 &198970434672492943
 PrefabInstance:
@@ -124,6 +214,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -151.868
+      objectReference: {fileID: 0}
+    - target: {fileID: 2169000721700731626, guid: 591f7d27ceb02ea4b8f4545fd8ad149f,
+        type: 3}
+      propertyPath: objectWithSkinnedMesh
+      value: 
+      objectReference: {fileID: 70728900120162184}
+    - target: {fileID: 3118711035943567026, guid: 591f7d27ceb02ea4b8f4545fd8ad149f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8363559562827931824, guid: 591f7d27ceb02ea4b8f4545fd8ad149f,
         type: 3}
@@ -266,6 +366,30 @@ PrefabInstance:
 --- !u!1 &8264577514579261351 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4793956473566993433, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
+    type: 3}
+  m_PrefabInstance: {fileID: 3474003149533506494}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &70728900120162184 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3516577909144568886, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
+    type: 3}
+  m_PrefabInstance: {fileID: 3474003149533506494}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6381192917570731478 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7545972847626344040, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
+    type: 3}
+  m_PrefabInstance: {fileID: 3474003149533506494}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &717936660643659203 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4161533741257021053, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
+    type: 3}
+  m_PrefabInstance: {fileID: 3474003149533506494}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &577500951106978599 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4050303399313729689, guid: 31ab8e9bafebd0540a5effeb65d6c60a,
     type: 3}
   m_PrefabInstance: {fileID: 3474003149533506494}
   m_PrefabAsset: {fileID: 0}
@@ -599,6 +723,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4580218496087348063}
     m_Modifications:
+    - target: {fileID: 98185485760170609, guid: 45dd0e06f15c80d438df140be66a326f,
+        type: 3}
+      propertyPath: objectWithSkinnedMesh
+      value: 
+      objectReference: {fileID: 6381192917570731478}
     - target: {fileID: 3023254705785343970, guid: 45dd0e06f15c80d438df140be66a326f,
         type: 3}
       propertyPath: m_RootOrder
@@ -663,6 +792,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4697584746697643484, guid: 45dd0e06f15c80d438df140be66a326f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45dd0e06f15c80d438df140be66a326f, type: 3}
