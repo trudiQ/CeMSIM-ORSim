@@ -11,6 +11,9 @@ public class InteractableClothController : MonoBehaviour
     public ClothPair[] clothingPairs;
     public Collider[] playerCollidersToIgnore;
 
+    public UnityEvent<ClothPair> OnClothEquipped;
+    public UnityEvent<ClothPair> OnClothUnequipped;
+
     void Start()
     {
         List<InteractableCloth> clothingFound = new List<InteractableCloth>(FindObjectsOfType<InteractableCloth>());
@@ -23,6 +26,10 @@ public class InteractableClothController : MonoBehaviour
 
             pair.Initialize(match);
             pair.IgnorePlayerCollision(playerCollidersToIgnore);
+
+            // Subscribe to events so there is one point that information can be sent from
+            pair.OnEquip.AddListener(() => OnClothEquipped.Invoke(pair));
+            pair.OnUnequip.AddListener(() => OnClothUnequipped.Invoke(pair));
         }
 
         // After setting up every pair, ignore collision between scene and model cloth (includes self collision)
@@ -149,30 +156,18 @@ public class ClothPair
     // Check if the cloth in the scene aligns with the cloth on the model in both position and angle
     public void CheckIfWithinThreshold()
     {
-        try
+        if (sceneCloth.isBeingGrabbed)
         {
-            if (sceneCloth.isBeingGrabbed)
+            if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
             {
-                if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
-                {
-                    ToggleModelCloth();
-                    OnEquip.Invoke();
-                }
-                else if (!InThresholdDistance())
-                {
-                    movedOutOfThresholdAfterUnequip = true;
-                }
+                ToggleModelCloth();
+                OnEquip.Invoke();
+            }
+            else if (!InThresholdDistance())
+            {
+                movedOutOfThresholdAfterUnequip = true;
             }
         }
-        catch (MissingReferenceException)
-        {
-            // Do nothing additional, message already printed at start
-        }
-        catch (System.NullReferenceException)
-        {
-            // Do nothing additional, message already printed at start
-        }
-
     }
 
     // Check if the scene cloth is within the distance threshold
@@ -191,12 +186,17 @@ public class ClothPair
         return angle <= angleThreshold;
     }
 
+    // Called when the scene cloth sends an event and snap is enabled, disables scene cloth and enables worn cloth
     private void OnSceneClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
         if (snapOnGrab)
+        {
             ToggleModelCloth();
+            OnEquip.Invoke();
+        }
     }
 
+    // Called when the worn cloth sends an event, disables worn cloth and enables scene cloth
     private void OnWornClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
         ToggleModelCloth();
