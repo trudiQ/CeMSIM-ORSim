@@ -14,7 +14,14 @@ namespace CEMSIM
         public class ClientInstance : MonoBehaviour
         {
             public static ClientInstance instance;
-            public static int dataBufferSize = 4096;
+
+
+            [Header("Menu Object")]
+            public GameObject PCConnectMenu;
+            public GameObject VRConnectMenu;
+
+            [Header("Network Configurations")]
+            public static int dataBufferSize = ClientNetworkConstants.DATA_BUFFER_SIZE;
 
             // server ip and port
             public string ip = ClientNetworkConstants.SERVER_IP;
@@ -22,12 +29,18 @@ namespace CEMSIM
             //public string ip;
             public int port = ClientNetworkConstants.SERVER_PORT;
 
+            [Header("Player Configurations")]
+            //public bool isVR = true;
             public int myId = 0;
             public string myUsername = "DEFAULT_USERNAME";
+            public Roles role=Roles.surgeon;
 
             [Header("Traffic Visualization")]
             public bool printNetworkTraffic = false;        // True: print out the inbound and outbound traffic in console.
 
+
+            [HideInInspector]
+            public bool isReady = false;                    // whether the client instance is ready to be controlled 
 
             public TCP tcp;
             public UDP udp;
@@ -51,6 +64,7 @@ namespace CEMSIM
                     Debug.Log("Another instance already exists. Destroy this one.");
                     Destroy(this);
                 }
+
             }
 
 
@@ -58,9 +72,6 @@ namespace CEMSIM
             private void Start()
             {
                 //ip = defaultIP;
-
-                // initialize the dictionary that maps packet id to packet description
-                PacketId.InitPacketIdDictionary();
 
                 //initialize TCP and UDP connections
                 Debug.Log($"Current server IP is {ip}");
@@ -71,25 +82,45 @@ namespace CEMSIM
                 {
                     //To do: Handle this in XR & Menu Manager Instances
                     // disable the manu and request to enter the OR
-                    ClientPCConnetMenu.Instance.gameObject.SetActive(false);
-                    ClientInstance.instance.ConnectToServer(ip, port);
+                    PCConnectMenu?.SetActive(false);
+                    VRConnectMenu?.SetActive(true);
+                    //ClientInstance.instance.ConnectToServer(ip, port);
 
                     //Delays the Spawn request to ensure the client is connected
-                    StartCoroutine(DelaySpawnRequest());
+                    //StartCoroutine(DelaySpawnRequest());
+                }
+                else
+                {
+                    PCConnectMenu?.SetActive(true);
+                    VRConnectMenu?.SetActive(false);
+                    isReady = true;
                 }
             }
 
 
-            IEnumerator DelaySpawnRequest()
+            public IEnumerator DelaySpawnRequest(float _seconds=5f)
             {
-                yield return new WaitForSeconds(5f);
+                yield return new WaitForSeconds(_seconds);
                 //string _username = "Player" + ClientInstance.instance.myId.ToString();
                 string _username = ClientInstance.instance.myUsername;
 
+                isReady = true;
+                Debug.Log("Reach Here");
+                // configure the local player
+                GameManager.instance.localPlayerVR.GetComponent<PlayerManager>().InitializePlayerManager(
+                    ClientInstance.instance.myId,
+                    _username,
+                    ClientInstance.instance.role,
+                    true,   // at the client side?
+                    true    // VR player?
+                    );
+
+
                 //TO DO: ConnectOnStart is used for VR mode at the moment. 
                 //Add feature for entering in VR or desktop mode
-                ClientSend.SendSpawnRequest(_username, true);
-                GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
+                
+                ClientSend.SendSpawnRequest(_username, true, role);
+                //GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
             }
 
             private void OnApplicationQuit()
@@ -117,11 +148,13 @@ namespace CEMSIM
             /// <summary>
             /// Check whether TCP and UDP are ready
             /// </summary>
-            public void CheckConnection()
+            public bool CheckConnection()
             {
                 instance.isConnected = instance.tcp.isTCPConnected && instance.udp.isUDPConnected;
+                return instance.isConnected;
             }
 
+            #region UDP
 
             /// <summary>
             /// The UDP class used by the client.
@@ -135,6 +168,7 @@ namespace CEMSIM
                 public UDP()
                 {
                     isUDPConnected = false;
+                    ClientInstance.instance.CheckConnection();
                 }
 
                 /// <summary>
@@ -151,22 +185,25 @@ namespace CEMSIM
                         _ip = Dns.GetHostAddresses(instance.ip)[0];
                     }
 
-                    Debug.Log($"UDP is connecting to the server with ip:{instance.ip} {_ip}");
                     endPoint = new IPEndPoint(_ip, instance.port);
 
+                    Debug.Log($"Create UDP socket");
                     socket = new UdpClient(_localPort);
+                    Debug.Log($"Connecting via UDP to the server with ip:{instance.ip} {_ip}");
                     socket.Connect(endPoint);
 
                     socket.BeginReceive(ReceiveCallback, null);
 
                     // send a welcome packet
-                    using (Packet _packet = new Packet((int)ClientPackets.welcome))
-                    {
-                        // since user id has already been added to the packet, no need to manually add it again.
-                        SendData(_packet);
-                    }
+                    //using (Packet _packet = new Packet((int)ClientPackets.welcome))
+                    //{
+                    //    // since user id has already been added to the packet, no need to manually add it again.
+                    //    SendData(_packet);
+                    //}
 
-                    isUDPConnected = true;
+                    ClientSend.WelcomeUDP();
+
+                    //isUDPConnected = true;
                     instance.CheckConnection();
                 }
 
@@ -185,7 +222,7 @@ namespace CEMSIM
                         {
                             if (ClientInstance.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Send] UDP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                                Debug.Log($"[Send] UDP {(ClientPackets)_packet.GetPacketId()}");
                             }
                             socket.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
                         }
@@ -243,7 +280,7 @@ namespace CEMSIM
                     {
                         int _packetLength = _packet.ReadInt32();
                         if (_data.Length - _packetLength != 4){
-                            Debug.LogWarning("UDP packet payload != packet size");
+                            Debug.LogWarning($"UDP packet payload {_packetLength} != packet size {_data.Length}");
                             return;
                         }
                         _data = _packet.ReadBytes(_packetLength);
@@ -257,7 +294,7 @@ namespace CEMSIM
                             int _packetId = _packet.DigestServerHeader();
                             if (ClientInstance.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Recv] UDP {PacketId.ServerPacketsInfo[_packetId]}");
+                                Debug.Log($"[Recv] UDP {(ServerPackets)_packetId}");
                             }
                             packetHandlers[_packetId](_packet);
                         }
@@ -274,7 +311,9 @@ namespace CEMSIM
                 }
 
             }
+            #endregion
 
+            #region TCP
             /// <summary>
             /// The TCP class used by the client.
             /// </summary>
@@ -364,7 +403,7 @@ namespace CEMSIM
                         {
                             if (ClientInstance.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Send] TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
+                                Debug.Log($"[Send] TCP {(ClientPackets)_packet.GetPacketId()}");
                             }
                             stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
                         }
@@ -420,7 +459,7 @@ namespace CEMSIM
 
                                 if (ClientInstance.instance.printNetworkTraffic)
                                 {
-                                    Debug.Log($"[Recv] TCP {PacketId.ServerPacketsInfo[_packetId]}");
+                                    Debug.Log($"[Recv] TCP {(ServerPackets)_packetId}");
                                 }
                                 // call proper handling function based on packet id
                                 packetHandlers[_packetId](_packet);
@@ -462,12 +501,14 @@ namespace CEMSIM
 
                 }
             }
+            #endregion
 
             private static void InitializeClientData()
             {
                 packetHandlers = new Dictionary<int, PacketHandler>() {
                     { (int)ServerPackets.invalidPacket, ClientHandle.InvalidPacketResponse},
                     { (int)ServerPackets.welcome, ClientHandle.Welcome },
+                    { (int)ServerPackets.welcomeUDP, ClientHandle.WelcomeUDP },
                     { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
                     { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
                     { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
@@ -475,9 +516,10 @@ namespace CEMSIM
                     { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected},
                     { (int)ServerPackets.heartBeatDetectionTCP, ClientHandle.HeartBeatDetectionTCP},
                     { (int)ServerPackets.heartBeatDetectionUDP, ClientHandle.HeartBeatDetectionUDP},
-                    { (int)ServerPackets.itemPositionUDP, ClientHandle.ItemPosition},
-                    { (int)ServerPackets.ownershipDenial, ClientHandle.OwnershipDenial},
+                    { (int)ServerPackets.itemState, ClientHandle.ItemState},
+                    { (int)ServerPackets.ownershipDeprivation, ClientHandle.OwnershipDeprivation},
                     { (int)ServerPackets.environmentState, ClientHandle.EnvironmentState},
+                    { (int)ServerPackets.itemList, ClientHandle.ItemList},
             };
 
                 Debug.Log("Client Data Initialization Complete.");

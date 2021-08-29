@@ -31,9 +31,6 @@ namespace CEMSIM
 
                 InitializeServerData();
 
-                // initialize the dictionary that maps packet id to packet description
-                PacketId.InitPacketIdDictionary();
-
                 // initialize tcpListener
                 tcpListener = new TcpListener(IPAddress.Any, port);
                 tcpListener.Start();
@@ -167,6 +164,7 @@ namespace CEMSIM
                     { (int)ClientPackets.invalidPacket, ServerHandle.InvalidPacketResponse},
                     { (int)ClientPackets.welcome, ServerHandle.Welcome},
                     { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
+                    { (int)ClientPackets.welcomeUDP, ServerHandle.WelcomeUDP },
                     { (int)ClientPackets.pingTCP, ServerHandle.PingTCP},
                     { (int)ClientPackets.pingUDP, ServerHandle.PingUDP},
                     { (int)ClientPackets.spawnRequest, ServerHandle.SpawnRequest},
@@ -174,7 +172,7 @@ namespace CEMSIM
                     { (int)ClientPackets.playerVRMovement, ServerHandle.PlayerVRMovement},
                     { (int)ClientPackets.heartBeatDetectionTCP, ServerHandle.HeartBeatDetectionTCP},
                     { (int)ClientPackets.heartBeatDetectionUDP, ServerHandle.HeartBeatDetectionUDP},
-                    { (int)ClientPackets.itemPositionUDP, ServerHandle.ItemPosition},
+                    { (int)ClientPackets.itemState, ServerHandle.ItemState},
                     { (int)ClientPackets.itemOwnershipChange, ServerHandle.ItemOwnershipChange},
                     { (int)ClientPackets.environmentState, ServerHandle.EnvironmentState},
                 };

@@ -50,6 +50,14 @@ namespace CEMSIM
                 }
             }
 
+            public static void WelcomeUDP()
+            {
+                using(Packet _packet = new Packet((int)ClientPackets.welcomeUDP))
+                {
+                    SendUDPData(_packet);
+                }
+            }
+
             public static void SendTCPPing(string _msg = "")
             {
                 using (Packet _packet = new Packet((int)ClientPackets.pingTCP))
@@ -71,12 +79,13 @@ namespace CEMSIM
                 }
             }
 
-            public static void SendSpawnRequest(string _username, bool _vrEnabled)
+            public static void SendSpawnRequest(string _username, bool _vrEnabled, Roles _role)
             {
                 using (Packet _packet = new Packet((int)ClientPackets.spawnRequest))
                 {
                     _packet.Write(_username);
                     _packet.Write(_vrEnabled);
+                    _packet.Write((int)_role);
 
                     SendTCPData(_packet);
                 }
@@ -90,6 +99,7 @@ namespace CEMSIM
             {
                 using (Packet _packet = new Packet((int)ClientPackets.playerDesktopMovement))
                 {
+                    // use to identify how many keys are sent
                     _packet.Write(_inputs.Length);
                     foreach (bool _input in _inputs)
                     {
@@ -107,16 +117,18 @@ namespace CEMSIM
             /// <param name="_inputs"></param>
             public static void PlayerVRMovement()
             {
+                if (!ClientInstance.instance.isReady)
+                {
+                    // Current user is not ready for position updating. Maybe in the delayed spawning stage.
+                    return;
+                }
                 if (GameManager.players.ContainsKey(ClientInstance.instance.myId))
                 {
                     // get the avatar position
-                    Vector3 _avatarPosition = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera.position;
-                    Quaternion _avatarRotation = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera.rotation;
+                    //Transform _avatar = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerVRController>().VRCamera;
+                    Transform _avatar = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().body.transform;
 
                     // get the position of both VR controllers
-                    //Transform _lefthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(1);
-                    //Transform _righthand = GameManager.players[ClientInstance.instance.myId].transform.GetChild(0).gameObject.transform.GetChild(2);
-
                     Transform _lefthand = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().leftHandController.transform;
                     Transform _righthand = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().rightHandController.transform;
 
@@ -124,8 +136,9 @@ namespace CEMSIM
                     using (Packet _packet = new Packet((int)ClientPackets.playerVRMovement))
                     {
                         // write avatar position
-                        _packet.Write(_avatarPosition);
-                        _packet.Write(_avatarRotation);
+
+                        _packet.Write(_avatar.position);
+                        _packet.Write(_avatar.rotation);
 
                         // write left and right controller positions
                         _packet.Write(_lefthand.position);
@@ -166,29 +179,32 @@ namespace CEMSIM
             /// Send the latest position of the interactable item (owned by the client) to the server.
             /// </summary>
             /// <param name="_item"></param>
-            public static void SendItemPosition(GameObject _item)                             //Send Item position to server via UDP
+            public static void SendItemPosition(GameObject _item, bool isUDP)                             //Send Item position to server via UDP
             {
                 ItemController itemCon = _item.GetComponent<ItemController>();
-                using (Packet _packet = new Packet((int)ClientPackets.itemPositionUDP))
+                using (Packet _packet = new Packet((int)ClientPackets.itemState))
                 {
                     _packet.Write(itemCon.id);
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);
+                    
+                    if (isUDP)
+                        SendUDPData(_packet);
+                    else
+                        SendTCPData(_packet);
 
-                    Debug.Log($"item {itemCon.id} pos {_item.transform.position}");
-                    SendUDPData(_packet);
+
                 }
             }
 
-            public static void SendOnwershipChange(GameObject _item)                          //Send Item rotation to server via TCP
+            public static void SendOnwershipChange(GameObject _item, bool _toGrab)                          //Send Item rotation to server via TCP
             {
                 using (Packet _packet = new Packet((int)ClientPackets.itemOwnershipChange))
                 {
                     ItemController itemCon = _item.GetComponent<ItemController>();
                     _packet.Write(itemCon.id);
-                    _packet.Write(itemCon.ownerId);
+                    _packet.Write(_toGrab); // if ownerId = 0, it only means that the user release the item. The true owner may not be user 0 (server)
                     SendTCPData(_packet);
-                    //Debug.Log($"[Send] Pack ID :{ (int)ClientPackets.itemOwnershipChange } TCP {PacketId.ClientPacketsInfo[_packet.GetPacketId()]}");
                 }
 
             }

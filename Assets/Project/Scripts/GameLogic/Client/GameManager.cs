@@ -19,7 +19,8 @@ namespace CEMSIM
             [Header("Player Prefabs")]
             public GameObject localPlayerVR;
             public GameObject localPlayerPrefab;
-            public GameObject playerPrefab;
+            //public GameObject playerPrefab;
+            public List<GameObject> playerPrefabs = new List<GameObject>();
 
             [Header("Events")]
             public GameObject roomLightButton;
@@ -54,37 +55,48 @@ namespace CEMSIM
             /// <param name="_name">The player's name.</param>
             /// <param name="_position">The player's starting position.</param>
             /// <param name="_rotation">The player's starting rotation.</param>
-            public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation)
+            public void SpawnPlayer(int _id, string _username, int _role_i, Vector3 _position, Quaternion _rotation)
             {
                 GameObject _player;
+                bool _isVR = true;
+
+                // TODO: Currently, no difference when the client knows the role of any other client.
+                Roles _role = Roles.surgeon;
+
+                if (Enum.IsDefined(typeof(Roles), _role_i))
+                    _role = (Roles)_role_i;
+
+                Debug.Log($"Spawning player {_id} - {_username} - {_role}");
 
 
                 if (_id == ClientInstance.instance.myId)
                 {
                     if (localPlayerVR.activeInHierarchy)
                     {
+                        _isVR = true;
                         _player = localPlayerVR;
-                        _player.GetComponent<PlayerVRController>().enabled = true;
+                        //_player.GetComponent<PlayerVRController>().enabled = true;
                     }
                     else
                     {
                         // create player for client
+                        _isVR = false;
                         _player = Instantiate(localPlayerPrefab, _position, _rotation);
                     }
                 }
                 else
                 {
                     // create player for another client
-                    _player = Instantiate(playerPrefab, _position, _rotation);
-                    // Child 1 is the username gameobject
-                    // P.S. Only the prefab of other players has "username"
-                    _player.transform.GetChild(1).gameObject.GetComponent<TextMesh>().text = _username; 
+                    int _role_id = (int)_role;
+                    _player = Instantiate(playerPrefabs[_role_id], new Vector3(_position.x, 0f, _position.z), _rotation);
+                    // Since the new rig model treats the initial y-axis as the floor, we should first spawn it to a coordinate with 0 as y-axis
+                    // then pull it to the correct position.
+                    _player.GetComponent<PlayerManager>().enabled = true;
+                    _player.GetComponent<PlayerManager>().SetPosition(_position, _rotation);
+
 
                 }
-
-                _player.GetComponent<PlayerManager>().id = _id;
-                _player.GetComponent<PlayerManager>().username = _username;
-
+                _player.GetComponent<PlayerManager>().InitializePlayerManager(_id, _username, _role, true, _isVR);
 
                 // record the player instance in the players dictionary
                 players.Add(_id, _player.GetComponent<PlayerManager>());
