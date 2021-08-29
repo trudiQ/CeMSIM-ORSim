@@ -37,9 +37,10 @@ namespace CEMSIM
             }
 
 
-            public void initialize(int _id)
+            public void initialize(int _id, int _ownerId=0)
             {
                 id = _id;
+                ownerId = _ownerId;
                 itemStateManager.initializeItem(_id);
             }
 
@@ -76,7 +77,7 @@ namespace CEMSIM
 
             public void DropOwnership()
             {
-                ClientItemManager.instance.DropOwnership(id);
+                ClientItemManager.instance.DropOwnership(id, true);
                 Debug.Log($"Release item {id}");
             }
         }

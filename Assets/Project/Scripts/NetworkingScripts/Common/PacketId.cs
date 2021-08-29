@@ -14,6 +14,7 @@ namespace CEMSIM
         {
             invalidPacket=1,    // an invalid packet
             welcome,            // welcome message sent in reply to client's tcp connection
+            welcomeUDP,         // udp welcome message in response to client's UDPWelcome
             pingResponseTCP,    // server response to client's pingTCP
             pingResponseUDP,    // server response to client's pingUDP
             spawnPlayer,        // the spawn of a player (also a reply to spawn request)
@@ -22,7 +23,7 @@ namespace CEMSIM
             heartBeatDetectionUDP, // a packet containing the server's system time. used to check whether the target client is alive and get the round-trip-time.
             heartBeatDetectionTCP, 
             itemState,       //update of item position
-            ownershipDenial,    //TCP packet that denies a client's request to an item's ownership
+            ownershipDeprivation,    //TCP packet that denies a client's request to an item's ownership
             environmentState,   // carry the environment state information (not player state)
             itemList,           // inform client the list of items in the current simulation scene
         }
@@ -35,6 +36,7 @@ namespace CEMSIM
             invalidPacket = 1,  // an invalid packet
             welcome,            // welcome packet sent by the client
             welcomeReceived,    // client's in response to server's welcome packet
+            welcomeUDP,         // UDP welcome packet sent after welcome (TCP) packet
             pingTCP,            // ping message to the server via TCP
             pingUDP,            // ping message to the server via UDP
             spawnRequest,       // player request to enter

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CEMSIM.Network;
+using HurricaneVR.Framework.Core;
 
 namespace CEMSIM
 {
@@ -17,7 +18,7 @@ namespace CEMSIM
 
 			[HideInInspector]
 			private List<GameObject> itemList = new List<GameObject>();  //This List contains all items in the scene
-			private List<GameObject> ownedItemList = new List<GameObject>();        //This List contains all items owned by this client
+			private List<int> ownedItemList = new List<int>();        //This List contains all items owned by this client
 
 
 			private void Awake()
@@ -59,7 +60,7 @@ namespace CEMSIM
 				Debug.Log($"Spawning {_itemId+1}/{_listSize} item - {_itemTypeId} @ {_position}");
 
 
-				GameObject _item = Instantiate(itemLibrary[_itemTypeId], _position, _rotation);
+				GameObject _item = Instantiate(itemLibrary[_itemTypeId], _position, _rotation);	// create item
 
 				_item.GetComponent<ItemController>().initialize(_itemId);
 				_item.GetComponent<ItemController>().DigestStateMessage(_remainderPacket);
@@ -132,68 +133,74 @@ namespace CEMSIM
 				}
 			}
 
+			
 
 			/// <summary>
 			/// Send Item status that is owned by this client
 			/// </summary>
 			private void SendOwnedItemStatus()
 			{
-				foreach (GameObject item in ownedItemList)
+				foreach (int _itemId in ownedItemList)
 				{
-					//Debug.Log($"Sending item {item.GetComponent<ItemController>().id}:");
-					//Send position to Server via UDP
-					ClientSend.SendItemPosition(item, true);
-					//Get Item Controller
-					//ItemController itemCon = item.GetComponent<ItemController>();
-					//Debug.Log("Sending item status:");
-					//Debug.Log(itemCon.ToString());
-
+					ClientSend.SendItemPosition(itemList[_itemId], true);
 				}
 			}
 
-			public void GainOwnership(int _itemId)
+			public void GainOwnership(int _itemId, bool _informServer = true)
 			{
 				GameObject _item = itemList[_itemId];
-				_item.GetComponent<ItemController>().ownerId = ClientInstance.instance.myId;
-				ownedItemList.Add(_item);
-				//Send ownership request to user
-				ClientSend.SendOnwershipChange(_item);
+				ItemController _itemCon = _item.GetComponent<ItemController>();
+				Rigidbody rb = _item.GetComponent<Rigidbody>();
+
+
+				_itemCon.ownerId = ClientInstance.instance.myId;
+
+				ownedItemList.Add(_itemId);
+
+				//Allow changing the item position
+				rb.isKinematic = false;                  
+				rb.useGravity = true;
+
+				if (_informServer)
+				{
+					//Send ownership request to user
+					ClientSend.SendOnwershipChange(_item, true);
+				}
+				Debug.Log($"Acquire item {_itemId} - {_itemCon.toolType}");
 			}
 
 			/// <summary>
 			/// When the player actively drops the item, the function informs the server the ownership change.
 			/// </summary>
 			/// <param name="_itemId"></param>
-			public void DropOwnership(int _itemId)
+			public void DropOwnership(int _itemId, bool _informServer=true)
 			{
 				GameObject _item = itemList[_itemId];
-				_item.GetComponent<ItemController>().ownerId = 0;
+				ItemController _itemCon = _item.GetComponent<ItemController>();
+				Rigidbody rb = _item.GetComponent<Rigidbody>();
+
+
+				_itemCon.ownerId = 0;// since the client doesn't care who is the owner, Set it to user 0 (server)
 				
-				ownedItemList.Remove(_item);
-				//Send drop ownership notification to server
-				ClientSend.SendOnwershipChange(_item);
-			}
+				ownedItemList.Remove(_itemId);
 
-			public void TransferOwnership(GameObject item, int _toId)
-            {
-				ItemController itemCon = item.GetComponent<ItemController>();
-				itemCon.ownerId = _toId;
-				if (_toId != ClientInstance.instance.myId)
+				//Prevent client's physics system from changing the item's position & rotation
+				rb.isKinematic = true;                  
+				rb.useGravity = false;
+
+                if (_informServer)
                 {
-					ownedItemList.Remove(item);
+					//Send drop ownership notification to server
+					ClientSend.SendOnwershipChange(_item, false);
+					Debug.Log($"Release item {_itemId} - {_itemCon.toolType}");
 				}
-            }
-
-
-
-
-
-
-
-
-
-
-
+                else
+                {
+					_item.GetComponent<HVRGrabbable>().ForceRelease();    // force the user to release the item.
+					Debug.Log($"Lost item {_itemId} - {_itemCon.toolType}");
+				}
+				
+			}
 
 		}
 	}

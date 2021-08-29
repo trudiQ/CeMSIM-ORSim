@@ -15,6 +15,11 @@ namespace CEMSIM
         {
             public static ClientInstance instance;
 
+
+            [Header("Menu Object")]
+            public GameObject PCConnectMenu;
+            public GameObject VRConnectMenu;
+
             [Header("Network Configurations")]
             public static int dataBufferSize = ClientNetworkConstants.DATA_BUFFER_SIZE;
 
@@ -25,6 +30,7 @@ namespace CEMSIM
             public int port = ClientNetworkConstants.SERVER_PORT;
 
             [Header("Player Configurations")]
+            //public bool isVR = true;
             public int myId = 0;
             public string myUsername = "DEFAULT_USERNAME";
             public Roles role=Roles.surgeon;
@@ -76,26 +82,30 @@ namespace CEMSIM
                 {
                     //To do: Handle this in XR & Menu Manager Instances
                     // disable the manu and request to enter the OR
-                    ClientPCConnetMenu.Instance.gameObject.SetActive(false);
-                    ClientInstance.instance.ConnectToServer(ip, port);
+                    PCConnectMenu?.SetActive(false);
+                    VRConnectMenu?.SetActive(true);
+                    //ClientInstance.instance.ConnectToServer(ip, port);
 
                     //Delays the Spawn request to ensure the client is connected
-                    StartCoroutine(DelaySpawnRequest());
+                    //StartCoroutine(DelaySpawnRequest());
                 }
                 else
                 {
+                    PCConnectMenu?.SetActive(true);
+                    VRConnectMenu?.SetActive(false);
                     isReady = true;
                 }
             }
 
 
-            IEnumerator DelaySpawnRequest()
+            public IEnumerator DelaySpawnRequest(float _seconds=5f)
             {
-                yield return new WaitForSeconds(5f);
+                yield return new WaitForSeconds(_seconds);
                 //string _username = "Player" + ClientInstance.instance.myId.ToString();
                 string _username = ClientInstance.instance.myUsername;
 
                 isReady = true;
+                Debug.Log("Reach Here");
                 // configure the local player
                 GameManager.instance.localPlayerVR.GetComponent<PlayerManager>().InitializePlayerManager(
                     ClientInstance.instance.myId,
@@ -108,6 +118,7 @@ namespace CEMSIM
 
                 //TO DO: ConnectOnStart is used for VR mode at the moment. 
                 //Add feature for entering in VR or desktop mode
+                
                 ClientSend.SendSpawnRequest(_username, true, role);
                 //GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
             }
@@ -137,9 +148,10 @@ namespace CEMSIM
             /// <summary>
             /// Check whether TCP and UDP are ready
             /// </summary>
-            public void CheckConnection()
+            public bool CheckConnection()
             {
                 instance.isConnected = instance.tcp.isTCPConnected && instance.udp.isUDPConnected;
+                return instance.isConnected;
             }
 
             #region UDP
@@ -156,6 +168,7 @@ namespace CEMSIM
                 public UDP()
                 {
                     isUDPConnected = false;
+                    ClientInstance.instance.CheckConnection();
                 }
 
                 /// <summary>
@@ -172,22 +185,25 @@ namespace CEMSIM
                         _ip = Dns.GetHostAddresses(instance.ip)[0];
                     }
 
-                    Debug.Log($"UDP is connecting to the server with ip:{instance.ip} {_ip}");
                     endPoint = new IPEndPoint(_ip, instance.port);
 
+                    Debug.Log($"Create UDP socket");
                     socket = new UdpClient(_localPort);
+                    Debug.Log($"Connecting via UDP to the server with ip:{instance.ip} {_ip}");
                     socket.Connect(endPoint);
 
                     socket.BeginReceive(ReceiveCallback, null);
 
                     // send a welcome packet
-                    using (Packet _packet = new Packet((int)ClientPackets.welcome))
-                    {
-                        // since user id has already been added to the packet, no need to manually add it again.
-                        SendData(_packet);
-                    }
+                    //using (Packet _packet = new Packet((int)ClientPackets.welcome))
+                    //{
+                    //    // since user id has already been added to the packet, no need to manually add it again.
+                    //    SendData(_packet);
+                    //}
 
-                    isUDPConnected = true;
+                    ClientSend.WelcomeUDP();
+
+                    //isUDPConnected = true;
                     instance.CheckConnection();
                 }
 
@@ -264,7 +280,7 @@ namespace CEMSIM
                     {
                         int _packetLength = _packet.ReadInt32();
                         if (_data.Length - _packetLength != 4){
-                            Debug.LogWarning($"UDP packet payload{_packetLength} != packet size {_data.Length}");
+                            Debug.LogWarning($"UDP packet payload {_packetLength} != packet size {_data.Length}");
                             return;
                         }
                         _data = _packet.ReadBytes(_packetLength);
@@ -492,6 +508,7 @@ namespace CEMSIM
                 packetHandlers = new Dictionary<int, PacketHandler>() {
                     { (int)ServerPackets.invalidPacket, ClientHandle.InvalidPacketResponse},
                     { (int)ServerPackets.welcome, ClientHandle.Welcome },
+                    { (int)ServerPackets.welcomeUDP, ClientHandle.WelcomeUDP },
                     { (int)ServerPackets.pingResponseTCP, ClientHandle.TCPPingResponse },
                     { (int)ServerPackets.pingResponseUDP, ClientHandle.UDPPingResponse },
                     { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
@@ -500,7 +517,7 @@ namespace CEMSIM
                     { (int)ServerPackets.heartBeatDetectionTCP, ClientHandle.HeartBeatDetectionTCP},
                     { (int)ServerPackets.heartBeatDetectionUDP, ClientHandle.HeartBeatDetectionUDP},
                     { (int)ServerPackets.itemState, ClientHandle.ItemState},
-                    { (int)ServerPackets.ownershipDenial, ClientHandle.OwnershipDenial},
+                    { (int)ServerPackets.ownershipDeprivation, ClientHandle.OwnershipDeprivation},
                     { (int)ServerPackets.environmentState, ClientHandle.EnvironmentState},
                     { (int)ServerPackets.itemList, ClientHandle.ItemList},
             };

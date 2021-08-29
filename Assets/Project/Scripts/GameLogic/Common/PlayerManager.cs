@@ -1,4 +1,5 @@
 ﻿using CEMSIM.Network;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -164,11 +165,11 @@ namespace CEMSIM
             {
                 if (displayName != null)
                 {
-                    displayName.GetComponent<TextMesh>().text = _name;
+                    displayName.GetComponent<TextMesh>().text = String.Format($"{role}: {_name}");
                 }
                 else
                 {
-                    Debug.LogWarning("username is null");
+                    Debug.LogWarning("Username is null. Maybe the player controlled avatar");
                 }
             }
 

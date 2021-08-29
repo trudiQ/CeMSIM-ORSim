@@ -22,6 +22,7 @@ namespace CEMSIM
             {
                 // Do nothing, because the "Welcome" packet is the first packet sent by the client through UDP
                 // It is used to verify the establishment of UDP connection
+                Debug.Log($"Welcome packet from {_fromClient}");
             }
 
             public static void WelcomeReceived(int _fromClient, Packet _packet)
@@ -40,6 +41,11 @@ namespace CEMSIM
                     return;
                 }
 
+            }
+
+            public static void WelcomeUDP(int _fromClient, Packet packet)
+            {
+                ServerSend.WelcomeUDP(_fromClient);
             }
 
             public static void PingUDP(int _fromClient, Packet _packet)
@@ -189,37 +195,63 @@ namespace CEMSIM
             /// <param name="_packet"></param>
             public static void ItemOwnershipChange(int _fromClient, Packet _packet)
             {
-                int _item_id = _packet.ReadInt32();
-                int _newOwner = _packet.ReadInt32();
+                int _itemId = _packet.ReadInt32();
+                bool _toGrab = _packet.ReadBool();
 
-                GameObject item = ServerItemManager.instance.itemList[_item_id];
+                GameObject item = ServerItemManager.instance.itemList[_itemId];
                 ItemController itemCon = item.GetComponent<ItemController>();
-                int currentOwner = item.GetComponent<ItemController>().ownerId;
+                int currentOwner = itemCon.ownerId;
+                Rigidbody rb = item.GetComponent<Rigidbody>();
                 //This item is currently not owned by anyone\ or owned by the incoming client
-                if (currentOwner == 0 || currentOwner == _fromClient){ 
-                    itemCon.ownerId = _newOwner;
-                    Rigidbody rb = item.GetComponent<Rigidbody>(); 
-                    if(_newOwner != 0){ 
+
+                if(_toGrab)
+                {
+                    // user _fromClient wants the item
+                    if (currentOwner == 0)
+                    {
+                        // server is the current owner
+                        itemCon.ownerId = _fromClient;
                         //if the item is no longer controlled by server then set item to kinematic and no gravity
                         rb.isKinematic = true;                  //Prevent server physics system from changing the item's position & rotation
                         rb.useGravity = false;
-                    }else{
-                        //if server regains control of an item then turn on gravity and set kinematic off
-                        rb.isKinematic = false;                  
-                        rb.useGravity = true;
-
                     }
-                    Debug.Log(string.Format("Ownership of item {0} is given to player {1}.",_item_id.ToString(),_newOwner));
+                    else
+                    {
+                        // this item is controlled by another user
+                        if (currentOwner != _fromClient)
+                        {
+                            ServerSend.ownershipDeprivation(currentOwner, _itemId);
+                            itemCon.ownerId = _fromClient;
+                        }
+                        else
+                        {
+                            // This shouldn't happen, unless some lost packets or lagging network
+                            // Do nothing
+                        }
+                    }
+
                 }
-                //If this item is currenly owned by other clients
-                // Update 06/30/2021 - We allow items to be passed from one person to anther
-                /*
-                if (currentOwner !=0 && currentOwner != _fromClient){
-                    //Makes no change in ownership and reply with denial
-                    ServerSend.OwnershipDenial(_fromClient, _item_id);
-                    Debug.Log("Ownership denied.");
+                else
+                {
+                    // the _fromClient user release the item. 
+                    if (currentOwner == _fromClient)
+                    {
+                        // no other user wants this item. The server gets it by default
+                        itemCon.ownerId = 0;
+
+                        //if server regains control of an item then turn on gravity and set kinematic off
+                        rb.isKinematic = false;
+                        rb.useGravity = true;
+                    }
+                    else
+                    {
+                        // some one is controlling this item already
+                        // do nothing
+                    }
                 }
-                //*/
+
+                Debug.Log($"The ownership of item {_itemId} - {itemCon.toolType} transfers from {currentOwner} to {itemCon.ownerId}");
+
             }
 
 

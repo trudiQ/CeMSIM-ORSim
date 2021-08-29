@@ -127,6 +127,15 @@ namespace CEMSIM
                 }
             }
 
+            public static void WelcomeUDP(int _toClient)
+            {
+                using(Packet _packet = new Packet((int)ServerPackets.welcomeUDP))
+                {
+                    _packet.Write(_toClient);
+                    SendUDPData(_toClient, _packet, true);
+                }
+            }
+
             /// <summary>
             /// Reply client's TCP ping
             /// </summary>
@@ -258,7 +267,7 @@ namespace CEMSIM
                     _packet.Write(ServerItemManager.instance.GetItemNum());     // different from BroadcastItemState
                     _packet.Write(_itemCon.id);
                     _packet.Write((int)_itemCon.toolType);                      // different from BroadcastItemState
-                    _packet.Write(_itemCon.ownerId);                            // different from BroadcastItemState
+                    //_packet.Write(_itemCon.ownerId);                          // the newly spawned user cannot hold an item. So no need to transmit this value
 
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);
@@ -269,11 +278,16 @@ namespace CEMSIM
             }
 
 
-            public static void OwnershipDenial(int _toClient, int item_id)              //Deny a clien's ownership via TCP
+            /// <summary>
+            /// Tell the current owner to pass the item's ownership to new user
+            /// </summary>
+            /// <param name="_toClient"></param>
+            /// <param name="_itemId"></param>
+            public static void ownershipDeprivation(int _toClient, int _itemId)              //Deny a clien's ownership via TCP
             {
-                using (Packet _packet = new Packet((int)ServerPackets.ownershipDenial))
+                using (Packet _packet = new Packet((int)ServerPackets.ownershipDeprivation))
                 {
-                    _packet.Write(item_id);
+                    _packet.Write(_itemId);
                     SendTCPData(_toClient, _packet);
                 }
             }

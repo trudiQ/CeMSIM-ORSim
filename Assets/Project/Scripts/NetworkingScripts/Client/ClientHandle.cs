@@ -34,10 +34,17 @@ namespace CEMSIM
                 ClientSend.WelcomeReceived();
 
                 // connect udp 
-                ClientInstance.instance.udp.Connect(((IPEndPoint)ClientInstance.instance.tcp.socket.Client.LocalEndPoint).Port);
+                //ClientInstance.instance.udp.Connect(((IPEndPoint)ClientInstance.instance.tcp.socket.Client.LocalEndPoint).Port);
 
                 // Mark TCP ready-to-use
                 ClientInstance.instance.tcp.isTCPConnected = true;
+                ClientInstance.instance.CheckConnection();
+            }
+
+            public static void WelcomeUDP(Packet _packet)
+            {
+                Debug.Log("UDP connection success");
+                ClientInstance.instance.udp.isUDPConnected = true;
                 ClientInstance.instance.CheckConnection();
             }
 
@@ -147,6 +154,7 @@ namespace CEMSIM
                 int _listSize = _packet.ReadInt32();
                 int _itemId = _packet.ReadInt32();
                 int _itemTypeId = _packet.ReadInt32();
+
                 Vector3 _position = _packet.ReadVector3();
                 Quaternion _rotation = _packet.ReadQuaternion();
 
@@ -173,10 +181,10 @@ namespace CEMSIM
             /// An item's ownership request sent by this client is denied by server, update ownership info accordingly
             /// </summary>
             /// <param name="_packet"></param>
-            public static void OwnershipDenial(Packet _packet)
+            public static void OwnershipDeprivation(Packet _packet)
             {
-                int _item_id = _packet.ReadInt32();
-                ClientItemManager.instance.DropOwnership(_item_id);
+                int _itemId = _packet.ReadInt32();
+                ClientItemManager.instance.DropOwnership(_itemId, false);
             }
 
 
