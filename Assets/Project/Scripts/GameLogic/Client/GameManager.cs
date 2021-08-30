@@ -72,7 +72,8 @@ namespace CEMSIM
 
                 if (_id == ClientInstance.instance.myId)
                 {
-                    if (localPlayerVR.activeInHierarchy)
+                    //if (localPlayerVR.activeInHierarchy)
+                    if (localPlayerVR != null)
                     {
                         _isVR = true;
                         _player = localPlayerVR;

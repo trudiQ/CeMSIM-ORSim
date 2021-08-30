@@ -517,7 +517,7 @@ Transform:
   m_LocalScale: {x: 1.0000002, y: 1, z: 1.0000002}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &181521837
 GameObject:
@@ -1251,12 +1251,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08e4de13b43af4faaabbde165d89e39b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PCConnectMenu: {fileID: 1578539651}
+  PCConnectMenu: {fileID: 1619101152}
   VRConnectMenu: {fileID: 2024819780}
   ip: orsimserver.ddns.net
   port: 30701
   myId: 3
   myUsername: Uone
+  role: 0
   printNetworkTraffic: 0
   isReady: 0
   isConnected: 0
@@ -2606,6 +2607,48 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 677466294}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &718463526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &739978752
 GameObject:
   m_ObjectHideFlags: 0
@@ -3877,7 +3920,7 @@ Transform:
   - {fileID: 1005816961}
   - {fileID: 1733629394}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &969614145
 GameObject:
@@ -4503,48 +4546,6 @@ Transform:
   m_Father: {fileID: 1126014338}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 90, y: -0.000015258789, z: -0.000015258789}
---- !u!114 &1071392169
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &1126014337
 GameObject:
   m_ObjectHideFlags: 0
@@ -4626,7 +4627,7 @@ Transform:
   - {fileID: 245206474}
   - {fileID: 1780108790}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &1193567668
 GameObject:
@@ -4673,7 +4674,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1210083623
 GameObject:
@@ -4718,7 +4719,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1231984718
 GameObject:
@@ -5220,7 +5221,7 @@ RectTransform:
   m_Children:
   - {fileID: 1578539650}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -6389,7 +6390,7 @@ Transform:
   - {fileID: 880726741}
   - {fileID: 1545180237}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1619101152 stripped
 GameObject:
@@ -6429,7 +6430,7 @@ Transform:
   - {fileID: 2004276591}
   - {fileID: 1935583957}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1655802067
 GameObject:
@@ -7358,7 +7359,7 @@ Transform:
   m_LocalScale: {x: 1.0000004, y: 1, z: 1.0000004}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: -161.658, z: 0}
 --- !u!1 &1719160063
 GameObject:
@@ -7656,48 +7657,6 @@ Transform:
   m_Father: {fileID: 1158019259}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1793889276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &1815556896
 GameObject:
   m_ObjectHideFlags: 0
@@ -9575,7 +9534,7 @@ PrefabInstance:
     - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
         type: 3}
@@ -9635,6 +9594,12 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 2008554773}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 923ec526580e484ca0d4716c43ccccc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2022690654
 GameObject:
   m_ObjectHideFlags: 0
@@ -11324,7 +11289,7 @@ PrefabInstance:
     - target: {fileID: 8559559516658173612, guid: 9d6d38dd46d8ca64484583050961f706,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8559559516658173612, guid: 9d6d38dd46d8ca64484583050961f706,
         type: 3}
@@ -11983,85 +11948,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82beef8dad1a96541b8ec963bff90271, type: 3}
---- !u!1001 &711439547361923973
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6247529882061140928, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_Name
-      value: HVRGlobal
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140929, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: Camera
-      value: 
-      objectReference: {fileID: 1581199695540425004}
-    - target: {fileID: 6247529882061140929, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: PlayerController
-      value: 
-      objectReference: {fileID: 1581199695540425005}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.299
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.293
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.7344261
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 2a4df11042f796649be68bdc104078fb, type: 3}
 --- !u!1001 &1581199695540425003
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12082,7 +11968,7 @@ PrefabInstance:
     - target: {fileID: 6149437513744750522, guid: 1ceb41317f1532143b0fe7113de25d2b,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6149437513744750522, guid: 1ceb41317f1532143b0fe7113de25d2b,
         type: 3}
@@ -12136,24 +12022,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ceb41317f1532143b0fe7113de25d2b, type: 3}
---- !u!4 &1581199695540425004 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6149437512335733471, guid: 1ceb41317f1532143b0fe7113de25d2b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1581199695540425003}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1581199695540425005 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6149437511910982912, guid: 1ceb41317f1532143b0fe7113de25d2b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1581199695540425003}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 621045042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df32767e580c4d24a3d3c9ed3026afd0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2077176172738705806
 PrefabInstance:
   m_ObjectHideFlags: 0

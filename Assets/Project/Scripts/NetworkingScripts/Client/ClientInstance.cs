@@ -81,7 +81,18 @@ namespace CEMSIM
                 tcp = new TCP();
                 udp = new UDP();
 
-                if(GameManager.instance.localPlayerVR.activeInHierarchy)
+                // Since the display of either VR menu or Desktop menu depends on whether 
+                // the VRRig gameobject has been assigned to the GameManager.instance.localPlayerVR,
+                // we need to give Unity some time.
+                StartCoroutine(DelayMenuDisplay(1.0f));
+
+            }
+
+            public IEnumerator DelayMenuDisplay(float _seconds = 1f)
+            {
+                yield return new WaitForSeconds(_seconds);
+
+                if (GameManager.instance.localPlayerVR != null)
                 {
                     //To do: Handle this in XR & Menu Manager Instances
                     // disable the manu and request to enter the OR
@@ -90,7 +101,7 @@ namespace CEMSIM
                     //ClientInstance.instance.ConnectToServer(ip, port);
 
                     //Delays the Spawn request to ensure the client is connected
-                    //StartCoroutine(DelaySpawnRequest());
+                    //
                 }
                 else
                 {
@@ -108,7 +119,6 @@ namespace CEMSIM
                 string _username = ClientInstance.instance.myUsername;
 
                 isReady = true;
-                Debug.Log("Reach Here");
                 // configure the local player
                 GameManager.instance.localPlayerVR.GetComponent<PlayerManager>().InitializePlayerManager(
                     ClientInstance.instance.myId,
@@ -119,8 +129,7 @@ namespace CEMSIM
                     );
 
 
-                //TO DO: ConnectOnStart is used for VR mode at the moment. 
-                //Add feature for entering in VR or desktop mode
+                //TO DO: ConnectOnStart (the connect button in the VR Menu) is used for VR mode at the moment. 
                 
                 ClientSend.SendSpawnRequest(_username, true, role);
                 //GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
