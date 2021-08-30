@@ -131,26 +131,13 @@ public class ClothPair
     // Sets the model cloth to a specific state, sets the model and scene cloth to opposite state
     public void SetModelClothActive(bool state)
     {
-        try
-        {
-            modelCloth.SetActive(state);
+        modelCloth.SetActive(state);
 
-            if (modelCloth.isActive)
-                movedOutOfThresholdAfterUnequip = false;
+        if (modelCloth.isActive)
+            movedOutOfThresholdAfterUnequip = false;
 
-            // Sets the parent of the scene cloth if the model cloth is active
-            sceneCloth.SetActiveAndParent(!state, snapOnGrab ? null : modelCloth.transform);
-        }
-        catch (MissingReferenceException e)
-        {
-            Debug.LogWarning("Missing objects in a ClothPair. \n" +
-                "Model Cloth: " + modelCloth +  ", Scene Cloth: " + sceneCloth + "\n" + e.ToString());
-        }
-        catch (System.NullReferenceException e)
-        {
-            Debug.LogWarning("Missing objects in a ClothPair (null). \n" +
-                "Model Cloth: " + modelCloth + ", Scene Cloth: " + sceneCloth + "\n" + e.ToString());
-        }
+        // Sets the parent of the scene cloth if the model cloth is active
+        sceneCloth.SetActiveAndParent(!state, snapOnGrab ? null : modelCloth.transform);
     }
 
     // Check if the cloth in the scene aligns with the cloth on the model in both position and angle

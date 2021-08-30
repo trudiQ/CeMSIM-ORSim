@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &7061021298727378024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8562389154780651839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e6e4820f069e6244b072cbb5a8ed5d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grabColliders: []
 --- !u!114 &8175619069068330703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,6 +166,25 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   playerCollidersToIgnore: []
+  OnClothEquipped:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClothUnequipped:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5561715370444649657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4850540082566763336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e6e4820f069e6244b072cbb5a8ed5d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grabColliders: []
 --- !u!1001 &198970434672492943
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -232,13 +264,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 591f7d27ceb02ea4b8f4545fd8ad149f, type: 3}
+--- !u!1 &8562389154780651839 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8363559562827931824, guid: 591f7d27ceb02ea4b8f4545fd8ad149f,
+    type: 3}
+  m_PrefabInstance: {fileID: 198970434672492943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2079312983292132197 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2169000721700731626, guid: 591f7d27ceb02ea4b8f4545fd8ad149f,
     type: 3}
   m_PrefabInstance: {fileID: 198970434672492943}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 8562389154780651839}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9f8a8483a4226d4fa76539cfc6cef85, type: 3}
@@ -800,13 +838,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45dd0e06f15c80d438df140be66a326f, type: 3}
+--- !u!1 &4850540082566763336 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4277856281546097905, guid: 45dd0e06f15c80d438df140be66a326f,
+    type: 3}
+  m_PrefabInstance: {fileID: 8650688235901884345}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8741970884564131272 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 98185485760170609, guid: 45dd0e06f15c80d438df140be66a326f,
     type: 3}
   m_PrefabInstance: {fileID: 8650688235901884345}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4850540082566763336}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9f8a8483a4226d4fa76539cfc6cef85, type: 3}
