@@ -106,7 +106,7 @@ namespace CEMSIM
             #endregion
 
 
-
+            #region Generate Server->Client Packets
             /// <summary>
             /// Send a welcome packet to a particular client
             /// </summary>
@@ -125,6 +125,15 @@ namespace CEMSIM
                     _packet.Write(_toClient); // add the client id assigned to the client
 
                     SendTCPData(_toClient, _packet, true);
+                }
+            }
+
+            public static void WelcomeUDP(int _toClient)
+            {
+                using(Packet _packet = new Packet((int)ServerPackets.welcomeUDP))
+                {
+                    _packet.Write(_toClient);
+                    SendUDPData(_toClient, _packet, true);
                 }
             }
 
@@ -164,31 +173,35 @@ namespace CEMSIM
             /// </summary>
             /// <param name="_toClient"></param>
             /// <param name="_player"></param>
-            public static void SpawnPlayer(int _toClient, ServerPlayer _player)
+            public static void SpawnPlayer(int _toClient, PlayerManager _player)
             {
+                Transform _avatar = _player.body.transform;
+
                 using (Packet _packet = new Packet((int)ServerPackets.spawnPlayer))
                 {
                     _packet.Write(_player.id);
                     _packet.Write(_player.username);
-                    _packet.Write(_player.transform.position);
-                    _packet.Write(_player.transform.rotation);
+                    _packet.Write((int)_player.role);
+                    _packet.Write(_avatar.position);
+                    _packet.Write(_avatar.rotation);
 
                     SendTCPData(_toClient, _packet, true);
                 }
             }
 
-            public static void PlayerPosition(ServerPlayer _player)
+            public static void PlayerPosition(PlayerManager _player)
             {
                 //TODO: Get rid of function GetChild
                 // get the position of both VR controllers
+                Transform _avatar = _player.body.transform;
                 Transform _lefthand = _player.leftHandController.transform;
                 Transform _righthand = _player.rightHandController.transform;
 
                 using (Packet _packet = new Packet((int)ServerPackets.playerPosition))
                 {
                     _packet.Write(_player.id);
-                    _packet.Write(_player.transform.position);
-                    _packet.Write(_player.transform.rotation);
+                    _packet.Write(_avatar.position);
+                    _packet.Write(_avatar.rotation);
 
                     _packet.Write(_lefthand.position);
                     _packet.Write(_lefthand.rotation);
@@ -196,7 +209,7 @@ namespace CEMSIM
                     _packet.Write(_righthand.rotation);
 
                     //Do not update VR player position based on server
-                    if (_player is ServerPlayerVR)
+                    if (_player.isVR)
                         MulticastExceptOneUDPData(_player.id, _packet, true);
                     else
                         MulticastUDPData(_packet, true);
@@ -228,26 +241,54 @@ namespace CEMSIM
                 }
             }
 
-            public static void BroadcastItemPosition(GameObject _item)
+            public static void BroadcastItemState(GameObject _item, bool isUDP)
             {
-                ItemController itemCon = _item.GetComponent<ItemController>();
+                ItemController _itemCon = _item.GetComponent<ItemController>();
                 // ServerItemManager.cs calls this method to multicase an item's position
-                using (Packet _packet = new Packet((int)ServerPackets.itemPositionUDP))
+                using (Packet _packet = new Packet((int)ServerPackets.itemState))
                 {
-                    _packet.Write(itemCon.id);
+                    _packet.Write(_itemCon.id);
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);
-                    MulticastExceptOneUDPData(itemCon.ownerId, _packet);                  //Does not update data to owner
-                }
+                    _packet.Write(_itemCon.GetItemState());
 
+                    if (isUDP)
+                        MulticastExceptOneUDPData(_itemCon.ownerId, _packet);                  //Does not update data to owner
+                    else
+                        MulticastExceptOneTCPData(_itemCon.ownerId, _packet);
+                }
+            }
+
+            public static void SendInitialItemState(int _toClient, GameObject _item)
+            {
+                ItemController _itemCon = _item.GetComponent<ItemController>();
+                // ServerItemManager.cs calls this method to multicase an item's position
+                using (Packet _packet = new Packet((int)ServerPackets.itemList))
+                {
+                    _packet.Write(ServerItemManager.instance.GetItemNum());     // different from BroadcastItemState
+                    _packet.Write(_itemCon.id);
+                    _packet.Write((int)_itemCon.toolType);                      // different from BroadcastItemState
+                    //_packet.Write(_itemCon.ownerId);                          // the newly spawned user cannot hold an item. So no need to transmit this value
+
+                    _packet.Write(_item.transform.position);
+                    _packet.Write(_item.transform.rotation);
+                    _packet.Write(_itemCon.GetItemState());
+
+                    SendTCPData(_toClient, _packet);                            // different from BroadcastItemState
+                }
             }
 
 
-            public static void OwnershipDenial(int _toClient, int item_id)              //Deny a clien's ownership via TCP
+            /// <summary>
+            /// Tell the current owner to pass the item's ownership to new user
+            /// </summary>
+            /// <param name="_toClient"></param>
+            /// <param name="_itemId"></param>
+            public static void ownershipDeprivation(int _toClient, int _itemId)              //Deny a clien's ownership via TCP
             {
-                using (Packet _packet = new Packet((int)ServerPackets.ownershipDenial))
+                using (Packet _packet = new Packet((int)ServerPackets.ownershipDeprivation))
                 {
-                    _packet.Write(item_id);
+                    _packet.Write(_itemId);
                     SendTCPData(_toClient, _packet);
                 }
             }

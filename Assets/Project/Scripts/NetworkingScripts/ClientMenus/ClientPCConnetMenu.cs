@@ -80,7 +80,7 @@ namespace CEMSIM
                 //string _username = "Player" + ClientInstance.instance.myId.ToString();
                 string _username = usernameField.text;
 
-                ClientSend.SendSpawnRequest(_username, GameManager.instance.localPlayerVR.activeInHierarchy);
+                ClientSend.SendSpawnRequest(_username, GameManager.instance.localPlayerVR.activeInHierarchy, ClientInstance.instance.role);
             }
 
             public void UpdateServerMessage(string serverMsg)

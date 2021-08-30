@@ -19,7 +19,7 @@ namespace CEMSIM
             public int id;
             public TCP tcp;
             public UDP udp;
-            public ServerPlayer player;  // the player corresponding to the client machine
+            public PlayerManager player;  // the player corresponding to the client machine
 
             public ServerClient(int _id)
             {
@@ -30,6 +30,7 @@ namespace CEMSIM
             }
 
 
+            #region TCP
             /// <summary>
             /// TCP connection between client-server
             /// </summary>
@@ -83,7 +84,7 @@ namespace CEMSIM
                         {
                             if (ServerNetworkManager.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Send] TCP to {id} {PacketId.ServerPacketsInfo[_packet.GetPacketId()]}");
+                                Debug.Log($"[Send] TCP to {id} {(ServerPackets)_packet.GetPacketId()}");
                             }
                             
                             stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
@@ -166,7 +167,7 @@ namespace CEMSIM
 
                                 if (ServerNetworkManager.instance.printNetworkTraffic)
                                 {
-                                    Debug.Log($"[Recv] TCP {PacketId.ClientPacketsInfo[_packetId]} from {id}");
+                                    Debug.Log($"[Recv] TCP {(ClientPackets)_packetId} from {id}");
                                 }
                                 //NetworkOverlayMenu.Instance.Log($"Receive a packet with id {_packetId} from client {id}");
                                 // call proper handling function based on packet id
@@ -208,7 +209,10 @@ namespace CEMSIM
                 }
 
             }
+            #endregion
 
+
+            #region UDP
             /// <summary>
             /// UDP connection between client-server
             /// </summary>
@@ -240,7 +244,7 @@ namespace CEMSIM
                         {
                             if (ServerNetworkManager.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Send] UDP to {id} {PacketId.ServerPacketsInfo[_packet.GetPacketId()]}");
+                                Debug.Log($"[Send] UDP to {id} {(ServerPackets)_packet.GetPacketId()}");
                             }
                             ServerInstance.SendUDPData(endPoint, _packet);
                         }
@@ -270,7 +274,7 @@ namespace CEMSIM
                             int _packetId = _packet.DigestClientHeader();
                             if (ServerNetworkManager.instance.printNetworkTraffic)
                             {
-                                Debug.Log($"[Recv] UDP {PacketId.ClientPacketsInfo[_packetId]} from {id}");
+                                Debug.Log($"[Recv] UDP {(ClientPackets)_packetId} from {id}");
                             }
                             ServerInstance.packetHandlers[_packetId](id, _packet);
                         }
@@ -288,19 +292,27 @@ namespace CEMSIM
             }
 
             // Spawn the player 
-            public void SendIntoGame(string _playerName, bool _vr)
+            public void SendIntoGame(string _username, bool _vr, int _role_i)
             {
-                Debug.Log($"Send player {id}: {_playerName} into game");
-                NetworkOverlayMenu.Instance.Log($"Send player {id}: {_playerName} into game");
+                // sanitize check
+                Roles _role = Roles.surgeon;
+                if (Enum.IsDefined(typeof(Roles), _role_i))
+                    _role = (Roles)_role_i;
 
-                if(_vr)
-                    player = ServerNetworkManager.instance.InstantiatePlayerVR();
-                else
-                    player = ServerNetworkManager.instance.InstantiatePlayerDesktop();
-                player.Initialize(id, _playerName);
-                player.transform.GetChild(1).gameObject.GetComponent<TextMesh>().text = _playerName; // Child 1 is the username
-                //player.GetComponent<TextMesh>().text = _playerName;
 
+                Debug.Log($"Send player {id}: {_username} - {_role} into game");
+                NetworkOverlayMenu.Instance.Log($"Send player {id}: {_username} - {_role} into game");
+
+                
+                // Send current environment state to newly added user
+                ServerNetworkManager.SendCurrentEnvironmentStates(id);
+
+                // Send current item information to the newly added user
+                ServerItemManager.SendCurrentItemList(id);
+
+                // instantialize and configure a player 
+                player = ServerNetworkManager.instance.InstantiatePlayer(_role);
+                player.InitializePlayerManager(id, _username, _role, false, _vr);
 
                 // 1. inform all other players the creation of current player
                 foreach (ServerClient _client in ServerInstance.clients.Values)
@@ -314,7 +326,7 @@ namespace CEMSIM
                     }
                 }
 
-                // 2. inform the current player the existance of other players
+                // 2. inform the current player the existence of other players
                 foreach (ServerClient _client in ServerInstance.clients.Values)
                 {
                     if (_client.player != null)
@@ -323,8 +335,7 @@ namespace CEMSIM
                     }
                 }
 
-                // Send current environment state to newly added user
-                ServerNetworkManager.SendCurrentEnvironmentStates(id);
+                
 
 
             }
@@ -348,6 +359,7 @@ namespace CEMSIM
                 });
                     
             }
+            #endregion
 
         }
     }

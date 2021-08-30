@@ -23,6 +23,7 @@ namespace CEMSIM
             {
                 // Do nothing, because the "Welcome" packet is the first packet sent by the client through UDP
                 // It is used to verify the establishment of UDP connection
+                Debug.Log($"Welcome packet from {_fromClient}");
             }
 
             public static void WelcomeReceived(int _fromClient, Packet _packet)
@@ -41,6 +42,11 @@ namespace CEMSIM
                     return;
                 }
 
+            }
+
+            public static void WelcomeUDP(int _fromClient, Packet packet)
+            {
+                ServerSend.WelcomeUDP(_fromClient);
             }
 
             public static void PingUDP(int _fromClient, Packet _packet)
@@ -92,12 +98,13 @@ namespace CEMSIM
             {
                 string _username = _packet.ReadString();
                 bool _vr = _packet.ReadBool();
+                int _role_i = _packet.ReadInt32();
 
                 Debug.Log($"client{_fromClient}: Spawn player.");
                 NetworkOverlayMenu.Instance.Log($"client{_fromClient}: Spawn player.");
 
                 // send back the packet with necessary inforamation about player locations
-                ServerInstance.clients[_fromClient].SendIntoGame(_username, _vr);
+                ServerInstance.clients[_fromClient].SendIntoGame(_username, _vr, _role_i);
             }
 
             /// <summary>
@@ -116,7 +123,7 @@ namespace CEMSIM
                 Quaternion _rotation = _packet.ReadQuaternion();
 
                 //Debug.Log($"client{_fromClient}: move packet received.");
-                ServerPlayerDesktop fromPlayer = (ServerPlayerDesktop)ServerInstance.clients[_fromClient].player;
+                PlayerManager fromPlayer = (PlayerManager)ServerInstance.clients[_fromClient].player;
                 fromPlayer.SetInput(_inputs, _rotation);
             }
 
@@ -138,7 +145,7 @@ namespace CEMSIM
                 Quaternion _rightRotation = _packet.ReadQuaternion();
 
                 //Debug.Log($"client{_fromClient}: move packet received.");
-                ServerPlayerVR fromPlayer = (ServerPlayerVR)ServerInstance.clients[_fromClient].player;
+                PlayerManager fromPlayer = (PlayerManager)ServerInstance.clients[_fromClient].player;
                 fromPlayer.SetPosition(_position, _rotation);
                 fromPlayer.SetControllerPositions(_leftPosition, _leftRotation, _rightPosition, _rightRotation);
             }
@@ -163,10 +170,10 @@ namespace CEMSIM
 
 
             /// <summary>
-            /// Update an item's position as instructed in packet
+            /// Update an item's position and state as instructed in packet
             /// </summary>
             /// <param name="_packet"></param>
-            public static void ItemPosition(int _fromClient, Packet _packet)
+            public static void ItemState(int _fromClient, Packet _packet)
             {
                 // interpret the packet
                 int _item_id = _packet.ReadInt32();
@@ -175,14 +182,12 @@ namespace CEMSIM
 
 
                 // Update item position
-                GameObject itemManager = GameObject.Find("ItemManager");
-                ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
                 //Ignore if the client is not the owner of the item
-                if (SIM.itemList[_item_id].GetComponent<ItemController>().ownerId != _fromClient){   
+                if (ServerItemManager.instance.itemList[_item_id].GetComponent<ItemController>().ownerId != _fromClient){   
                     Debug.Log(string.Format("client {0} attempted to update pos on item {1} but ignored by server",_fromClient,_item_id));
                     return;
                 }
-                SIM.UpdateItemPosition(_item_id, _position, _rotation);
+                ServerItemManager.instance.UpdateItemState(_item_id, _position, _rotation, _packet);
             }
 
             /// <summary>
@@ -191,36 +196,63 @@ namespace CEMSIM
             /// <param name="_packet"></param>
             public static void ItemOwnershipChange(int _fromClient, Packet _packet)
             {
-                int _item_id = _packet.ReadInt32();
-                int _newOwner = _packet.ReadInt32();
-                GameObject itemManager = GameObject.Find("ItemManager");
-                ServerItemManager SIM = (ServerItemManager)itemManager.GetComponent(typeof(ServerItemManager));
+                int _itemId = _packet.ReadInt32();
+                bool _toGrab = _packet.ReadBool();
 
-                GameObject item = SIM.itemList[_item_id];
+                GameObject item = ServerItemManager.instance.itemList[_itemId];
                 ItemController itemCon = item.GetComponent<ItemController>();
-                int currentOwner = item.GetComponent<ItemController>().ownerId;
+                int currentOwner = itemCon.ownerId;
+                Rigidbody rb = item.GetComponent<Rigidbody>();
                 //This item is currently not owned by anyone\ or owned by the incoming client
-                if (currentOwner == 0 || currentOwner == _fromClient){ 
-                    itemCon.ownerId = _newOwner;
-                    Rigidbody rb = item.GetComponent<Rigidbody>(); 
-                    if(_newOwner != 0){ 
+
+                if(_toGrab)
+                {
+                    // user _fromClient wants the item
+                    if (currentOwner == 0)
+                    {
+                        // server is the current owner
+                        itemCon.ownerId = _fromClient;
                         //if the item is no longer controlled by server then set item to kinematic and no gravity
                         rb.isKinematic = true;                  //Prevent server physics system from changing the item's position & rotation
                         rb.useGravity = false;
-                    }else{
-                        //if server regains control of an item then turn on gravity and set kinematic off
-                        rb.isKinematic = false;                  
-                        rb.useGravity = true;
-
                     }
-                    Debug.Log(string.Format("Ownership of item {0} is given to player {1}.",_item_id.ToString(),_newOwner));
+                    else
+                    {
+                        // this item is controlled by another user
+                        if (currentOwner != _fromClient)
+                        {
+                            ServerSend.ownershipDeprivation(currentOwner, _itemId);
+                            itemCon.ownerId = _fromClient;
+                        }
+                        else
+                        {
+                            // This shouldn't happen, unless some lost packets or lagging network
+                            // Do nothing
+                        }
+                    }
+
                 }
-                //If this item is currenly owned by other clients
-                if (currentOwner !=0 && currentOwner != _fromClient){
-                    //Makes no change in ownership and reply with denial
-                    ServerSend.OwnershipDenial(_fromClient, _item_id);
-                    Debug.Log("Ownership denied.");
+                else
+                {
+                    // the _fromClient user release the item. 
+                    if (currentOwner == _fromClient)
+                    {
+                        // no other user wants this item. The server gets it by default
+                        itemCon.ownerId = 0;
+
+                        //if server regains control of an item then turn on gravity and set kinematic off
+                        rb.isKinematic = false;
+                        rb.useGravity = true;
+                    }
+                    else
+                    {
+                        // some one is controlling this item already
+                        // do nothing
+                    }
                 }
+
+                Debug.Log($"The ownership of item {_itemId} - {itemCon.toolType} transfers from {currentOwner} to {itemCon.ownerId}");
+
             }
 
 

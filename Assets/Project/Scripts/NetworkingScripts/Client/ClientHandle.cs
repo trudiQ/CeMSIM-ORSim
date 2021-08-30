@@ -42,6 +42,13 @@ namespace CEMSIM
                 ClientInstance.instance.CheckConnection();
             }
 
+            public static void WelcomeUDP(Packet _packet)
+            {
+                Debug.Log("UDP connection success");
+                ClientInstance.instance.udp.isUDPConnected = true;
+                ClientInstance.instance.CheckConnection();
+            }
+
             /// <summary>
             /// Handle the TCP ping response from the server.
             /// </summary>
@@ -73,12 +80,13 @@ namespace CEMSIM
             {
                 int _id = _packet.ReadInt32();
                 string _username = _packet.ReadString();
+                int _role_i = _packet.ReadInt32();
                 Vector3 _position = _packet.ReadVector3();
                 Quaternion _rotation = _packet.ReadQuaternion();
 
                 Debug.Log($"Spawn Player {_id} at {_position}");
                 // spawn the player
-                GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
+                GameManager.instance.SpawnPlayer(_id, _username, _role_i, _position, _rotation);
 
             }
 
@@ -104,47 +112,14 @@ namespace CEMSIM
                 if (GameManager.players.ContainsKey(_id))
                 {
                     //Player
-                    GameManager.players[_id].transform.position = _position;
-                    GameManager.players[_id].transform.rotation = _rotation;
-                    //Hands
-                    GameManager.players[_id].GetComponent<PlayerManager>().leftHandController.transform.position = _leftPosition;
-                    GameManager.players[_id].GetComponent<PlayerManager>().leftHandController.transform.rotation = _leftRotation;
-                    GameManager.players[_id].GetComponent<PlayerManager>().rightHandController.transform.position = _rightPosition;
-                    GameManager.players[_id].GetComponent<PlayerManager>().rightHandController.transform.rotation = _rightRotation;
-
-                    //GameManager.players[_id].transform.GetChild(3).transform.position = _rightPosition;
-                    //GameManager.players[_id].transform.GetChild(3).transform.rotation = _rightRotation;
-                    //GameManager.players[_id].transform.GetChild(2).transform.position = _leftPosition;
-                    //GameManager.players[_id].transform.GetChild(2).transform.rotation = _leftRotation;
-
+                    GameManager.players[_id].SetPosition(_position, _rotation);
+                    GameManager.players[_id].SetControllerPositions(_leftPosition, _leftRotation, _rightPosition, _rightRotation);
                 }
                 else
                 {
                     Debug.LogWarning($"Player {_id} has not been created yet");
                 }
 
-            }
-
-            /// <summary>
-            /// Update a player's rotation.
-            /// </summary>
-            /// <param name="_packet"></param>
-            public static void PlayerRotation(Packet _packet)
-            {
-                //int _id = _packet.ReadInt32();
-                //Quaternion _rotation = _packet.ReadQuaternion();
-
-                //Debug.Log($"Player {_id} rotation to {_rotation}");
-
-                //// update corresponding player's position
-                //if (GameManager.players.ContainsKey(_id))
-                //{
-                //    GameManager.players[_id].transform.rotation = _rotation;
-                //}
-                //else
-                //{
-                //    Debug.LogWarning($"Player {_id} has not been created yet");
-                //}
             }
 
             /// <summary>
@@ -175,21 +150,31 @@ namespace CEMSIM
                 ClientSend.SendHeartBeatResponseTCP(sendTicks);
             }
 
+            public static void ItemList(Packet _packet)
+            {
+                int _listSize = _packet.ReadInt32();
+                int _itemId = _packet.ReadInt32();
+                int _itemTypeId = _packet.ReadInt32();
+
+                Vector3 _position = _packet.ReadVector3();
+                Quaternion _rotation = _packet.ReadQuaternion();
+
+                ClientItemManager.instance.InitializeItem(_listSize, _itemId, _itemTypeId, _position, _rotation, _packet);
+            }
+
             /// <summary>
             /// Update an item's position as instructed in packet
             /// </summary>
             /// <param name="_packet"></param>
-            public static void ItemPosition(Packet _packet)
+            public static void ItemState(Packet _packet)
             {
                 // interpret the packet
-                int _item_id = _packet.ReadInt32();
+                int _itemId = _packet.ReadInt32();
                 Vector3 _position = _packet.ReadVector3();
                 Quaternion _rotation = _packet.ReadQuaternion();
 
                 // update item
-                GameObject itemManager = GameObject.Find("ItemManager");
-                ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
-                CIM.UpdateItemPosition(_item_id, _position, _rotation);
+                ClientItemManager.instance.UpdateItemState(_itemId, _position, _rotation, _packet);
             }
 
 
@@ -197,12 +182,10 @@ namespace CEMSIM
             /// An item's ownership request sent by this client is denied by server, update ownership info accordingly
             /// </summary>
             /// <param name="_packet"></param>
-            public static void OwnershipDenial(Packet _packet)
+            public static void OwnershipDeprivation(Packet _packet)
             {
-                int _item_id = _packet.ReadInt32();
-                GameObject itemManager = GameObject.Find("ItemManager");
-                ClientItemManager CIM = (ClientItemManager)itemManager.GetComponent(typeof(ClientItemManager));
-                CIM.DropOwnership(CIM.itemList[_item_id]);
+                int _itemId = _packet.ReadInt32();
+                ClientItemManager.instance.DropOwnership(_itemId, false);
             }
 
 

@@ -324,9 +324,9 @@ namespace CEMSIM
             /// <param name="_value">Vector3 instance</param>
             public void Write(Vector3 _value)
             {
-                Write(_value.x);
-                Write(_value.y);
-                Write(_value.z);
+                Write((float)_value.x);
+                Write((float)_value.y);
+                Write((float)_value.z);
             }
 
             /// <summary>
@@ -335,10 +335,10 @@ namespace CEMSIM
             /// <param name="_value">Quaternion instance</param>
             public void Write(Quaternion _value)
             {
-                Write(_value.x);
-                Write(_value.y);
-                Write(_value.z);
-                Write(_value.w);
+                Write((float)_value.x);
+                Write((float)_value.y);
+                Write((float)_value.z);
+                Write((float)_value.w);
             }
             #endregion
 
