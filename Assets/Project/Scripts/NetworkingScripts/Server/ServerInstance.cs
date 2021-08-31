@@ -121,7 +121,10 @@ namespace CEMSIM
                         {
                             // build up the connection
                             clients[_clientId].udp.Connect(_clientEndPoint);
-                            return;
+
+                            // In the new system, the welcome packet is also a valid packet with proper head. The client also expects a welcome response packet.
+                            //return; 
+
                         }
 
                         // compare whether the packet is sent from a client we know

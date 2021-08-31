@@ -205,14 +205,6 @@ namespace CEMSIM
                     socket.Connect(endPoint);
 
                     socket.BeginReceive(ReceiveCallback, null);
-
-                    // send a welcome packet
-                    //using (Packet _packet = new Packet((int)ClientPackets.welcome))
-                    //{
-                    //    // since user id has already been added to the packet, no need to manually add it again.
-                    //    SendData(_packet);
-                    //}
-
                     ClientSend.WelcomeUDP();
 
                     //isUDPConnected = true;
