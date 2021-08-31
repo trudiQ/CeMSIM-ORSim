@@ -153,8 +153,11 @@ namespace CEMSIM
                 port = _port;
                 InitializeClientData();
                 tcp.Connect();
-                udp.Connect(_port);
-                //isConnected = true;
+
+                // UDP connection is called when TCP connection has established. (inside the ClientHandle.Welcome)
+                // We must follow this connection order because UDP connection requires the knowledge of the correct user id,
+                // which is assigned by the server when the TCP connection is established.
+                //udp.Connect(_port); 
             }
 
             /// <summary>
