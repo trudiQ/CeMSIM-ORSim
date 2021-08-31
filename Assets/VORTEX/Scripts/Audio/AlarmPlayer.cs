@@ -36,6 +36,7 @@ public class AlarmPlayer : AudioPlayer
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = isAudio3D ? 1 : 0;
+        audioSource.volume = volume;
     }
 
 

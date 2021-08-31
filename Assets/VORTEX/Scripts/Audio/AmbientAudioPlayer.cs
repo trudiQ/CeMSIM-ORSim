@@ -11,6 +11,7 @@ public class AmbientAudioPlayer : AudioPlayer
         audioSource.clip = audioClip;
         audioSource.loop = true;
         audioSource.spatialBlend = isAudio3D ? 1 : 0;
+        audioSource.volume = volume;
         audioSource.Play();
     }
     public override void  Pause()

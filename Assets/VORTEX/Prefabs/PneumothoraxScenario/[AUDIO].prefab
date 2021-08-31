@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
   audioClip: {fileID: 8300000, guid: ef5b5ecd4681b864882836cbbd7b3908, type: 3}
-  volume: 0.15
+  volume: 0.124
   isAudio3D: 1
   alarmType: 0
   valueToMonitor: {fileID: 0}
@@ -58,9 +58,55 @@ MonoBehaviour:
   lightController: {fileID: 0}
   otherAlarms:
   - {fileID: 2753646269535451604}
-  timeSinceDing: 0
-  currentDingNumber: 0
-  thresholdMet: 0
+--- !u!1 &2076706261
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2076706262}
+  - component: {fileID: 2076706263}
+  m_Layer: 0
+  m_Name: BloodPressureMonitor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2076706262
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2076706261}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.72, y: -1.57, z: 4.69}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2753646268905097255}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2076706263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2076706261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aede8a7cbeefec4bb417c89b355d3d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  audioClip: {fileID: 8300000, guid: d57d897014a800344999a942cef13140, type: 3}
+  volume: 1
+  isAudio3D: 1
+  timer: 0
+  randomTime: 0
 --- !u!1 &2753646268584381523
 GameObject:
   m_ObjectHideFlags: 0
@@ -107,7 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
   audioClip: {fileID: 8300000, guid: b1600d03746181a4fb754e55b37a550a, type: 3}
-  volume: 0.271
+  volume: 0.163
   isAudio3D: 1
   vital: {fileID: 0}
 --- !u!114 &2753646268584381526
@@ -170,7 +216,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
   audioClip: {fileID: 8300000, guid: 38a99f5dec86ecc48a208e89cc584307, type: 3}
-  volume: 0.026
+  volume: 0.121
   isAudio3D: 1
 --- !u!1 &2753646268905097254
 GameObject:
@@ -204,6 +250,7 @@ Transform:
   - {fileID: 2753646268591944813}
   - {fileID: 2753646269535451607}
   - {fileID: 207234845}
+  - {fileID: 2076706262}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -252,7 +299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
   audioClip: {fileID: 8300000, guid: 71f4d0530dfa56746868e63e1a84934b, type: 3}
-  volume: 0.4
+  volume: 0.331
   isAudio3D: 1
   alarmType: 1
   valueToMonitor: {fileID: 0}
@@ -264,9 +311,6 @@ MonoBehaviour:
   muteDuration: 60
   lightController: {fileID: 0}
   otherAlarms: []
-  timeSinceDing: 0
-  currentDingNumber: 0
-  thresholdMet: 0
 --- !u!1 &2753646269741030722
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,7 +356,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
   audioClip: {fileID: 8300000, guid: 131828e08a3d58c47867a02c70eea2e0, type: 3}
-  volume: 0.218
+  volume: 0.369
   isAudio3D: 1
   paused: 0
   inflate: {fileID: 8300000, guid: 131828e08a3d58c47867a02c70eea2e0, type: 3}
