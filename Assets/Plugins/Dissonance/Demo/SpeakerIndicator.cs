@@ -7,6 +7,8 @@ namespace Dissonance.Demo
     public class SpeakerIndicator
         : MonoBehaviour
     {
+        private float indicatorHight = 1.7f;
+
         private GameObject _indicator;
         private Light _light;
         private Transform _transform;
@@ -24,9 +26,9 @@ namespace Dissonance.Demo
         private void OnEnable()
         {
             //Get some bits from the indicator game object
-            _indicator = Instantiate(Resources.Load<GameObject>("SpeechIndicator"));
+            _indicator = Instantiate(Resources.Load<GameObject>("SpeechIndicator")); // load a preset gameobject
             _indicator.transform.SetParent(transform);
-            _indicator.transform.localPosition = new Vector3(0, 3, 0);
+            _indicator.transform.localPosition = new Vector3(0, indicatorHight, 0);
 
             _light = _indicator.GetComponent<Light>();
             _transform = _indicator.GetComponent<Transform>();
@@ -59,10 +61,13 @@ namespace Dissonance.Demo
 
         private void Update()
         {
-            if (IsSpeaking)
+            //Debug.Log($"player type {_player.PlayerId} - {_player.Type}, Remote = {NetworkPlayerType.Remote}");
+            //Debug.Log($"player state {IsSpeaking}, {_state.IsSpeaking}");
+            //if (IsSpeaking)
+            if(_state.IsSpeaking)
             {
                 //Calculate intensity of speech - do the pow to visually boost the scale at lower intensities
-                _intensity = Mathf.Max(Mathf.Clamp(Mathf.Pow(_state.Amplitude, 0.175f), 0.25f, 1), _intensity - Time.unscaledDeltaTime);
+                _intensity = Mathf.Max(Mathf.Clamp(Mathf.Pow(_state.Amplitude, 0.175f), 0.25f, 1)*0.25f, _intensity - Time.unscaledDeltaTime);
                 _indicator.SetActive(true);
             }
             else
