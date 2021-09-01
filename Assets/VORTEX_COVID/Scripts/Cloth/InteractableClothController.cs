@@ -58,7 +58,7 @@ public class ClothPair
     public string clothName; // Name to be matched at start
     public WornCloth modelCloth; // Clothing object on the model
     public InteractableCloth sceneCloth; // Clothing object in the scene
-    public float distanceThreshold = 0.1f; // Distance from the model cloth that the scene cloth needs to be to equip
+    public float distanceThreshold = 0.2f; // Distance from the model cloth that the scene cloth needs to be to equip
     public float angleThreshold = 30f; // Angle between the model cloth that the scene cloth needs to be to equip
     public bool equipAtStart = false;
     public bool snapOnGrab = false; // Snap to/from the model when grabbed
@@ -160,7 +160,7 @@ public class ClothPair
     // Check if the scene cloth is within the distance threshold
     private bool InThresholdDistance()
     {
-        float distance = Vector3.Distance(modelCloth.GetOffsetPosition(), sceneCloth.GetOffsetPosition());
+        float distance = Vector3.Distance(modelCloth.GetPosition(), sceneCloth.GetPosition());
 
         return  distance <= distanceThreshold;
     }

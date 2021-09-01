@@ -10,8 +10,7 @@ using HurricaneVR.Framework.Core;
 public class InteractableCloth : MonoBehaviour
 {
     public string clothName; // Name to be matched at start
-    public Vector3 offset; // Position offset from the object's origin to the center of the mesh
-    public bool isBeingGrabbed = false;
+    [HideInInspector] public bool isBeingGrabbed = false;
     public bool isActive { get; private set; }
 
     public UnityEvent<HVRHandGrabber, HVRGrabbable> onSceneClothInteracted;
@@ -33,9 +32,9 @@ public class InteractableCloth : MonoBehaviour
     }
 
     // Returns the position in the world where the offset of the object would be
-    public Vector3 GetOffsetPosition()
+    public Vector3 GetPosition()
     {
-        return transform.position + transform.rotation * offset;
+        return transform.position;
     }
 
     // Returns the rotation
@@ -115,6 +114,6 @@ public class InteractableCloth : MonoBehaviour
     // Show the offset position as a sphere when the object is selected
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawSphere(GetOffsetPosition(), 0.01f);
+        Gizmos.DrawSphere(GetPosition(), 0.01f);
     }
 }
