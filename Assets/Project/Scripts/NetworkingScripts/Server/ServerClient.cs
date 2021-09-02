@@ -330,7 +330,7 @@ namespace CEMSIM
                 // 2. inform the current player the existence of other players
                 foreach (ServerClient _client in ServerInstance.clients.Values)
                 {
-                    if (_client.player != null && _client.id != id)
+                    if (_client.player != null)
                     {
                         ServerSend.SpawnPlayer(_client.id, player);
                         string _dissonancePlayerId = _client.player.GetComponent<CEMSIMVoicePlayer>().PlayerId;
