@@ -64,8 +64,8 @@ namespace CEMSIM
 
             private void Update()
             {
-                //Debug.Log($"player type {_player.PlayerId} - {_player.Type}, Remote = {NetworkPlayerType.Remote}");
-                //Debug.Log($"player state {IsSpeaking}, {_state.IsSpeaking}");
+                Debug.Log($"player type {_player.PlayerId} - {_player.Type}, Remote = {NetworkPlayerType.Remote}");
+                Debug.Log($"player state {IsSpeaking}, {_state.IsSpeaking}");
                 if (IsSpeaking)
                 {
                     //Calculate intensity of speech - do the pow to visually boost the scale at lower intensities

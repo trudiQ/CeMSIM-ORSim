@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.GameLogic;
+using CEMSIM.VoiceChat;
 using System;
 
 namespace CEMSIM
@@ -269,6 +270,17 @@ namespace CEMSIM
                     ServerNetworkManager.instance.dissonanceServer.PacketDelivered(_fromClient, _voiceData); // any dissonance data, TCP/UDP, voice/message
                 else
                     Debug.LogWarning("DissonanceServer has not been configured");
+            }
+
+            public static void VoiceChatPlayerId(int _fromClient, Packet _packet)
+            {
+                string _playerId = _packet.ReadString();
+
+                // set playerId
+                ServerInstance.clients[_fromClient].player.gameObject.GetComponent<CEMSIMVoicePlayer>().ChangePlayerName(_playerId);
+
+                // inform other clients
+                ServerSend.SendVoiceChatPlayerId(_fromClient, _playerId);
             }
 
         }

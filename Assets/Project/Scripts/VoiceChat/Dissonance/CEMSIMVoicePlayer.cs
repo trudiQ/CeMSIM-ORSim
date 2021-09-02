@@ -17,6 +17,7 @@ namespace CEMSIM
             private Coroutine _startCo;
             public bool IsTracking { get; private set; }
             public string PlayerId { get; private set; }
+            public string _PlayerId;
 
             public NetworkPlayerType Type
             {
@@ -60,16 +61,28 @@ namespace CEMSIM
                 }
             }
 
-            private void SetPlayerName(string playerName)
+            private void SetPlayerName(string _playerName)
             {
                 //We need to stop and restart tracking to handle the name change
                 if (IsTracking)
                     StopTracking();
 
                 //Perform the actual work
-                PlayerId = playerName;
+                PlayerId = _playerName;
+                _PlayerId = _playerName; // Debug: for display only
                 StartTracking();
+
+                // multicast the playerId
+                if (isMine)
+                    ClientSend.SendVoiceChatPlayerId(PlayerId);
+
             }
+
+            public void ChangePlayerName(string _playerName)
+            {
+                SetPlayerName(_playerName);
+            }
+
 
             public void OnDestroy()
             {

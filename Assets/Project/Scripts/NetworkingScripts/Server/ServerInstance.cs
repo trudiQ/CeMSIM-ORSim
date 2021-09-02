@@ -179,6 +179,7 @@ namespace CEMSIM
                     { (int)ClientPackets.itemOwnershipChange, ServerHandle.ItemOwnershipChange},
                     { (int)ClientPackets.environmentState, ServerHandle.EnvironmentState},
                     { (int)ClientPackets.voiceChatData, ServerHandle.VoiceChatData},
+                    { (int)ClientPackets.voiceChatPlayerId, ServerHandle.VoiceChatPlayerId},
                 };
 
                 Debug.Log("Initialized Server Data");

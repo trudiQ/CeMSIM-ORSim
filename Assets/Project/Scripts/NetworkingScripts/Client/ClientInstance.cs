@@ -528,6 +528,7 @@ namespace CEMSIM
                     { (int)ServerPackets.environmentState, ClientHandle.EnvironmentState},
                     { (int)ServerPackets.itemList, ClientHandle.ItemList},
                     { (int)ServerPackets.voiceChatData, ClientHandle.VoiceChatData},
+                    { (int)ServerPackets.voiceChatPlayerId, ClientHandle.VoiceChatPlayerId},
             };
 
                 Debug.Log("Client Data Initialization Complete.");

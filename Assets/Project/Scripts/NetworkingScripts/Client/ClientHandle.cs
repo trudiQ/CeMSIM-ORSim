@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 
+using CEMSIM.VoiceChat;
 using CEMSIM.GameLogic;
 
 namespace CEMSIM
@@ -202,6 +203,14 @@ namespace CEMSIM
                 {
                     ClientInstance.instance.dissonanceClient.PacketDelivered(_voiceData); // any data, either TCP/UDP voice/message
                 }
+            }
+
+            public static void VoiceChatPlayerId(Packet _packet)
+            {
+                int _fromClient = _packet.ReadInt32();
+                string _playerId = _packet.ReadString();
+
+                GameManager.players[_fromClient].gameObject.GetComponent<CEMSIMVoicePlayer>().ChangePlayerName(_playerId);
             }
 
 
