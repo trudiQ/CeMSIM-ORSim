@@ -22,7 +22,7 @@ public class BloodPressureMonitorAudioPlayer : AudioPlayer
         {
             if(!randomSet)
             {
-                randomTime = Random.Range(30, 120);
+                randomTime = Random.Range(30, 80);
                 randomSet = true;
             }
             else if(!audioSource.isPlaying)
