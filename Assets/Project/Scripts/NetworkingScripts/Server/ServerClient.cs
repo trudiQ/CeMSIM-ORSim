@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.GameLogic;
+using CEMSIM.VoiceChat;
 
 namespace CEMSIM
 {
@@ -329,9 +330,12 @@ namespace CEMSIM
                 // 2. inform the current player the existence of other players
                 foreach (ServerClient _client in ServerInstance.clients.Values)
                 {
-                    if (_client.player != null)
+                    if (_client.player != null && _client.id != id)
                     {
                         ServerSend.SpawnPlayer(_client.id, player);
+                        string _dissonancePlayerId = _client.player.GetComponent<CEMSIMVoicePlayer>().PlayerId;
+                        ServerSend.SendVoiceChatPlayerId(_client.id, _dissonancePlayerId, false);
+                        Debug.Log($"inform client {id} that client {_client.id} - {_dissonancePlayerId}");
                     }
                 }
 

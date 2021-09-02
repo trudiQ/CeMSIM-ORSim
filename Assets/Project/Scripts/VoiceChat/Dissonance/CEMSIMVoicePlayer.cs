@@ -77,10 +77,11 @@ namespace CEMSIM
                     ClientSend.SendVoiceChatPlayerId(PlayerId);
 
             }
-
+            
             public void ChangePlayerName(string _playerName)
             {
                 SetPlayerName(_playerName);
+                gameObject.GetComponent<CEMSIMSpeakIndicator>().UpdateState();
             }
 
 

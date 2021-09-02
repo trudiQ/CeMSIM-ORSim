@@ -280,7 +280,7 @@ namespace CEMSIM
                 ServerInstance.clients[_fromClient].player.gameObject.GetComponent<CEMSIMVoicePlayer>().ChangePlayerName(_playerId);
 
                 // inform other clients
-                ServerSend.SendVoiceChatPlayerId(_fromClient, _playerId);
+                ServerSend.SendVoiceChatPlayerId(_fromClient, _playerId, true);
             }
 
         }

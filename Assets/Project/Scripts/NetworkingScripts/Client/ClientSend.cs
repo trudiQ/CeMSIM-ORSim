@@ -235,7 +235,7 @@ namespace CEMSIM
             }
 
             /// <summary>
-            /// 
+            /// Inform server your dissonance player id.
             /// </summary>
             /// <param name="_playerId">The uid of the dissonance player</param>
             public static void SendVoiceChatPlayerId(string _playerId)

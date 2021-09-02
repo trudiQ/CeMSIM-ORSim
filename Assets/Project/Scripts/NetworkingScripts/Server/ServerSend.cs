@@ -329,16 +329,20 @@ namespace CEMSIM
             /// <summary>
             /// Inform other users the dissonance player id (string) of user _fromClient.
             /// </summary>
-            /// <param name="_fromClient">id of the player who would like to inform its chosen dissonance playerId</param>
+            /// <param name="_tgtClient">id of the player who would like to inform its chosen dissonance playerId</param>
             /// <param name="_playerId">Dissonance player id</param>
-            public static void SendVoiceChatPlayerId(int _fromClient, string _playerId)
+            /// <param name="_needMulticast">whether to multicast except the tgtClient or only unicast to the tgtClient</param>
+            public static void SendVoiceChatPlayerId(int _tgtClient, string _playerId, bool _needMulticast=true)
             {
                 using (Packet _packet = new Packet((int)ServerPackets.voiceChatPlayerId))
                 {
-                    _packet.Write(_fromClient);
+                    _packet.Write(_tgtClient);
                     _packet.Write(_playerId);
 
-                    MulticastExceptOneTCPData(_fromClient, _packet);
+                    if(_needMulticast)
+                        MulticastExceptOneTCPData(_tgtClient, _packet);
+                    else
+                        SendTCPData(_tgtClient, _packet);
                 }
             }
 
