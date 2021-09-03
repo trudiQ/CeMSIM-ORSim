@@ -12,12 +12,12 @@ namespace CEMSIM
     {
         public class CEMSIMVoicePlayer : MonoBehaviour, IDissonancePlayer
         {
-            public bool isMine = false;
+            private bool isMine = false;
             private DissonanceComms comm;
             private Coroutine _startCo;
             public bool IsTracking { get; private set; }
             public string PlayerId { get; private set; }
-            public string _PlayerId;
+            public string _PlayerId; // for display and debug use only. 
 
             public NetworkPlayerType Type
             {
