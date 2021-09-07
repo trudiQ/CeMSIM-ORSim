@@ -11,6 +11,8 @@ namespace CEMSIM
         public class CEMSIMSpeakIndicator
             : MonoBehaviour
         {
+            [Tooltip("The object based on which the indicator is located. E.g. avatar username.")]
+            public Transform baseObjectTransform;
             private GameObject _indicator;
             private Light _light;
             private Transform _transform;
@@ -30,8 +32,8 @@ namespace CEMSIM
             {
                 //Get some bits from the indicator game object
                 _indicator = Instantiate(Resources.Load<GameObject>("SpeechIndicator")); // load a preset gameobject
-                _indicator.transform.SetParent(transform);
-                _indicator.transform.localPosition = new Vector3(0, ClientGameConstants.SPEAK_INDICATOR_HEIGHT, 0);
+                _indicator.transform.SetParent(baseObjectTransform);
+                _indicator.transform.localPosition = new Vector3(0, ClientGameConstants.SPEAK_INDICATOR_HEIGHT_OFFSET, 0);
 
                 _light = _indicator.GetComponent<Light>();
                 _transform = _indicator.GetComponent<Transform>();
@@ -65,8 +67,8 @@ namespace CEMSIM
 
             private void Update()
             {
-                Debug.Log($"player type {_player.PlayerId} - {_player.Type}, Remote = {NetworkPlayerType.Remote}");
-                Debug.Log($"player state is null?{_state == null} is speaking? {IsSpeaking}");
+                //Debug.Log($"player type {_player.PlayerId} - {_player.Type}, Remote = {NetworkPlayerType.Remote}");
+                //Debug.Log($"player state is null?{_state == null} is speaking? {IsSpeaking}");
                 if (IsSpeaking)
                 {
                     //Calculate intensity of speech - do the pow to visually boost the scale at lower intensities
