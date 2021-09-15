@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Sirenix.OdinInspector;
 
 [ExecuteInEditMode] //allow start() to run in both edit/play mode
 

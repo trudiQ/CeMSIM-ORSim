@@ -1,16 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using PaintIn3D;
 using Sirenix.OdinInspector;
 using System.Linq;
 
-namespace PaintIn3D
-{
     /// <summary>
     /// Manager the rendering of staple lines on colon mesh
     /// </summary>
-    public class StapleLineManager : P3dHitScreenBase
+    public class StapleLineManager : MonoBehaviour
     {
         public List<GameObject> lsSimStepTwoHideStaples;
         public List<GameObject> lsSimStepThreeShowStaples;
@@ -29,10 +26,6 @@ namespace PaintIn3D
         public int paintCount; // How many times the brush should paint for each touch
         public int brushSize;
         public float brushAngle; // Angle of the texture (basically horizontal (0 degree) or vertical (90 degree)
-        public P3dPaintSphere staplePainter; // Painter used for painting the staple line
-        public P3dHitScreen staplePainterMouseSim; // Used to simulate paint staple line with mouse click
-        public P3dPaintSphere eraser; // Painter used for erasing the staple line
-        public P3dHitScreen eraserMouseSim; // Used to simulate erase with mouse click
         public Transform painterBrushControl; // Used to define the behavior of the staple line painter brush 
 
         public GameObject stapleLinePrefab; // GameObject to be used as staple line segment
@@ -89,7 +82,7 @@ namespace PaintIn3D
         [ShowInInspector]
         public void TestPaintAnimated()
         {
-            StartCoroutine(PaintAlongPlaneCollisionAnimated(paintPointsLocator, staplePainterMouseSim, Vector3.one * brushSize, Vector3.up * brushAngle));
+            StartCoroutine(PaintAlongPlaneCollisionAnimated(paintPointsLocator, Vector3.one * brushSize, Vector3.up * brushAngle));
         }
 
         [ShowInInspector]
@@ -326,7 +319,7 @@ namespace PaintIn3D
         /// <param name="brush"></param>
         /// <param name="brushSize"></param>
         /// <param name="brushRotation"></param>
-        public void PaintAlongPlaneCollision(StapleLineLocator plane, P3dHitScreen brush, Vector3 brushSize, Vector3 brushRotation)
+        public void PaintAlongPlaneCollision(StapleLineLocator plane, Vector3 brushSize, Vector3 brushRotation)
         {
             painterBrushControl.localScale = brushSize;
             painterBrushControl.eulerAngles = brushRotation;
@@ -344,7 +337,7 @@ namespace PaintIn3D
                 {
                     for (int c = 0; c < paintCount; c++)
                     {
-                        SimulateMouseClickPaint(r, brush);
+                        
                     }
                 }
             }
@@ -357,7 +350,7 @@ namespace PaintIn3D
         /// <param name="brush"></param>
         /// <param name="brushSize"></param>
         /// <param name="brushRotation"></param>
-        public IEnumerator PaintAlongPlaneCollisionAnimated(StapleLineLocator plane, P3dHitScreen brush, Vector3 brushSize, Vector3 brushRotation)
+        public IEnumerator PaintAlongPlaneCollisionAnimated(StapleLineLocator plane, Vector3 brushSize, Vector3 brushRotation)
         {
             painterBrushControl.localScale = brushSize;
             painterBrushControl.eulerAngles = brushRotation;
@@ -377,7 +370,6 @@ namespace PaintIn3D
                 {
                     for (int c = 0; c < paintCount; c++)
                     {
-                        SimulateMouseClickPaint(r, brush);
                         Debug.DrawRay(r.origin, r.direction * 5, Color.white, 1f);
                     }
                     yield return wait;
@@ -569,18 +561,16 @@ namespace PaintIn3D
         /// </summary>
         /// <param name="hitRay"></param>
         /// <param name="brush"></param>
-        public void SimulateMouseClickPaint(Ray hitRay, P3dHitScreen brush)
+        public void SimulateMouseClickPaint(Ray hitRay)
         {
             var hit3D = default(RaycastHit);
             var finalPosition = default(Vector3);
             var finalRotation = default(Quaternion);
 
             // Hit 3D?
-            if (Physics.Raycast(hitRay, out hit3D, float.PositiveInfinity, brush.Layers))
+            if (Physics.Raycast(hitRay, out hit3D, float.PositiveInfinity))
             {
                 CalcHitData(hit3D.point, hit3D.normal, hitRay, out finalPosition, out finalRotation);
-
-                brush.Connector.SubmitPoint(brush.gameObject, false, 0, 1, finalPosition, finalRotation, new Link());
             }
         }
 
@@ -597,97 +587,4 @@ namespace PaintIn3D
 
             finalRotation = Quaternion.LookRotation(-finalNormal, finalUp);
         }
-
-        // This stores extra information for each finger unique to this component
-        protected class Link : P3dInputManager.Link
-        {
-            public float Age;
-            public bool Down;
-            public int State;
-            public float Distance;
-            public Vector2 ScreenDelta;
-            public Vector2 ScreenOld;
-
-            public List<Vector2> History = new List<Vector2>();
-
-            public void Move(Vector2 screenNew)
-            {
-                if (State == 0)
-                {
-                    ScreenOld = screenNew;
-                    State = 1;
-                }
-                else
-                {
-                    if (TryMove(screenNew) == true || State == 2)
-                    {
-                        State += 1;
-                    }
-                }
-            }
-
-            private bool TryMove(Vector2 screenNew)
-            {
-                var threshold = 2.0f;
-                var distance = Vector2.Distance(ScreenOld, screenNew);
-
-                if (distance >= threshold)
-                {
-                    ScreenOld = Vector2.MoveTowards(ScreenOld, screenNew, distance - threshold * 0.5f);
-
-                    return true;
-                }
-
-                return false;
-            }
-
-            public override void Clear()
-            {
-                Age = 0.0f;
-                Down = false;
-                State = 0;
-                Distance = 0.0f;
-                ScreenDelta = Vector2.zero;
-                ScreenOld = Vector2.zero;
-
-                History.Clear();
-            }
-        }
     }
-}
-
-public class GFG
-{
-    public static double[] find_Centroid(double[,] v)
-    {
-        double[] ans = new double[2];
-
-        int n = v.GetLength(0);
-        double signedArea = 0;
-
-        // For all vertices 
-        for (int i = 0; i < n; i++)
-        {
-            double x0 = v[i, 0], y0 = v[i, 1];
-            double x1 = v[(i + 1) % n, 0],
-                    y1 = v[(i + 1) % n, 1];
-
-            // Calculate value of A 
-            // using shoelace formula 
-            double A = (x0 * y1) - (x1 * y0);
-            signedArea += A;
-
-            // Calculating coordinates of 
-            // centroid of polygon 
-            ans[0] += (x0 + x1) * A;
-            ans[1] += (y0 + y1) * A;
-        }
-        signedArea *= 0.5;
-        ans[0] = (ans[0]) / (6 * signedArea);
-        ans[1] = (ans[1]) / (6 * signedArea);
-
-        return ans;
-    }
-}
-// https://www.geeksforgeeks.org/find-the-centroid-of-a-non-self-intersecting-closed-polygon/
-// This code is contributed by PrinciRaj1992
