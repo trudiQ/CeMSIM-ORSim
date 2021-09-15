@@ -15,9 +15,13 @@ namespace CEMSIM
             private bool isMine = false;
             private DissonanceComms comm;
             private Coroutine _startCo;
+
             public bool IsTracking { get; private set; }
             public string PlayerId { get; private set; }
             public string _PlayerId; // for display and debug use only. 
+
+            [Tooltip("The gameobject whose transform will be used to represent the player's position. By default, it's the attached gameobject.")]
+            public GameObject trackingPoint = null;
 
             public NetworkPlayerType Type
             {
@@ -26,12 +30,12 @@ namespace CEMSIM
 
             public Vector3 Position
             {
-                get { return transform.position; }
+                get { return trackingPoint.transform.position; }
             }
 
             public Quaternion Rotation
             {
-                get { return transform.rotation; }
+                get { return trackingPoint.transform.rotation; }
             }
 
             public void initialization(bool isLocalPlayer=false)
@@ -59,7 +63,14 @@ namespace CEMSIM
                 {
                     Debug.Log("Create a remote voice player");
                 }
+                if (trackingPoint == null)
+                {
+                    trackingPoint = gameObject; // itself
+                }
+
             }
+
+
 
             private void SetPlayerName(string _playerName)
             {
