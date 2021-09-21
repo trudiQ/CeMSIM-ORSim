@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
+/// <summary>
+/// Simulation logic & steps
+/// 
+/// 
+/// </summary>
 public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 {
     public LS_UIcontroller uiController;
@@ -36,13 +41,16 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public float tipProximityCondition;
     public List<Transform> colonAsecondLayerSpheres;
     public List<Transform> colonAlastLayerSpheres;
+    public List<Transform> colonA10thLayerSpheres;
     public List<Transform> colonBsecondLayerSpheres;
     public List<Transform> colonBlastLayerSpheres;
+    public List<Transform> colonB10thLayerSpheres;
     public float angleDifferenceCondition; // What's the maximum allowing angle difference from the LS tool to the colon direction for the LS tool to enter insertion phase
     public float tipExitProximityMultiplier; // How many times the tip exiting proximity range it is for the LS tool to exit insertion phase
     // For LS tool after joining colon action
     public List<Transform> joinedColonFirstLayerSpheres;
     public List<Transform> joinedColonLastLayerSpheres;
+    public List<Transform> joinedColon10thLayerSpheres;
     public float joiningPhaseToolMovingAxisDifference; // After the colons are joined, how much the top tool should move down
     // For LS tool in closure phase
     public Transform bottomPartLastPhaseProximityDetector; // Use to verify if bottom part enters target position for last closure phase
@@ -90,6 +98,13 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public Quaternion bottomLocalRotationBeforeLock;
     // Simulation states
     public int simStates; // Which step the simulation is at (0: before joining, 1: after joining before take out the tool from colon, 2: after take out the tool from colon
+    // Insertion phase states
+    /// <summary>
+    /// 0: colon is not being inserted and is not being picked up by forceps, both methods can start
+    /// 1: colon is being inserted without being lifted up, it will stay flat on the table during the insertion, and cannot be lifted up
+    /// 2: colon is being lifted up first
+    /// </summary>
+    public int insertionStates;
     // Colon info
     public Vector3 colonAopeningPos;
     public Vector3 colonBopeningPos;
@@ -495,7 +510,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         bottomHalf.transform.localRotation = Quaternion.identity;
         simStates = 1; // Update the simulation step state
         topPartMovingAxisStart = joinedColonFirstLayerSpheres;
-        topPartMovingAxisEnd = joinedColonLastLayerSpheres;
+        topPartMovingAxisEnd = joinedColon10thLayerSpheres;
         DisableBottomPartCollision();
         DisableTopPartCollision();
 
@@ -699,7 +714,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 if (topToColonA <= tipProximityCondition)
                 {
                     topPartMovingAxisStart = colonAsecondLayerSpheres;
-                    topPartMovingAxisEnd = colonAlastLayerSpheres;
+                    topPartMovingAxisEnd = colonA10thLayerSpheres;
                     if (Vector3.Angle(topHalf.transform.right, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) < angleDifferenceCondition)
                     {
                         globalOperators.m_bInsert[0] = 1;
@@ -717,7 +732,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 if (bottomToColonA <= tipProximityCondition)
                 {
                     bottomPartMovingAxisStart = colonAsecondLayerSpheres;
-                    bottomPartMovingAxisEnd = colonAlastLayerSpheres;
+                    bottomPartMovingAxisEnd = colonA10thLayerSpheres;
                     if (Vector3.Angle(bottomHalf.transform.right, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) < angleDifferenceCondition)
                     {
                         globalOperators.m_bInsert[0] = 2;
@@ -739,7 +754,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 if (topToColonB <= tipProximityCondition)
                 {
                     topPartMovingAxisStart = colonBsecondLayerSpheres;
-                    topPartMovingAxisEnd = colonBlastLayerSpheres;
+                    topPartMovingAxisEnd = colonB10thLayerSpheres;
                     if (Vector3.Angle(topHalf.transform.right, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) < angleDifferenceCondition)
                     {
                         globalOperators.m_bInsert[1] = 1;
@@ -757,7 +772,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 if (bottomToColonB <= tipProximityCondition)
                 {
                     bottomPartMovingAxisStart = colonBsecondLayerSpheres;
-                    bottomPartMovingAxisEnd = colonBlastLayerSpheres;
+                    bottomPartMovingAxisEnd = colonB10thLayerSpheres;
                     if (Vector3.Angle(bottomHalf.transform.right, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) < angleDifferenceCondition)
                     {
                         globalOperators.m_bInsert[1] = 2;
