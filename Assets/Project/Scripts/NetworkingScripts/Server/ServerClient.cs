@@ -334,8 +334,8 @@ namespace CEMSIM
                     {
                         ServerSend.SpawnPlayer(_client.id, player);
                         string _dissonancePlayerId = _client.player.GetComponent<CEMSIMVoicePlayer>().PlayerId;
-                        ServerSend.SendVoiceChatPlayerId(_client.id, _dissonancePlayerId, false);
                         Debug.Log($"inform client {id} that client {_client.id} - {_dissonancePlayerId}");
+                        ServerSend.SendVoiceChatPlayerId(_client.id, _dissonancePlayerId, false);
                     }
                 }
 

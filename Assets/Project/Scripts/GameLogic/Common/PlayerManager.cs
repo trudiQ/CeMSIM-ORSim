@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CEMSIM
 {
@@ -20,12 +21,18 @@ namespace CEMSIM
             public GameObject body;
             public GameObject leftHandController;
             public GameObject rightHandController;
-            public GameObject displayName;
+            public GameObject overheadUI;
+            //public GameObject displayName;
+            //public GameObject displayRole;
 
 
             // server side player management
             [Header("Required by Server Avatar")]
             public CharacterController controller;  //< a easy controller used to implement collision detection
+
+            [Header("Required by Over-Head UI")]
+            public GameObject facingObject; //< the object that the overheadUI should face to
+
 
             // server side keyboard player management
             private float gravity_per_tick = ServerGameConstants.GRAVITY;
@@ -146,11 +153,15 @@ namespace CEMSIM
                 isClientSide = _isClientSide;
                 isVR = _isVR;
 
-                SetDisplayName(_username);
+                SetOverHeadUI(_username, _role);
+                GetViewCameraObject();
 
                 if (!isClientSide)
                 {
-                    if(controller == null)
+                    // This script is attached to a serverSideAvatar
+                    
+
+                    if (controller == null)
                     {
                         Debug.LogWarning("Character Controller is null. This may affect the avatar collision detection and/or movement (especially for keyboard)");
                     }
@@ -161,17 +172,45 @@ namespace CEMSIM
                 }
             }
 
-            public void SetDisplayName(string _name)
+
+            /// <summary>
+            /// Get the camera (or the point that represents the client's eye position)
+            /// </summary>
+            private void GetViewCameraObject()
             {
-                if (displayName != null)
+                if (facingObject != null)
+                    return;
+
+                if (isClientSide)
                 {
-                    displayName.GetComponent<TextMesh>().text = String.Format($"{role}: {_name}");
+                    int clientId = ClientInstance.instance.myId;
+                    if (id != clientId && GameManager.players.ContainsKey(clientId))
+                    {
+                        // this is not a player controlled avatar
+                        facingObject = GameManager.players[ClientInstance.instance.myId].GetComponent<PlayerManager>().body;
+                    }
                 }
                 else
                 {
-                    Debug.LogWarning("Username is null. Maybe the player controlled avatar");
+                    facingObject = GameObject.Find("Main Camera");
                 }
             }
+
+            public void SetOverHeadUI(string _name, Roles _role)
+            {
+                //if (displayName != null)
+                if(overheadUI != null)
+                {
+                    OverHeadUI overHeadUIObj = overheadUI.GetComponent<OverHeadUI>();
+                    overHeadUIObj.SetDisplayName(_name);
+                    overHeadUIObj.SetRoleName(_role);
+                }
+                else
+                {
+                    Debug.LogWarning("OverheadUI is null. Maybe it's a player controlled avatar");
+                }
+            }
+
 
             public void SetPosition(Vector3 _position, Quaternion _rotation)
             {
@@ -179,11 +218,33 @@ namespace CEMSIM
                 {
                     body.transform.position = _position;
                     body.transform.rotation = _rotation;
+
+                    // adjust the overhead UI board
+                    AdjustOverHeadUIDirection(_position);
                 }
                 else
                 {
                     Debug.LogWarning("ServerPlayerVR.body is null");
                 }
+            }
+
+            /// <summary>
+            /// Adjust the facing direction of the OverHeadUI to make it always facing the camera.
+            /// Camera can either be the camera at the server side or the camera attached to the avatar at the client side
+            /// </summary>
+            /// <param name="_position">The current position of the player</param>
+            public void AdjustOverHeadUIDirection(Vector3 _position)
+            {
+                if(facingObject != null && overheadUI != null)
+                {
+                    Vector3 relativePos = _position - facingObject.transform.position;
+
+                    // the second argument, upwards, defaults to Vector3.up
+                    Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
+
+                    overheadUI.transform.rotation = rotation;
+                }
+
             }
 
             public void SetControllerPositions(Vector3 _leftPosition, Quaternion _leftRotation, Vector3 _rightPosition, Quaternion _rightRotation)
