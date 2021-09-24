@@ -5,7 +5,23 @@ using Sirenix.OdinInspector;
 
 /// <summary>
 /// Simulation logic & steps
+/// Not allowing flat entry then lift up (original plan?):
+/// 1. If user inserted LS without using forceps, then the colon will stay flat on the table, and as long as the LS is inserted, the colon can not be raised up by the forceps
+/// 2. During lifting up, when user release forceps, colon will raise/fall with the stapler if the stapler is inserted. If the stapler is not inserted, then the colon will hang in mid-air with the released forceps
 /// 
+/// Allowing flat entry then lift up (but only lift up by the forceps):
+/// 1. User insert LS without lift up, then use forceps to grab the colon then lift it up
+/// 2. During lifting up, when user release forceps, colon will raise/fall with the stapler if the stapler is inserted. If the stapler is not inserted, then the colon will hang in mid-air with the released forceps
+/// 
+/// Allowing flat entry then lift up (can also lift up without using the forceps and just raise the LS, better imo):
+/// If the colon is lifted up with the forceps without LS insertion, then the colon raise is controlled by the LS, however as long as LS is inserted, the colon will be solely controlled by the LS, 
+/// and the forceps will not move with the colon anymore, and the picking will behave like the general picking
+/// 
+/// Do not allow LS entry at all if the colon is not picked up by the forceps:
+/// Need further discussion on what to do if user try to push in the LS without lifting the colon up
+/// Potential behavior: 
+/// LS will push the colon away (more difficult to do because need to have a method to bring colon back to position)
+/// Colon will stick on the table, if LS is pushed against the colon, it will stop moving forward
 /// 
 /// </summary>
 public class LinearStaplerTool : MonoBehaviour //inherits Tool class
@@ -47,6 +63,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public List<Transform> colonB10thLayerSpheres;
     public float angleDifferenceCondition; // What's the maximum allowing angle difference from the LS tool to the colon direction for the LS tool to enter insertion phase
     public float tipExitProximityMultiplier; // How many times the tip exiting proximity range it is for the LS tool to exit insertion phase
+    public LinearStaplerColonDetector topHalfColonDetector; // The trigger at the front of the LS that detects colon sphere and stop it inserting if the colon is not secured by forceps
+    public LinearStaplerColonDetector bottomHalfColonDetector; 
     // For LS tool after joining colon action
     public List<Transform> joinedColonFirstLayerSpheres;
     public List<Transform> joinedColonLastLayerSpheres;
@@ -117,6 +135,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public bool isColonARemoving;
     public bool isColonBInserting;
     public bool isColonBRemoving;
+    public List<bool> colonSecuredByForceps;
     //public bool isTopHalfMovingInCuttingPlane; // Is the top half tool locked onto the moving plane for the last cutting step
     public bool isBottomHalfMovingInCuttingPlane; // Is the bottom half tool locked onto the moving plane for the last cutting step
     public float bottomLastPhaseX; // The position difference on the x-axis from the mean joinedColonFirstLayerLowerSpheresPosition to bottom half position
@@ -152,6 +171,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         colonAInsertDepthRecord = new List<float>();
         colonBInsertDepthRecord = new List<float>();
         insertDepthRecordTimeStamps = new List<float>();
+        colonSecuredByForceps = new List<bool>();
+        colonSecuredByForceps.Add(false);
+        colonSecuredByForceps.Add(false);
     }
 
     void Update() //Checks status of knob, lever, and linear stapler in every frame
@@ -710,8 +732,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             // If colon0 is not being inserted
             if (globalOperators.m_bInsert[0] == 0)
             {
-                // Check for angle
-                if (topToColonA <= tipProximityCondition)
+                // Check for angle and colon secure and stapler status
+                if (topToColonA <= tipProximityCondition && colonSecuredByForceps[0] && !topHalfColonDetector.stopped)
                 {
                     topPartMovingAxisStart = colonAsecondLayerSpheres;
                     topPartMovingAxisEnd = colonA10thLayerSpheres;
@@ -729,7 +751,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     }
                 }
 
-                if (bottomToColonA <= tipProximityCondition)
+                if (bottomToColonA <= tipProximityCondition && colonSecuredByForceps[0] && !bottomHalfColonDetector.stopped)
                 {
                     bottomPartMovingAxisStart = colonAsecondLayerSpheres;
                     bottomPartMovingAxisEnd = colonA10thLayerSpheres;
@@ -750,8 +772,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             // If colon1 is not being inserted
             if (globalOperators.m_bInsert[1] == 0)
             {
-                // Check for angle
-                if (topToColonB <= tipProximityCondition)
+                // Check for angle and colon secure and stapler status
+                if (topToColonB <= tipProximityCondition && colonSecuredByForceps[1] && !topHalfColonDetector.stopped)
                 {
                     topPartMovingAxisStart = colonBsecondLayerSpheres;
                     topPartMovingAxisEnd = colonB10thLayerSpheres;
@@ -769,7 +791,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     }
                 }
 
-                if (bottomToColonB <= tipProximityCondition)
+                if (bottomToColonB <= tipProximityCondition && colonSecuredByForceps[1] && !bottomHalfColonDetector.stopped)
                 {
                     bottomPartMovingAxisStart = colonBsecondLayerSpheres;
                     bottomPartMovingAxisEnd = colonB10thLayerSpheres;

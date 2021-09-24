@@ -475,6 +475,8 @@ public class HapticSurgTools : MonoBehaviour
                                 LSSimDataRecording.currentPickedForceps = i;
                                 LSSimDataRecording.forcepsTip = tool4Select[i].toolTipSphere.transform;
                             }
+                            // Update the active forceps for the colon movement controller
+                            ColonMovementController.instance.activeForceps = tool4Select[i].toolTipSphere.transform;
                             // disable selector's haptics
                             seleHapticGO.SetActive(false);
                             bActive = false;

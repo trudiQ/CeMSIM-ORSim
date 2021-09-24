@@ -14,21 +14,25 @@ using UnityEngine;
 /// </summary>
 public class ColonMovementController : MonoBehaviour
 {
-    public List<SplinePositioner> followedSplinesTop;
-    public List<Transform> splineFollowersTop;
-    public List<SplinePositioner> followedSplinesBottom;
-    public List<Transform> splineFollowersBottom;
+    public List<SplinePositioner> followedSplinesTop0;
+    public List<Transform> splineFollowersTop0;
+    public List<SplinePositioner> followedSplinesBottom0;
+    public List<Transform> splineFollowersBottom0;
+    public List<SplinePositioner> followedSplinesTop1;
+    public List<Transform> splineFollowersTop1;
+    public List<SplinePositioner> followedSplinesBottom1;
+    public List<Transform> splineFollowersBottom1;
     public bool colonMatchX; // Which axis the colon spheres should match with the spline follower
     public bool colonMatchY;
     public bool colonMatchZ;
     public List<Transform> colon0FrontSpheres;
     public List<Transform> colon1FrontSpheres;
+    public float linearStaplerControlInsertionThreshold; // How deep the LS need to be inserted into the colon in order for the stapler to take over control of the colon motion
 
     public Transform activeForceps; // Which forceps is the user using
-    public Vector3 controllerStartPosition; // Position of the forceps or the linear stapler when user start to grab the colon with it or inserted the linear stapler while the grabbing forceps is released
-    public float controllerStartPercent; // Percentage of spline follower's position when user start to grab the colon with it or inserted the linear stapler
-    public Transform activeLinearStapler; // Which linear stapler is controlling the colon tilt
-    public int updateMode; // How the colon sphere position should be updated?
+    public List<Vector3> controllerStartPosition; // Position of the forceps or the linear stapler when user start to grab the colon with it or inserted the linear stapler while the grabbing forceps is released
+    public List<float> controllerStartPercent; // Percentage of spline follower's position when user start to grab the colon with it or inserted the linear stapler
+    public List<int> updateMode; // How the colon sphere position should be updated?
     // 0. Do nothing
     // 1. Follow forceps
     // 2. Follow linear stapler tilt
@@ -36,7 +40,7 @@ public class ColonMovementController : MonoBehaviour
     //
     public List<Vector3> splineFollowersStartPositionTop; // The position of spline followers when they are at 0 percent on their spline
     public List<Vector3> splineFollowersStartPositionBottom; // The position of spline followers when they are at 0 percent on their spline
-    public int controlledColon; // Whic colon is being manipulated right now
+    public List<Transform> colonController; // The controller transform for each colon
     public List<Vector3> colon0FrontSphereStartPosition; // Initial position of the colon spheres when user start lifting the colon
     public List<Vector3> colon1FrontSphereStartPosition;
     public List<float> colon0SphereWeights; // Determine how spheres will move with spline followers
@@ -44,6 +48,7 @@ public class ColonMovementController : MonoBehaviour
 
     public globalOperators globalOperators; // Main manager of the simulation
     public LinearStaplerTool linearStaplerTool; // LS manager
+    public static ColonMovementController instance;
 
     // Test
     public bool isTest;
@@ -52,17 +57,31 @@ public class ColonMovementController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        instance = this;
+
         splineFollowersStartPositionTop = new List<Vector3>();
         splineFollowersStartPositionBottom = new List<Vector3>();
         colon0FrontSphereStartPosition = new List<Vector3>();
         colon1FrontSphereStartPosition = new List<Vector3>();
         colon0SphereWeights = new List<float>();
         colon1SphereWeights = new List<float>();
+        updateMode = new List<int>();
+        updateMode.Add(0);
+        updateMode.Add(0);
+        controllerStartPosition = new List<Vector3>();
+        controllerStartPosition.Add(Vector3.zero);
+        controllerStartPosition.Add(Vector3.zero);
+        controllerStartPercent = new List<float>();
+        controllerStartPercent.Add(0);
+        controllerStartPercent.Add(0);
+        colonController = new List<Transform>();
+        colonController.Add(null);
+        colonController.Add(null);
 
-        for (int i = 0; i < splineFollowersTop.Count; i++)
+        for (int i = 0; i < splineFollowersTop0.Count; i++)
         {
-            splineFollowersStartPositionTop.Add(splineFollowersTop[i].position);
-            splineFollowersStartPositionBottom.Add(splineFollowersBottom[i].position);
+            splineFollowersStartPositionTop.Add(splineFollowersTop0[i].position);
+            splineFollowersStartPositionBottom.Add(splineFollowersBottom0[i].position);
         }
     }
 
@@ -77,101 +96,103 @@ public class ColonMovementController : MonoBehaviour
 
     public void MainUpdatingLoop()
     {
-        switch (updateMode)
-        {
-            // Do nothing
-            case 0:
-                break;
-            // Follow forceps up
-            case 1:
-                UpdateSplineFollowers(activeForceps);
-                break;
-            // Follow linear stapler down
-            case 2:
-                UpdateSplineFollowers(activeLinearStapler);
-                break;
-            // Follow linear stapler up
-            case 3:
-                break;
-        }
+        UpdateSplineFollowers();
+        UpdateColonSpherePosition();
+        //switch (updateMode)
+        //{
+        //    // Do nothing
+        //    case 0:
+        //        break;
+        //    // Follow forceps up
+        //    case 1:
+        //        UpdateSplineFollowers(activeForceps);
+        //        break;
+        //    // Follow linear stapler down
+        //    case 2:
+        //        UpdateSplineFollowers(activeLinearStapler);
+        //        break;
+        //    // Follow linear stapler up
+        //    case 3:
+        //        break;
+        //}
     }
 
 
 
-    public void ChangeFollowStates(int newState, Transform newController = null)
+    public void ChangeFollowStates(int controlledColon, int newState, Transform newController = null)
     {
         switch (newState)
         {
             // Stop following anything
             case 0:
-                StopFollowForceps();
-                StopFollowLinearStaplerTilt();
-                StopFollowLinearStaplerMove();
+                StopFollowForceps(controlledColon);
+                StopFollowLinearStaplerTilt(controlledColon);
+                StopFollowLinearStaplerMove(controlledColon);
                 break;
             // Follow forceps up
             case 1:
-                StartFollowForceps(newController);
-                StopFollowLinearStaplerTilt();
-                StopFollowLinearStaplerMove();
+                StartFollowForceps(controlledColon, newController);
+                StopFollowLinearStaplerTilt(controlledColon);
+                StopFollowLinearStaplerMove(controlledColon);
                 break;
             // Follow linear stapler down
             case 2:
-                StartFollowLinearStaplerTilt(newController);
-                StopFollowForceps();
-                StopFollowLinearStaplerMove();
+                StartFollowLinearStaplerTilt(controlledColon, newController);
+                StopFollowForceps(controlledColon);
+                StopFollowLinearStaplerMove(controlledColon);
                 break;
             // Follow linear stapler up
             case 3:
-                StartFollowLinearStaplerMove(newController);
-                StopFollowForceps();
-                StopFollowLinearStaplerTilt();
+                StartFollowLinearStaplerMove(controlledColon, newController);
+                StopFollowForceps(controlledColon);
+                StopFollowLinearStaplerTilt(controlledColon);
                 break;
         }
 
-        updateMode = newState;
+        updateMode[controlledColon] = newState;
     }
 
-    public void StartFollowForceps(Transform newForceps)
+    public void StartFollowForceps(int controlledColon, Transform newForceps)
     {
-        activeForceps = newForceps;
-        controllerStartPosition = activeForceps.position;
-        controllerStartPercent = (float)followedSplinesTop[0].position;
+        colonController[controlledColon] = newForceps;
+        controllerStartPosition[controlledColon] = activeForceps.position;
+        controllerStartPercent[controlledColon] = (float)followedSplinesTop0[0].position;
     }
 
-    public void StopFollowForceps()
+    public void StopFollowForceps(int controlledColon)
     {
         // Do nothing if colon is not currently following forceps
-        if (updateMode != 1)
+        if (updateMode[controlledColon] != 1)
         {
             return;
         }
     }
 
-    public void StartFollowLinearStaplerTilt(Transform newStapler)
+    public void StartFollowLinearStaplerTilt(int controlledColon, Transform newStapler)
     {
-        activeLinearStapler = newStapler;
-        controllerStartPosition = activeLinearStapler.position;
-        controllerStartPercent = (float)followedSplinesTop[0].position;
+        colonController[controlledColon] = newStapler;
+        controllerStartPosition[controlledColon] = newStapler.position;
+        controllerStartPercent[controlledColon] = (float)followedSplinesTop0[0].position;
     }
 
-    public void StopFollowLinearStaplerTilt()
+    public void StopFollowLinearStaplerTilt(int controlledColon)
     {
         // Do nothing if colon is not currently following LS tilt
-        if (updateMode != 2)
+        if (updateMode[controlledColon] != 2)
         {
             return;
         }
     }
 
-    public void StartFollowLinearStaplerMove(Transform newStapler)
+    public void StartFollowLinearStaplerMove(int controlledColon, Transform newStapler)
     {
 
     }
 
-    public void StopFollowLinearStaplerMove()
+    public void StopFollowLinearStaplerMove(int controlledColon)
     {
         // Do nothing if colon is not currently following LS vertical
-        if (updateMode != 3)
+        if (updateMode[controlledColon] != 3)
         {
             return;
         }
@@ -180,13 +201,24 @@ public class ColonMovementController : MonoBehaviour
     /// <summary>
     /// Updates the spline follower's position based on the forceps/linear stapler's position
     /// </summary>
-    /// <param name="controller"></param>
-    public void UpdateSplineFollowers(Transform controller)
+    public void UpdateSplineFollowers()
     {
-        float percent = Mathf.Clamp01((controller.position.y - controllerStartPosition.y) / (8.37f - 3.33f) + controllerStartPercent); // Normalize forceps y position
+        // Colon0
+        if (colonController[0] != null)
+        {
+            float percent = Mathf.Clamp01((colonController[0].position.y - controllerStartPosition[0].y) / (8.37f - 3.33f) + controllerStartPercent[0]); // Normalize forceps y position
 
-        followedSplinesTop.ForEach(sp => sp.position = percent);
-        followedSplinesBottom.ForEach(sp => sp.position = percent);
+            followedSplinesTop0.ForEach(sp => sp.position = percent);
+            followedSplinesBottom0.ForEach(sp => sp.position = percent);
+        }
+        // Colon1
+        if (colonController[1] != null)
+        {
+            float percent = Mathf.Clamp01((colonController[1].position.y - controllerStartPosition[1].y) / (8.37f - 3.33f) + controllerStartPercent[1]); // Normalize forceps y position
+
+            followedSplinesTop1.ForEach(sp => sp.position = percent);
+            followedSplinesBottom1.ForEach(sp => sp.position = percent);
+        }
     }
 
     [ShowInInspector]
@@ -221,22 +253,22 @@ public class ColonMovementController : MonoBehaviour
 
     public void UpdateColonSpherePosition()
     {
-        if (controlledColon == 0)
+        if (colonController[0] != null)
         {
             for (int i = 0; i < colon0FrontSpheres.Count; i++)
             {
-                Vector3 topFollowerDisplacement = splineFollowersTop[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionTop[Mathf.FloorToInt(i / 20f)];
-                Vector3 bottomFollowerDisplacement = splineFollowersBottom[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionBottom[Mathf.FloorToInt(i / 20f)];
+                Vector3 topFollowerDisplacement = splineFollowersTop0[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionTop[Mathf.FloorToInt(i / 20f)];
+                Vector3 bottomFollowerDisplacement = splineFollowersBottom0[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionBottom[Mathf.FloorToInt(i / 20f)];
 
                 colon0FrontSpheres[i].position = colon0FrontSphereStartPosition[i] + bottomFollowerDisplacement + (topFollowerDisplacement - bottomFollowerDisplacement) * colon0SphereWeights[i];
             }
         }
-        else if (controlledColon == 1)
+        if (colonController[1] != null)
         {
             for (int i = 0; i < colon1FrontSpheres.Count; i++)
             {
-                Vector3 topFollowerDisplacement = splineFollowersTop[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionTop[Mathf.FloorToInt(i / 20f)];
-                Vector3 bottomFollowerDisplacement = splineFollowersBottom[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionBottom[Mathf.FloorToInt(i / 20f)];
+                Vector3 topFollowerDisplacement = splineFollowersTop0[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionTop[Mathf.FloorToInt(i / 20f)];
+                Vector3 bottomFollowerDisplacement = splineFollowersBottom0[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionBottom[Mathf.FloorToInt(i / 20f)];
 
                 colon1FrontSpheres[i].position = colon1FrontSphereStartPosition[i] + bottomFollowerDisplacement + (topFollowerDisplacement - bottomFollowerDisplacement) * colon1SphereWeights[i];
             }
@@ -245,8 +277,8 @@ public class ColonMovementController : MonoBehaviour
 
     public void TestColonMotion()
     {
-        followedSplinesTop.ForEach(sp => sp.position = testPercent);
-        followedSplinesBottom.ForEach(sp => sp.position = testPercent);
+        followedSplinesTop0.ForEach(sp => sp.position = testPercent);
+        followedSplinesBottom0.ForEach(sp => sp.position = testPercent);
         UpdateColonSpherePosition();
     }
 
