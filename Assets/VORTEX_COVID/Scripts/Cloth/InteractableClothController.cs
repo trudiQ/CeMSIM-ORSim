@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -14,30 +14,43 @@ public class InteractableClothController : MonoBehaviour
     public UnityEvent<ClothPair> OnClothEquipped;
     public UnityEvent<ClothPair> OnClothUnequipped;
 
+    // Manager for handling equipment events and teleportation
+    private MainManager mainManager;
+
     void Start()
     {
+        mainManager = FindObjectOfType<MainManager>();
         List<InteractableCloth> clothingFound = new List<InteractableCloth>(FindObjectsOfType<InteractableCloth>());
 
         // Since objects not in the prefab can't be linked, find the first cloth with the same name in the scene and pair it
         // NOTE: If there is more than one object in the scene with the same name, it will only choose the first one
-        foreach(ClothPair pair in clothingPairs)
+        foreach (ClothPair pair in clothingPairs)
         {
             InteractableCloth match = clothingFound.Find((x) => x.clothName == pair.clothName);
 
+            // Subscribe to events so there is one point that information can be sent from
+            pair.OnEquip.AddListener(() =>
+            {
+                CheckIfAllPPEEquipped();
+                OnClothEquipped.Invoke(pair);
+            });
+
+            pair.OnUnequip.AddListener(() =>
+            {
+                mainManager.onPPEUnequipped();
+                OnClothUnequipped.Invoke(pair);
+            });
+
             pair.Initialize(match);
             pair.IgnorePlayerCollision(playerCollidersToIgnore);
-
-            // Subscribe to events so there is one point that information can be sent from
-            pair.OnEquip.AddListener(() => OnClothEquipped.Invoke(pair));
-            pair.OnUnequip.AddListener(() => OnClothUnequipped.Invoke(pair));
         }
 
         // After setting up every pair, ignore collision between scene and model cloth (includes self collision)
         // This process includes 4 nested for loops, O(n*n*m*s)
         // n = number of cloth pairs, m = number of model colliders, s = number of scene colliders
-        foreach(ClothPair pair in clothingPairs)
+        foreach (ClothPair pair in clothingPairs)
         {
-            foreach(ClothPair innerPair in clothingPairs)
+            foreach (ClothPair innerPair in clothingPairs)
             {
                 pair.IgnoreOtherCollision(innerPair);
             }
@@ -49,6 +62,23 @@ public class InteractableClothController : MonoBehaviour
         // Check if the cloth in the scene aligns with the cloth on the model
         foreach (ClothPair pair in clothingPairs)
             pair.CheckIfWithinThreshold();
+    }
+
+    private void CheckIfAllPPEEquipped()
+    {
+        bool allEquipped = true;
+        foreach (ClothPair pair in clothingPairs)
+        {
+            if (!pair.isEquipped)
+            {
+                allEquipped = false;
+                break;
+            }
+        }
+        if (allEquipped)
+        {
+            mainManager.onAllPPEsEquipped();
+        }
     }
 }
 
@@ -62,6 +92,7 @@ public class ClothPair
     public float angleThreshold = 30f; // Angle between the model cloth that the scene cloth needs to be to equip
     public bool equipAtStart = false;
     public bool snapOnGrab = false; // Snap to/from the model when grabbed
+    public bool isEquipped { get; private set; } = false;
 
     public UnityEvent OnEquip;
     public UnityEvent OnUnequip;
@@ -82,10 +113,16 @@ public class ClothPair
 
         // Make sure any events are triggered based on what is equipped at start
         if (equipAtStart)
+        {
+            isEquipped = true;
             OnEquip.Invoke();
+        }
         else
+        {
+            isEquipped = false;
             OnUnequip.Invoke();
-
+        }
+            
         modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted); // Subscribe to the grab event
         sceneCloth.onSceneClothInteracted.AddListener(OnSceneClothInteracted); // Subscribe to the grab event
     }
@@ -148,6 +185,7 @@ public class ClothPair
             if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
             {
                 ToggleModelCloth();
+                isEquipped = true;
                 OnEquip.Invoke();
             }
             else if (!InThresholdDistance())
@@ -162,7 +200,7 @@ public class ClothPair
     {
         float distance = Vector3.Distance(modelCloth.GetOffsetPosition(), sceneCloth.GetOffsetPosition());
 
-        return  distance <= distanceThreshold;
+        return distance <= distanceThreshold;
     }
 
     // Check if the scene cloth is within the rotation threshold
@@ -179,6 +217,7 @@ public class ClothPair
         if (snapOnGrab)
         {
             ToggleModelCloth();
+            isEquipped = true;
             OnEquip.Invoke();
         }
     }
@@ -187,6 +226,7 @@ public class ClothPair
     private void OnWornClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
         ToggleModelCloth();
+        isEquipped = false;
         OnUnequip.Invoke();
 
         if (!snapOnGrab)
