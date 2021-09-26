@@ -6,6 +6,7 @@ public class TeleportManager : MonoBehaviour
     public GameObject rigToBeTeleported;
     public GameObject anteroomTeleportationPad;
     public GameObject operationRoomTeleportationPad;
+    public GameObject teleportationPrompt;
     public Room currentRoom { get; set; } = Room.ANTEROOM;
 
     // Start is called before the first frame update
@@ -41,14 +42,25 @@ public class TeleportManager : MonoBehaviour
         operationRoomTeleportationPad.SetActive(true);
     }
 
+    public void OperationRoomTeleportationTriggered()
+    {
+        teleportationPrompt.SetActive(true);    
+    }
+
+    public void AnteroomTeleportationTriggered()
+    {
+        Teleport(operationRoomTeleportationPad.transform, Room.OPERATIONROOM);
+    }
+
     public void TeleportToAnteroom()
     {
+        teleportationPrompt.SetActive(false);
         Teleport(anteroomTeleportationPad.transform, Room.ANTEROOM);
     }
 
-    public void TeleportToOperationRoom()
+    public void StayInOR()
     {
-        Teleport(operationRoomTeleportationPad.transform, Room.OPERATIONROOM);
+        teleportationPrompt.SetActive(false);
     }
 
     private void Teleport(Transform destination, Room destinationRoom)

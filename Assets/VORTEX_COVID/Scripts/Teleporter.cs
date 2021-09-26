@@ -4,7 +4,7 @@ using UnityEngine.Events;
 public class Teleporter : MonoBehaviour
 {
     public UnityEvent onTriggered;
-    public bool disableAfterArrival;
+    public bool disableAfterTrigger;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +22,7 @@ public class Teleporter : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            if (disableAfterArrival)
+            if (disableAfterTrigger)
             {
                 this.gameObject.SetActive(false);
             }
