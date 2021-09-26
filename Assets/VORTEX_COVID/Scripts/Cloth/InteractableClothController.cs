@@ -15,11 +15,11 @@ public class InteractableClothController : MonoBehaviour
     public UnityEvent<ClothPair> OnClothUnequipped;
 
     // Manager for handling equipment events and teleportation
-    private MainManager mainManager;
+    private TeleportManager teleportManager;
 
     void Start()
     {
-        mainManager = FindObjectOfType<MainManager>();
+        teleportManager = FindObjectOfType<TeleportManager>();
         List<InteractableCloth> clothingFound = new List<InteractableCloth>(FindObjectsOfType<InteractableCloth>());
 
         // Since objects not in the prefab can't be linked, find the first cloth with the same name in the scene and pair it
@@ -37,7 +37,7 @@ public class InteractableClothController : MonoBehaviour
 
             pair.OnUnequip.AddListener(() =>
             {
-                mainManager.onPPEUnequipped();
+                teleportManager.OnPPEUnequipped();
                 OnClothUnequipped.Invoke(pair);
             });
 
@@ -77,7 +77,7 @@ public class InteractableClothController : MonoBehaviour
         }
         if (allEquipped)
         {
-            mainManager.onAllPPEsEquipped();
+            teleportManager.OnAllPPEsEquipped();
         }
     }
 }
@@ -122,7 +122,7 @@ public class ClothPair
             isEquipped = false;
             OnUnequip.Invoke();
         }
-            
+
         modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted); // Subscribe to the grab event
         sceneCloth.onSceneClothInteracted.AddListener(OnSceneClothInteracted); // Subscribe to the grab event
     }
@@ -143,9 +143,9 @@ public class ClothPair
     // Ignore the collision between scene cloth and an other pair's worn cloth
     public void IgnoreOtherCollision(ClothPair other)
     {
-        foreach(Collider sceneCollider in sceneClothColliders)
+        foreach (Collider sceneCollider in sceneClothColliders)
         {
-            foreach(Collider modelCollider in other.modelClothColliders)
+            foreach (Collider modelCollider in other.modelClothColliders)
             {
                 Physics.IgnoreCollision(sceneCollider, modelCollider);
             }

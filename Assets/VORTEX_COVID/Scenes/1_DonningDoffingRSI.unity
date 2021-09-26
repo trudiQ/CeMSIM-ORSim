@@ -7945,7 +7945,7 @@ Transform:
   m_LocalScale: {x: 1.0000004, y: 1, z: 1.0000004}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: -302.11, z: 0}
 --- !u!114 &764332394
 MonoBehaviour:
@@ -8548,6 +8548,41 @@ PrefabInstance:
         type: 3}
       propertyPath: disableAfterArrival
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1132950135}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TeleportToOperationRoom
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: TeleportManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e6a25a575bdcc14ca3b86359492019c, type: 3}
@@ -9599,7 +9634,7 @@ Transform:
   m_Children:
   - {fileID: 1093949343}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &901356427
 BoxCollider:
@@ -11572,7 +11607,7 @@ Transform:
   - {fileID: 79291962}
   - {fileID: 1320856391}
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: -175.64, y: 388.68, z: -4.598999}
 --- !u!23 &1045128106 stripped
 MeshRenderer:
@@ -12446,7 +12481,7 @@ GameObject:
   - component: {fileID: 1132950134}
   - component: {fileID: 1132950135}
   m_Layer: 0
-  m_Name: MainManager
+  m_Name: TeleportManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12478,6 +12513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b885f7b095f3254991d6b20e7078657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rigToBeTeleported: {fileID: 764332392}
   anteroomTeleportationPad: {fileID: 69720025}
   operationRoomTeleportationPad: {fileID: 1620348692}
 --- !u!1 &1134450606 stripped
@@ -14903,7 +14939,7 @@ Transform:
   - {fileID: 1078295826}
   - {fileID: 794400715}
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 362.231, z: 0}
 --- !u!4 &1563436817 stripped
 Transform:
@@ -15662,6 +15698,7 @@ Transform:
   m_Children:
   - {fileID: 1731186780}
   - {fileID: 1132950134}
+  - {fileID: 8883000592612120110}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -16820,6 +16857,41 @@ PrefabInstance:
       propertyPath: disableAfterArrival
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1132950135}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TeleportToAnteroom
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: TeleportManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2821649242050729480, guid: 2e6a25a575bdcc14ca3b86359492019c,
+        type: 3}
+      propertyPath: onTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e6a25a575bdcc14ca3b86359492019c, type: 3}
 --- !u!4 &1684724174 stripped
@@ -17847,7 +17919,7 @@ Transform:
   m_LocalScale: {x: 1.0000002, y: 1, z: 1.0000002}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1822759417
 GameObject:
@@ -18571,7 +18643,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1867216388
 GameObject:
@@ -24385,7 +24457,7 @@ PrefabInstance:
     - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
         type: 3}
       propertyPath: m_RootOrder
-      value: 13
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6247529882061140930, guid: 2a4df11042f796649be68bdc104078fb,
         type: 3}
@@ -59803,7 +59875,7 @@ PrefabInstance:
     - target: {fileID: 8559559516658173612, guid: 9d6d38dd46d8ca64484583050961f706,
         type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8559559516658173612, guid: 9d6d38dd46d8ca64484583050961f706,
         type: 3}
@@ -61717,12 +61789,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6929632332005117840}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.299, y: 0.293, z: 0.7344261}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5.409872, y: 3.6151464, z: 2.104751}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_Father: {fileID: 1628762704}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8900738510241266273
 MeshFilter:
