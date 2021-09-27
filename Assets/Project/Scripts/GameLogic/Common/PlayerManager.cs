@@ -42,6 +42,8 @@ namespace CEMSIM
             private bool[] keyboardInputs = new bool[5];
             private float yVelocity = 0;    // player's vertical velocity (jump)
 
+            private float playerHeight = 1.4f; // the height of the player, acquired from the player calibration process.
+
             void Start(){
                 gravity_per_tick *= Time.fixedDeltaTime * Time.fixedDeltaTime;
                 moveSpeed_per_tick *= Time.fixedDeltaTime;
@@ -238,11 +240,14 @@ namespace CEMSIM
                 if(facingObject != null && overheadUI != null)
                 {
                     Vector3 relativePos = _position - facingObject.transform.position;
+                    Vector3 overheadPosition = overheadUI.transform.position;
 
                     // the second argument, upwards, defaults to Vector3.up
                     Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
+                    overheadPosition.y = Math.Max(overheadPosition.y, playerHeight);
 
                     overheadUI.transform.rotation = rotation;
+                    overheadUI.transform.position = overheadPosition;
                 }
 
             }
