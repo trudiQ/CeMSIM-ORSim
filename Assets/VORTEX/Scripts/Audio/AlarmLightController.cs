@@ -7,6 +7,7 @@ public class AlarmLightController : MonoBehaviour
     public Material[] materials;
     public MeshRenderer[] meshRenderers;
     private int colorIndex = 0;
+    
 
     public void TurnOnRedLight()
     {

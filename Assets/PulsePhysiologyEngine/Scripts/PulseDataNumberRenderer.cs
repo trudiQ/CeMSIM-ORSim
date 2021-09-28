@@ -21,6 +21,7 @@ public class PulseDataNumberRenderer: PulseDataConsumer
     float previousTime = 0;         // Used to match the requested frequency
 
     public float currentValue = 0;
+    public FloatList list;
 
 
     // MARK: Monobehavior methods
@@ -38,6 +39,7 @@ public class PulseDataNumberRenderer: PulseDataConsumer
     override internal void UpdateFromPulse(FloatList times, FloatList values)
     {
         // Update display at a certain frequency
+        list.Add(values.Get(values.Count -1));
         float currentTime = Time.time;
         if (frequency > 0 && currentTime < previousTime + 1 / frequency)
             return;

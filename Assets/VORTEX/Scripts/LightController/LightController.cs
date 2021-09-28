@@ -59,7 +59,10 @@ public class LightController : MonoBehaviour
 
     public void TurnOverheadLightsOff()
     {
-        overheadLightMesh.material = lightOffMaterial;
+        Material[] mats = overheadLightMesh.materials;
+        mats[1] = lightOffMaterial;
+        overheadLightMesh.materials = mats;
+
         overheadLight.enabled = false;
         foreach(var light in spotLights)
         {
@@ -76,8 +79,10 @@ public class LightController : MonoBehaviour
 
     public void TurnOverheadLightsOn()
     {
+        Material[] mats = overheadLightMesh.materials;
+        mats[1] = lightOnMaterial;
+        overheadLightMesh.materials = mats;
         
-        overheadLightMesh.material = lightOnMaterial;
         overheadLight.enabled = true;
         foreach(var light in spotLights)
         {

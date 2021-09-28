@@ -7,29 +7,29 @@ public class PatientDynamicBreathing : MonoBehaviour
     private SkinnedMeshRenderer meshRenderer;
     public PulseDataNumberRenderer dataSource;
 
-    public float breath = 0f;
-    public float inflation = 0;
+    private float breath = 0f;
+    private float inflation = 0;
     private float currentValue = 0f;
 
-    public float holdBreatheTimer = 0;
-    public float holdBreatheTime = 1;
-    public bool holdBreathe = false;
+    private float holdBreatheTimer = 0;
+    private float holdBreatheTime = 1;
+    private bool holdBreathe = false;
 
-    public float currentLerpTime;
+    private float currentLerpTime;
 
     private int mod = 1;        //used to delimit whether lungs should be inflating or deflating
 
-    public float totalTime = 0;
-    public float numberOfBreathesIn = 0;
-    public float numberOfBreathesOut = 0;
+    // public float totalTime = 0;
+    // public float numberOfBreathesIn = 0;
+    // public float numberOfBreathesOut = 0;
     public TieVentilationToBreath audioPlayer;
-    public bool beginningTriggered = false;
-    public bool endTriggered = false;
-    public bool inflating = false;
-    public bool breathIn = false;
+    // public bool beginningTriggered = false;
+    // public bool endTriggered = false;
+    private bool inflating = false;
+    // public bool breathIn = false;
 
     private float lastInflation = 0;
-    public float inflationDifference = 0;
+    private float inflationDifference = 0;
     private float breathingRate;
     public bool dynamicBreathing = false;
     // private bool lungsReset = false;
@@ -47,7 +47,7 @@ public class PatientDynamicBreathing : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        totalTime = Time.timeSinceLevelLoad;
+        // totalTime = Time.timeSinceLevelLoad;
         if(Mathf.Abs(currentValue - dataSource.currentValue) > .1f)
         {
             currentValue = dataSource.currentValue;
@@ -55,7 +55,9 @@ public class PatientDynamicBreathing : MonoBehaviour
         }
 
         if(dynamicBreathing)
+        {
             breathingRate = 60/currentValue;
+        }
 
         Breathe(breathingRate, 100, 2);
 
@@ -84,13 +86,13 @@ public class PatientDynamicBreathing : MonoBehaviour
         if(breath > 1 && mod == 1)
         {
             holdBreathe = true;
-            numberOfBreathesIn++;
+            // numberOfBreathesIn++;
             mod = -1;
         }
         else if(breath < 0 && mod == -1)
         {
             holdBreathe = true;
-            numberOfBreathesOut++;
+            // numberOfBreathesOut++;
             mod = 1;
         }
 
@@ -117,14 +119,11 @@ public class PatientDynamicBreathing : MonoBehaviour
             meshRenderer.SetBlendShapeWeight(shapeKeyIndex, inflation);
         }
         
-        breathIn = lastInflation - inflation < -.0001f ? true : false;
+        // breathIn = lastInflation - inflation < -.0001f ? true : false;
         inflationDifference = lastInflation - inflation;
 
         ControlVentilatorSounds();
         lastInflation = inflation;
-        
-        
-
     }
 
      private void ControlVentilatorSounds()
@@ -136,8 +135,8 @@ public class PatientDynamicBreathing : MonoBehaviour
                  if(!inflating)
                  {
                      inflating = true;
-                     beginningTriggered = false;
-                     endTriggered = false;
+                    //  beginningTriggered = false;
+                    //  endTriggered = false;
                      audioPlayer.Play(audioPlayer.inflate);
                  }
              }

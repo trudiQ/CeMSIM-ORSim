@@ -19,7 +19,7 @@ public class AlarmPlayer : AudioPlayer
     private float timeSinceDing = 0.0f;
     private int currentDingNumber = 0;
     private bool paused = false;
-    private bool thresholdMet = false;
+    public bool thresholdMet = false;
 
 
     // Update is called once per frame
@@ -79,24 +79,63 @@ public class AlarmPlayer : AudioPlayer
         }
     }
 
+    private bool IsThresholdMet()
+    {
+        bool above = valueToMonitor.currentValue > valueToTriggerAlarmAt ? true : false;
+
+        if((higher && above) || (!higher && !above))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool OtherThresholdMet()
+    {
+        if(otherAlarms.Length != 0)
+        {
+            foreach(var other in otherAlarms)
+            {
+                if(other.IsThresholdMet())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void HandleAlarm()
     {
-        if(timeSinceDing >= delayBetweenDings)
-        {
-            bool above = valueToMonitor.currentValue > valueToTriggerAlarmAt ? true : false;
+        thresholdMet = IsThresholdMet();
 
-            if((higher && above) || (!higher && !above))
+        if(thresholdMet)
+        {
+            if(timeSinceDing >= delayBetweenDings)
             {
                 Play();
             }
+            else if(timeSinceDing > delayBetweenDings / 2 && thresholdMet)
+            {
+                SetAlarmLightColor();
+                lightController.AlteranateLitLight(0);
+            }
+
+            timeSinceDing+=Time.deltaTime;
         }
-        else if(timeSinceDing > delayBetweenDings / 2 && thresholdMet)
+        else if(!OtherThresholdMet())
         {
-            SetAlarmLightColor();
-            lightController.AlteranateLitLight(0);
+            lightController.TurnOffLight();
         }
-       
-        timeSinceDing+=Time.deltaTime;
+
     }
 
     private void SetAlarmLightColor()
@@ -120,7 +159,6 @@ public class AlarmPlayer : AudioPlayer
         {
             CheckForOtherAlarmsToPause();
             timeSinceDing = 0;
-            thresholdMet = true;
             CheckForDingLimitation();
             audioSource.PlayOneShot(audioClip);
             SetAlarmLightColor();

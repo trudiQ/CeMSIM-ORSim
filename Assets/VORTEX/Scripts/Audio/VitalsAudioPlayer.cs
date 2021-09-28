@@ -70,6 +70,7 @@ public class VitalsAudioPlayer : AudioPlayer
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = isAudio3D ? 1 : 0;
         audioSource.volume = volume;
+        audioSource.rolloffMode = AudioRolloffMode.Custom;
     }
 
     public override void Pause()
