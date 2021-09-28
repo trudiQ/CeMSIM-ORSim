@@ -44,7 +44,12 @@ public class TeleportManager : MonoBehaviour
 
     public void OperationRoomTeleportationTriggered()
     {
-        teleportationPrompt.SetActive(true);    
+        teleportationPrompt.SetActive(true);
+    }
+
+    public void OperationRoomTeleportationTriggerExit()
+    {
+        teleportationPrompt.SetActive(false);
     }
 
     public void AnteroomTeleportationTriggered()
