@@ -1000,6 +1000,19 @@ public class HapticSurgTools : MonoBehaviour
         joint = (FixedJoint)gameObject.AddComponent(typeof(FixedJoint));
         joint.connectedBody = body;
 
+        // Update colon grabbing states for colon motion controller
+        if (body.gameObject.name.Contains("sphere_"))
+        {
+            // Don't let surgeon lift colon if grab on further layers
+            int layer = int.Parse(body.gameObject.name[9].ToString());
+            if (layer == 0 || layer == 1)
+            {
+                int colon = int.Parse(body.gameObject.name[7].ToString());
+                gOperators.lsController.colonSecuredByForceps[colon] = true;
+                ColonMovementController.instance.ChangeFollowStates(colon, 1, ColonMovementController.instance.colon0FrontSphereStartPosition.Count == 0, toolTipSphere.transform);
+            }
+        }
+
         // Update UI
         gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Grasping colon");
     }
@@ -1020,13 +1033,23 @@ public class HapticSurgTools : MonoBehaviour
         if (grabbing == null) //Nothing to release
             return;
 
+        // Update colon grabbing states for colon motion controller
+        if (joint.connectedBody.gameObject.name.Contains("sphere_"))
+        {
+            // Do nothing if released sphere is not at front layers
+            int layer = int.Parse(joint.connectedBody.gameObject.name[9].ToString());
+            if (layer == 0 || layer == 1)
+            {
+                int colon = int.Parse(joint.connectedBody.gameObject.name[7].ToString());
+                gOperators.lsController.colonSecuredByForceps[colon] = false;
+                ColonMovementController.instance.ChangeFollowStates(colon, 0, false);
+            }
+        }
 
         Debug.Assert(joint != null);
 
         joint.connectedBody = null;
         Destroy(joint);
-
-
 
         grabbing = null;
 

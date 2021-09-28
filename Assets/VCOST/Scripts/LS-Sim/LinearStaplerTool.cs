@@ -609,6 +609,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     /// <returns></returns> Return float number that indicate if the controlled object is out of controlled path (if outside of 0-1 meaning it moves out of controlled path)
     public float LockToolMovement(Transform controlledObject, Vector3 startPosition, Vector3 endPosition, Vector3 rotateUpDir)
     {
+        Vector3 controlledObjectOriginalPosition = controlledObject.position;
         Vector3 objectToStartVector = controlledObject.position - startPosition;
         float movementRange = Vector3.Distance(startPosition, endPosition);
         float objectNormalToStartDistance = Vector3.Dot(objectToStartVector, Vector3.Normalize(endPosition - startPosition));
@@ -617,6 +618,9 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         // Rotate the LS tool to align it with the colon
         controlledObject.LookAt(controlledObject.position + (endPosition - startPosition).normalized, rotateUpDir);
         controlledObject.Rotate(0, -90 * Mathf.Sign(rotateUpDir.y), 0, Space.Self);
+
+        // If the controlled object is linear stapler and it is controlling the colon movement then use its original y position control the colon movement
+
 
         return objectNormalToStartDistance / movementRange;
     }

@@ -88,10 +88,14 @@ public class ColonMovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        MainUpdatingLoop();
+
         if (isTest)
         {
             TestColonMotion();
         }
+
+
     }
 
     public void MainUpdatingLoop()
@@ -118,9 +122,21 @@ public class ColonMovementController : MonoBehaviour
     }
 
 
-
-    public void ChangeFollowStates(int controlledColon, int newState, Transform newController = null)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="controlledColon"></param>
+    /// <param name="newState"></param>
+    /// <param name="newController"></param>
+    /// <param name="resetColonSphereData"></param>
+    public void ChangeFollowStates(int controlledColon, int newState, bool resetColonSphereData, Transform newController = null)
     {
+        // Determine if we need to re-initialize the colon sphere data
+        if (resetColonSphereData)
+        {
+            InitializeColonSphereData();
+        }
+
         switch (newState)
         {
             // Stop following anything
@@ -156,7 +172,7 @@ public class ColonMovementController : MonoBehaviour
     {
         colonController[controlledColon] = newForceps;
         controllerStartPosition[controlledColon] = activeForceps.position;
-        controllerStartPercent[controlledColon] = (float)followedSplinesTop0[0].position;
+        controllerStartPercent[controlledColon] = Mathf.Clamp01((colonController[controlledColon].position.y - controllerStartPosition[controlledColon].y) / (8.37f - 3.33f));
     }
 
     public void StopFollowForceps(int controlledColon)
@@ -166,6 +182,8 @@ public class ColonMovementController : MonoBehaviour
         {
             return;
         }
+
+        colonController[controlledColon] = null;
     }
 
     public void StartFollowLinearStaplerTilt(int controlledColon, Transform newStapler)
@@ -182,6 +200,8 @@ public class ColonMovementController : MonoBehaviour
         {
             return;
         }
+
+        colonController[controlledColon] = null;
     }
 
     public void StartFollowLinearStaplerMove(int controlledColon, Transform newStapler)
@@ -196,6 +216,44 @@ public class ColonMovementController : MonoBehaviour
         {
             return;
         }
+    }
+
+    /// <summary>
+    /// If the colon is both secured by the forceps and inserted by the stapler, then decide which tool is controlling the motion
+    /// </summary>
+    public void UpdateForcepsStaplerControlPriority()
+    {
+        if (linearStaplerTool.colonSecuredByForceps[0])
+        {
+            // If colon is currently controlled by forceps and the stapler inserted over 25% of total insertion depth, switch control over to stapler
+            if (globalOperators.m_insertDepth[0] >= 0.25 && updateMode[0] == 1)
+            {
+                ChangeFollowStates(0, 2, false, globalOperators.m_bInsert[0] == 1 ? linearStaplerTool.topTracker : linearStaplerTool.bottomTracker);
+            }
+
+            // If colon is currently controlled by the stapler and stapler insertion is below 18% of total insertion depth, switch control over to forceps
+            if (globalOperators.m_insertDepth[0] <= 0.18 && updateMode[0] == 2)
+            {
+                ChangeFollowStates(0, 1, false, activeForceps);
+            }
+        }
+
+        if (linearStaplerTool.colonSecuredByForceps[1])
+        {
+            // If colon is currently controlled by forceps and the stapler inserted over 25% of total insertion depth, switch control over to stapler
+            if (globalOperators.m_insertDepth[1] >= 0.25 && updateMode[1] == 1)
+            {
+                ChangeFollowStates(1, 2, false, globalOperators.m_bInsert[1] == 1 ? linearStaplerTool.topTracker : linearStaplerTool.bottomTracker);
+            }
+
+            // If colon is currently controlled by the stapler and stapler insertion is below 18% of total insertion depth, switch control over to forceps
+            if (globalOperators.m_insertDepth[1] <= 0.18 && updateMode[1] == 2)
+            {
+                ChangeFollowStates(1, 1, false, activeForceps);
+            }
+        }
+
+        // Need to let stapler "slip out" if the colon is controlled by forceps and the forceps is released
     }
 
     /// <summary>
@@ -221,6 +279,9 @@ public class ColonMovementController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     [ShowInInspector]
     public void InitializeColonSphereData()
     {
@@ -267,8 +328,8 @@ public class ColonMovementController : MonoBehaviour
         {
             for (int i = 0; i < colon1FrontSpheres.Count; i++)
             {
-                Vector3 topFollowerDisplacement = splineFollowersTop0[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionTop[Mathf.FloorToInt(i / 20f)];
-                Vector3 bottomFollowerDisplacement = splineFollowersBottom0[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionBottom[Mathf.FloorToInt(i / 20f)];
+                Vector3 topFollowerDisplacement = splineFollowersTop1[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionTop[Mathf.FloorToInt(i / 20f)];
+                Vector3 bottomFollowerDisplacement = splineFollowersBottom1[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionBottom[Mathf.FloorToInt(i / 20f)];
 
                 colon1FrontSpheres[i].position = colon1FrontSphereStartPosition[i] + bottomFollowerDisplacement + (topFollowerDisplacement - bottomFollowerDisplacement) * colon1SphereWeights[i];
             }
