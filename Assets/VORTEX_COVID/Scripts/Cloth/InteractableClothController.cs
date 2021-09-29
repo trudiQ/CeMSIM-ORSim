@@ -28,8 +28,8 @@ public class InteractableClothController : MonoBehaviour
             pair.IgnorePlayerCollision(playerCollidersToIgnore);
 
             // Subscribe to events so there is one point that information can be sent from
-            pair.OnEquip.AddListener(() => OnClothEquipped.Invoke(pair));
-            pair.OnUnequip.AddListener(() => OnClothUnequipped.Invoke(pair));
+            pair.OnEquip.AddListener((_) => OnClothEquipped.Invoke(pair));
+            pair.OnUnequip.AddListener((_) => OnClothUnequipped.Invoke(pair));
         }
 
         // After setting up every pair, ignore collision between scene and model cloth (includes self collision)
@@ -63,8 +63,8 @@ public class ClothPair
     public bool equipAtStart = false;
     public bool snapOnGrab = false; // Snap to/from the model when grabbed
 
-    public UnityEvent OnEquip;
-    public UnityEvent OnUnequip;
+    public UnityEvent<HVRHandGrabber> OnEquip;
+    public UnityEvent<HVRHandGrabber> OnUnequip;
 
     private bool movedOutOfThresholdAfterUnequip = true;
 
@@ -82,9 +82,9 @@ public class ClothPair
 
         // Make sure any events are triggered based on what is equipped at start
         if (equipAtStart)
-            OnEquip.Invoke();
+            OnEquip.Invoke(null);
         else
-            OnUnequip.Invoke();
+            OnUnequip.Invoke(null);
 
         modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted); // Subscribe to the grab event
         sceneCloth.onSceneClothInteracted.AddListener(OnSceneClothInteracted); // Subscribe to the grab event
@@ -147,8 +147,11 @@ public class ClothPair
         {
             if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
             {
+                // Get a reference to which grabber held the object, then invoke the equip event with it after the ForceRelease
+                HVRHandGrabber grabber = sceneCloth.GetGrabber();
+
                 ToggleModelCloth();
-                OnEquip.Invoke();
+                OnEquip.Invoke(grabber);
             }
             else if (!InThresholdDistance())
             {
@@ -179,7 +182,7 @@ public class ClothPair
         if (snapOnGrab)
         {
             ToggleModelCloth();
-            OnEquip.Invoke();
+            OnEquip.Invoke(grabber);
         }
     }
 
@@ -187,7 +190,7 @@ public class ClothPair
     private void OnWornClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
         ToggleModelCloth();
-        OnUnequip.Invoke();
+        OnUnequip.Invoke(grabber);
 
         if (!snapOnGrab)
             sceneCloth.ManualGrab(grabber);

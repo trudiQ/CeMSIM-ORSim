@@ -89,7 +89,7 @@ public class InteractableCloth : MonoBehaviour
     // Manually grab the object
     public void ManualGrab(HVRHandGrabber grabber)
     {
-        Debug.Log(grabber.TryGrab(interactable, true));
+        grabber.TryGrab(interactable, true);
     }
 
     // Forces the release of the object from a hand
@@ -109,6 +109,11 @@ public class InteractableCloth : MonoBehaviour
 
         if (rb)
             rb.isKinematic = !state;
+    }
+
+    public HVRHandGrabber GetGrabber()
+    {
+        return connectedHand;
     }
 
     // Show the offset position as a sphere when the object is selected
