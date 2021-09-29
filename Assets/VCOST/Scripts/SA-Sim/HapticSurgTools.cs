@@ -1042,7 +1042,10 @@ public class HapticSurgTools : MonoBehaviour
             {
                 int colon = int.Parse(joint.connectedBody.gameObject.name[7].ToString());
                 gOperators.lsController.colonSecuredByForceps[colon] = false;
-                ColonMovementController.instance.ChangeFollowStates(colon, 0, false);
+                if (ColonMovementController.instance.updateMode[colon] == 1)
+                {
+                    ColonMovementController.instance.ChangeFollowStates(colon, 0, false);
+                }
             }
         }
 

@@ -64,7 +64,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public float angleDifferenceCondition; // What's the maximum allowing angle difference from the LS tool to the colon direction for the LS tool to enter insertion phase
     public float tipExitProximityMultiplier; // How many times the tip exiting proximity range it is for the LS tool to exit insertion phase
     public LinearStaplerColonDetector topHalfColonDetector; // The trigger at the front of the LS that detects colon sphere and stop it inserting if the colon is not secured by forceps
-    public LinearStaplerColonDetector bottomHalfColonDetector; 
+    public LinearStaplerColonDetector bottomHalfColonDetector;
     // For LS tool after joining colon action
     public List<Transform> joinedColonFirstLayerSpheres;
     public List<Transform> joinedColonLastLayerSpheres;
@@ -719,6 +719,22 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         //return objectNormalToStartDistance / movementRange;
     }
 
+    public void UpdateStaplerMovementTrack(int stapler)
+    {
+        if (stapler == 0)
+        {
+            // Update tool moving axis info
+            topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
+            topPartMovingAxisEndPoint = GetPositionMean(topPartMovingAxisEnd);
+        }
+        else
+        {
+            // Update tool moving axis info
+            bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
+            bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
+        }
+    }
+
     /// <summary>
     /// Check if either part of the LS tool meets the condition to enter colon model through the opening
     /// </summary>
@@ -747,8 +763,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         topHalfInserted = true;
                         EnableTopPartCollision();
                         // Update tool moving axis info
-                        topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
-                        topPartMovingAxisEndPoint = GetPositionMean(topPartMovingAxisEnd);
+                        UpdateStaplerMovementTrack(0);
 
                         // Update tool UI
                         uiController.UpdateToolStatusText("lsTop", "Inserting in colon");
@@ -764,8 +779,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         globalOperators.m_bInsert[0] = 2;
                         bottomHalfInserted = true;
                         EnableBottomPartCollision();
-                        bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
-                        bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
+                        // Update tool moving axis info
+                        UpdateStaplerMovementTrack(1);
 
                         // Update tool UI
                         uiController.UpdateToolStatusText("lsBottom", "Inserting in colon");
@@ -787,8 +802,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         topHalfInserted = true;
                         EnableTopPartCollision();
                         // Update tool moving axis info
-                        topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
-                        topPartMovingAxisEndPoint = GetPositionMean(topPartMovingAxisEnd);
+                        UpdateStaplerMovementTrack(0);
 
                         // Update tool UI
                         uiController.UpdateToolStatusText("lsTop", "Inserting in colon");
@@ -804,8 +818,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         globalOperators.m_bInsert[1] = 2;
                         bottomHalfInserted = true;
                         EnableBottomPartCollision();
-                        bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
-                        bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
+                        // Update tool moving axis info
+                        UpdateStaplerMovementTrack(1);
 
                         // Update tool UI
                         uiController.UpdateToolStatusText("lsBottom", "Inserting in colon");
