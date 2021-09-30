@@ -914,6 +914,10 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         if (simStates == 1 && globalOperators.m_bInsert[0] == 0 && globalOperators.m_bInsert[1] == 0)
         {
             simStates = 2;
+
+            // Stop colon motion control from stapler for joining phase
+            ColonMovementController.instance.ChangeFollowStates(0, 0, false, false);
+            ColonMovementController.instance.ChangeFollowStates(1, 0, false, false);
         }
     }
 

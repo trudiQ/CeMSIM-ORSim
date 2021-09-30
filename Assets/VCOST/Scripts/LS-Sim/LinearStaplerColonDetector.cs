@@ -41,11 +41,23 @@ public class LinearStaplerColonDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (staplerController.simStates > 1)
+        {
+            return;
+        }
+
         if (other.name.Contains("sphere_"))
         {
             touchingColonSpheres++;
 
-            staplerTipLastTouchedColonLayers.Add(int.Parse(other.name[9].ToString()));
+            if (other.name[10] == '_')
+            {
+                staplerTipLastTouchedColonLayers.Add(int.Parse(other.name[9].ToString()));
+            }
+            else
+            {
+                staplerTipLastTouchedColonLayers.Add(int.Parse(other.name[9].ToString() + other.name[10].ToString()));
+            }
 
             if (belongedStapler != null)
             {
@@ -62,18 +74,35 @@ public class LinearStaplerColonDetector : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (staplerController.simStates > 1)
+        {
+            return;
+        }
+
         if (other.name.Contains("sphere_"))
         {
             touchingColonSpheres--;
 
-            staplerTipLastTouchedColonLayers.Remove(int.Parse(other.name[9].ToString()));
+            if (other.name[10] == '_')
+            {
+                staplerTipLastTouchedColonLayers.Remove(int.Parse(other.name[9].ToString()));
+            }
+            else
+            {
+                staplerTipLastTouchedColonLayers.Remove(int.Parse(other.name[9].ToString() + other.name[10].ToString()));
+            }
 
             if (belongedStapler != null)
             {
                 if (touchingColonSpheres <= 0)
                 {
                     touchingColonSpheres = 0;
-                    ReenableStapler();
+
+                    // Unfreeze the stapler if it is not locked already
+                    if (!staplerController.topTransformLocked)
+                    {
+                        ReenableStapler();
+                    }
                 }
             }
         }
