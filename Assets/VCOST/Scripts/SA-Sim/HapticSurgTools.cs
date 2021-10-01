@@ -29,6 +29,7 @@ public class HapticSurgTools : MonoBehaviour
     private HapticSurgTools seleSurgTool = null; // valid for selectors only but accessed by tools
     private List<GameObject> toolHapticGO = new List<GameObject>(); // valid for tools only but accessed by selectors
     private GameObject seleHapticGO = null; // valid for selectors only
+    public Transform defaultParent; // The original parent object of this haptic tool
 
     /// touching, grabing, holding, cutting tool actions (some of them could be true at the same time)
     private bool bTouching = false; //forceps, scissors
@@ -40,7 +41,7 @@ public class HapticSurgTools : MonoBehaviour
     public GameObject toolTipSphere = null; // forceps only
     private GameObject touching = null;         //!< Reference to the object currently touched
     private GameObject grabbing = null;         //!< Reference to the object currently grabbed
-    private FixedJoint joint = null;            //!< The Unity physics joint created between the stylus and the object being grabbed.
+    private Joint joint = null;            //!< The Unity physics joint created between the stylus and the object being grabbed.
     private FixedJoint holdJoint = null;        //!< Attach the tool to the sphere being held (forceps only)
     public enum PhysicsToggleStyle { none, onTouch, onGrab };
     public PhysicsToggleStyle physicsToggleStyle = PhysicsToggleStyle.none;   //!< Should the grabber script toggle the physics forces on the stylus? 
@@ -185,6 +186,8 @@ public class HapticSurgTools : MonoBehaviour
             LSSimDataRecording.currentPickedForceps = -1;
             LSSimDataRecording.forcepsTip = this.gameObject.transform;
         }
+
+        defaultParent = transform.parent;
     }
 
     void disableUnityCollisions()
@@ -476,7 +479,7 @@ public class HapticSurgTools : MonoBehaviour
                                 LSSimDataRecording.forcepsTip = tool4Select[i].toolTipSphere.transform;
                             }
                             // Update the active forceps for the colon movement controller
-                            ColonMovementController.instance.activeForceps = tool4Select[i].toolTipSphere.transform;
+                            ColonMovementController.instance.currentGrabbingForcepsController = toolHapticGO[i].GetComponent<HapticPlugin>();
                             // disable selector's haptics
                             seleHapticGO.SetActive(false);
                             bActive = false;
@@ -997,11 +1000,9 @@ public class HapticSurgTools : MonoBehaviour
             body = grabbing.GetComponent<Rigidbody>();
         }
 
-        joint = (FixedJoint)gameObject.AddComponent(typeof(FixedJoint));
-        joint.connectedBody = body;
-
+        bool isLifting = false;
         // Update colon grabbing states for colon motion controller
-        if (body.gameObject.name.Contains("sphere_"))
+        if (LinearStaplerTool.instance.simStates < 2 && body.gameObject.name.Contains("sphere_"))
         {
             // Don't let surgeon lift colon if grab on further layers
             int layer = int.Parse(body.gameObject.name[9].ToString());
@@ -1009,8 +1010,27 @@ public class HapticSurgTools : MonoBehaviour
             {
                 int colon = int.Parse(body.gameObject.name[7].ToString());
                 gOperators.lsController.colonSecuredByForceps[colon] = true;
-                ColonMovementController.instance.ChangeFollowStates(colon, 1, ColonMovementController.instance.colon0FrontSphereStartPosition.Count == 0, false, toolTipSphere.transform);
+                ColonMovementController.instance.ChangeFollowStates(colon, 1, ColonMovementController.instance.colon0FrontSphereStartPosition.Count == 0, false, ColonMovementController.instance.activeForcepsHaptic);
+                // Make forceps attach to the colon
+                toolHapticGO[0].GetComponent<HapticPlugin>().updateManipulatorTransform = false;
+                transform.parent = body.transform;
+                GetComponent<Rigidbody>().isKinematic = true;
+                ColonMovementController.instance.currentGrabbingForcepsTransform = transform;
+                ColonMovementController.instance.forcepsGrabInitialLocalPosition = transform.localPosition;
+
+                isLifting = true;
             }
+        }
+
+        if (!isLifting)
+        {
+            joint = (FixedJoint)gameObject.AddComponent(typeof(FixedJoint));
+            joint.connectedBody = body;
+        }
+        else
+        {
+            joint = (ConfigurableJoint)gameObject.AddComponent(typeof(ConfigurableJoint));
+            joint.connectedBody = body;
         }
 
         // Update UI
@@ -1046,6 +1066,10 @@ public class HapticSurgTools : MonoBehaviour
                 {
                     ColonMovementController.instance.ChangeFollowStates(colon, 0, false, false);
                 }
+                // Make forceps detach from the colon
+                toolHapticGO[0].GetComponent<HapticPlugin>().updateManipulatorTransform = true;
+                transform.parent = defaultParent;
+                GetComponent<Rigidbody>().isKinematic = false;
             }
         }
 

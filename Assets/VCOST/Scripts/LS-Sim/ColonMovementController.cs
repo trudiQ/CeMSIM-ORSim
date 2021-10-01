@@ -29,8 +29,11 @@ public class ColonMovementController : MonoBehaviour
     public List<Transform> colon1FrontSpheres;
     public float linearStaplerControlInsertionThreshold; // How deep the LS need to be inserted into the colon in order for the stapler to take over control of the colon motion
     public List<LinearStaplerColonDetector> staplerColonLayerDetectors;
+    public Transform activeForcepsHaptic; // Which forceps is the user using
 
-    public Transform activeForceps; // Which forceps is the user using
+    public HapticPlugin currentGrabbingForcepsController;
+    public Transform currentGrabbingForcepsTransform;
+    public Vector3 forcepsGrabInitialLocalPosition; // Initial local position of the forceps that's grabbing the colon sphere
     public List<Vector3> controllerStartPosition; // Position of the forceps or the linear stapler when user start to grab the colon with it or inserted the linear stapler while the grabbing forceps is released
     public List<float> controllerStartPercent; // Percentage of spline follower's position when user start to grab the colon with it or inserted the linear stapler
     public List<int> updateMode; // How the colon sphere position should be updated?
@@ -94,6 +97,13 @@ public class ColonMovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Update active forceps representer
+        if (currentGrabbingForcepsController != null && activeForcepsHaptic != null)
+        {
+            activeForcepsHaptic.position = currentGrabbingForcepsController.stylusPositionWorld;
+            activeForcepsHaptic.rotation = currentGrabbingForcepsController.stylusRotationWorld;
+        }
+
         insertionDepth[0] = globalOperators.m_insertDepth[0];
         insertionDepth[1] = globalOperators.m_insertDepth[1];
 
@@ -105,6 +115,22 @@ public class ColonMovementController : MonoBehaviour
         }
 
 
+    }
+
+    private void FixedUpdate()
+    {
+        if (updateMode.Contains(1))
+        {
+            currentGrabbingForcepsTransform.localPosition = forcepsGrabInitialLocalPosition;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (updateMode.Contains(1))
+        {
+            currentGrabbingForcepsTransform.localPosition = forcepsGrabInitialLocalPosition;
+        }
     }
 
     public void MainUpdatingLoop()
@@ -192,7 +218,7 @@ public class ColonMovementController : MonoBehaviour
     public void StartFollowForceps(int controlledColon, Transform newForceps, bool keepSplineFollowerPosition)
     {
         colonController[controlledColon] = newForceps;
-        controllerStartPosition[controlledColon] = activeForceps.position;
+        controllerStartPosition[controlledColon] = activeForcepsHaptic.position;
         if (keepSplineFollowerPosition)
         {
             controllerStartPercent[controlledColon] = (float)followedSplinesTop0[0].position;
@@ -272,7 +298,7 @@ public class ColonMovementController : MonoBehaviour
                 // Check if forceps is still securing the colon
                 if (linearStaplerTool.colonSecuredByForceps[0])
                 {
-                    ChangeFollowStates(0, 1, false, true, activeForceps);
+                    ChangeFollowStates(0, 1, false, true, activeForcepsHaptic);
                 }
                 else
                 {
@@ -295,7 +321,7 @@ public class ColonMovementController : MonoBehaviour
                 // Check if forceps is still securing the colon
                 if (linearStaplerTool.colonSecuredByForceps[0])
                 {
-                    ChangeFollowStates(1, 1, false, true, activeForceps);
+                    ChangeFollowStates(1, 1, false, true, activeForcepsHaptic);
                 }
                 else
                 {

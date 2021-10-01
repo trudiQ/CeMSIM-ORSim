@@ -142,6 +142,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public List<float> colonAInsertDepthRecord; // Record the tool insert depth inside colonA
     public List<float> colonBInsertDepthRecord;
     public List<float> insertDepthRecordTimeStamps;
+    public static LinearStaplerTool instance;
 
     // Tool moving axis
     public List<Transform> topPartMovingAxisStart;
@@ -174,6 +175,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         colonSecuredByForceps = new List<bool>();
         colonSecuredByForceps.Add(false);
         colonSecuredByForceps.Add(false);
+
+        instance = this;
     }
 
     void Update() //Checks status of knob, lever, and linear stapler in every frame
