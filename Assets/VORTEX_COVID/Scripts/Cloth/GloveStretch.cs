@@ -14,10 +14,14 @@ public class GloveStretch : MonoBehaviour
     private HVRGrabbable grabbable;
     private PPEOptionPoint closestPoint;
     private bool grabbed = false;
+    private bool pointsActivated = false;
 
     void Start()
     {
         gameObject.SetActive(false);
+
+        SetPointsActive(false);
+
         grabbable = GetComponent<HVRGrabbable>();
     }
 
@@ -25,6 +29,9 @@ public class GloveStretch : MonoBehaviour
     {
         if (grabbed)
         {
+            if (!pointsActivated)
+                SetPointsActive(true);
+
             float minimumDistance = float.MaxValue;
             int minimumIndex = -1;
 
@@ -64,7 +71,18 @@ public class GloveStretch : MonoBehaviour
     {
         Debug.Log("Selected: " + closestPoint.name);
         closestPoint.Select();
+
         gameObject.SetActive(false);
+        SetPointsActive(false);
+
         grabbed = false;
+    }
+
+    private void SetPointsActive(bool state)
+    {
+        foreach (PPEOptionPoint point in stretchReferencePoints)
+            point.gameObject.SetActive(state);
+
+        pointsActivated = state;
     }
 }
