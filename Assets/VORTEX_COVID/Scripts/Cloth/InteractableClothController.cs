@@ -93,6 +93,7 @@ public class ClothPair
     public bool equipAtStart = false;
     public bool snapOnGrab = false; // Snap to/from the model when grabbed
     public bool isEquipped { get; private set; } = false;
+    public bool ignoreAutomaticMeshHide = false; // Enable or disable automatically disabling the worn PPE when unequipping
 
     public UnityEvent OnEquip;
     public UnityEvent OnUnequip;
@@ -168,7 +169,7 @@ public class ClothPair
     // Sets the model cloth to a specific state, sets the model and scene cloth to opposite state
     public void SetModelClothActive(bool state)
     {
-        modelCloth.SetActive(state);
+        modelCloth.SetActive(state, !ignoreAutomaticMeshHide);
 
         if (modelCloth.isActive)
             movedOutOfThresholdAfterUnequip = false;
