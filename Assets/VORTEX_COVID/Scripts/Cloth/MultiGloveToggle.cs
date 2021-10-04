@@ -21,7 +21,9 @@ public class MultiGloveToggle : MonoBehaviour
 
     public void GloveUnequipped()
     {
-        if (--currentGloveEquippedCount == 0)
+        currentGloveEquippedCount = Mathf.Max(0, --currentGloveEquippedCount);
+
+        if (currentGloveEquippedCount == 0)
         {
             gloveObjectWithSkinnedMesh.SetActive(false);
             handObjectWithSkinnedMesh.SetActive(true);
