@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using Dissonance;
 using UnityEngine;
@@ -12,7 +12,8 @@ namespace CEMSIM
     {
         public class CEMSIMVoicePlayer : MonoBehaviour, IDissonancePlayer
         {
-            private bool isMine = false;
+            public bool isMine = false;
+            public bool isServerDummyPlayer = false; // true: a dummy player running at server
             private DissonanceComms comm;
             private Coroutine _startCo;
 
@@ -38,7 +39,7 @@ namespace CEMSIM
                 get { return trackingPoint.transform.rotation; }
             }
 
-            public void initialization(bool isLocalPlayer=false)
+            public void initialization(bool isLocalPlayer=false, bool _isServerDummyPlayer = false)
             {
                 comm = FindObjectOfType<DissonanceComms>();
                 if (comm == null)
@@ -48,6 +49,7 @@ namespace CEMSIM
                 }
 
                 isMine = isLocalPlayer;
+                isServerDummyPlayer = _isServerDummyPlayer;
 
                 if (isMine)
                 {
@@ -84,8 +86,18 @@ namespace CEMSIM
                 StartTracking();
 
                 // multicast the playerId
+
                 if (isMine)
-                    ClientSend.SendVoiceChatPlayerId(PlayerId);
+                    if (isServerDummyPlayer)
+                    {
+                        ServerSend.SendVoiceChatPlayerId(0, PlayerId, true);
+                        ServerInstance.dissonancePlayerId = PlayerId;
+
+                        Debug.Log($"Server chooses dissonance player id {PlayerId}");
+
+                    }
+                    else
+                        ClientSend.SendVoiceChatPlayerId(PlayerId);
 
             }
             

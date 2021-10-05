@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Collections;
@@ -339,7 +339,11 @@ namespace CEMSIM
                     }
                 }
 
-                
+                // 3. inform the current player the dissonance player ID of the dummy server player
+                ServerSend.SendVoiceChatPlayerId(id, ServerInstance.dissonancePlayerId, false);
+
+                // Send current environment state to newly added user
+                ServerNetworkManager.SendCurrentEnvironmentStates(id); 
 
 
             }

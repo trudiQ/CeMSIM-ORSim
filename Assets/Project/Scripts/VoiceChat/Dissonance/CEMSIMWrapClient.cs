@@ -12,12 +12,16 @@ namespace CEMSIM
         public class CEMSIMWrapClient : BaseClient<CEMSIMWrapServer, CEMSIMWrapClient, int>
         {
             private CEMSIMCommsNetwork comm;
+
+            private int counter = 0; // debug use only
+
+            // We allow the server to fake a client for monitoring. so we need to distinguish whether it's a server side fake client or a real client.
             public bool printNetworkTraffic = false;
-            public CEMSIMWrapClient(CEMSIMCommsNetwork network) : base(network)
+            public CEMSIMWrapClient(CEMSIMCommsNetwork _network) : base(_network)
             {
                 // do nothing, because CeMSIMWrapClient is purely a wrap up class.
-                comm = network;
-                printNetworkTraffic = network.printNetworkTraffic;
+                comm = _network;
+                printNetworkTraffic = _network.printNetworkTraffic;
             }
 
             public override void Connect()
@@ -42,14 +46,27 @@ namespace CEMSIM
             {
                 if (printNetworkTraffic)
                     Debug.Log("[VoiceChat] Sending TCP packet");
-                ClientSend.SendVoiceChatData(_voiceChatData, false);
+                if (comm.isClientSide)
+                    ClientSend.SendVoiceChatData(_voiceChatData, false); // real client
+                else
+                {
+                    // for the fake client running at the server side, we directly pass the data to the packet handling function.
+                    ServerNetworkManager.instance.dissonanceServer.PacketDelivered(0, _voiceChatData);
+                }
             }
 
             protected override void SendUnreliable(ArraySegment<byte> _voiceChatData)
             {
                 if (printNetworkTraffic)
                     Debug.Log("[VoiceChat] Sending UDP packet");
-                ClientSend.SendVoiceChatData(_voiceChatData, true);
+                if (comm.isClientSide)
+                    ClientSend.SendVoiceChatData(_voiceChatData, true);
+                else
+                {
+                    // for the fake client running at the server side, we directly pass the data to the packet handling function.
+                    ServerNetworkManager.instance.dissonanceServer.PacketDelivered(0, _voiceChatData);
+                }
+
             }
 
             public ushort? PacketDelivered(ArraySegment<byte> packet)

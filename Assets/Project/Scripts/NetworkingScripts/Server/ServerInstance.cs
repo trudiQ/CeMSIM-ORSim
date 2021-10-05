@@ -21,6 +21,9 @@ namespace CEMSIM
             public delegate void PacketHandler(int _fromClient, Packet _packet);
             public static Dictionary<int, PacketHandler> packetHandlers;
 
+            public static string dissonancePlayerId; // the player id of a dummy dissonance client running at the server
+
+
             public static void Start(int _maxPlayers, int _port)
             {
                 maxPlayers = _maxPlayers;

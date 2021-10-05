@@ -31,16 +31,24 @@ namespace CEMSIM
             {
                 if(printNetworkTraffic)
                     Debug.Log($"[VoiceChat] Sending TCP packet to {_toClient} ");
-
-                ServerSend.SendVoiceChatData(_toClient, packet, false);
+                if (_toClient == 0)
+                {
+                    ServerNetworkManager.instance.dissonanceDummyClient.PacketDelivered(packet);
+                }
+                else
+                    ServerSend.SendVoiceChatData(_toClient, packet, false);
             }
 
             protected override void SendUnreliable(int _toClient, ArraySegment<byte> packet)
             {
                 if (printNetworkTraffic)
                     Debug.Log($"[VoiceChat] Sending UDP packet to {_toClient} ");
-
-                ServerSend.SendVoiceChatData(_toClient, packet, true);
+                if (_toClient == 0)
+                {
+                    ServerNetworkManager.instance.dissonanceDummyClient.PacketDelivered(packet);
+                }
+                else
+                    ServerSend.SendVoiceChatData(_toClient, packet, true);
             }
 
             public override void Connect()

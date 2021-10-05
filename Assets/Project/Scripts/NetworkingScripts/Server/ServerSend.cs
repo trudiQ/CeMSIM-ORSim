@@ -315,6 +315,8 @@ namespace CEMSIM
 
             public static void SendVoiceChatData(int _toClient, ArraySegment<byte> _voiceData, bool _isUDP = true)
             {
+
+
                 using (Packet _packet = new Packet((int)ServerPackets.voiceChatData))
                 {
                     _packet.Write(_voiceData);
@@ -323,7 +325,6 @@ namespace CEMSIM
                     else
                         SendTCPData(_toClient, _packet);
                 }
-
             }
 
             /// <summary>
@@ -339,10 +340,14 @@ namespace CEMSIM
                     _packet.Write(_tgtClient);
                     _packet.Write(_playerId);
 
-                    if(_needMulticast)
+                    if (_needMulticast)
+                    {
                         MulticastExceptOneTCPData(_tgtClient, _packet);
+                    }
                     else
+                    {
                         SendTCPData(_tgtClient, _packet);
+                    }
                 }
             }
 
