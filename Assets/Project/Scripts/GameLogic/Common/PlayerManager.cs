@@ -240,14 +240,14 @@ namespace CEMSIM
                 if(facingObject != null && overheadUI != null)
                 {
                     Vector3 relativePos = _position - facingObject.transform.position;
-                    Vector3 overheadPosition = overheadUI.transform.position;
+                    //Vector3 overheadPosition = overheadUI.transform.position;
 
                     // the second argument, upwards, defaults to Vector3.up
                     Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
-                    overheadPosition.y = Math.Max(overheadPosition.y, playerHeight);
+                    //overheadPosition.y = Math.Max(overheadPosition.y, playerHeight);
 
                     overheadUI.transform.rotation = rotation;
-                    overheadUI.transform.position = overheadPosition;
+                    //overheadUI.transform.position = overheadPosition;
                 }
 
             }
