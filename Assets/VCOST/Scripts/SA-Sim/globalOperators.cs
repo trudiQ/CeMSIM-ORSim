@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System;
+using System.Linq;
 
 /// <summary>
 /// Orignally derived from 'testSceneOperations.cs'
@@ -14,6 +15,7 @@ public class globalOperators : MonoBehaviour
     public int m_numSphereModels = 0; // specified when creating sphereJointModels
     public GameObject[] m_sphereJointObjs;
     public sphereJointModel[] m_sphereJointModels;
+    public List<GameObject> m_sphereJointObjects;
 
     /// meshes
     public int m_numBindColonMeshes = 0; // #colon meshs bound to sphereJointModels
@@ -102,10 +104,12 @@ public class globalOperators : MonoBehaviour
         m_sphereJointModels = new sphereJointModel[m_numSphereModels];
         m_colonMeshObjs = new GameObject[m_numSphereModels];
         m_colonMeshes = new colonMesh[m_numSphereModels];
+        m_sphereJointObjects = new List<GameObject>();
         for (int i = 0; i < m_numSphereModels; i++)
         {
             m_sphereJointObjs[i] = GameObject.Find("sphereJointGameObj" + i.ToString());
             m_sphereJointModels[i] = m_sphereJointObjs[i].GetComponent<sphereJointModel>();
+            m_sphereJointObjects.AddRange(m_sphereJointObjs[i].GetComponentsInChildren<sphereJointsInfo>().Select(s => s.gameObject));
 
             if (!m_sphereJointObjs[i] || !m_sphereJointModels[i])
                 return;
@@ -264,8 +268,8 @@ public class globalOperators : MonoBehaviour
         for (int l = 0; l < numLayer2Join; l++)
         {
             // connect sphereA of object0 to sphereB of object1
-            GameObject sphere0A = GameObject.Find("sphere_" + objIdx[0].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + m_sphereIdx2Split[0].ToString());
-            GameObject sphere1B = GameObject.Find("sphere_" + objIdx[1].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + sphereIdxB[1].ToString());
+            GameObject sphere0A = m_sphereJointObjects.Find(g => g.name == "sphere_" + objIdx[0].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + m_sphereIdx2Split[0].ToString());
+            GameObject sphere1B = m_sphereJointObjects.Find(g => g.name == "sphere_" + objIdx[1].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + sphereIdxB[1].ToString());
             if (sphere0A && sphere1B)
             {
                 // move the spheres to the middle
@@ -274,6 +278,9 @@ public class globalOperators : MonoBehaviour
                 dist0A1B = Vector3.Distance(sphere0A.transform.position, sphere1B.transform.position);
                 sphere0A.transform.position = sphere0A.transform.position + (0.5f * dist0A1B - sphereRadius[0]) * vec0A1B;
                 sphere1B.transform.position = sphere1B.transform.position - (0.5f * dist0A1B - sphereRadius[1]) * vec0A1B;
+                // move the spheres up a bit
+                //sphere0A.transform.position = sphere0A.transform.position + Vector3.up;
+                //sphere1B.transform.position = sphere1B.transform.position + Vector3.up;
                 // add a fixed joint
                 FixedJoint joint0A1B = sphere0A.AddComponent<FixedJoint>();
                 joint0A1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
@@ -293,8 +300,8 @@ public class globalOperators : MonoBehaviour
             }
 
             // connect sphereA of object1 to sphereB of object0
-            GameObject sphere1A = GameObject.Find("sphere_" + objIdx[1].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + m_sphereIdx2Split[1].ToString());
-            GameObject sphere0B = GameObject.Find("sphere_" + objIdx[0].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + sphereIdxB[0].ToString());
+            GameObject sphere1A = m_sphereJointObjects.Find(g => g.name == "sphere_" + objIdx[1].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + m_sphereIdx2Split[1].ToString());
+            GameObject sphere0B = m_sphereJointObjects.Find(g => g.name == "sphere_" + objIdx[0].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + sphereIdxB[0].ToString());
             if (sphere1A && sphere0B)
             {
                 // move the spheres to the middle
@@ -304,9 +311,68 @@ public class globalOperators : MonoBehaviour
                 dist1A0B = Vector3.Distance(sphere1A.transform.position, sphere0B.transform.position);
                 //sphere1A.transform.position = sphere1A.transform.position + (0.5f * dist1A0B - sphereRadius[1]) * vec1A0B;
                 //sphere0B.transform.position = sphere0B.transform.position - (0.5f * dist1A0B - sphereRadius[0]) * vec1A0B;
+                // move the spheres up a bit
+                sphere1A.transform.position = sphere1A.transform.position + Vector3.up * 1;
+                sphere0B.transform.position = sphere0B.transform.position + Vector3.up * 1;
                 // add a fixed joint
                 FixedJoint joint1A0B = sphere1A.AddComponent<FixedJoint>();
                 joint1A0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
+                // add more fixed joint
+                FixedJoint joint0A0B = sphere0A.AddComponent<FixedJoint>();
+                joint0A0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
+                FixedJoint joint1A1B = sphere1A.AddComponent<FixedJoint>();
+                joint1A1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
+
+                GameObject sphere0C = m_sphereJointObjects.Find(g => g.name == "sphere_" + 0.ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + 5.ToString());
+                sphere0C.transform.position = sphere0C.transform.position + Vector3.up * 0.5f;
+                FixedJoint joint0C0B = sphere0C.AddComponent<FixedJoint>();
+                joint0C0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
+                FixedJoint joint0C1B = sphere0C.AddComponent<FixedJoint>();
+                joint0C1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
+                GameObject sphere1C = m_sphereJointObjects.Find(g => g.name == "sphere_" + 1.ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + 13.ToString());
+                sphere1C.transform.position = sphere1C.transform.position + Vector3.up * 0.5f;
+                FixedJoint joint1C0B = sphere1C.AddComponent<FixedJoint>();
+                joint1C0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
+                FixedJoint joint1C1B = sphere1C.AddComponent<FixedJoint>();
+                joint1C1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
+                // reconfigure neighbor joints
+                List<ConfigurableJoint> joints0 = sphere0B.GetComponents<ConfigurableJoint>().ToList();
+                foreach (ConfigurableJoint j in joints0)
+                {
+                    Rigidbody sphere = j.connectedBody;
+                    Destroy(j);
+                    FixedJoint newJ = sphere0B.AddComponent<FixedJoint>();
+                    newJ.connectedBody = sphere;
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    List<ConfigurableJoint> joints1 =
+                        m_sphereJointObjects.Find(g => g.name == "sphere_" + objIdx[1].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + i.ToString()).
+                        GetComponents<ConfigurableJoint>().ToList();
+                    foreach (ConfigurableJoint j in joints1)
+                    {
+                        if (j.connectedBody.name == sphere1A.name)
+                        {
+                            GameObject sphere = j.gameObject;
+                            Destroy(j);
+                            ConfigurableJoint newJ = sphere.AddComponent<ConfigurableJoint>();
+                            newJ.connectedBody = sphere1A.GetComponent<Rigidbody>();
+                        }
+                    }
+                    //List<ConfigurableJoint> joints2 =
+                    //    m_sphereJointObjects.Find(g => g.name == "sphere_" + objIdx[1].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + i.ToString()).
+                    //    GetComponents<ConfigurableJoint>().ToList();
+                    //foreach (ConfigurableJoint j in joints2)
+                    //{
+                    //    if (j.connectedBody.name == sphere1C.name)
+                    //    {
+                    //        GameObject sphere = j.gameObject;
+                    //        Destroy(j);
+                    //        ConfigurableJoint newJ = sphere.AddComponent<ConfigurableJoint>();
+                    //        newJ.connectedBody = sphere1C.GetComponent<Rigidbody>();
+                    //    }
+                    //}
+                }
                 // reconfigure the joint
                 //joint1A0B.linearLimitSpring = new SoftJointLimitSpring() { spring = 50.0f, damper = 50.0f };
                 //joint1A0B.linearLimit = new SoftJointLimit() { limit = 0.01f };
@@ -1095,7 +1161,7 @@ public class globalOperators : MonoBehaviour
             // Evaluate the final score and time
             if (lsController && MetricsScoringManager)
             {
-                if (MetricsScoringManager.m_bFinalResultEvaluated == false && (m_bFinalClosure == true || m_bSimEnd == true)) 
+                if (MetricsScoringManager.m_bFinalResultEvaluated == false && (m_bFinalClosure == true || m_bSimEnd == true))
                 {
                     MetricsScoringManager.evaluateLSCompletion();
                 }
