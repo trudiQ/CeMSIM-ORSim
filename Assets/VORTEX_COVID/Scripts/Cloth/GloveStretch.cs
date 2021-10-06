@@ -13,13 +13,14 @@ public class GloveStretch : MonoBehaviour
 
     private HVRGrabbable grabbable;
     private PPEOptionPoint closestPoint;
+    private Transform originalParent;
     private bool grabbed = false;
     private bool pointsActivated = false;
 
     void Start()
     {
+        originalParent = transform.parent;
         gameObject.SetActive(false);
-
         SetPointsActive(false);
 
         grabbable = GetComponent<HVRGrabbable>();
@@ -60,7 +61,7 @@ public class GloveStretch : MonoBehaviour
     {
         if (grabber)
         {
-            Debug.Log("Grabbed");
+            transform.parent = null;
             gameObject.SetActive(true);
             grabber.TryGrab(grabbable, true);
             grabbed = true;
@@ -69,11 +70,11 @@ public class GloveStretch : MonoBehaviour
 
     public void SelectClosestPoint()
     {
-        Debug.Log("Selected: " + closestPoint.name);
         closestPoint.Select();
 
         gameObject.SetActive(false);
         SetPointsActive(false);
+        transform.parent = originalParent;
 
         grabbed = false;
     }
