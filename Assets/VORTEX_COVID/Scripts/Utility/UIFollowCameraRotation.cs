@@ -9,6 +9,6 @@ public class UIFollowCameraRotation : MonoBehaviour
     private void LateUpdate()
     {
         if (gameObject.activeInHierarchy)
-            transform.LookAt(transform.position + cameraTransform.forward, Vector3.up);
+            transform.LookAt(transform.position + cameraTransform.forward, cameraTransform.rotation * Vector3.up);
     }
 }

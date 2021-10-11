@@ -9,8 +9,6 @@ public class GloveStretch : MonoBehaviour
 {
     public PPEOptionPoint[] stretchReferencePoints;
 
-    public float stretchPointDistanceThreshold = 1f;
-
     private HVRGrabbable grabbable;
     private PPEOptionPoint closestPoint;
     private Transform originalParent;
@@ -40,17 +38,18 @@ public class GloveStretch : MonoBehaviour
             {
                 float distance = Vector3.Distance(transform.position, stretchReferencePoints[i].transform.position);
 
-                if (distance < stretchPointDistanceThreshold && distance < minimumDistance)
+                if (distance < minimumDistance)
                 {
                     minimumDistance = distance;
                     minimumIndex = i;
-                    Debug.Log("Closest: " + stretchReferencePoints[i].name);
                 }
             }
 
             if (closestPoint != stretchReferencePoints[minimumIndex])
             {
-                closestPoint?.Unhover();
+                if (closestPoint)
+                    closestPoint.Unhover();
+
                 closestPoint = stretchReferencePoints[minimumIndex];
                 closestPoint.Hover();
             }
