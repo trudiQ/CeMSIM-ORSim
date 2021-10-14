@@ -6,12 +6,14 @@ public class MaterialVisibilityToggle : MonoBehaviour
 {
     public new Renderer renderer;
     public int[] materialSlotsToToggle;
+    public Material defaultMaterial;
+    public Material transparentMaterial;
 
     public void ShowMaterial(int index)
     {
         if (index >= 0 && index < materialSlotsToToggle.Length)
         {
-            SetOpacity(materialSlotsToToggle[index], 1);
+            SetOpacity(materialSlotsToToggle[index], false);
         }
         else
             Debug.LogWarning("MaterialVisibilityToggle material index out of range: Requested " + index + ", Max " + (materialSlotsToToggle.Length - 1));
@@ -21,7 +23,7 @@ public class MaterialVisibilityToggle : MonoBehaviour
     {
         if (index >= 0 && index < materialSlotsToToggle.Length)
         {
-            SetOpacity(materialSlotsToToggle[index], 0);
+            SetOpacity(materialSlotsToToggle[index], true);
         }
         else
             Debug.LogWarning("MaterialVisibilityToggle material index out of range: Requested " + index + ", Max " + (materialSlotsToToggle.Length - 1));
@@ -31,17 +33,27 @@ public class MaterialVisibilityToggle : MonoBehaviour
     {
         foreach(int i in materialSlotsToToggle)
         {
-            SetOpacity(i, 1);
+            SetOpacity(i, false);
         }
     }
 
-    private void SetOpacity(int index, float opacity)
+    private void SetOpacity(int index, bool hide)
     {
         if (index >= 0 && index < renderer.materials.Length)
         {
-            Material mat = renderer.materials[index];
+            //renderer.materials[index] = hide == true ? transparentMaterial : originalMaterial;
 
-            mat.SetColor("_Color", new Color(mat.color.r, mat.color.g, mat.color.b, opacity));
+            Material[] newMaterials = new Material[renderer.materials.Length];
+
+            for (int i = 0; i < renderer.materials.Length; i++)
+            {
+                if (i == index)
+                    newMaterials[i] = hide == true ? transparentMaterial : defaultMaterial;
+                else
+                    newMaterials[i] = renderer.materials[i];
+            }
+
+            renderer.materials = newMaterials;
         }
         else
             Debug.LogWarning("MaterialVisibilityToggle renderer index out of range: Requested " + index + ", Max " + (renderer.materials.Length - 1));
