@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class PPEClothSwitcher : MonoBehaviour
 {
-    public GameObject[] objectsWithMesh;
-    public GameObject objectWithHandMesh;
+    public GameObject[] objectsWithClothMesh;
+    public MaterialVisibilityToggle handMeshMaterialToggle;
 
     public void Show(int index)
     {
-        if (index >= 0 && index < objectsWithMesh.Length)
+        if (index >= 0 && index < objectsWithClothMesh.Length)
         {
-            objectsWithMesh[index].SetActive(true);
-            objectWithHandMesh.SetActive(false);
+            objectsWithClothMesh[index].SetActive(true);
+            handMeshMaterialToggle.HideMaterial(index);
         }
         else
             Debug.LogWarning("ClothSwitcher index out of range.");
@@ -20,17 +20,20 @@ public class PPEClothSwitcher : MonoBehaviour
 
     public void Hide(int index)
     {
-        if (index >= 0 && index < objectsWithMesh.Length)
-            objectsWithMesh[index].SetActive(false);
+        if (index >= 0 && index < objectsWithClothMesh.Length)
+        {
+            objectsWithClothMesh[index].SetActive(false);
+            handMeshMaterialToggle.ShowMaterial(index);
+        }
         else
             Debug.LogWarning("ClothSwitcher index out of range.");
     }
 
     public void HideAll()
     {
-        foreach (GameObject mesh in objectsWithMesh)
-            mesh.SetActive(false);
+        foreach (GameObject clothMesh in objectsWithClothMesh)
+            clothMesh.SetActive(false);
 
-        objectWithHandMesh.SetActive(true);
+        handMeshMaterialToggle.ShowAll();
     }
 }
