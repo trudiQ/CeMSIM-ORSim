@@ -41,6 +41,10 @@ public class LinearStaplerColonDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!globalOperators.m_bSimStart)
+        {
+            return;
+        }
         if (staplerController != null && staplerController.simStates > 1)
         {
             return;
@@ -74,6 +78,10 @@ public class LinearStaplerColonDetector : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (!globalOperators.m_bSimStart)
+        {
+            return;
+        }
         if (staplerController != null && staplerController.simStates > 1)
         {
             return;

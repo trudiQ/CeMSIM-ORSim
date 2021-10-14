@@ -69,6 +69,20 @@ public class HapticSurgTools : MonoBehaviour
     // omni tools animations
     public OmniToolsAnimations tAnimations = null;
 
+    // tool collision stopper
+    /// Algorithm: when tool collide a colon sphere, save the point of collision (pB) and the position of the sphere (pA), tool tip collider position will be pC
+    /// also save the haptics position pD
+    /// continue measure the angle between the vector pApB to pApC, when the angle is greater than the threshold then stop the tool
+    /// when the tool is stopped, continue measure the distance between the still updating haptics position pE to pA, if the length of pEpA > pDpA, then restore tool movement
+    public Transform collisionObjectTrans; // Transform of the object that is colliding with the tool
+    public Vector3 collidingPoint; // World position where the tool collide the object
+    public Vector3 collidingObjectPoint; // World position of the collided object when the tool collide the object
+    public Vector3 objectCollidingPoint; // World position of the tool when it collide the object
+    public Transform collidingTip; // Which tip collider collided
+    public Vector3 toolLockingPosition; // Where do we lock the tool's movement
+    public bool lockToolDueColonContact; // Do we lock tool movement due to collision with colon
+    public float stopThresholdAngle; // 
+
     //! Automatically called for initialization
     void Start()
     {
@@ -966,7 +980,7 @@ public class HapticSurgTools : MonoBehaviour
 
         if (grabbing != null) // Already grabbing
             return;
-        if (touchedObject == null) // Nothing to grab
+        if (touchedObject == null && !lockToolDueColonContact) // Nothing to grab
             return;
 
         // Grabbing a grabber is bad news.
@@ -1024,6 +1038,7 @@ public class HapticSurgTools : MonoBehaviour
 
         if (!isLifting)
         {
+            grabbing.transform.position = collidingTip.position;
             joint = (FixedJoint)gameObject.AddComponent(typeof(FixedJoint));
             joint.connectedBody = body;
         }
@@ -1035,6 +1050,8 @@ public class HapticSurgTools : MonoBehaviour
 
         // Update UI
         gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Grasping colon");
+
+        lockToolDueColonContact = false;
     }
     //! changes the layer of an object, and every child of that object.
     static void SetLayerRecursively(GameObject go, int layerNumber)
@@ -1090,5 +1107,49 @@ public class HapticSurgTools : MonoBehaviour
     public bool isGrabbing()
     {
         return (grabbing != null);
+    }
+
+    public void OnCollidingColon(Collision collision)
+    {
+        collisionObjectTrans = collision.collider.transform;
+        collidingPoint = collision.GetContact(0).point;
+        collidingObjectPoint = collision.collider.transform.position;
+        objectCollidingPoint = transform.position;
+        collidingTip = collision.GetContact(0).thisCollider.transform;
+    }
+
+    public void UpdateCollisionStatus()
+    {
+        if (grabbing)
+        {
+            return;
+        }
+
+        Vector3 collisionVector = collidingPoint - collidingObjectPoint;
+        Vector3 toolTipVector = collidingTip.position - collidingObjectPoint;
+        if (Vector3.Angle(toolTipVector, collisionVector) > stopThresholdAngle && !lockToolDueColonContact)
+        {
+            lockToolDueColonContact = true;
+            toolLockingPosition = transform.position;
+        }
+        Vector3 collisionDistance = objectCollidingPoint - collidingObjectPoint;
+        Vector3 toolDistance = transform.position - collidingObjectPoint;
+        if (toolDistance.magnitude > collisionDistance.magnitude && lockToolDueColonContact)
+        {
+            lockToolDueColonContact = false;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (grabbing)
+        {
+            return;
+        }
+
+        if (lockToolDueColonContact)
+        {
+            transform.position = toolLockingPosition;
+        }
     }
 }

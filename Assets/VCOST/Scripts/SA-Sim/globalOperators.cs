@@ -312,8 +312,8 @@ public class globalOperators : MonoBehaviour
                 //sphere1A.transform.position = sphere1A.transform.position + (0.5f * dist1A0B - sphereRadius[1]) * vec1A0B;
                 //sphere0B.transform.position = sphere0B.transform.position - (0.5f * dist1A0B - sphereRadius[0]) * vec1A0B;
                 // move the spheres up a bit
-                sphere1A.transform.position = sphere1A.transform.position + Vector3.up * 1;
-                sphere0B.transform.position = sphere0B.transform.position + Vector3.up * 1;
+                sphere1A.transform.position = new Vector3(sphere1A.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere1A.transform.position.z);
+                sphere0B.transform.position = new Vector3(sphere0B.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere0B.transform.position.z);
                 // add a fixed joint
                 FixedJoint joint1A0B = sphere1A.AddComponent<FixedJoint>();
                 joint1A0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
@@ -324,17 +324,23 @@ public class globalOperators : MonoBehaviour
                 joint1A1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
 
                 GameObject sphere0C = m_sphereJointObjects.Find(g => g.name == "sphere_" + 0.ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + 5.ToString());
-                sphere0C.transform.position = sphere0C.transform.position + Vector3.up * 0.5f;
+                sphere0C.transform.position = new Vector3(sphere0C.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere0C.transform.position.z);
                 FixedJoint joint0C0B = sphere0C.AddComponent<FixedJoint>();
                 joint0C0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
                 FixedJoint joint0C1B = sphere0C.AddComponent<FixedJoint>();
                 joint0C1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
                 GameObject sphere1C = m_sphereJointObjects.Find(g => g.name == "sphere_" + 1.ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + 13.ToString());
-                sphere1C.transform.position = sphere1C.transform.position + Vector3.up * 0.5f;
+                sphere1C.transform.position = new Vector3(sphere1C.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere1C.transform.position.z);
                 FixedJoint joint1C0B = sphere1C.AddComponent<FixedJoint>();
                 joint1C0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
                 FixedJoint joint1C1B = sphere1C.AddComponent<FixedJoint>();
                 joint1C1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
+                GameObject sphere1D = m_sphereJointObjects.Find(g => g.name == "sphere_" + 1.ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + 12.ToString());
+                sphere1D.transform.position = new Vector3(sphere1D.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere1D.transform.position.z);
+                FixedJoint joint1D0B = sphere1D.AddComponent<FixedJoint>();
+                joint1D0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
+                FixedJoint joint1D1B = sphere1D.AddComponent<FixedJoint>();
+                joint1D1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
                 // reconfigure neighbor joints
                 List<ConfigurableJoint> joints0 = sphere0B.GetComponents<ConfigurableJoint>().ToList();
                 foreach (ConfigurableJoint j in joints0)
@@ -358,6 +364,20 @@ public class globalOperators : MonoBehaviour
                             ConfigurableJoint newJ = sphere.AddComponent<ConfigurableJoint>();
                             newJ.connectedBody = sphere1A.GetComponent<Rigidbody>();
                         }
+                        if (j.connectedBody.name == sphere1C.name)
+                        {
+                            GameObject sphere = j.gameObject;
+                            Destroy(j);
+                            ConfigurableJoint newJ = sphere.AddComponent<ConfigurableJoint>();
+                            newJ.connectedBody = sphere1C.GetComponent<Rigidbody>();
+                        }
+                        //if (j.connectedBody.name == sphere1D.name)
+                        //{
+                        //    GameObject sphere = j.gameObject;
+                        //    Destroy(j);
+                        //    FixedJoint newJ = sphere.AddComponent<FixedJoint>();
+                        //    newJ.connectedBody = sphere1D.GetComponent<Rigidbody>();
+                        //}
                     }
                     //List<ConfigurableJoint> joints2 =
                     //    m_sphereJointObjects.Find(g => g.name == "sphere_" + objIdx[1].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + i.ToString()).

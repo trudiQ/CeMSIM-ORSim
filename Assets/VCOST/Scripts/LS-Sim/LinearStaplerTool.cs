@@ -743,6 +743,11 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     /// </summary>
     public void CheckAndUpdateLStoolInsertionStates()
     {
+        if (!globalOperators.m_bSimStart)
+        {
+            return;
+        }
+
         // Get the distance from each LS tip to each colon opening
         float topToColonA = Vector3.Distance(topHalfFrontTip.position, colonAopeningPos);
         float topToColonB = Vector3.Distance(topHalfFrontTip.position, colonBopeningPos);
@@ -1118,6 +1123,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         PlayerPrefs.SetFloat("BottomHalfLocalEulerX", bottomHalf.transform.localEulerAngles.x);
         PlayerPrefs.SetFloat("BottomHalfLocalEulerY", bottomHalf.transform.localEulerAngles.y);
         PlayerPrefs.SetFloat("BottomHalfLocalEulerZ", bottomHalf.transform.localEulerAngles.z);
+
+        SaveToolLocalPositionRotation();
     }
     public void LoadStapleToolCalibrationData()
     {
