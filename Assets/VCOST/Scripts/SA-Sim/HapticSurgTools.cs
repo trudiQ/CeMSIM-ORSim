@@ -945,11 +945,22 @@ public class HapticSurgTools : MonoBehaviour
             return;
 
         touching = that;
+
+        if (LinearStaplerTool.instance.simStates < 2 && touching.gameObject.name.Contains("sphere_"))
+        {
+            // Don't let surgeon lift colon if grab on further layers
+            int layer = int.Parse(touching.gameObject.name[9].ToString());
+            if (layer > 1)
+            {
+                OnCollidingColon(collisionInfo);
+            }
+        }
     }
     void OnCollisionExit(Collision collisionInfo)
     {
         Collider other = collisionInfo.collider;
         //Debug.unityLogger.Log("onCollisionrExit : " + other.name);
+        collidingTip = null;
 
         if (collisionInfo.rigidbody != null)
             hapticTouchEvent(false);
@@ -1125,6 +1136,11 @@ public class HapticSurgTools : MonoBehaviour
             return;
         }
 
+        if (collidingTip == null)
+        {
+            return;
+        }
+
         Vector3 collisionVector = collidingPoint - collidingObjectPoint;
         Vector3 toolTipVector = collidingTip.position - collidingObjectPoint;
         if (Vector3.Angle(toolTipVector, collisionVector) > stopThresholdAngle && !lockToolDueColonContact)
@@ -1140,16 +1156,27 @@ public class HapticSurgTools : MonoBehaviour
         }
     }
 
+    public void LockToolDueColonCollision()
+    {
+
+    }
+    public void UnlockToolDueColonCollision()
+    {
+
+    }
+
     private void LateUpdate()
     {
+        UpdateCollisionStatus();
+
         if (grabbing)
         {
             return;
         }
 
-        if (lockToolDueColonContact)
-        {
-            transform.position = toolLockingPosition;
-        }
+        //if (lockToolDueColonContact)
+        //{
+        //    transform.position = toolLockingPosition;
+        //}
     }
 }
