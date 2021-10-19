@@ -29,13 +29,13 @@ public class InteractableClothController : MonoBehaviour
             InteractableCloth match = clothingFound.Find((x) => x.clothName == pair.clothName);
 
             // Subscribe to events so there is one point that information can be sent from
-            pair.OnEquip.AddListener(() =>
+            pair.OnEquip.AddListener((_) =>
             {
                 CheckIfAllPPEEquipped();
                 OnClothEquipped.Invoke(pair);
             });
 
-            pair.OnUnequip.AddListener(() =>
+            pair.OnUnequip.AddListener((_) =>
             {
                 teleportManager.OnPPEUnequipped();
                 OnClothUnequipped.Invoke(pair);
@@ -88,15 +88,15 @@ public class ClothPair
     public string clothName; // Name to be matched at start
     public WornCloth modelCloth; // Clothing object on the model
     public InteractableCloth sceneCloth; // Clothing object in the scene
-    public float distanceThreshold = 0.1f; // Distance from the model cloth that the scene cloth needs to be to equip
+    public float distanceThreshold = 0.2f; // Distance from the model cloth that the scene cloth needs to be to equip
     public float angleThreshold = 30f; // Angle between the model cloth that the scene cloth needs to be to equip
     public bool equipAtStart = false;
     public bool snapOnGrab = false; // Snap to/from the model when grabbed
     public bool isEquipped { get; private set; } = false;
     public bool ignoreAutomaticMeshHide = false; // Enable or disable automatically disabling the worn PPE when unequipping
 
-    public UnityEvent OnEquip;
-    public UnityEvent OnUnequip;
+    public UnityEvent<HVRHandGrabber> OnEquip;
+    public UnityEvent<HVRHandGrabber> OnUnequip;
 
     private bool movedOutOfThresholdAfterUnequip = true;
 
@@ -116,12 +116,12 @@ public class ClothPair
         if (equipAtStart)
         {
             isEquipped = true;
-            OnEquip.Invoke();
+            OnEquip.Invoke(null);
         }
         else
         {
             isEquipped = false;
-            OnUnequip.Invoke();
+            OnUnequip.Invoke(null);
         }
 
         modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted); // Subscribe to the grab event
@@ -185,9 +185,12 @@ public class ClothPair
         {
             if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
             {
+                // Get a reference to which grabber held the object, then invoke the equip event with it after the ForceRelease
+                HVRHandGrabber grabber = sceneCloth.GetGrabber();
+
                 ToggleModelCloth();
                 isEquipped = true;
-                OnEquip.Invoke();
+                OnEquip.Invoke(grabber);
             }
             else if (!InThresholdDistance())
             {
@@ -199,7 +202,7 @@ public class ClothPair
     // Check if the scene cloth is within the distance threshold
     private bool InThresholdDistance()
     {
-        float distance = Vector3.Distance(modelCloth.GetOffsetPosition(), sceneCloth.GetOffsetPosition());
+        float distance = Vector3.Distance(modelCloth.GetPosition(), sceneCloth.GetPosition());
 
         return distance <= distanceThreshold;
     }
@@ -219,7 +222,7 @@ public class ClothPair
         {
             ToggleModelCloth();
             isEquipped = true;
-            OnEquip.Invoke();
+            OnEquip.Invoke(grabber);
         }
     }
 
@@ -228,7 +231,7 @@ public class ClothPair
     {
         ToggleModelCloth();
         isEquipped = false;
-        OnUnequip.Invoke();
+        OnUnequip.Invoke(grabber);
 
         if (!snapOnGrab)
             sceneCloth.ManualGrab(grabber);

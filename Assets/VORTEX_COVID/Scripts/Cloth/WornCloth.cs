@@ -13,7 +13,6 @@ public class WornCloth : MonoBehaviour
     // It has to be different from the skinned object since its position doesn't move, only the vertices
     // The below GameObject contains the SkinnedMeshRenderer and is enabled/disabled to show/hide
     public GameObject objectWithSkinnedMesh;
-    public Vector3 offset; // Position offset from the object's origin to the center of the mesh
     public bool isActive { get; private set; }
 
     // Events that trigger when the user grabs the object
@@ -29,9 +28,9 @@ public class WornCloth : MonoBehaviour
     }
 
     // Returns the position in the world where the offset of the object would be
-    public Vector3 GetOffsetPosition()
+    public Vector3 GetPosition()
     {
-        return transform.position + transform.rotation * offset;
+        return transform.position;
     }
 
     public Quaternion GetRotation()
@@ -41,9 +40,9 @@ public class WornCloth : MonoBehaviour
 
     public void SetActive(bool state, bool hideMesh)
     {
-        if (hideMesh)
-            SetMeshVisible(state);
-        
+        if(objectWithSkinnedMesh)
+            objectWithSkinnedMesh.SetActive(state);
+
         gameObject.SetActive(state);
         isActive = state;
     }
@@ -65,6 +64,6 @@ public class WornCloth : MonoBehaviour
     // Show the offset position as a sphere when the object is selected
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawSphere(GetOffsetPosition(), 0.01f);
+        Gizmos.DrawSphere(GetPosition(), 0.01f);
     }
 }
