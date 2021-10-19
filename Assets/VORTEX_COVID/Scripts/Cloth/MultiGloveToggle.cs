@@ -4,29 +4,9 @@ using UnityEngine;
 
 public class MultiGloveToggle : MonoBehaviour
 {
-    public GameObject gloveObjectWithSkinnedMesh;
-    public GameObject handObjectWithSkinnedMesh;
-    public int gloveCount;
+    public int currentGloveEquippedCount = 0;
 
-    private int currentGloveEquippedCount = 0;
-
-    public void GloveEquipped()
-    {
-        if (++currentGloveEquippedCount >= 1)
-        {
-            gloveObjectWithSkinnedMesh.SetActive(true);
-            handObjectWithSkinnedMesh.SetActive(false);
-        }
-    }
-
-    public void GloveUnequipped()
-    {
-        currentGloveEquippedCount = Mathf.Max(0, --currentGloveEquippedCount);
-
-        if (currentGloveEquippedCount == 0)
-        {
-            gloveObjectWithSkinnedMesh.SetActive(false);
-            handObjectWithSkinnedMesh.SetActive(true);
-        }
-    }
+    public void GloveEquipped() => currentGloveEquippedCount++;
+   
+    public void GloveUnequipped() => currentGloveEquippedCount--;
 }

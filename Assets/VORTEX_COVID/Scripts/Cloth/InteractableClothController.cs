@@ -121,7 +121,6 @@ public class ClothPair
         else
         {
             isEquipped = false;
-            OnUnequip.Invoke(null);
         }
 
         modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted); // Subscribe to the grab event
@@ -169,7 +168,7 @@ public class ClothPair
     // Sets the model cloth to a specific state, sets the model and scene cloth to opposite state
     public void SetModelClothActive(bool state)
     {
-        modelCloth.SetActive(state, !ignoreAutomaticMeshHide);
+        modelCloth.SetActive(state, ignoreAutomaticMeshHide);
 
         if (modelCloth.isActive)
             movedOutOfThresholdAfterUnequip = false;

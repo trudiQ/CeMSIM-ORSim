@@ -38,9 +38,9 @@ public class WornCloth : MonoBehaviour
         return transform.rotation;
     }
 
-    public void SetActive(bool state, bool hideMesh)
+    public void SetActive(bool state, bool ignoreMeshHide)
     {
-        if(objectWithSkinnedMesh)
+        if(objectWithSkinnedMesh && !ignoreMeshHide)
             objectWithSkinnedMesh.SetActive(state);
 
         gameObject.SetActive(state);
