@@ -574,112 +574,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.02062987, y: 0.020419883, z: 0.029681643}
   m_Center: {x: 0.00000011891728, y: 0.00000053578145, z: 0.0065320544}
---- !u!1 &42207982
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 42207983}
-  - component: {fileID: 42207985}
-  - component: {fileID: 42207984}
-  m_Layer: 0
-  m_Name: GrabPointRight
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &42207983
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 42207982}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0444, y: 0.0293, z: -0.135}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 537872131}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &42207984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 42207982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79cd113ec3a24073b5bab8cbfb533d1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsJointAnchor: 0
-  AllowedAngleDifference: 360
-  LeftHand: 0
-  RightHand: 1
-  jointOffset: {x: 0, y: 0, z: 0}
-  GrabIndicatorPosition: {fileID: 0}
-  VisualGrabPoint: {fileID: 0}
-  HandPoser: {fileID: 42207985}
-  IsLineGrab: 0
-  LineStart: {fileID: 0}
-  LineEnd: {fileID: 0}
-  CanLineFlip: 1
-  LooseDamper: 100
-  LooseAngularDamper: 1
-  LineCanReposition: 1
-  LineCanRotate: 1
-  UpdateJointOffset: 0
---- !u!114 &42207985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 42207982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96d1b667b6234620a01e126539c3f6d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LeftHandPreview: {fileID: 0}
-  RightHandPreview: {fileID: 0}
-  BodyPreview: {fileID: 0}
-  PreviewLeft: 0
-  PreviewRight: 0
-  LeftAutoPose: 0
-  RightAutoPose: 0
-  SelectionIndex: 0
-  PoseNames:
-  - 'Primary: ShoeCoverHandPose'
-  PrimaryPose:
-    Pose: {fileID: 11400000, guid: fb9e0476b6c0bae47996dd18ed2f617e, type: 2}
-    Weight: 1
-    Mask: 0
-    Disabled: 0
-    Type: 0
-    Speed: 16
-    AnimationParameter: None
-    ButtonParameter: 0
-    Button: 0
-    ThumbType: 0
-    IndexType: 0
-    MiddleType: 0
-    RingType: 0
-    PinkyType: 0
-    ThumbStart: 0.75
-    IndexStart: 1
-    MiddleStart: 0
-    RingStart: 0
-    PinkyStart: 0
-  Blends: []
-  ReferencePose: {fileID: 0}
-  MirrorAxis: 2
 --- !u!1 &46489776
 GameObject:
   m_ObjectHideFlags: 0
@@ -2312,6 +2206,112 @@ Transform:
   m_Father: {fileID: 505617245}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &202341691
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 202341692}
+  - component: {fileID: 202341694}
+  - component: {fileID: 202341693}
+  m_Layer: 0
+  m_Name: GrabPointRight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &202341692
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202341691}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.0444, y: 0.0293, z: -0.135}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1991819106}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &202341693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202341691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79cd113ec3a24073b5bab8cbfb533d1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsJointAnchor: 0
+  AllowedAngleDifference: 360
+  LeftHand: 0
+  RightHand: 1
+  jointOffset: {x: 0, y: 0, z: 0}
+  GrabIndicatorPosition: {fileID: 0}
+  VisualGrabPoint: {fileID: 0}
+  HandPoser: {fileID: 0}
+  IsLineGrab: 0
+  LineStart: {fileID: 0}
+  LineEnd: {fileID: 0}
+  CanLineFlip: 1
+  LooseDamper: 100
+  LooseAngularDamper: 1
+  LineCanReposition: 1
+  LineCanRotate: 1
+  UpdateJointOffset: 0
+--- !u!114 &202341694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202341691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d1b667b6234620a01e126539c3f6d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LeftHandPreview: {fileID: 0}
+  RightHandPreview: {fileID: 0}
+  BodyPreview: {fileID: 0}
+  PreviewLeft: 0
+  PreviewRight: 0
+  LeftAutoPose: 0
+  RightAutoPose: 0
+  SelectionIndex: 0
+  PoseNames:
+  - 'Primary: ShoeCoverHandPose'
+  PrimaryPose:
+    Pose: {fileID: 11400000, guid: fb9e0476b6c0bae47996dd18ed2f617e, type: 2}
+    Weight: 1
+    Mask: 0
+    Disabled: 0
+    Type: 0
+    Speed: 16
+    AnimationParameter: None
+    ButtonParameter: 0
+    Button: 0
+    ThumbType: 0
+    IndexType: 0
+    MiddleType: 0
+    RingType: 0
+    PinkyType: 0
+    ThumbStart: 0.75
+    IndexStart: 1
+    MiddleStart: 0
+    RingStart: 0
+    PinkyStart: 0
+  Blends: []
+  ReferencePose: {fileID: 0}
+  MirrorAxis: 2
 --- !u!1 &205456681 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8225175944635427987, guid: f74a885fc98feb949a78645e7d7c16c6,
@@ -4880,89 +4880,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1551745064}
     m_Modifications:
-    - target: {fileID: 7075660267024876, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.0514
-      objectReference: {fileID: 0}
-    - target: {fileID: 7075660267024876, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.0311
-      objectReference: {fileID: 0}
-    - target: {fileID: 7075660267024876, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.1205
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: MirrorAxis
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: BodyPreview
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PreviewLeft
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PrimaryPose.Pose
-      value: 
-      objectReference: {fileID: 11400000, guid: fb9e0476b6c0bae47996dd18ed2f617e,
-        type: 2}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PrimaryPose.RingType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PrimaryPose.IndexType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PrimaryPose.PinkyType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PrimaryPose.ThumbType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PrimaryPose.IndexStart
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PrimaryPose.MiddleType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PrimaryPose.ThumbStart
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 338636538877145178, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: PoseNames.Array.data[0]
-      value: 'Primary: ShoeCoverHandPose'
-      objectReference: {fileID: 0}
-    - target: {fileID: 468743075897496014, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: m_Name
-      value: GrabPointLeft
-      objectReference: {fileID: 0}
-    - target: {fileID: 501986400251884507, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: RightHand
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1888649405378857392, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
         type: 3}
       propertyPath: m_Name
@@ -4972,21 +4889,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RootOrder
       value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8957019707123470937, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 8957019707123470937, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 8957019707123470937, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: 8957019707123470937, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
         type: 3}
@@ -5043,12 +4945,6 @@ PrefabInstance:
 --- !u!4 &537872130 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8957019707123470937, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
-    type: 3}
-  m_PrefabInstance: {fileID: 537872129}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &537872131 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 517163809366965141, guid: 558d52ea81c41a8489f5ea2a1ffc6d7d,
     type: 3}
   m_PrefabInstance: {fileID: 537872129}
   m_PrefabAsset: {fileID: 0}
@@ -22898,6 +22794,97 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1551745064}
     m_Modifications:
+    - target: {fileID: 506909345873606450, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: HandPoser
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 506909345873606450, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: RightHand
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1806730249248102040, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0509
+      objectReference: {fileID: 0}
+    - target: {fileID: 1806730249248102040, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0311
+      objectReference: {fileID: 0}
+    - target: {fileID: 1806730249248102040, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.1205
+      objectReference: {fileID: 0}
+    - target: {fileID: 2223997105424582199, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: m_Name
+      value: GrabPointLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: MirrorAxis
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: BodyPreview
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PreviewLeft
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PrimaryPose.Pose
+      value: 
+      objectReference: {fileID: 11400000, guid: fb9e0476b6c0bae47996dd18ed2f617e,
+        type: 2}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PrimaryPose.RingType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PrimaryPose.IndexType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PrimaryPose.PinkyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PrimaryPose.ThumbType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PrimaryPose.IndexStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PrimaryPose.MiddleType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PrimaryPose.ThumbStart
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343081750206993321, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+        type: 3}
+      propertyPath: PoseNames.Array.data[0]
+      value: 'Primary: ShoeCoverHandPose'
+      objectReference: {fileID: 0}
     - target: {fileID: 4752016248953256783, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
         type: 3}
       propertyPath: m_Name
@@ -22978,6 +22965,12 @@ PrefabInstance:
 --- !u!4 &1991819105 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8075682550446865906, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 1991819104}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1991819106 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8069662823318659352, guid: 4f05f446c9e6b5d4fb4ca63244b770c1,
     type: 3}
   m_PrefabInstance: {fileID: 1991819104}
   m_PrefabAsset: {fileID: 0}
