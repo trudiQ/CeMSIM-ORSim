@@ -74,6 +74,7 @@ public class HapticSurgTools : MonoBehaviour
     /// also save the haptics position pD
     /// continue measure the angle between the vector pApB to pApC, when the angle is greater than the threshold then stop the tool
     /// when the tool is stopped, continue measure the distance between the still updating haptics position pE to pA, if the length of pEpA > pDpA, then restore tool movement
+    public GameObject jointObject; // Created joint object to attach colon sphere towards
     public Transform collisionObjectTrans; // Transform of the object that is colliding with the tool
     public Vector3 collidingPoint; // World position where the tool collide the object
     public Vector3 collidingObjectPoint; // World position of the collided object when the tool collide the object
@@ -88,6 +89,7 @@ public class HapticSurgTools : MonoBehaviour
     public Quaternion collidingTipLocalRotation;
     public Rigidbody tipBody; // Rigidbody added to the tip when attaching joint to colon
     public List<Joint> pushColonJoints; // Joints created to let the tool push colon mesh
+    public List<ToolColonSphereJoint> createdJoints;
     public GameObject lockToolDummyMesh; // The dummy mesh to turn on when the tool is locked
     public List<MeshRenderer> toolMesh;
 
@@ -845,9 +847,9 @@ public class HapticSurgTools : MonoBehaviour
                     }
 
                     if (tAnimations)
-                        tAnimations.CloseOpenScissors();
+                        tAnimations.CloseOpenScissors(this, cutSphereIdx);
                 }
-                if (newButtonStatus[0] == false)
+                if (newButtonStatus[0] == false && curAction != toolAction.cutting)
                 {
                     cutSphereIdx = new int[] { -1, -1, -1 };
                     bCutting = false;
@@ -891,8 +893,10 @@ public class HapticSurgTools : MonoBehaviour
         if (this.gameObject.name == "Scissors")
         {
             // priority: cutting > touching > idle
-            if (bCutting)
-                curAction = toolAction.cutting;
+            if (curAction == toolAction.cutting)
+            {
+                //curAction = toolAction.cutting;
+            }
             else // !bCutting
             {
                 if (bTouching)
@@ -1017,6 +1021,11 @@ public class HapticSurgTools : MonoBehaviour
         //Debug.logger.Log("Grabbing Object : " + grabbing.name);
         Rigidbody body = grabbing.GetComponent<Rigidbody>();
 
+        if (pushColonJoints.Count > 0)
+        {
+            DetachColonStopPush();
+        }
+
         // If this doesn't have a rigidbody, walk up the tree. 
         // It may be PART of a larger physics object.
         while (body == null)
@@ -1134,10 +1143,15 @@ public class HapticSurgTools : MonoBehaviour
 
     public void OnCollidingColon(Collision collision)
     {
-        if (collidingTip != null)
+        if (isGrabbing())
         {
             return;
         }
+
+        //if (collidingTip != null)
+        //{
+        //    return;
+        //}
 
         collisionObjectTrans = collision.collider.transform;
         collidingPoint = collision.GetContact(0).point;
@@ -1145,7 +1159,7 @@ public class HapticSurgTools : MonoBehaviour
         objectCollidingPoint = transform.position;
         collidingTip = collision.GetContact(0).thisCollider.transform;
 
-        AttachColonForPush(collidingTip.gameObject, collisionObjectTrans.gameObject);
+        AttachColonForPush(collision.GetContact(0).point, collidingTip.gameObject, collisionObjectTrans.gameObject);
     }
 
     public void UpdateCollisionStatus()
@@ -1175,10 +1189,10 @@ public class HapticSurgTools : MonoBehaviour
         //    lockToolDueColonContact = false;
         //    UnlockToolDueColonCollision();
         //}
-        if (Vector3.Distance(collidingTip.position, collidingObjectPoint) > breakPushingJointDistance)
-        {
-            DetachColonStopPush();
-        }
+        //if (collidingTip == null || Vector3.Distance(collidingTip.position, collidingObjectPoint) > breakPushingJointDistance)
+        //{
+        //    DetachColonStopPush();
+        //}
 
         if (collidingTip == null)
         {
@@ -1206,24 +1220,35 @@ public class HapticSurgTools : MonoBehaviour
     /// <summary>
     /// Create joints from the tool tip to the touched colon
     /// </summary>
+    /// <param name="anchorPosition"></param>
     /// <param name="toolAttachPoint"></param>
     /// <param name="colonSphere"></param>
-    public void AttachColonForPush(GameObject toolAttachPoint, GameObject colonSphere)
+    public void AttachColonForPush(Vector3 anchorPosition, GameObject toolAttachPoint, GameObject colonSphere)
     {
-        Joint collideSphereJoint = (FixedJoint)toolAttachPoint.AddComponent(typeof(FixedJoint));
-        tipBody = toolAttachPoint.GetComponent<Rigidbody>();
-        tipBody.useGravity = false;
-        tipBody.isKinematic = true;
-        collideSphereJoint.connectedBody = colonSphere.GetComponent<Rigidbody>();
-        pushColonJoints.Add(collideSphereJoint);
+        ToolColonSphereJoint newJointAnchor = Instantiate(jointObject).GetComponent<ToolColonSphereJoint>();
+        newJointAnchor.transform.position = anchorPosition;
+        newJointAnchor.initialPosition = anchorPosition;
+        newJointAnchor.transform.parent = toolAttachPoint.transform;
+        newJointAnchor.joint.connectedBody = colonSphere.GetComponent<Rigidbody>();
+        createdJoints.Add(newJointAnchor);
+
+        //Joint collideSphereJoint = (FixedJoint)toolAttachPoint.AddComponent(typeof(FixedJoint));
+        //tipBody = toolAttachPoint.GetComponent<Rigidbody>();
+        //tipBody.useGravity = false;
+        //tipBody.isKinematic = true;
+        //collideSphereJoint.connectedBody = colonSphere.GetComponent<Rigidbody>();
+        //pushColonJoints.Add(collideSphereJoint);
     }
 
     public void DetachColonStopPush()
     {
-        pushColonJoints.ForEach(j => Destroy(j));
-        pushColonJoints.Clear();
-        Destroy(tipBody);
-        tipBody = null;
+        createdJoints.ForEach(j => Destroy(j));
+        createdJoints.Clear();
+
+        //pushColonJoints.ForEach(j => Destroy(j));
+        //pushColonJoints.Clear();
+        //Destroy(tipBody);
+        //tipBody = null;
     }
 
     /// <summary>
@@ -1234,6 +1259,8 @@ public class HapticSurgTools : MonoBehaviour
     public List<GameObject> GetNeighborColonSphere(GameObject centerSphere)
     {
         List<GameObject> neighbor = new List<GameObject>();
+
+
 
         return neighbor;
     }

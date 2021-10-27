@@ -110,7 +110,7 @@ public class OmniToolsAnimations : MonoBehaviour
         }
     }
     [ShowInInspector]
-    public void CloseOpenScissors()
+    public void CloseOpenScissors(HapticSurgTools scissors, int[] spheres)
     {
         if (isPlayingAnimation)
         {
@@ -120,6 +120,7 @@ public class OmniToolsAnimations : MonoBehaviour
         isPlayingAnimation = true;
         StartCoroutine(RotateObject(scissorsA, new Quaternion[] { scissorsAopenRot, scissorsAcloseRot }, new Quaternion[] { scissorsAcloseRot, scissorsAopenRot }, new float[] { scissorsAnimationDuration * 0.5f, scissorsAnimationDuration * 0.5f }));
         StartCoroutine(RotateObject(scissorsB, new Quaternion[] { scissorsBopenRot, scissorsBcloseRot }, new Quaternion[] { scissorsBcloseRot, scissorsBopenRot }, new float[] { scissorsAnimationDuration * 0.5f, scissorsAnimationDuration * 0.5f }));
+        StartCoroutine(DelayedScissorCut(scissors, scissorsAnimationDuration * 0.5f, spheres));
     }
 
     /// <summary>
@@ -143,5 +144,12 @@ public class OmniToolsAnimations : MonoBehaviour
         }
 
         isPlayingAnimation = false;
+    }
+
+    public IEnumerator DelayedScissorCut(HapticSurgTools scissors, float delay, int[] spheres)
+    {
+        yield return new WaitForSeconds(delay - 0.1f);
+        scissors.curAction = HapticSurgTools.toolAction.cutting;
+        scissors.cutSphereIdx = spheres;
     }
 }

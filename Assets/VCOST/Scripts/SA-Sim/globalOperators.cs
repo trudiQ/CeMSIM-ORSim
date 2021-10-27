@@ -77,6 +77,15 @@ public class globalOperators : MonoBehaviour
     public static bool m_bSimStart = false; // Start when the user clicks "Start"
     public static bool m_bSimEnd = false; // manual end by the user by pressing space
 
+    // Cutting stuff
+    public float upDirectionThreshold;
+    public float rightDirectionThreshold;
+    public float forwardDirectionThreshold;
+    public float xDistanceThreshold;
+    public float yDistanceThreshold;
+    public float zDistanceThreshold;
+    public List<GameObject> validCuttingSpheres; // Which colon spheres are valid for cutting
+
     // UI control
     public LS_UIcontroller uiController;
 
@@ -918,6 +927,8 @@ public class globalOperators : MonoBehaviour
                             }
                         }
                     }
+
+                    m_hapticSurgTools["Scissors"].curAction = HapticSurgTools.toolAction.touching;
                 }
             }
 
