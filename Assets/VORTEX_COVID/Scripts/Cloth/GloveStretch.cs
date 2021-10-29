@@ -14,6 +14,7 @@ public class GloveStretch : MonoBehaviour
     private Transform originalParent;
     private bool grabbed = false;
     private bool pointsActivated = false;
+    private bool gownEquipped = false;
 
     void Start()
     {
@@ -53,6 +54,29 @@ public class GloveStretch : MonoBehaviour
                 closestPoint = stretchReferencePoints[minimumIndex];
                 closestPoint.Hover();
             }
+        }
+    }
+
+    public void GownEquipped()
+    {
+        gownEquipped = true;
+    }
+
+    public void GownUnequipped()
+    {
+        gownEquipped = false;
+    }
+
+    public void GloveEquipped(HVRHandGrabber grabber)
+    {
+        if (gownEquipped)
+        {
+            GrabStretchPoint(grabber);
+        }
+        else
+        {
+            stretchReferencePoints[0].Hover();
+            stretchReferencePoints[0].Select();
         }
     }
 
