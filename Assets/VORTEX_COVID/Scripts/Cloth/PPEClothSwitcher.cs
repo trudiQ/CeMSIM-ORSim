@@ -6,12 +6,7 @@ public class PPEClothSwitcher : MonoBehaviour
 {
     public GameObject[] objectsWithClothMesh;
     public MaterialVisibilityToggle handMeshMaterialToggle;
-    private MultiGloveToggle multiGloveToggle;
-
-    void Start()
-    {
-        multiGloveToggle = GetComponentInParent<MultiGloveToggle>();
-    }
+    public MultiGloveToggle multiGloveToggle;
 
     public void Show(int index)
     {

@@ -11,16 +11,21 @@ public class HeadPPEController : MonoBehaviour
 
     private List<HeadPPETypes> equipOrder = new List<HeadPPETypes>();
 
+    private void Start()
+    {
+        Debug.Log(bouffantRenderer.sharedMesh.blendShapeCount);
+    }
+
     public void BouffantEquipped()
     {
         if (equipOrder.Count == 1) // shield -> bouffant
         {
             if (equipOrder[0] == HeadPPETypes.FaceShield)
-                bouffantRenderer.SetBlendShapeWeight(0, 1); // FaceShieldUnder
+                bouffantRenderer.SetBlendShapeWeight(0, 100); // FaceShieldUnder
         }
         else if (equipOrder.Count == 2) // mask -> shield -> bouffant
         {
-            bouffantRenderer.SetBlendShapeWeight(0, 1); // FaceShieldUnder
+            bouffantRenderer.SetBlendShapeWeight(0, 100); // FaceShieldUnder
         }
 
         equipOrder.Add(HeadPPETypes.Bouffant);
@@ -68,8 +73,8 @@ public class HeadPPEController : MonoBehaviour
         {
             if (equipOrder[0] == HeadPPETypes.Bouffant) // bouffant -> mask
             {
-                faceMaskRenderer.SetBlendShapeWeight(0, 1); // OverBouffant
-                bouffantRenderer.SetBlendShapeWeight(1, 1); // FaceShieldOver
+                faceMaskRenderer.SetBlendShapeWeight(0, 100); // OverBouffant
+                bouffantRenderer.SetBlendShapeWeight(1, 100); // FaceShieldOver
             }
             else if (equipOrder[0] == HeadPPETypes.FaceShield) // shield -> mask
             {
@@ -115,11 +120,11 @@ public class HeadPPEController : MonoBehaviour
         if (equipOrder.Count == 1)
         {
             if (equipOrder[0] == HeadPPETypes.Bouffant) // bouffant -> shield
-                bouffantRenderer.SetBlendShapeWeight(1, 1); // FaceShieldOver
+                bouffantRenderer.SetBlendShapeWeight(1, 100); // FaceShieldOver
         }
         else if (equipOrder.Count == 2) // bouffant -> mask -> shield OR mask -> bouffant -> shield
         {
-            bouffantRenderer.SetBlendShapeWeight(1, 1); // FaceShieldOver
+            bouffantRenderer.SetBlendShapeWeight(1, 100); // FaceShieldOver
         }
 
         equipOrder.Add(HeadPPETypes.FaceShield);

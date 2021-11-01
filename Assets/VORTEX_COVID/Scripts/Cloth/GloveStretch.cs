@@ -8,6 +8,7 @@ using HurricaneVR.Framework.Core.Grabbers;
 public class GloveStretch : MonoBehaviour
 {
     public PPEOptionPoint[] stretchReferencePoints;
+    public MultiGloveToggle multiGlove;
 
     private HVRGrabbable grabbable;
     private PPEOptionPoint closestPoint;
@@ -69,15 +70,24 @@ public class GloveStretch : MonoBehaviour
 
     public void GloveEquipped(HVRHandGrabber grabber)
     {
-        if (gownEquipped)
+        if (multiGlove.currentGloveEquippedCount == 0)
         {
-            GrabStretchPoint(grabber);
+            if (gownEquipped)
+            {
+                GrabStretchPoint(grabber);
+            }
+            else
+            {
+                stretchReferencePoints[0].Hover();
+                stretchReferencePoints[0].Select();
+            }
         }
-        else
-        {
-            stretchReferencePoints[0].Hover();
-            stretchReferencePoints[0].Select();
-        }
+    }
+
+    public void GloveUnequipped()
+    {
+        if (closestPoint && multiGlove.currentGloveEquippedCount == 0)
+            closestPoint.Unhover();
     }
 
     public void GrabStretchPoint(HVRHandGrabber grabber)
