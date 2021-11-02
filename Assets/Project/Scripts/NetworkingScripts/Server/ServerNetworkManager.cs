@@ -5,6 +5,7 @@ using UnityEngine;
 using CEMSIM.GameLogic;
 using System;
 using CEMSIM.VoiceChat;
+using CEMSIM.Logger;
 
 namespace CEMSIM
 {
@@ -43,6 +44,7 @@ namespace CEMSIM
             private static Dictionary<int, eventHandler> eventHandlerDict;
             private delegate void eventStatePush(int _fromClient);
             private static Dictionary<int, eventStatePush> eventStatePushDict;
+
 
             private void Awake()
             {
@@ -211,6 +213,11 @@ namespace CEMSIM
                     {(int)EnvironmentId.roomLight, GetRoomLightState}
                 };
             }
+            #endregion
+
+
+            #region event system
+
             #endregion
 
         }

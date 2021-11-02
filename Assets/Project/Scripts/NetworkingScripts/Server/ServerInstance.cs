@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CEMSIM.Logger;
 
 namespace CEMSIM
 {
@@ -22,6 +23,10 @@ namespace CEMSIM
             public static Dictionary<int, PacketHandler> packetHandlers;
 
             public static string dissonancePlayerId; // the player id of a dummy dissonance client running at the server
+
+            // event system
+            public static event Action onServerStartTrigger;
+            public static event Action onServerStopTrigger;
 
 
             public static void Start(int _maxPlayers, int _port)
@@ -46,6 +51,8 @@ namespace CEMSIM
 
                 Debug.Log($"Server is listening on port {_port}");
                 NetworkOverlayMenu.Instance.Log($"Server is listening on port {_port}");
+
+                ServerStartTrigger();
 
             }
 
@@ -196,8 +203,26 @@ namespace CEMSIM
             {
                 tcpListener.Stop();
                 udpListener.Close();
+                ServerStopTrigger();
             }
 
+
+            #region
+            public static void ServerStartTrigger()
+            {
+                if (onServerStartTrigger != null)
+                    onServerStartTrigger();
+            }
+
+            public static void ServerStopTrigger()
+            {
+                if (onServerStopTrigger != null)
+                    onServerStopTrigger();
+            }
+
+
+            
+            #endregion
         }
     }
 }
