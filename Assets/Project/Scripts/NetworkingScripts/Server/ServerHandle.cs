@@ -109,10 +109,11 @@ namespace CEMSIM
 
                 Debug.Log($"client{_fromClient}: Spawn player.");
                 NetworkOverlayMenu.Instance.Log($"client{_fromClient}: Spawn player.");
+                
+                PlayerEnterTrigger(_fromClient, _username);
 
                 // send back the packet with necessary inforamation about player locations
                 ServerInstance.clients[_fromClient].SendIntoGame(_username, _vr, _role_i);
-                PlayerEnterTrigger(_fromClient, _username);
             }
 
             /// <summary>
@@ -303,6 +304,7 @@ namespace CEMSIM
             #region event system
             public static void PlayerEnterTrigger(int _playerId, string _username)
             {
+                Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onPlayerEnterTrigger != null)
                     onPlayerEnterTrigger(_playerId, _username);
             }

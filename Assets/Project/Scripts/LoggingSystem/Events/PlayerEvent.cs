@@ -46,23 +46,23 @@ namespace CEMSIM
 
             public static string GetHeader()
             {
-                string msg = "EventTime,PlayerId,Pos_x,Pos_y,Pos_z,Rot_x,Rot_y,Rot_z,ActionId,ItemId";
+                string msg = "EventTime,PlayerId,ActionId,Pos_x,Pos_y,Pos_z,Rot_x,Rot_y,Rot_z,ItemId";
                 return msg;
             }
 
             public override string ToString()
             {
-                string msg = string.Format("{0}: {1},{2},{3},{4},{5},{6},{7},{8},{9}",
-                    eventTime.TotalMilliseconds,
+                string msg = string.Format("{0}: player{1},{2}, item{3},{4},{5},{6},{7},{8}{9}",
+                    eventTime,
                     playerId,
                     playerAction,
+                    itemId,
                     player_pos.x,
                     player_pos.y,
                     player_pos.z,
                     player_rot.x,
                     player_rot.y,
-                    player_rot.z,
-                    itemId
+                    player_rot.z
                     );
                 return msg;
             }
@@ -72,7 +72,7 @@ namespace CEMSIM
                 string msg = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
                     eventTime,
                     playerId,
-                    (int)playerAction,
+                    playerAction,
                     player_pos.x,
                     player_pos.y,
                     player_pos.z,
@@ -103,7 +103,7 @@ namespace CEMSIM
 
             public static void GenPlayerExitEvent(int _playerId)
             {
-                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.EnterGame, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION))
+                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.ExitGame, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToPlayerEventQueue();
