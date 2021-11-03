@@ -70,7 +70,8 @@ public class InteractableCloth : MonoBehaviour
         connectedHand = grabber;
         isBeingGrabbed = true;
 
-        onSceneClothInteracted.Invoke(grabber, interactable);
+        if (!this.interactable.grabbable)
+            onSceneClothInteracted.Invoke(grabber, interactable);
     }
 
     // Removes the reference to the grabbing hand

@@ -7,8 +7,11 @@ using HurricaneVR.Framework.Core.Grabbers;
 [RequireComponent(typeof(HVRGrabbable))]
 public class GloveStretch : MonoBehaviour
 {
+    public enum GloveStretchState { AtWrist, UnderGown, OverGown }
+
     public PPEOptionPoint[] stretchReferencePoints;
     public MultiGloveToggle multiGlove;
+    public GloveStretchState stretchState { get; private set; }
 
     private HVRGrabbable grabbable;
     private PPEOptionPoint closestPoint;
@@ -110,6 +113,11 @@ public class GloveStretch : MonoBehaviour
         transform.parent = originalParent;
 
         grabbed = false;
+    }
+
+    public void SetStretchState(int state)
+    {
+        stretchState = (GloveStretchState)state;
     }
 
     private void SetPointsActive(bool state)

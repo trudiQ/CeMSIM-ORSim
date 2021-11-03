@@ -488,12 +488,19 @@ MonoBehaviour:
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 1
+    manuallyHandleEquip: 0
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 0
     OnEquip:
       m_PersistentCalls:
         m_Calls: []
     OnUnequip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedUnequip:
       m_PersistentCalls:
         m_Calls: []
   - clothName: Face Mask
@@ -502,15 +509,22 @@ MonoBehaviour:
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 1
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 0
     OnEquip:
       m_PersistentCalls:
+        m_Calls: []
+    OnUnequip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedEquip:
+      m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 5845204490367049247}
           m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
-          m_MethodName: FaceMaskEquipped
-          m_Mode: 1
+          m_MethodName: CheckFaceMaskEquip
+          m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -519,13 +533,13 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    OnUnequip:
+    OnAttemptedUnequip:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 5845204490367049247}
           m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
-          m_MethodName: FaceMaskUnequipped
-          m_Mode: 1
+          m_MethodName: CheckFaceMaskUnequip
+          m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -540,15 +554,22 @@ MonoBehaviour:
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 1
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 0
     OnEquip:
       m_PersistentCalls:
+        m_Calls: []
+    OnUnequip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedEquip:
+      m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 5845204490367049247}
           m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
-          m_MethodName: FaceShieldEquipped
-          m_Mode: 1
+          m_MethodName: CheckFaceShieldEquip
+          m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -557,13 +578,13 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    OnUnequip:
+    OnAttemptedUnequip:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 5845204490367049247}
           m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
-          m_MethodName: FaceShieldUnequipped
-          m_Mode: 1
+          m_MethodName: CheckFaceShieldUnequip
+          m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -578,6 +599,7 @@ MonoBehaviour:
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 0
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 1
     OnEquip:
@@ -658,12 +680,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+    OnAttemptedEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Glove L2
     modelCloth: {fileID: 1213543295206832310}
     sceneCloth: {fileID: 0}
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 0
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 1
     OnEquip:
@@ -744,12 +773,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+    OnAttemptedEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Glove R
     modelCloth: {fileID: 4020791398688176999}
     sceneCloth: {fileID: 0}
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 0
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 1
     OnEquip:
@@ -830,12 +866,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+    OnAttemptedEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Glove R2
     modelCloth: {fileID: 8552553751716864208}
     sceneCloth: {fileID: 0}
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 0
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 1
     OnEquip:
@@ -916,12 +959,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+    OnAttemptedEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Shoe Cover L
     modelCloth: {fileID: 1865746778037948272}
     sceneCloth: {fileID: 0}
     distanceThreshold: 0.1
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 0
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 0
     OnEquip:
@@ -954,12 +1004,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+    OnAttemptedEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Shoe Cover R
     modelCloth: {fileID: 803262875212698328}
     sceneCloth: {fileID: 0}
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 0
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 0
     OnEquip:
@@ -992,12 +1049,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+    OnAttemptedEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   - clothName: Bouffant
     modelCloth: {fileID: 7371361103773066336}
     sceneCloth: {fileID: 0}
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 1
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 0
     OnEquip:
@@ -1007,18 +1071,6 @@ MonoBehaviour:
           m_TargetAssemblyTypeName: MaterialVisibilityToggle, Assembly-CSharp
           m_MethodName: HideMaterial
           m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-        - m_Target: {fileID: 5845204490367049247}
-          m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
-          m_MethodName: BouffantEquipped
-          m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1066,18 +1118,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 5845204490367049247}
-          m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
-          m_MethodName: BouffantUnequipped
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
         - m_Target: {fileID: 8877828909936214241}
           m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_MethodName: SetActive
@@ -1101,6 +1141,36 @@ MonoBehaviour:
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 1
+          m_CallState: 2
+    OnAttemptedEquip:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5845204490367049247}
+          m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
+          m_MethodName: CheckBouffantEquip
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    OnAttemptedUnequip:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5845204490367049247}
+          m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
+          m_MethodName: CheckBouffantUnequip
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
           m_CallState: 2
   - clothName: Gown
     modelCloth: {fileID: 7717378517735677323}
@@ -1108,6 +1178,7 @@ MonoBehaviour:
     distanceThreshold: 0.2
     angleThreshold: 30
     equipAtStart: 0
+    manuallyHandleEquip: 0
     snapOnGrab: 0
     ignoreAutomaticMeshHide: 0
     OnEquip:
@@ -1188,6 +1259,12 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+    OnAttemptedEquip:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAttemptedUnequip:
+      m_PersistentCalls:
+        m_Calls: []
   playerCollidersToIgnore:
   - {fileID: 0}
   - {fileID: 0}
@@ -2116,6 +2193,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.size
       value: 3
       objectReference: {fileID: 0}
@@ -2137,6 +2219,11 @@ PrefabInstance:
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
@@ -2179,6 +2266,11 @@ PrefabInstance:
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3386924429349658301}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2238,6 +2330,16 @@ PrefabInstance:
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
       value: HideMaterial
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetStretchState
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
@@ -2316,6 +2418,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GloveStretch, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: PPEClothSwitcher, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -2367,6 +2479,11 @@ PrefabInstance:
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
@@ -2548,6 +2665,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -2564,6 +2686,11 @@ PrefabInstance:
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
@@ -2596,6 +2723,11 @@ PrefabInstance:
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3386924429349658301}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2640,6 +2772,16 @@ PrefabInstance:
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
       value: HideMaterial
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetStretchState
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
@@ -2698,6 +2840,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GloveStretch, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: PPEClothSwitcher, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -2738,6 +2890,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
@@ -2758,6 +2915,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -2769,6 +2931,11 @@ PrefabInstance:
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
@@ -2791,6 +2958,11 @@ PrefabInstance:
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3386924429349658301}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2820,6 +2992,16 @@ PrefabInstance:
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
       value: HideMaterial
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetStretchState
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
@@ -2853,6 +3035,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GloveStretch, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: PPEClothSwitcher, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -2869,6 +3056,11 @@ PrefabInstance:
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
@@ -4455,6 +4647,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.size
       value: 3
       objectReference: {fileID: 0}
@@ -4476,6 +4673,11 @@ PrefabInstance:
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
@@ -4518,6 +4720,11 @@ PrefabInstance:
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8909728064611669825}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4577,6 +4784,16 @@ PrefabInstance:
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
       value: HideMaterial
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetStretchState
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
@@ -4655,6 +4872,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GloveStretch, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: PPEClothSwitcher, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -4706,6 +4933,11 @@ PrefabInstance:
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 532985179382145082, guid: 01aa48249084bba4b9b8d52127c697f9,
@@ -4895,6 +5127,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -4911,6 +5148,11 @@ PrefabInstance:
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
@@ -4943,6 +5185,11 @@ PrefabInstance:
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8909728064611669825}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4987,6 +5234,16 @@ PrefabInstance:
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
       value: HideMaterial
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetStretchState
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
@@ -5045,6 +5302,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GloveStretch, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: PPEClothSwitcher, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -5085,6 +5352,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541758291398041812, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
@@ -5105,6 +5377,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -5116,6 +5393,11 @@ PrefabInstance:
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
@@ -5138,6 +5420,11 @@ PrefabInstance:
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8909728064611669825}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -5167,6 +5454,16 @@ PrefabInstance:
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
       value: HideMaterial
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetStretchState
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
@@ -5200,6 +5497,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GloveStretch, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
       propertyPath: OnUnhover.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: PPEClothSwitcher, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -5216,6 +5518,11 @@ PrefabInstance:
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
         type: 3}
       propertyPath: OnHover.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,
+        type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6908566929163768795, guid: 01aa48249084bba4b9b8d52127c697f9,

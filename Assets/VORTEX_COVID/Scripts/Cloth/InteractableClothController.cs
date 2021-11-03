@@ -91,12 +91,16 @@ public class ClothPair
     public float distanceThreshold = 0.2f; // Distance from the model cloth that the scene cloth needs to be to equip
     public float angleThreshold = 30f; // Angle between the model cloth that the scene cloth needs to be to equip
     public bool equipAtStart = false;
+    public bool manuallyHandleEquip = false; // Use this if equipping and unequipping PPE depends on external conditions
     public bool snapOnGrab = false; // Snap to/from the model when grabbed
     public bool isEquipped { get; private set; } = false;
     public bool ignoreAutomaticMeshHide = false; // Enable or disable automatically disabling the worn PPE when unequipping
 
     public UnityEvent<HVRHandGrabber> OnEquip;
     public UnityEvent<HVRHandGrabber> OnUnequip;
+    public UnityEvent<HVRHandGrabber, ClothPair> OnAttemptedEquip;
+    public UnityEvent<HVRHandGrabber, ClothPair> OnAttemptedUnequip;
+
 
     private bool movedOutOfThresholdAfterUnequip = true;
 
@@ -184,18 +188,48 @@ public class ClothPair
         {
             if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
             {
-                // Get a reference to which grabber held the object, then invoke the equip event with it after the ForceRelease
                 HVRHandGrabber grabber = sceneCloth.GetGrabber();
 
-                ToggleModelCloth();
-                isEquipped = true;
-                OnEquip.Invoke(grabber);
+                if (!manuallyHandleEquip)
+                    Equip(grabber);
+                else
+                    OnAttemptedEquip.Invoke(grabber, this);
             }
             else if (!InThresholdDistance())
             {
                 movedOutOfThresholdAfterUnequip = true;
             }
         }
+    }
+
+    public void ManuallyEquip(HVRHandGrabber grabber)
+    {
+        if (manuallyHandleEquip)
+            Equip(grabber);
+    }
+
+    public void ManuallyUnequip(HVRHandGrabber grabber)
+    {
+        if (manuallyHandleEquip)
+            Unequip(grabber);
+    }
+
+    private void Equip(HVRHandGrabber grabber)
+    {
+        // Get a reference to which grabber held the object, then invoke the equip event with it after the ForceRelease
+        ToggleModelCloth();
+        isEquipped = true;
+        OnEquip.Invoke(grabber);
+    }
+
+    private void Unequip(HVRHandGrabber grabber)
+    {
+        ToggleModelCloth();
+        isEquipped = false;
+        OnUnequip.Invoke(grabber);
+
+        if (!snapOnGrab)
+            sceneCloth.ManualGrab(grabber);
     }
 
     // Check if the scene cloth is within the distance threshold
@@ -219,20 +253,19 @@ public class ClothPair
     {
         if (snapOnGrab)
         {
-            ToggleModelCloth();
-            isEquipped = true;
-            OnEquip.Invoke(grabber);
+            if (manuallyHandleEquip)
+                OnAttemptedEquip.Invoke(grabber, this);
+            else
+                Equip(grabber);
         }
     }
 
     // Called when the worn cloth sends an event, disables worn cloth and enables scene cloth
     private void OnWornClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
-        ToggleModelCloth();
-        isEquipped = false;
-        OnUnequip.Invoke(grabber);
-
-        if (!snapOnGrab)
-            sceneCloth.ManualGrab(grabber);
+        if (manuallyHandleEquip)
+            OnAttemptedUnequip.Invoke(grabber, this);
+        else
+            Unequip(grabber);
     }
 }
