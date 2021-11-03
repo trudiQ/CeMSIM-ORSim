@@ -39,6 +39,10 @@ namespace CEMSIM
 
                 InitializeServerData();
 
+                // register event triggers
+                //onServerStartTrigger += GeneralEvent.GenSeverStartEvent;
+                //onServerStopTrigger += GeneralEvent.GenServerStopEvent;
+
                 // initialize tcpListener
                 tcpListener = new TcpListener(IPAddress.Any, port);
                 tcpListener.Start();

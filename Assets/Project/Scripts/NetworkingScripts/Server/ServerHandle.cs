@@ -12,6 +12,12 @@ namespace CEMSIM
     {
         public class ServerHandle : MonoBehaviour
         {
+            public static event Action<int, string> onPlayerEnterTrigger;
+            public static event Action<int, Vector3, Quaternion, Vector3, Quaternion, Vector3, Quaternion> onPlayerMoveTrigger;
+            public static event Action<int, int> onPlayerItemPickupTrigger;
+            public static event Action<int, int> onPlayerItemDropoffTrigger;
+            public static event Action<int, int, Vector3, Quaternion> onPlayerItemMoveTrigger;
+
             public static void InvalidPacketResponse(int _fromClient, Packet _packet)
             {
                 Debug.LogWarning($"Client {_fromClient} sends an invalid packet");
@@ -106,6 +112,7 @@ namespace CEMSIM
 
                 // send back the packet with necessary inforamation about player locations
                 ServerInstance.clients[_fromClient].SendIntoGame(_username, _vr, _role_i);
+                PlayerEnterTrigger(_fromClient, _username);
             }
 
             /// <summary>
@@ -149,6 +156,8 @@ namespace CEMSIM
                 PlayerManager fromPlayer = (PlayerManager)ServerInstance.clients[_fromClient].player;
                 fromPlayer.SetPosition(_position, _rotation);
                 fromPlayer.SetControllerPositions(_leftPosition, _leftRotation, _rightPosition, _rightRotation);
+
+                PlayerMoveTrigger(_fromClient, _position, _rotation, _leftPosition, _leftRotation, _rightPosition, _rightRotation);
             }
 
             // update the TCP round-trip-time based on the response packet
@@ -189,6 +198,7 @@ namespace CEMSIM
                     return;
                 }
                 ServerItemManager.instance.UpdateItemState(_item_id, _position, _rotation, _packet);
+                PlayerItemMoveTrigger(_fromClient, _item_id, _position, _rotation);
             }
 
             /// <summary>
@@ -216,6 +226,8 @@ namespace CEMSIM
                         //if the item is no longer controlled by server then set item to kinematic and no gravity
                         rb.isKinematic = true;                  //Prevent server physics system from changing the item's position & rotation
                         rb.useGravity = false;
+
+                        PlayerItemPickupTrigger(_fromClient, _itemId);
                     }
                     else
                     {
@@ -224,6 +236,9 @@ namespace CEMSIM
                         {
                             ServerSend.ownershipDeprivation(currentOwner, _itemId);
                             itemCon.ownerId = _fromClient;
+
+                            PlayerItemDropoffTrigger(currentOwner, _itemId);
+                            PlayerItemPickupTrigger(_fromClient, _itemId);
                         }
                         else
                         {
@@ -244,6 +259,8 @@ namespace CEMSIM
                         //if server regains control of an item then turn on gravity and set kinematic off
                         rb.isKinematic = false;
                         rb.useGravity = true;
+
+                        PlayerItemDropoffTrigger(_fromClient, _itemId);
                     }
                     else
                     {
@@ -282,6 +299,34 @@ namespace CEMSIM
                 // inform other clients
                 ServerSend.SendVoiceChatPlayerId(_fromClient, _playerId, true);
             }
+
+            #region event system
+            public static void PlayerEnterTrigger(int _playerId, string _username)
+            {
+                if (onPlayerEnterTrigger != null)
+                    onPlayerEnterTrigger(_playerId, _username);
+            }
+            public static void PlayerMoveTrigger(int _playerId, Vector3 _pos, Quaternion _rot, Vector3 _lft_pos, Quaternion _lft_rot, Vector3 _rgt_pos, Quaternion _rgt_rot)
+            {
+                if (onPlayerMoveTrigger != null)
+                    onPlayerMoveTrigger(_playerId, _pos, _rot, _lft_pos, _lft_rot, _rgt_pos, _rgt_rot);
+            }
+            public static void PlayerItemPickupTrigger(int _playerId, int _itemId)
+            {
+                if (onPlayerItemPickupTrigger != null)
+                    onPlayerItemPickupTrigger(_playerId, _itemId);
+            }
+            public static void PlayerItemDropoffTrigger(int _playerId, int _itemId)
+            {
+                if (onPlayerItemDropoffTrigger != null)
+                    onPlayerItemDropoffTrigger(_playerId, _itemId);
+            }
+            public static void PlayerItemMoveTrigger(int _playerId, int _itemId, Vector3 _pos, Quaternion _rot)
+            {
+                if (onPlayerItemMoveTrigger != null)
+                    onPlayerItemMoveTrigger(_playerId, _itemId, _pos, _rot);
+            }
+            #endregion
 
         }
     }

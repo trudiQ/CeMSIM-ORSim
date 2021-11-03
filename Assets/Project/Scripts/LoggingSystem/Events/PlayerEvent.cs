@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using CEMSIM.GameLogic;
 using UnityEngine;
 
 namespace CEMSIM
@@ -13,23 +14,33 @@ namespace CEMSIM
             ExitGame,
             Move,
             PickupItem,
-            DropoffItem
+            DropoffItem,
+            MoveItem
         }
         public class PlayerEvent : BaseEvent
         {
+            /// <summary>
+            /// TODO: both controllers and item positions are not stored into files. This also includes the item state.
+            /// </summary>
             private int playerId;
             private PlayerActionType playerAction;
-            private Vector3 position;
-            private Vector3 rotation;
+            private Vector3 player_pos;
+            private Vector3 player_rot;
+            private Vector3 lft_ctl_pos;
+            private Vector3 lft_ctl_rot;
+            private Vector3 rgt_ctl_pos;
+            private Vector3 rgt_ctl_rot;
             private int itemId;
+            private Vector3 item_pos;
+            private Vector3 item_rot;
 
             public PlayerEvent(int _playerId, PlayerActionType _playerAction, Vector3 _position, Quaternion _rotation, int _itemId=-1)
             {
-                eventTime = DateTime.UtcNow.Ticks;
+                //eventTime = DateTime.UtcNow - LogManager.instance.SystemStartTime;
                 playerId = _playerId;
                 playerAction = _playerAction;
-                position = _position;
-                rotation = _rotation.eulerAngles;
+                player_pos = _position;
+                player_rot = _rotation.eulerAngles;
                 itemId = _itemId;
             }
 
@@ -42,15 +53,15 @@ namespace CEMSIM
             public override string ToString()
             {
                 string msg = string.Format("{0}: {1},{2},{3},{4},{5},{6},{7},{8},{9}",
-                    eventTime,
+                    eventTime.TotalMilliseconds,
                     playerId,
                     playerAction,
-                    position.x,
-                    position.y,
-                    position.z,
-                    rotation.x,
-                    rotation.y,
-                    rotation.z,
+                    player_pos.x,
+                    player_pos.y,
+                    player_pos.z,
+                    player_rot.x,
+                    player_rot.y,
+                    player_rot.z,
                     itemId
                     );
                 return msg;
@@ -62,17 +73,78 @@ namespace CEMSIM
                     eventTime,
                     playerId,
                     (int)playerAction,
-                    position.x,
-                    position.y,
-                    position.z,
-                    rotation.x,
-                    rotation.y,
-                    rotation.z,
+                    player_pos.x,
+                    player_pos.y,
+                    player_pos.z,
+                    player_rot.x,
+                    player_rot.y,
+                    player_rot.z,
                     itemId
                     );
                 return msg;
             }
 
+            #region generate events
+
+            //public static event Action<int, string> onPlayerEnterTrigger;
+            //public static event Action<int, Vector3, Quaternion, Vector3, Quaternion, Vector3, Quaternion> onPlayerMoveTrigger;
+            //public static event Action<int, int> onPlayerItemPickupTrigger;
+            //public static event Action<int, int> onPlayerItemDropdownTrigger;
+            //public static event Action<int, int, Vector3, Quaternion> onPlayerItemMoveTrigger;
+
+            public static void GenPlayerEnterEvent(int _playerId, string _username)
+            {
+                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.EnterGame, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION))
+                {
+                    e.AddToGeneralEventQueue();
+                    e.AddToPlayerEventQueue();
+                }
+            }
+
+            public static void GenPlayerExitEvent(int _playerId)
+            {
+                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.EnterGame, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION))
+                {
+                    e.AddToGeneralEventQueue();
+                    e.AddToPlayerEventQueue();
+                }
+            }
+
+            public static void GenPlayerMoveEvent(int _playerId, Vector3 _pos, Quaternion _rot, Vector3 _lft_pos, Quaternion _lft_rot, Vector3 _rgt_pos, Quaternion _rgt_rot)
+            {
+                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.Move, _pos, _rot))
+                {
+                    e.AddToPlayerEventQueue();
+                }
+            }
+
+            public static void GenPlayerItemPickupEvent(int _playerId, int _itemId)
+            {
+                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.PickupItem, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, _itemId))
+                {
+                    e.AddToGeneralEventQueue();
+                    e.AddToPlayerEventQueue();
+                }
+            }
+
+            public static void GenPlayerItemDropoffEvent(int _playerId, int _itemId)
+            {
+                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.DropoffItem, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, _itemId))
+                {
+                    e.AddToGeneralEventQueue();
+                    e.AddToPlayerEventQueue();
+                }
+            }
+
+            public static void GenPlayerItemMoveEvent(int _playerId, int _itemId, Vector3 _item_pos, Quaternion _item_rot)
+            {
+                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.MoveItem, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, _itemId))
+                {
+                    //e.AddToPlayerEventQueue();
+
+                }
+            }
+            #endregion
         }
     }
 }

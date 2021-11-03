@@ -12,6 +12,8 @@ namespace CEMSIM
         public class ServerSend : MonoBehaviour
         {
 
+            public static event Action<int> onPlayerExitTrigger;
+
             #region Send TCP Packets
             /// <summary>
             /// Send a packet to a particular client
@@ -226,6 +228,7 @@ namespace CEMSIM
                     // This packet is important, we cannot afford losing it.
                     MulticastTCPData(_packet, true);
                 }
+                PlayerExitTrigger(_playerId);
             }
 
             public static void HeartBeatDetection()
@@ -351,6 +354,14 @@ namespace CEMSIM
                 }
             }
 
+            #endregion
+
+            #region event system
+            public static void PlayerExitTrigger(int _playerId)
+            {
+                if (onPlayerExitTrigger != null)
+                    onPlayerExitTrigger(_playerId);
+            }
             #endregion
 
         }

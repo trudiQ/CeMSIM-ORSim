@@ -9,8 +9,13 @@ namespace CEMSIM
     {
         public class BaseEvent : IDisposable
         {
-            protected long eventTime;
+            protected TimeSpan eventTime;
             private bool disposed = false; ///> true: this object has been manually disposed
+
+            public BaseEvent()
+            {
+                eventTime = DateTime.UtcNow - LogManager.instance.SystemStartTime;
+            }
 
             /// <summary>
             /// Serialize the event to a string. Used to add to log file
@@ -33,7 +38,6 @@ namespace CEMSIM
 
             public void AddToGeneralEventQueue()
             {
-                Debug.Log("Add general event ~~~~~");
                 LogManager.instance.generalEventQueue.Enqueue(this);
             }
 

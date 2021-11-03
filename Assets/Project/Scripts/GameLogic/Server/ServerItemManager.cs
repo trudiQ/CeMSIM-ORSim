@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CEMSIM.Network;
 using CEMSIM.GameLogic;
-
+using System;
 
 namespace CEMSIM{
 
@@ -13,10 +13,11 @@ namespace CEMSIM{
 		public List<GameObject> itemList = new List<GameObject>();	//This List contains all items to be instantiated. To use: drag gameobject into the list in Unity IDE
 		public List<Vector3>spawnPositionList = new List<Vector3>();//This List contains all positions that item is to be allocated, To use: enter x y z value for vector3 in unity
 
+		// event system
+		public static event Action onItemInitializeTrigger;
 
-
-	    // Start is called before the first frame update
-	    void Start()
+		// Start is called before the first frame update
+		void Start()
 	    {
 			if (instance == null)
 			{
@@ -31,6 +32,7 @@ namespace CEMSIM{
 			}
 
 			InitializeItems();
+
 	    	
 	    }
 
@@ -84,7 +86,10 @@ namespace CEMSIM{
 				itemCon.ownerId = owner;
 			    id++;
 			}
-	    }
+
+			ItemInitializeTrigger();
+
+		}
 
 		/// <summary>
 		/// Update an item's position and rotation
@@ -111,6 +116,17 @@ namespace CEMSIM{
 				ServerSend.SendInitialItemState(_toClient, _item);
             }
         }
+
+
+        #region event system
+		public void ItemInitializeTrigger()
+        {
+			Debug.Log("initialize item list");
+			if (onItemInitializeTrigger != null)
+				onItemInitializeTrigger();
+
+		}
+		#endregion
 
 	}
 }

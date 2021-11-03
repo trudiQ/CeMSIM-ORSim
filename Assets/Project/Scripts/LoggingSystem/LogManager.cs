@@ -16,15 +16,16 @@ namespace CEMSIM
             [Tooltip("Period to store events to log files (seconds)")]
             public int StorageInterval = 1;
             public string LogDir = "Logs/";
+            public DateTime SystemStartTime = DateTime.UtcNow;
 
             private string generalLogFile = "CEMSIM_LOG" + DateTime.UtcNow.ToString("MM_dd_yyyy_HH_mm_ss") + ".log";
             private string playerCSVFile = "CEMSIM_Player" + DateTime.UtcNow.ToString("MM_dd_yyyy_HH_mm_ss") + ".csv";
 
-            public Queue<BaseEvent> generalEventQueue;
-            public Queue<BaseEvent> playerEventQueue;
+            public Queue<BaseEvent> generalEventQueue = new Queue<BaseEvent>();
+            public Queue<BaseEvent> playerEventQueue = new Queue<BaseEvent>();
 
             // Start is called before the first frame update
-            void Start()
+            private void Awake()
             {
                 if (instance == null)
                 {
@@ -38,30 +39,25 @@ namespace CEMSIM
                     Destroy(this);
                 }
 
-                generalEventQueue = new Queue<BaseEvent>();
-                playerEventQueue = new Queue<BaseEvent>();
-
                 generalLogFile = Path.Combine(LogDir, generalLogFile);
                 playerCSVFile = Path.Combine(LogDir, playerCSVFile);
+
+                // register event 
+                registerPublicEvent();
+                registerPlayerEvent();
 
                 InitializeGeneralLog();
                 InitializePlayerLog();
 
-                // register general event trigger
-                registerGeneralEventTrigger();
-
-
                 StartCoroutine(StoreGeneralEvents());
                 StartCoroutine(StorePlayerEvents());
-
             }
-
 
             private void InitializeGeneralLog()
             {
                 using (StreamWriter sw = File.CreateText(generalLogFile))
                 {
-                    sw.WriteLine("---Begin Log---");
+                    sw.WriteLine($"---Begin Log {DateTime.UtcNow.ToString("MM_dd_yyyy_HH_mm_ss")}---");
                 }
             }
 
@@ -76,7 +72,6 @@ namespace CEMSIM
             private IEnumerator StoreGeneralEvents()
             {
                 yield return new WaitForSeconds(StorageInterval);
-
                 ServerThreadManager.ExecuteOnMainThread(() =>
                 {
                     using (StreamWriter sw = File.AppendText(generalLogFile))
@@ -112,14 +107,22 @@ namespace CEMSIM
             }
 
 
-            private void registerGeneralEventTrigger()
+            private void registerPublicEvent()
             {
-                // register event triggers
                 ServerInstance.onServerStartTrigger += GeneralEvent.GenSeverStartEvent;
                 ServerInstance.onServerStopTrigger += GeneralEvent.GenServerStopEvent;
+                ServerItemManager.onItemInitializeTrigger += GeneralEvent.GenInitializeItemsEvent;
             }
 
-
+            private void registerPlayerEvent()
+            {
+                ServerHandle.onPlayerEnterTrigger += PlayerEvent.GenPlayerEnterEvent;
+                ServerHandle.onPlayerMoveTrigger += PlayerEvent.GenPlayerMoveEvent;
+                ServerHandle.onPlayerItemPickupTrigger += PlayerEvent.GenPlayerItemPickupEvent;
+                ServerHandle.onPlayerItemDropoffTrigger += PlayerEvent.GenPlayerItemDropoffEvent;
+                ServerHandle.onPlayerItemMoveTrigger += PlayerEvent.GenPlayerItemMoveEvent;
+                ServerSend.onPlayerExitTrigger += PlayerEvent.GenPlayerExitEvent;
+            }
 
         }
     }

@@ -8,9 +8,14 @@ namespace CEMSIM
     {
         public enum GeneralEventType
         {
-            ServerStart=1,
-            ServerStop,
+            ServerStart=1,      // referred in ServerInstance.start
+            ServerStop,         // referred in ServerInstance.stop
+            InitializeItems,    // referred in ServerItemManager.InitializeItems
         }
+
+        /// <summary>
+        /// GeneralEvent follows the eventSystem design pattern. The place where we add the "event action" is marked in the definiation of enumerator.
+        /// </summary>
         public class GeneralEvent : BaseEvent
         {
             private GeneralEventType eventType;
@@ -22,28 +27,38 @@ namespace CEMSIM
             public override string ToString()
             {
                 string msg = string.Format("{0}: {1}",
-                    eventTime,
+                    eventTime.TotalMilliseconds,
                     eventType);
                 return msg;
             }
 
+            #region generate events
 
-            public static void GenSeverStartEvent()
+            private static void GenServerEvent(GeneralEventType _eventType)
             {
-                using (GeneralEvent e = new GeneralEvent(GeneralEventType.ServerStart))
+                using (GeneralEvent e = new GeneralEvent(_eventType))
                 {
                     e.AddToGeneralEventQueue();
                 }
+            }
 
+            public static void GenSeverStartEvent()
+            {
+                GenServerEvent(GeneralEventType.ServerStart);
             }
 
             public static void GenServerStopEvent()
             {
-                using (GeneralEvent e = new GeneralEvent(GeneralEventType.ServerStop))
-                {
-                    e.AddToGeneralEventQueue();
-                }
+                GenServerEvent(GeneralEventType.ServerStop);
+
             }
+
+            public static void GenInitializeItemsEvent()
+            {
+                GenServerEvent(GeneralEventType.InitializeItems);
+            }
+
+            #endregion
         }
     }
 }
