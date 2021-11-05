@@ -4,7 +4,6 @@ using UnityEngine;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 
-[RequireComponent(typeof(HVRGrabbable))]
 public class GloveStretch : MonoBehaviour
 {
     public enum GloveStretchState { AtWrist, UnderGown, OverGown }
@@ -12,36 +11,28 @@ public class GloveStretch : MonoBehaviour
     public PPEOptionPoint[] stretchReferencePoints;
     public MultiGloveToggle multiGlove;
     public GloveStretchState stretchState { get; private set; }
+    public GameObject grabPointPrefab;
 
-    private HVRGrabbable grabbable;
+    private HVRGrabbable grabPoint;
     private PPEOptionPoint closestPoint;
-    private Transform originalParent;
     private bool grabbed = false;
-    private bool pointsActivated = false;
     private bool gownEquipped = false;
 
     void Start()
     {
-        originalParent = transform.parent;
-        gameObject.SetActive(false);
         SetPointsActive(false);
-
-        grabbable = GetComponent<HVRGrabbable>();
     }
 
     void Update()
     {
         if (grabbed)
         {
-            if (!pointsActivated)
-                SetPointsActive(true);
-
             float minimumDistance = float.MaxValue;
             int minimumIndex = -1;
 
             for (int i = 0; i < stretchReferencePoints.Length; i++)
             {
-                float distance = Vector3.Distance(transform.position, stretchReferencePoints[i].transform.position);
+                float distance = Vector3.Distance(grabPoint.transform.position, stretchReferencePoints[i].transform.position);
 
                 if (distance < minimumDistance)
                 {
@@ -93,24 +84,25 @@ public class GloveStretch : MonoBehaviour
             closestPoint.Unhover();
     }
 
-    public void GrabStretchPoint(HVRHandGrabber grabber)
+    private void GrabStretchPoint(HVRHandGrabber grabber)
     {
         if (grabber)
         {
-            transform.parent = null;
-            gameObject.SetActive(true);
-            grabber.TryGrab(grabbable, true);
+            grabPoint = Instantiate(grabPointPrefab, transform.position, Quaternion.identity).GetComponent<HVRGrabbable>();
+            grabber.TryGrab(grabPoint, true);
+            grabPoint.HandReleased.AddListener((_1, _2) => SelectClosestPoint());
+            SetPointsActive(true);
+
             grabbed = true;
         }
     }
 
+
     public void SelectClosestPoint()
     {
         closestPoint.Select();
-
-        gameObject.SetActive(false);
+        Destroy(grabPoint.gameObject);
         SetPointsActive(false);
-        transform.parent = originalParent;
 
         grabbed = false;
     }
@@ -124,7 +116,5 @@ public class GloveStretch : MonoBehaviour
     {
         foreach (PPEOptionPoint point in stretchReferencePoints)
             point.gameObject.SetActive(state);
-
-        pointsActivated = state;
     }
 }

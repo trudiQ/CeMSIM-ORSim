@@ -216,7 +216,6 @@ public class ClothPair
 
     private void Equip(HVRHandGrabber grabber)
     {
-        // Get a reference to which grabber held the object, then invoke the equip event with it after the ForceRelease
         ToggleModelCloth();
         isEquipped = true;
         OnEquip.Invoke(grabber);

@@ -13,7 +13,7 @@ public class PPEClothSwitcher : MonoBehaviour
         if (index >= 0 && index < objectsWithClothMesh.Length)
         {
             objectsWithClothMesh[index].SetActive(true);
-            handMeshMaterialToggle.HideMaterial(index);
+            handMeshMaterialToggle.HideMaterial(0);
         }
         else
             Debug.LogWarning("ClothSwitcher index out of range.");
@@ -24,7 +24,7 @@ public class PPEClothSwitcher : MonoBehaviour
         if (index >= 0 && index < objectsWithClothMesh.Length)
         {
             objectsWithClothMesh[index].SetActive(false);
-            handMeshMaterialToggle.ShowMaterial(index);
+            handMeshMaterialToggle.ShowMaterial(0);
         }
         else
             Debug.LogWarning("ClothSwitcher index out of range.");
