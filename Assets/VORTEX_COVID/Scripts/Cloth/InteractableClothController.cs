@@ -91,7 +91,8 @@ public class ClothPair
     public float distanceThreshold = 0.2f; // Distance from the model cloth that the scene cloth needs to be to equip
     public float angleThreshold = 30f; // Angle between the model cloth that the scene cloth needs to be to equip
     public bool equipAtStart = false;
-    public bool manuallyHandleEquip = false; // Use this if equipping and unequipping PPE depends on external conditions
+    public bool manuallyHandleEquip = false; // Use this if equipping PPE depends on external conditions
+    public bool manuallyHandleUnequip = false; // Use this if unequipping PPE depends on external conditions
     public bool snapOnGrab = false; // Snap to/from the model when grabbed
     public bool isEquipped { get; private set; } = false;
     public bool ignoreAutomaticMeshHide = false; // Enable or disable automatically disabling the worn PPE when unequipping
@@ -118,14 +119,9 @@ public class ClothPair
 
         // Make sure any events are triggered based on what is equipped at start
         if (equipAtStart)
-        {
-            isEquipped = true;
-            OnEquip.Invoke(null);
-        }
+            Equip(null);
         else
-        {
             isEquipped = false;
-        }
 
         modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted); // Subscribe to the grab event
         sceneCloth.onSceneClothInteracted.AddListener(OnSceneClothInteracted); // Subscribe to the grab event
@@ -210,7 +206,7 @@ public class ClothPair
 
     public void ManuallyUnequip(HVRHandGrabber grabber)
     {
-        if (manuallyHandleEquip)
+        if (manuallyHandleUnequip)
             Unequip(grabber);
     }
 
@@ -262,7 +258,7 @@ public class ClothPair
     // Called when the worn cloth sends an event, disables worn cloth and enables scene cloth
     private void OnWornClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
     {
-        if (manuallyHandleEquip)
+        if (manuallyHandleUnequip)
             OnAttemptedUnequip.Invoke(grabber, this);
         else
             Unequip(grabber);
