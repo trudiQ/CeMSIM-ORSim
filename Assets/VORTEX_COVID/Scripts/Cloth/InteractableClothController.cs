@@ -119,7 +119,10 @@ public class ClothPair
 
         // Make sure any events are triggered based on what is equipped at start
         if (equipAtStart)
-            Equip(null);
+        {
+            isEquipped = true;
+            OnEquip.Invoke(null);
+        }
         else
             isEquipped = false;
 

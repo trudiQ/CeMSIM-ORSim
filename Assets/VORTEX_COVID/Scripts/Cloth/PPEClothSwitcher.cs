@@ -40,8 +40,6 @@ public class PPEClothSwitcher : MonoBehaviour
                 clothMesh.SetActive(false);
 
             handMeshMaterialToggle.ShowAll();
-
         }
-
     }
 }

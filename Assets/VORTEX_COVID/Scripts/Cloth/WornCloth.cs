@@ -13,7 +13,7 @@ public class WornCloth : MonoBehaviour
     // It has to be different from the skinned object since its position doesn't move, only the vertices
     // The below GameObject contains the SkinnedMeshRenderer and is enabled/disabled to show/hide
     public GameObject objectWithSkinnedMesh;
-    public bool isActive { get; private set; }
+    public bool isActive { get; private set; } = false;
 
     // Events that trigger when the user grabs the object
     public VRInteractableEvent onWornClothInteracted;
