@@ -10,40 +10,40 @@ public class WarningMessage : MonoBehaviour
     public float fadeOutStartTime = 3f;
     public float fadeOutTime = 1f;
 
-    private IEnumerator currentFade;
+    private Coroutine currentFade;
 
     void Start()
     {
         gameObject.SetActive(false);
     }
 
-    public void DispayWarning(string message)
+    public void DisplayWarning(string message)
     {
 
         if (currentFade == null)
         {
             gameObject.SetActive(true);
-            StartCoroutine(WarningFade(message, defaultColor));
+            currentFade = StartCoroutine(WarningFade(message, defaultColor));
         }
             
         else
         {
             StopCoroutine(currentFade);
-            StartCoroutine(WarningFade(message, defaultColor));
+            currentFade = StartCoroutine(WarningFade(message, defaultColor));
         }
     }
     
-    public void DispayWarning(string message, Color color)
+    public void DisplayWarning(string message, Color color)
     {
         if (currentFade == null)
         {
             gameObject.SetActive(true);
-            StartCoroutine(WarningFade(message, color));
+            currentFade = StartCoroutine(WarningFade(message, color));
         }
         else
         {
             StopCoroutine(currentFade);
-            StartCoroutine(WarningFade(message, color));
+            currentFade = StartCoroutine(WarningFade(message, color));
         }
     }
 

@@ -192,12 +192,12 @@ public class HeadPPEController : MonoBehaviour
     public void RejectEquipOrder(string name)
     {
         if (warning)
-            warning.DispayWarning("Cannot don " + name + " in this order.");
+            warning.DisplayWarning("Cannot don " + name + " in this order.");
     }
 
     public void RejectUnequipOrder(string name)
     {
         if (warning)
-            warning.DispayWarning("Cannot doff " + name + " in this order.");
+            warning.DisplayWarning("Cannot doff " + name + " in this order.");
     }
 }
