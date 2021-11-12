@@ -7,7 +7,7 @@ public class HeadPPEController : MonoBehaviour
 {
     public SkinnedMeshRenderer bouffantRenderer;
     public SkinnedMeshRenderer faceMaskRenderer;
-    public WarningMessage warning;
+    public Notification notification;
 
     private enum HeadPPETypes { Bouffant, FaceMask, FaceShield }
     private List<HeadPPETypes> equipOrder = new List<HeadPPETypes>();
@@ -191,13 +191,13 @@ public class HeadPPEController : MonoBehaviour
 
     public void RejectEquipOrder(string name)
     {
-        if (warning)
-            warning.DisplayWarning("Cannot don " + name + " in this order.");
+        if (notification)
+            notification.DisplayWarning("Cannot don " + name + " in this order.");
     }
 
     public void RejectUnequipOrder(string name)
     {
-        if (warning)
-            warning.DisplayWarning("Cannot doff " + name + " in this order.");
+        if (notification)
+            notification.DisplayWarning("Cannot doff " + name + " in this order.");
     }
 }
