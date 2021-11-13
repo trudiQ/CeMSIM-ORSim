@@ -59,6 +59,12 @@ public class GloveStretch : MonoBehaviour
 
     public void GownUnequipped()
     {
+        if (multiGlove.currentGloveEquippedCount > 0 && stretchState == GloveStretchState.OverGown)
+        {
+            stretchReferencePoints[0].Hover();
+            stretchReferencePoints[0].Select();
+        }
+
         gownEquipped = false;
     }
 

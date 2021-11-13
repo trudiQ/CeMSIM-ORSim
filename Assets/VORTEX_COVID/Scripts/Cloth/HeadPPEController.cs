@@ -7,6 +7,7 @@ public class HeadPPEController : MonoBehaviour
 {
     public SkinnedMeshRenderer bouffantRenderer;
     public SkinnedMeshRenderer faceMaskRenderer;
+    public Notification notification;
 
     private enum HeadPPETypes { Bouffant, FaceMask, FaceShield }
     private List<HeadPPETypes> equipOrder = new List<HeadPPETypes>();
@@ -32,7 +33,7 @@ public class HeadPPEController : MonoBehaviour
         if (BouffantEquipped())
             pair?.ManuallyEquip(grabber);
         else
-            RejectEquipOrder();
+            RejectEquipOrder(pair.clothName);
     }
 
     private bool BouffantUnequipped()
@@ -71,7 +72,7 @@ public class HeadPPEController : MonoBehaviour
         if (BouffantUnequipped())
             pair?.ManuallyUnequip(grabber);
         else
-            RejectUnequipOrder();
+            RejectUnequipOrder(pair.clothName);
     }
 
     private bool FaceMaskEquipped()
@@ -98,7 +99,7 @@ public class HeadPPEController : MonoBehaviour
         if (FaceMaskEquipped())
             pair?.ManuallyEquip(grabber);
         else
-            RejectEquipOrder();
+            RejectEquipOrder(pair.clothName);
     }
 
     private bool FaceMaskUnequipped()
@@ -125,7 +126,7 @@ public class HeadPPEController : MonoBehaviour
         if (FaceMaskUnequipped())
             pair?.ManuallyUnequip(grabber);
         else
-            RejectUnequipOrder();
+            RejectUnequipOrder(pair.clothName);
     }
 
     private bool FaceShieldEquipped()
@@ -149,7 +150,7 @@ public class HeadPPEController : MonoBehaviour
         if (FaceShieldEquipped())
             pair?.ManuallyEquip(grabber);
         else
-            RejectEquipOrder();
+            RejectEquipOrder(pair.clothName);
     }
 
     private bool FaceShieldUnequipped()
@@ -185,16 +186,18 @@ public class HeadPPEController : MonoBehaviour
         if (FaceShieldUnequipped())
             pair?.ManuallyUnequip(grabber);
         else
-            RejectUnequipOrder();
+            RejectUnequipOrder(pair.clothName);
     }
 
-    public void RejectEquipOrder()
+    public void RejectEquipOrder(string name)
     {
-        Debug.Log("Bad Equip Order");
+        if (notification)
+            notification.DisplayWarning("Cannot don " + name + " in this order.");
     }
 
-    public void RejectUnequipOrder()
+    public void RejectUnequipOrder(string name)
     {
-        Debug.Log("Bad Unequip Order");
+        if (notification)
+            notification.DisplayWarning("Cannot doff " + name + " in this order.");
     }
 }
