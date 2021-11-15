@@ -98,15 +98,16 @@ public class InteractableCloth : MonoBehaviour {
 	}
 
 	// Enables or disables the object from being grabbed
-	public void SetGrabbableState(bool state) {
-		foreach(HVRInteractable interactable in interactables) {
-			interactable.grabbable = state;
-			interactable.Stationary = !state;
+	public void SetGrabbableState(bool snapOnGrap) {
+		if(snapOnGrap) {
+			foreach(HVRInteractable interactable in interactables) {
+				interactable.grabbable = !snapOnGrap;
+				interactable.Stationary = snapOnGrap;
+			}
+			foreach(Rigidbody rb in kinematicRigidbodies) {
+				rb.isKinematic = snapOnGrap;
+			}
 		}
-		foreach(Rigidbody rb in kinematicRigidbodies) {
-			rb.isKinematic = !state;
-		}
-		rb.isKinematic = !state;
 	}
 
 	public HVRHandGrabber GetGrabber() {

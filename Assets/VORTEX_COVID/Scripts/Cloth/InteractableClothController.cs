@@ -111,8 +111,11 @@ public class ClothPair
     public void Initialize(InteractableCloth pairedCloth)
     {
         sceneCloth = pairedCloth; // Pair the cloth objects
-        pairedCloth.SetGrabbableState(!snapOnGrab); // Toggle the cloth between grabbable and interactable based on snap
-        SetModelClothActive(equipAtStart);
+        pairedCloth.SetGrabbableState(snapOnGrab); // Toggle the cloth between grabbable and interactable based on snap
+
+		if(equipAtStart) {
+            SetModelClothActive(equipAtStart);
+        }
 
         modelClothColliders = modelCloth.gameObject.GetComponentsInChildren<Collider>(); // Get all colliders from the model cloth
         sceneClothColliders = sceneCloth.gameObject.GetComponentsInChildren<Collider>(); // Get all colliders from the scene cloth
@@ -159,13 +162,6 @@ public class ClothPair
     public void ToggleModelCloth()
     {
         SetModelClothActive(!modelCloth.isActive);
-    }
-
-    // Toggles between snapping and grabbing
-    public void ToggleGrabSnap()
-    {
-        sceneCloth.SetGrabbableState(snapOnGrab);
-        snapOnGrab = !snapOnGrab;
     }
 
     // Sets the model cloth to a specific state, sets the model and scene cloth to opposite state

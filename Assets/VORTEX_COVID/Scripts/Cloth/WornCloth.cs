@@ -18,6 +18,8 @@ public class WornCloth : MonoBehaviour
     // Events that trigger when the user grabs the object
     public VRInteractableEvent onWornClothInteracted;
 
+    public Transform anchor;
+
     private HVRInteractable interactable;
 
     void Start()
@@ -30,11 +32,17 @@ public class WornCloth : MonoBehaviour
     // Returns the position in the world where the offset of the object would be
     public Vector3 GetPosition()
     {
+		if(anchor) {
+            return anchor.position;
+		}
         return transform.position;
     }
 
     public Quaternion GetRotation()
     {
+		if(anchor) {
+            return anchor.rotation;
+		}
         return transform.rotation;
     }
 
