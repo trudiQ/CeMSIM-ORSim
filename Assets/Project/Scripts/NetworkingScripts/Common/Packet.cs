@@ -143,7 +143,10 @@ namespace CEMSIM
                 // extract packet id
                 id = ReadInt32();
                 if (!Enum.IsDefined(typeof(ServerPackets), id))
+                {
+                    Debug.LogWarning($"[Network] Receive an unknown packet with id {id}");
                     id = (int)ServerPackets.invalidPacket;
+                }
 
                 return id;
             }
@@ -156,7 +159,10 @@ namespace CEMSIM
                 // extract packet id
                 id = ReadInt32();
                 if (!Enum.IsDefined(typeof(ClientPackets), id))
+                {
+                    Debug.LogWarning($"[Network] Receive an unknown packet with id {id}");
                     id = (int)ClientPackets.invalidPacket;
+                }
 
                 return id;
             }
@@ -238,6 +244,13 @@ namespace CEMSIM
                 // may need to check whether _value is longer than the size of the buffer.
                 buffer.AddRange(_value);
             }
+
+            public void Write(ArraySegment<byte> _value)
+            {
+                Write(_value.Count);
+                Write(_value.Array);
+            }
+
 
             /// <summary>
             /// Convert a short variable to bytes and add bytes to buffer
@@ -368,6 +381,12 @@ namespace CEMSIM
                 {
                     throw new Exception($"No space in buffer for {_length} length of 'bytes'");
                 }
+            }
+
+            public ArraySegment<byte> ReadByteArraySegment(bool _moveReadPos = true)
+            {
+                int _length = ReadInt32();
+                return new ArraySegment<byte>(ReadBytes(_length));
             }
 
             public Int16 ReadInt16(bool _moveReadPos = true)

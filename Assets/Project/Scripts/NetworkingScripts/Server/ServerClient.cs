@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Collections;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.GameLogic;
+using CEMSIM.VoiceChat;
 
 namespace CEMSIM
 {
@@ -332,10 +333,17 @@ namespace CEMSIM
                     if (_client.player != null)
                     {
                         ServerSend.SpawnPlayer(_client.id, player);
+                        string _dissonancePlayerId = _client.player.GetComponent<CEMSIMVoicePlayer>().PlayerId;
+                        Debug.Log($"inform client {id} that client {_client.id} - {_dissonancePlayerId}");
+                        ServerSend.SendVoiceChatPlayerId(_client.id, _dissonancePlayerId, false);
                     }
                 }
 
-                
+                // 3. inform the current player the dissonance player ID of the dummy server player
+                ServerSend.SendVoiceChatPlayerId(id, ServerInstance.dissonancePlayerId, false);
+
+                // Send current environment state to newly added user
+                ServerNetworkManager.SendCurrentEnvironmentStates(id); 
 
 
             }

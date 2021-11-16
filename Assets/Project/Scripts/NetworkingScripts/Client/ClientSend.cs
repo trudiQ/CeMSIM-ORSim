@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 using CEMSIM.GameLogic;
 
 namespace CEMSIM
@@ -220,6 +220,32 @@ namespace CEMSIM
 
             }
             #endregion
+
+            public static void SendVoiceChatData(ArraySegment<byte> _voiceData, bool _isUDP=true)
+            {
+                using (Packet _packet = new Packet((int)ClientPackets.voiceChatData))
+                {
+                    _packet.Write(_voiceData);
+                    if (_isUDP)
+                        SendUDPData(_packet);
+                    else
+                        SendTCPData(_packet);
+                }
+               
+            }
+
+            /// <summary>
+            /// Inform server your dissonance player id.
+            /// </summary>
+            /// <param name="_playerId">The uid of the dissonance player</param>
+            public static void SendVoiceChatPlayerId(string _playerId)
+            {
+                using (Packet _packet = new Packet((int)ClientPackets.voiceChatPlayerId))
+                {
+                    _packet.Write(_playerId);
+                    SendTCPData(_packet);
+                }
+            }
 
         }
     }

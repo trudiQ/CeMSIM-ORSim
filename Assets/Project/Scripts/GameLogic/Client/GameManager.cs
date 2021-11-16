@@ -1,9 +1,10 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.Network;
 using System;
+using CEMSIM.VoiceChat;
 
 namespace CEMSIM
 {
@@ -71,7 +72,8 @@ namespace CEMSIM
 
                 if (_id == ClientInstance.instance.myId)
                 {
-                    if (localPlayerVR.activeInHierarchy)
+                    //if (localPlayerVR.activeInHierarchy)
+                    if (localPlayerVR != null)
                     {
                         _isVR = true;
                         _player = localPlayerVR;
@@ -79,20 +81,26 @@ namespace CEMSIM
                     }
                     else
                     {
-                        // create player for client
+                        // create the desktop player for client
                         _isVR = false;
                         _player = Instantiate(localPlayerPrefab, _position, _rotation);
                     }
+                    ClientInstance.instance.dissonanceClient.Connect();
+                    _player.GetComponent<CEMSIMVoicePlayer>().initialization(true);
+                    Debug.Log("Connect to dissonance server");
                 }
                 else
                 {
-                    // create player for another client
+                    // create the player avatar of one existing client
                     int _role_id = (int)_role;
-                    _player = Instantiate(playerPrefabs[_role_id], new Vector3(_position.x, 0f, _position.z), _rotation);
+                    _player = Instantiate(playerPrefabs[_role_id], new Vector3(_position.x, 0f, _position.z), Quaternion.identity);
                     // Since the new rig model treats the initial y-axis as the floor, we should first spawn it to a coordinate with 0 as y-axis
                     // then pull it to the correct position.
                     _player.GetComponent<PlayerManager>().enabled = true;
-                    _player.GetComponent<PlayerManager>().SetPosition(_position, _rotation);
+                    //_player.GetComponent<PlayerManager>().SetPosition(_position, _rotation);
+
+                    // initialize the Dissonance player as a remote player (false)
+                    _player.GetComponent<CEMSIMVoicePlayer>().initialization(false);
 
 
                 }
@@ -100,6 +108,8 @@ namespace CEMSIM
 
                 // record the player instance in the players dictionary
                 players.Add(_id, _player.GetComponent<PlayerManager>());
+
+
             }
 
 

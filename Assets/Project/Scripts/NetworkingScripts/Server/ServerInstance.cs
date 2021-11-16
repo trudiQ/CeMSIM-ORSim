@@ -21,6 +21,9 @@ namespace CEMSIM
             public delegate void PacketHandler(int _fromClient, Packet _packet);
             public static Dictionary<int, PacketHandler> packetHandlers;
 
+            public static string dissonancePlayerId; // the player id of a dummy dissonance client running at the server
+
+
             public static void Start(int _maxPlayers, int _port)
             {
                 maxPlayers = _maxPlayers;
@@ -121,7 +124,10 @@ namespace CEMSIM
                         {
                             // build up the connection
                             clients[_clientId].udp.Connect(_clientEndPoint);
-                            return;
+
+                            // // In the new system, the welcome packet is also a valid packet with proper head. The client also expects a welcome response packet.
+                            //return; 
+
                         }
 
                         // compare whether the packet is sent from a client we know
@@ -175,6 +181,8 @@ namespace CEMSIM
                     { (int)ClientPackets.itemState, ServerHandle.ItemState},
                     { (int)ClientPackets.itemOwnershipChange, ServerHandle.ItemOwnershipChange},
                     { (int)ClientPackets.environmentState, ServerHandle.EnvironmentState},
+                    { (int)ClientPackets.voiceChatData, ServerHandle.VoiceChatData},
+                    { (int)ClientPackets.voiceChatPlayerId, ServerHandle.VoiceChatPlayerId},
                 };
 
                 Debug.Log("Initialized Server Data");

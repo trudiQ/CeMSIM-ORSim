@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 
+using CEMSIM.VoiceChat;
 using CEMSIM.GameLogic;
 
 namespace CEMSIM
@@ -34,7 +36,7 @@ namespace CEMSIM
                 ClientSend.WelcomeReceived();
 
                 // connect udp 
-                //ClientInstance.instance.udp.Connect(((IPEndPoint)ClientInstance.instance.tcp.socket.Client.LocalEndPoint).Port);
+                ClientInstance.instance.udp.Connect(((IPEndPoint)ClientInstance.instance.tcp.socket.Client.LocalEndPoint).Port);
 
                 // Mark TCP ready-to-use
                 ClientInstance.instance.tcp.isTCPConnected = true;
@@ -194,6 +196,22 @@ namespace CEMSIM
                 GameManager.handleEventPacket(_eventId, _packet);
             }
 
+            public static void VoiceChatData(Packet _packet)
+            {
+                ArraySegment<byte> _voiceData = _packet.ReadByteArraySegment();
+                if (ClientInstance.instance.dissonanceClient != null)
+                {
+                    ClientInstance.instance.dissonanceClient.PacketDelivered(_voiceData); // any data, either TCP/UDP voice/message
+                }
+            }
+
+            public static void VoiceChatPlayerId(Packet _packet)
+            {
+                int _fromClient = _packet.ReadInt32();
+                string _playerId = _packet.ReadString();
+
+                GameManager.players[_fromClient].gameObject.GetComponent<CEMSIMVoicePlayer>().ChangePlayerName(_playerId);
+            }
 
 
         }

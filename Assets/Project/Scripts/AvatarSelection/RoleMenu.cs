@@ -34,6 +34,9 @@ public class RoleMenu : MonoBehaviour
     public UnityEvent<string> onPortChanged;
     public UnityEvent onConnect;
 
+    private bool connectionCheck = false;
+    private bool isPlayerSpawned = false;
+
     void Start()
     {
         // Set initial values to each field 
@@ -86,6 +89,33 @@ public class RoleMenu : MonoBehaviour
         SetRoleDropdownsInteractable(false); // To prevent swapping avatars before height calibration
 
         ChooseRoleAndAvatar(avatarSwapper.defaultRole, avatarSwapper.defaultAvatar);
+    }
+
+    void Update()
+    {
+        if (connectionCheck)
+        {
+            // the connect button has been pressed
+            if(ClientInstance.instance.CheckConnection())
+            {
+                if (!isPlayerSpawned)
+                {
+                    // use to guarantee that player will only be spawned once.
+                    isPlayerSpawned = true;
+                    connectButton.GetComponent<Selectable>().interactable = false;
+                    connectButton.GetComponentInChildren<Text>().text = "Entering";
+                    StartCoroutine(ClientInstance.instance.DelaySpawnRequest(1f));
+                    StartCoroutine(DelayDestroy());
+                    
+                }
+            }
+            else
+            {
+                connectButton.GetComponentInChildren<Text>().text = "Reconnect";
+                connectButton.GetComponent<Selectable>().interactable = true;
+                Debug.Log($"TCP: {ClientInstance.instance.tcp.isTCPConnected} UDP: {ClientInstance.instance.udp.isUDPConnected}");
+            }
+        }
     }
 
     public void SetRoleDropdownsInteractable(bool state)
@@ -160,10 +190,7 @@ public class RoleMenu : MonoBehaviour
         ClientInstance.instance.SetUsername(nameField.text);
         ClientInstance.instance.ConnectToServer(_ip, _port);
 
-        StartCoroutine(ClientInstance.instance.DelaySpawnRequest(1f));
-       
-        StartCoroutine(DelayDestroy());
-
+        connectionCheck = true;
     }
 
 

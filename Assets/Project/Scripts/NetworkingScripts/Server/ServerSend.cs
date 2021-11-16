@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.GameLogic;
+using System;
 
 namespace CEMSIM
 {
@@ -312,7 +313,43 @@ namespace CEMSIM
 
             }
 
-            
+            public static void SendVoiceChatData(int _toClient, ArraySegment<byte> _voiceData, bool _isUDP = true)
+            {
+
+
+                using (Packet _packet = new Packet((int)ServerPackets.voiceChatData))
+                {
+                    _packet.Write(_voiceData);
+                    if (_isUDP)
+                        SendUDPData(_toClient, _packet);
+                    else
+                        SendTCPData(_toClient, _packet);
+                }
+            }
+
+            /// <summary>
+            /// Inform other users the dissonance player id (string) of user _fromClient.
+            /// </summary>
+            /// <param name="_tgtClient">id of the player who would like to inform its chosen dissonance playerId</param>
+            /// <param name="_playerId">Dissonance player id</param>
+            /// <param name="_needMulticast">whether to multicast except the tgtClient or only unicast to the tgtClient</param>
+            public static void SendVoiceChatPlayerId(int _tgtClient, string _playerId, bool _needMulticast=true)
+            {
+                using (Packet _packet = new Packet((int)ServerPackets.voiceChatPlayerId))
+                {
+                    _packet.Write(_tgtClient);
+                    _packet.Write(_playerId);
+
+                    if (_needMulticast)
+                    {
+                        MulticastExceptOneTCPData(_tgtClient, _packet);
+                    }
+                    else
+                    {
+                        SendTCPData(_tgtClient, _packet);
+                    }
+                }
+            }
 
             #endregion
 

@@ -22,10 +22,12 @@ namespace CEMSIM
             playerDisconnected, // inform player the disconnection of another player
             heartBeatDetectionUDP, // a packet containing the server's system time. used to check whether the target client is alive and get the round-trip-time.
             heartBeatDetectionTCP, 
-            itemState,       //update of item position
+            itemState,          //update of item position
             ownershipDeprivation,    //TCP packet that denies a client's request to an item's ownership
             environmentState,   // carry the environment state information (not player state)
             itemList,           // inform client the list of items in the current simulation scene
+            voiceChatData,      // voice chat data 
+            voiceChatPlayerId,  // inform other clients the dissonance player id
         }
 
         /// <summary>
@@ -47,6 +49,8 @@ namespace CEMSIM
             itemState,     //UDP update of item position
             itemOwnershipChange, //TCP update of item's ownership
             environmentState,    // carry the environment state information (not player state)
+            voiceChatData,       // voice chat data
+            voiceChatPlayerId,   // inform the server (then other clients) the setting of dissonance player id
         }
 
     }
