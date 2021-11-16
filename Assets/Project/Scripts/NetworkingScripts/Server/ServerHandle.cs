@@ -304,7 +304,7 @@ namespace CEMSIM
             #region event system
             public static void PlayerEnterTrigger(int _playerId, string _username)
             {
-                Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
+                //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onPlayerEnterTrigger != null)
                     onPlayerEnterTrigger(_playerId, _username);
             }

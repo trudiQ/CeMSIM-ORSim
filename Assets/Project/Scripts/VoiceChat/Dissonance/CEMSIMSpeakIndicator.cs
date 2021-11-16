@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Dissonance;
 using CEMSIM.GameLogic;
+using System;
 
 namespace CEMSIM
 {
@@ -21,6 +22,10 @@ namespace CEMSIM
 
             private IDissonancePlayer _player;
             private VoicePlayerState _state;
+            private bool isSpeaking_prev = false;
+
+            public static event Action<string> onPlayerStartSpeaking;
+            public static event Action<string> onPlayerStopSpeaking;
 
             private bool IsSpeaking
             {
@@ -74,6 +79,9 @@ namespace CEMSIM
                     //Calculate intensity of speech - do the pow to visually boost the scale at lower intensities
                     _intensity = Mathf.Max(Mathf.Clamp(Mathf.Pow(_state.Amplitude, 0.175f), 0.25f, 1) * 0.25f, _intensity - Time.unscaledDeltaTime);
                     _indicator.SetActive(true);
+                    if(!isSpeaking_prev)
+                        StartSpeakingTrigger(_player.PlayerId);
+                    isSpeaking_prev = true;
                 }
                 else
                 {
@@ -82,6 +90,9 @@ namespace CEMSIM
 
                     if (_intensity <= 0)
                         _indicator.SetActive(false);
+                    if (isSpeaking_prev)
+                        StopSpeakingTrigger(_player.PlayerId);
+                    isSpeaking_prev = false;
                 }
 
                 UpdateLight(_light, _intensity);
@@ -102,6 +113,25 @@ namespace CEMSIM
             {
                 StartCoroutine(FindPlayerState());
             }
+
+
+            #region Event system
+            public void StartSpeakingTrigger(string _playerUId)
+            {
+                //Debug.Log($"{_playerUId} starts speaking");
+                if (onPlayerStartSpeaking != null)
+                    onPlayerStartSpeaking(_playerUId);
+            }
+
+            public void StopSpeakingTrigger(string _playerUId)
+            {
+                //Debug.Log($"{_playerUId} stops speaking");
+                if (onPlayerStopSpeaking != null)
+                    onPlayerStopSpeaking(_playerUId);
+            }
+
+            #endregion
+
         }
     }
 }

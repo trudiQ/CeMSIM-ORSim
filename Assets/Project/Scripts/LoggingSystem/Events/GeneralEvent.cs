@@ -27,7 +27,7 @@ namespace CEMSIM
             public override string ToString()
             {
                 string msg = string.Format("{0}: {1}",
-                    eventTime.TotalMilliseconds,
+                    eventTime,
                     eventType);
                 return msg;
             }

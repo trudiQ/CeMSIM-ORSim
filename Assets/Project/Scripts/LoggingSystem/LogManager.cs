@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using CEMSIM.Network;
+using CEMSIM.VoiceChat;
+using Dissonance.Audio.Playback;
 using UnityEngine;
 
 namespace CEMSIM
@@ -45,6 +47,7 @@ namespace CEMSIM
                 // register event 
                 registerPublicEvent();
                 registerPlayerEvent();
+                registerVoiceChatEvent();
 
                 InitializeGeneralLog();
                 InitializePlayerLog();
@@ -123,6 +126,13 @@ namespace CEMSIM
                 ServerHandle.onPlayerItemMoveTrigger += PlayerEvent.GenPlayerItemMoveEvent;
                 ServerSend.onPlayerExitTrigger += PlayerEvent.GenPlayerExitEvent;
             }
+
+            private void registerVoiceChatEvent()
+            {
+                SamplePlaybackComponent.onPlayerSpeechFileCreating += VoiceChatEvent.GenAudioFileCreateEvent;
+                CEMSIMSpeakIndicator.onPlayerStartSpeaking += VoiceChatEvent.GenStartSpeakEvent;
+                CEMSIMSpeakIndicator.onPlayerStopSpeaking += VoiceChatEvent.GenStopSpeakEvent;
+            } 
 
         }
     }
