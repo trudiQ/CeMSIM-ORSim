@@ -219,16 +219,17 @@ namespace CEMSIM
             }
 
 
-            public static void PlayerDisconnect(int _playerId)
+            public static void PlayerDisconnect(int _clientId)
             {
                 using (Packet _packet = new Packet((int)ServerPackets.playerDisconnected))
                 {
-                    _packet.Write(_playerId);
+                    _packet.Write(_clientId);
 
                     // This packet is important, we cannot afford losing it.
                     MulticastTCPData(_packet, true);
                 }
-                PlayerExitTrigger(_playerId);
+                PlayerExitTrigger(_clientId);
+                ServerInstance.RemoveClientid(_clientId);
             }
 
             public static void HeartBeatDetection()
@@ -334,14 +335,14 @@ namespace CEMSIM
             /// Inform other users the dissonance player id (string) of user _fromClient.
             /// </summary>
             /// <param name="_tgtClient">id of the player who would like to inform its chosen dissonance playerId</param>
-            /// <param name="_playerId">Dissonance player id</param>
+            /// <param name="_clientuuid">Dissonance player id</param>
             /// <param name="_needMulticast">whether to multicast except the tgtClient or only unicast to the tgtClient</param>
-            public static void SendVoiceChatPlayerId(int _tgtClient, string _playerId, bool _needMulticast=true)
+            public static void SendVoiceChatPlayerId(int _tgtClient, string _clientuuid, bool _needMulticast=true)
             {
                 using (Packet _packet = new Packet((int)ServerPackets.voiceChatPlayerId))
                 {
                     _packet.Write(_tgtClient);
-                    _packet.Write(_playerId);
+                    _packet.Write(_clientuuid);
 
                     if (_needMulticast)
                     {
@@ -357,10 +358,10 @@ namespace CEMSIM
             #endregion
 
             #region event system
-            public static void PlayerExitTrigger(int _playerId)
+            public static void PlayerExitTrigger(int _clientId)
             {
                 if (onPlayerExitTrigger != null)
-                    onPlayerExitTrigger(_playerId);
+                    onPlayerExitTrigger(_clientId);
             }
             #endregion
 

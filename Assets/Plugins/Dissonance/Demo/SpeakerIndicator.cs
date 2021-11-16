@@ -54,7 +54,7 @@ namespace Dissonance.Demo
             //The loop is necessary in case Dissonance is still initializing this player into the network session
             while (_state == null)
             {
-                _state = FindObjectOfType<DissonanceComms>().FindPlayer(_player.PlayerId);
+                _state = FindObjectOfType<DissonanceComms>().FindPlayer(_player.clientuuid);
                 yield return null;
             }
         }

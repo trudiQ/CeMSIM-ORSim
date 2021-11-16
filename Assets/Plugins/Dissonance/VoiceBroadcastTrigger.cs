@@ -483,8 +483,8 @@ namespace Dissonance
                 //Don't warn if self does not have an ID yet - it could just be initialising
                 if (_self == null)
                     Log.Warn("Attempting to transmit to a null player object");
-                else if (_self.PlayerId != null)
-                    _playerChannel = Comms.PlayerChannels.Open(_self.PlayerId, _broadcastPosition, _priority);
+                else if (_self.clientuuid != null)
+                    _playerChannel = Comms.PlayerChannels.Open(_self.clientuuid, _broadcastPosition, _priority);
             }
         }
 

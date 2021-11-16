@@ -18,7 +18,7 @@ namespace CEMSIM
             private Coroutine _startCo;
 
             public bool IsTracking { get; private set; }
-            public string PlayerId { get; private set; }
+            public string clientuuid { get; private set; } // the dissonance uuid 
             public string _PlayerId; // for display and debug use only. 
 
             [Tooltip("The gameobject whose transform will be used to represent the player's position. By default, it's the attached gameobject.")]
@@ -74,15 +74,15 @@ namespace CEMSIM
 
 
 
-            private void SetPlayerName(string _playerName)
+            private void SetPlayerName(string _clientuuid)
             {
                 //We need to stop and restart tracking to handle the name change
                 if (IsTracking)
                     StopTracking();
 
                 //Perform the actual work
-                PlayerId = _playerName;
-                _PlayerId = _playerName; // Debug: for display only
+                clientuuid = _clientuuid;
+                _PlayerId = _clientuuid; // Debug: for display only
                 StartTracking();
 
                 // multicast the playerId
@@ -90,20 +90,20 @@ namespace CEMSIM
                 if (isMine)
                     if (isServerDummyPlayer)
                     {
-                        ServerSend.SendVoiceChatPlayerId(0, PlayerId, true);
-                        ServerInstance.dissonancePlayerId = PlayerId;
+                        ServerSend.SendVoiceChatPlayerId(0, clientuuid, true);
+                        ServerInstance.dissonancePlayerId = clientuuid;
 
-                        Debug.Log($"Server chooses dissonance player id {PlayerId}");
+                        Debug.Log($"Server chooses dissonance player id {clientuuid}");
 
                     }
                     else
-                        ClientSend.SendVoiceChatPlayerId(PlayerId);
+                        ClientSend.SendVoiceChatPlayerId(clientuuid);
 
             }
             
-            public void ChangePlayerName(string _playerName)
+            public void ChangePlayerName(string _clientuuid)
             {
-                SetPlayerName(_playerName);
+                SetPlayerName(_clientuuid);
                 gameObject.GetComponent<CEMSIMSpeakIndicator>().UpdateState();
             }
 
@@ -144,7 +144,7 @@ namespace CEMSIM
                 }
 
                 // Can't track someone with a null name! Loop until name is valid
-                while (PlayerId == null)
+                while (clientuuid == null)
                     yield return null;
 
                 // Now start tracking

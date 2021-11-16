@@ -22,7 +22,7 @@ namespace CEMSIM
             /// <summary>
             /// TODO: both controllers and item positions are not stored into files. This also includes the item state.
             /// </summary>
-            private int playerId;
+            private int clientId;
             private PlayerActionType playerAction;
             private Vector3 player_pos;
             private Vector3 player_rot;
@@ -34,10 +34,10 @@ namespace CEMSIM
             private Vector3 item_pos;
             private Vector3 item_rot;
 
-            public PlayerEvent(int _playerId, PlayerActionType _playerAction, Vector3 _position, Quaternion _rotation, int _itemId=-1)
+            public PlayerEvent(int _clientId, PlayerActionType _playerAction, Vector3 _position, Quaternion _rotation, int _itemId=-1)
             {
                 //eventTime = DateTime.UtcNow - LogManager.instance.SystemStartTime;
-                playerId = _playerId;
+                clientId = _clientId;
                 playerAction = _playerAction;
                 player_pos = _position;
                 player_rot = _rotation.eulerAngles;
@@ -54,7 +54,7 @@ namespace CEMSIM
             {
                 string msg = string.Format("{0}: player{1},{2}, item{3},{4},{5},{6},{7},{8}{9}",
                     eventTime,
-                    playerId,
+                    clientId,
                     playerAction,
                     itemId,
                     player_pos.x,
@@ -71,7 +71,7 @@ namespace CEMSIM
             {
                 string msg = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
                     eventTime,
-                    playerId,
+                    clientId,
                     playerAction,
                     player_pos.x,
                     player_pos.y,
@@ -92,53 +92,53 @@ namespace CEMSIM
             //public static event Action<int, int> onPlayerItemDropdownTrigger;
             //public static event Action<int, int, Vector3, Quaternion> onPlayerItemMoveTrigger;
 
-            public static void GenPlayerEnterEvent(int _playerId, string _username)
+            public static void GenPlayerEnterEvent(int _clientId, string _username)
             {
-                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.EnterGame, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION))
+                using (PlayerEvent e = new PlayerEvent(_clientId, PlayerActionType.EnterGame, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToPlayerEventQueue();
                 }
             }
 
-            public static void GenPlayerExitEvent(int _playerId)
+            public static void GenPlayerExitEvent(int _clientId)
             {
-                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.ExitGame, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION))
+                using (PlayerEvent e = new PlayerEvent(_clientId, PlayerActionType.ExitGame, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToPlayerEventQueue();
                 }
             }
 
-            public static void GenPlayerMoveEvent(int _playerId, Vector3 _pos, Quaternion _rot, Vector3 _lft_pos, Quaternion _lft_rot, Vector3 _rgt_pos, Quaternion _rgt_rot)
+            public static void GenPlayerMoveEvent(int _clientId, Vector3 _pos, Quaternion _rot, Vector3 _lft_pos, Quaternion _lft_rot, Vector3 _rgt_pos, Quaternion _rgt_rot)
             {
-                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.Move, _pos, _rot))
+                using (PlayerEvent e = new PlayerEvent(_clientId, PlayerActionType.Move, _pos, _rot))
                 {
                     e.AddToPlayerEventQueue();
                 }
             }
 
-            public static void GenPlayerItemPickupEvent(int _playerId, int _itemId)
+            public static void GenPlayerItemPickupEvent(int _clientId, int _itemId)
             {
-                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.PickupItem, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, _itemId))
-                {
-                    e.AddToGeneralEventQueue();
-                    e.AddToPlayerEventQueue();
-                }
-            }
-
-            public static void GenPlayerItemDropoffEvent(int _playerId, int _itemId)
-            {
-                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.DropoffItem, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, _itemId))
+                using (PlayerEvent e = new PlayerEvent(_clientId, PlayerActionType.PickupItem, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, _itemId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToPlayerEventQueue();
                 }
             }
 
-            public static void GenPlayerItemMoveEvent(int _playerId, int _itemId, Vector3 _item_pos, Quaternion _item_rot)
+            public static void GenPlayerItemDropoffEvent(int _clientId, int _itemId)
             {
-                using (PlayerEvent e = new PlayerEvent(_playerId, PlayerActionType.MoveItem, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, _itemId))
+                using (PlayerEvent e = new PlayerEvent(_clientId, PlayerActionType.DropoffItem, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, _itemId))
+                {
+                    e.AddToGeneralEventQueue();
+                    e.AddToPlayerEventQueue();
+                }
+            }
+
+            public static void GenPlayerItemMoveEvent(int _clientId, int _itemId, Vector3 _item_pos, Quaternion _item_rot)
+            {
+                using (PlayerEvent e = new PlayerEvent(_clientId, PlayerActionType.MoveItem, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, _itemId))
                 {
                     //e.AddToPlayerEventQueue();
 

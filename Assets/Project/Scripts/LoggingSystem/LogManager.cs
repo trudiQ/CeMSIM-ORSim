@@ -72,6 +72,8 @@ namespace CEMSIM
                 }
             }
 
+
+            #region store log files
             private IEnumerator StoreGeneralEvents()
             {
                 yield return new WaitForSeconds(StorageInterval);
@@ -109,6 +111,9 @@ namespace CEMSIM
                 StartCoroutine(StorePlayerEvents());
             }
 
+            #endregion
+
+            #region register triggers
 
             private void registerPublicEvent()
             {
@@ -132,8 +137,9 @@ namespace CEMSIM
                 SamplePlaybackComponent.onPlayerSpeechFileCreating += VoiceChatEvent.GenAudioFileCreateEvent;
                 CEMSIMSpeakIndicator.onPlayerStartSpeaking += VoiceChatEvent.GenStartSpeakEvent;
                 CEMSIMSpeakIndicator.onPlayerStopSpeaking += VoiceChatEvent.GenStopSpeakEvent;
-            } 
+            }
 
+            #endregion
         }
     }
 }

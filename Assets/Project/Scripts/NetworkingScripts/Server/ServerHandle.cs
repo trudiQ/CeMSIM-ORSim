@@ -292,41 +292,44 @@ namespace CEMSIM
 
             public static void VoiceChatPlayerId(int _fromClient, Packet _packet)
             {
-                string _playerId = _packet.ReadString();
+                string _clientuuid = _packet.ReadString();
 
                 // set playerId
-                ServerInstance.clients[_fromClient].player.gameObject.GetComponent<CEMSIMVoicePlayer>().ChangePlayerName(_playerId);
+                ServerInstance.clients[_fromClient].player.gameObject.GetComponent<CEMSIMVoicePlayer>().ChangePlayerName(_clientuuid);
+
+                // update two dicionaries that maps client id and dissonance uuid
+                ServerInstance.SetClientuuid(_fromClient, _clientuuid);
 
                 // inform other clients
-                ServerSend.SendVoiceChatPlayerId(_fromClient, _playerId, true);
+                ServerSend.SendVoiceChatPlayerId(_fromClient, _clientuuid, true);
             }
 
             #region event system
-            public static void PlayerEnterTrigger(int _playerId, string _username)
+            public static void PlayerEnterTrigger(int _clientId, string _username)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onPlayerEnterTrigger != null)
-                    onPlayerEnterTrigger(_playerId, _username);
+                    onPlayerEnterTrigger(_clientId, _username);
             }
-            public static void PlayerMoveTrigger(int _playerId, Vector3 _pos, Quaternion _rot, Vector3 _lft_pos, Quaternion _lft_rot, Vector3 _rgt_pos, Quaternion _rgt_rot)
+            public static void PlayerMoveTrigger(int _clientId, Vector3 _pos, Quaternion _rot, Vector3 _lft_pos, Quaternion _lft_rot, Vector3 _rgt_pos, Quaternion _rgt_rot)
             {
                 if (onPlayerMoveTrigger != null)
-                    onPlayerMoveTrigger(_playerId, _pos, _rot, _lft_pos, _lft_rot, _rgt_pos, _rgt_rot);
+                    onPlayerMoveTrigger(_clientId, _pos, _rot, _lft_pos, _lft_rot, _rgt_pos, _rgt_rot);
             }
-            public static void PlayerItemPickupTrigger(int _playerId, int _itemId)
+            public static void PlayerItemPickupTrigger(int _clientId, int _itemId)
             {
                 if (onPlayerItemPickupTrigger != null)
-                    onPlayerItemPickupTrigger(_playerId, _itemId);
+                    onPlayerItemPickupTrigger(_clientId, _itemId);
             }
-            public static void PlayerItemDropoffTrigger(int _playerId, int _itemId)
+            public static void PlayerItemDropoffTrigger(int _clientId, int _itemId)
             {
                 if (onPlayerItemDropoffTrigger != null)
-                    onPlayerItemDropoffTrigger(_playerId, _itemId);
+                    onPlayerItemDropoffTrigger(_clientId, _itemId);
             }
-            public static void PlayerItemMoveTrigger(int _playerId, int _itemId, Vector3 _pos, Quaternion _rot)
+            public static void PlayerItemMoveTrigger(int _clientId, int _itemId, Vector3 _pos, Quaternion _rot)
             {
                 if (onPlayerItemMoveTrigger != null)
-                    onPlayerItemMoveTrigger(_playerId, _itemId, _pos, _rot);
+                    onPlayerItemMoveTrigger(_clientId, _itemId, _pos, _rot);
             }
             #endregion
 

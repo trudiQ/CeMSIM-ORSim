@@ -26,7 +26,7 @@ namespace Dissonance.Editor
 
             if (Application.isPlaying)
             {
-                EditorGUILayout.LabelField("Player: ", player.PlayerId);
+                EditorGUILayout.LabelField("Player: ", player.clientuuid);
                 EditorGUILayout.LabelField("Type: ", player.Type.ToString());
                 EditorGUILayout.Toggle("Tracking: ", player.IsTracking);
             }

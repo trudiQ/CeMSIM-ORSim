@@ -18,6 +18,10 @@ namespace CEMSIM
             private static UdpClient udpListener;
 
             public static Dictionary<int, ServerClient> clients = new Dictionary<int, ServerClient>(); ///> a dictionary storing clients and their ids.
+            public static Dictionary<int, String> clientId2uuidDict = new Dictionary<int, string>();   ///> map client id to the dissonance user id
+            public static Dictionary<String, int> clientuuid2IdDict = new Dictionary<string, int>();   ///> map dissonance user id to client id 
+
+
 
             public delegate void PacketHandler(int _fromClient, Packet _packet);
             public static Dictionary<int, PacketHandler> packetHandlers;
@@ -210,8 +214,34 @@ namespace CEMSIM
                 ServerStopTrigger();
             }
 
+            public static void SetClientuuid(int _clientId, string _clientuuid)
+            {
+                clientId2uuidDict[_clientId] = _clientuuid;
+                clientuuid2IdDict[_clientuuid] = _clientId;
+            }
 
-            #region
+            public static void RemoveClientuuid(string _clientuuid)
+            {
+                if (clientuuid2IdDict.ContainsKey(_clientuuid))
+                {
+                    int _clientId = clientuuid2IdDict[_clientuuid];
+                    clientId2uuidDict.Remove(_clientId);
+                    clientuuid2IdDict.Remove(_clientuuid);
+                }
+            }
+
+            public static void RemoveClientid(int _clientId)
+            {
+                if (clientId2uuidDict.ContainsKey(_clientId))
+                {
+                    string _clientuuid = clientId2uuidDict[_clientId];
+                    clientId2uuidDict.Remove(_clientId);
+                    clientuuid2IdDict.Remove(_clientuuid);
+                }
+            }
+
+
+            #region 
             public static void ServerStartTrigger()
             {
                 if (onServerStartTrigger != null)
@@ -224,9 +254,11 @@ namespace CEMSIM
                     onServerStopTrigger();
             }
 
+            #endregion
+
 
             
-            #endregion
+
         }
     }
 }

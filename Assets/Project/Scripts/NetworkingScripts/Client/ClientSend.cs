@@ -238,11 +238,11 @@ namespace CEMSIM
             /// Inform server your dissonance player id.
             /// </summary>
             /// <param name="_playerId">The uid of the dissonance player</param>
-            public static void SendVoiceChatPlayerId(string _playerId)
+            public static void SendVoiceChatPlayerId(string _playeruuid)
             {
                 using (Packet _packet = new Packet((int)ClientPackets.voiceChatPlayerId))
                 {
-                    _packet.Write(_playerId);
+                    _packet.Write(_playeruuid);
                     SendTCPData(_packet);
                 }
             }

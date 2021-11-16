@@ -64,7 +64,7 @@ namespace CEMSIM
                 //The loop is necessary in case Dissonance is still initializing this player into the network session
                 while (_state == null)
                 {
-                    _state = FindObjectOfType<DissonanceComms>().FindPlayer(_player.PlayerId);
+                    _state = FindObjectOfType<DissonanceComms>().FindPlayer(_player.clientuuid);
                     yield return null;
                 }
             }
@@ -80,8 +80,7 @@ namespace CEMSIM
                     _intensity = Mathf.Max(Mathf.Clamp(Mathf.Pow(_state.Amplitude, 0.175f), 0.25f, 1) * 0.25f, _intensity - Time.unscaledDeltaTime);
                     _indicator.SetActive(true);
                     if(!isSpeaking_prev)
-                        StartSpeakingTrigger(_player.PlayerId);
-                    isSpeaking_prev = true;
+                        StartSpeakingTrigger(_player.clientuuid);
                 }
                 else
                 {
@@ -91,9 +90,10 @@ namespace CEMSIM
                     if (_intensity <= 0)
                         _indicator.SetActive(false);
                     if (isSpeaking_prev)
-                        StopSpeakingTrigger(_player.PlayerId);
-                    isSpeaking_prev = false;
+                        StopSpeakingTrigger(_player.clientuuid);
+                    
                 }
+                isSpeaking_prev = IsSpeaking;
 
                 UpdateLight(_light, _intensity);
                 UpdateChildTransform(_transform, _intensity);
