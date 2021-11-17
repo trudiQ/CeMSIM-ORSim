@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 7298431385176522361}
   - component: {fileID: 3391299925784815311}
   - component: {fileID: 2825603390615424057}
+  - component: {fileID: 4442950885460149065}
   m_Layer: 0
   m_Name: GloveR
   m_TagString: Untagged
@@ -265,7 +266,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clothName: Glove R
-  offset: {x: 0, y: 0, z: 0}
   isBeingGrabbed: 0
   onSceneClothInteracted:
     m_PersistentCalls:
@@ -286,6 +286,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &4442950885460149065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2170504908596532190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73fee08514f8a954cbd7197f84d4d40f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSoiled:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4383548090097826582
 GameObject:
   m_ObjectHideFlags: 0
