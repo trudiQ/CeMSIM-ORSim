@@ -40,17 +40,12 @@ public class HeadPPEController : MonoBehaviour
     {
         if (equipOrder.Count == 2)
         {
-            if (equipOrder.Contains(HeadPPETypes.FaceShield))
+            if (equipOrder[0] == HeadPPETypes.FaceShield) // shield -> bouffant
             {
-                if (equipOrder.IndexOf(HeadPPETypes.Bouffant) > equipOrder.IndexOf(HeadPPETypes.FaceShield)) // shield -> bouffant
-                {
-                    bouffantRenderer.SetBlendShapeWeight(0, 0); // FaceShieldUnder
-                    bouffantRenderer.SetBlendShapeWeight(1, 0); // FaceShieldOver
-                }
+                bouffantRenderer.SetBlendShapeWeight(0, 0); // FaceShieldUnder
             }
-            else // bouffant -> mask OR bouffant -> shield
+            else if (equipOrder[0] == HeadPPETypes.Bouffant) // bouffant -> mask OR bouffant -> shield
                 return false;
-
         }
         else if (equipOrder.Count == 3)
         {
