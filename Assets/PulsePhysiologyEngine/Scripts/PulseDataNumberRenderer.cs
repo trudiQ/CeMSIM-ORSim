@@ -19,6 +19,8 @@ public class PulseDataNumberRenderer: PulseDataConsumer
     Text textRenderer;              // Text component to update
     float previousTime = 0;         // Used to match the requested frequency
 
+    public float currentValue = 0;
+
 
     // MARK: Monobehavior methods
 
@@ -49,6 +51,8 @@ public class PulseDataNumberRenderer: PulseDataConsumer
         dataValue *= multiplier;
         string decimalCode = "F" + decimals.ToString();
         string dataString = dataValue.ToString(decimalCode);
+
+        currentValue = dataValue;
 
         // Update displayed value with prefix and suffix
         textRenderer.text = prefix + dataString + suffix;
