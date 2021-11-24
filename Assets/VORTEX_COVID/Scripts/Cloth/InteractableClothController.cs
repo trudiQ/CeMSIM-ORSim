@@ -49,9 +49,9 @@ public class InteractableClothController : MonoBehaviour
         // n = number of cloth pairs, m = number of model colliders, s = number of scene colliders
         foreach (ClothPair pair in clothingPairs)
         {
-            foreach (ClothPair innerPair in clothingPairs)
+            foreach (ClothPair otherPair in clothingPairs)
             {
-                pair.IgnoreOtherCollision(innerPair);
+                pair.IgnoreOtherCollision(otherPair);
             }
         }
     }
@@ -84,6 +84,11 @@ public class InteractableClothController : MonoBehaviour
     {
         ClothPair pair = clothingPairs.Find((x) => x.clothName == sceneCloth.clothName);
         pair.AddSceneCloth(sceneCloth);
+
+        pair.IgnorePlayerCollision(playerCollidersToIgnore);
+
+        foreach (ClothPair otherPair in clothingPairs)
+            pair.IgnoreOtherCollision(otherPair);
     }
 
     public void RemoveSceneCloth(InteractableCloth sceneCloth)
@@ -227,12 +232,22 @@ public class ClothPair
     public void AddSceneCloth(InteractableCloth cloth)
     {
         if (!sceneCloth.Contains(cloth))
+        {
             sceneCloth.Add(cloth);
+            sceneClothColliders.AddRange(cloth.GetComponentsInChildren<Collider>());
+        }
     }
     public void RemoveSceneCloth(InteractableCloth cloth)
     {
         if (sceneCloth.Contains(cloth))
+        {
             sceneCloth.Remove(cloth);
+
+            Collider[] colliders = cloth.GetComponentsInChildren<Collider>();
+
+            foreach (Collider collider in colliders)
+                sceneClothColliders.Remove(collider);
+        }
     }
 
     private void Equip(HVRHandGrabber grabber, InteractableCloth sceneCloth)

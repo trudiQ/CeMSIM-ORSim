@@ -11,27 +11,41 @@ public class GloveBox : MonoBehaviour
     public GameObject rightGlovePrefab;
 
     private HVRInteractable interactable;
+    private InteractableClothController clothController;
 
     private void Start()
     {
         interactable = GetComponent<HVRInteractable>();
-
+        
         interactable.Interacted.AddListener(OnInteracted);
     }
 
     private void OnInteracted(HVRHandGrabber grabber, HVRInteractable interactable)
     {
+        Debug.Log(grabber);
+        if (!clothController)
+            clothController = FindObjectOfType<InteractableClothController>();
+
+        GameObject glove;
+
         if (grabber.HandSide == HVRHandSide.Left)
         {
-            GameObject glove = Instantiate(rightGlovePrefab, grabber.transform.position, grabber.transform.rotation);
+            glove = Instantiate(rightGlovePrefab, grabber.transform.position, grabber.transform.rotation);
             HVRInteractable gloveInteractable = glove.GetComponent<HVRInteractable>();
             grabber.TryGrab(gloveInteractable, true);
         }
         else
         {
-            GameObject glove = Instantiate(leftGlovePrefab, grabber.transform.position, grabber.transform.rotation);
+            glove = Instantiate(leftGlovePrefab, grabber.transform.position, grabber.transform.rotation);
             HVRInteractable gloveInteractable = glove.GetComponent<HVRInteractable>();
             grabber.TryGrab(gloveInteractable, true);
+        }
+
+        if (clothController)
+        {
+            InteractableCloth cloth;
+            cloth = glove.GetComponent<InteractableCloth>();
+            clothController.AddSceneCloth(cloth);
         }
     }
 }

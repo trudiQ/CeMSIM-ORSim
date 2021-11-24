@@ -8,15 +8,24 @@ public class PPESpawner : MonoBehaviour
     public float respawnThresholdDistance = 0.5f;
 
     private GameObject currentlyTrackedObject;
+    private InteractableClothController clothController;
 
     private void Start()
     {
-        Instantiate(ppePrefab, transform.position, transform.rotation);
+        clothController = FindObjectOfType<InteractableClothController>();
+
+        SpawnPPE();
     }
 
     private void Update()
     {
         if (Vector3.Distance(currentlyTrackedObject.transform.position, transform.position) > respawnThresholdDistance)
-            Instantiate(ppePrefab, transform.position, transform.rotation);
+            SpawnPPE();
+    }
+
+    private void SpawnPPE()
+    {
+        currentlyTrackedObject = Instantiate(ppePrefab, transform.position, transform.rotation);
+        clothController.AddSceneCloth(currentlyTrackedObject.GetComponent<InteractableCloth>());
     }
 }

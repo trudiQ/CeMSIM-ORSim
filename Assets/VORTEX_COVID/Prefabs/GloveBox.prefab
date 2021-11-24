@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2884205617224458532}
   - component: {fileID: 6812586335272287138}
   - component: {fileID: 9007390000569181054}
+  - component: {fileID: 6677018837796930813}
   m_Layer: 0
   m_Name: GloveBox
   m_TagString: Untagged
@@ -123,7 +124,7 @@ MonoBehaviour:
   ParentHandModel: 1
   BreakDistance: 1
   RemainsKinematic: 1
-  Stationary: 0
+  Stationary: 1
   ReleasedAngularConversionFactor: 1
   ReleasedVelocityFactor: 1
   ReleasedAngularFactor: 1
@@ -136,7 +137,7 @@ MonoBehaviour:
   RightForceGrabberGrabPoint: {fileID: 0}
   UseDefaultHighlighter: 1
   ForceGrabberHighlighter: {fileID: 0}
-  ForceGrabbable: 1
+  ForceGrabbable: 0
   ForcePullOverride: {fileID: 0}
   JointOverride: {fileID: 0}
   OneHandJointSettings: {fileID: 0}
@@ -224,3 +225,19 @@ MonoBehaviour:
     type: 3}
   rightGlovePrefab: {fileID: 2170504908596532190, guid: cef96587237fb354abbf91c08e4afb40,
     type: 3}
+--- !u!54 &6677018837796930813
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4070057846994120763}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
