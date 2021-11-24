@@ -6,7 +6,15 @@ public class PPEClothSwitcher : MonoBehaviour
 {
     public GameObject[] objectsWithClothMesh;
     public MaterialVisibilityToggle handMeshMaterialToggle;
-    public MultiGloveToggle multiGloveToggle;
+    public InteractableClothController clothController;
+    public string clothName;
+
+    private ClothPair pair;
+
+    void Start()
+    {
+        pair = clothController.clothingPairs.Find((x) => x.clothName == clothName);
+    }
 
     public void Show(int index)
     {
@@ -32,8 +40,7 @@ public class PPEClothSwitcher : MonoBehaviour
 
     public void HideAll()
     {
-        multiGloveToggle.GloveUnequipped();
-        if (multiGloveToggle.currentGloveEquippedCount == 0)
+        if (pair.equipCount == 0)
         {
             Debug.Log("Hide all was called.");
             foreach (GameObject clothMesh in objectsWithClothMesh)

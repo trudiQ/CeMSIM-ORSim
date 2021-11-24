@@ -9,17 +9,21 @@ public class GloveStretch : MonoBehaviour
     public enum GloveStretchState { AtWrist, UnderGown, OverGown }
 
     public PPEOptionPoint[] stretchReferencePoints;
-    public MultiGloveToggle multiGlove;
     public GloveStretchState stretchState { get; private set; }
     public GameObject grabPointPrefab;
+    public InteractableClothController clothController;
+    public string clothName;
 
     private HVRGrabbable grabPoint;
     private PPEOptionPoint closestPoint;
+    private ClothPair pair;
     private bool grabbed = false;
     private bool gownEquipped = false;
 
     void Start()
     {
+        pair = clothController.clothingPairs.Find((x) => x.clothName == clothName);
+
         SetPointsActive(false);
     }
 
@@ -59,7 +63,7 @@ public class GloveStretch : MonoBehaviour
 
     public void GownUnequipped()
     {
-        if (multiGlove.currentGloveEquippedCount > 0 && stretchState == GloveStretchState.OverGown)
+        if (pair.equipCount > 0 && stretchState == GloveStretchState.OverGown)
         {
             stretchReferencePoints[0].Hover();
             stretchReferencePoints[0].Select();
@@ -70,7 +74,7 @@ public class GloveStretch : MonoBehaviour
 
     public void GloveEquipped(HVRHandGrabber grabber)
     {
-        if (multiGlove.currentGloveEquippedCount == 0)
+        if (pair.equipCount == 1)
         {
             if (gownEquipped)
             {
@@ -86,7 +90,7 @@ public class GloveStretch : MonoBehaviour
 
     public void GloveUnequipped()
     {
-        if (closestPoint && multiGlove.currentGloveEquippedCount == 0)
+        if (closestPoint && pair.equipCount == 0)
             closestPoint.Unhover();
     }
 

@@ -8,7 +8,7 @@ using UnityEngine.Events;
 public class InteractableClothController : MonoBehaviour
 {
     // Array of object pairs.
-    public ClothPair[] clothingPairs;
+    public List<ClothPair> clothingPairs;
     public Collider[] playerCollidersToIgnore;
 
     public UnityEvent<ClothPair> OnClothEquipped;
@@ -23,10 +23,9 @@ public class InteractableClothController : MonoBehaviour
         List<InteractableCloth> clothingFound = new List<InteractableCloth>(FindObjectsOfType<InteractableCloth>());
 
         // Since objects not in the prefab can't be linked, find the first cloth with the same name in the scene and pair it
-        // NOTE: If there is more than one object in the scene with the same name, it will only choose the first one
         foreach (ClothPair pair in clothingPairs)
         {
-            InteractableCloth match = clothingFound.Find((x) => x.clothName == pair.clothName);
+            List<InteractableCloth> matches = clothingFound.FindAll((x) => x.clothName == pair.clothName);
 
             // Subscribe to events so there is one point that information can be sent from
             pair.OnEquip.AddListener((_) =>
@@ -41,7 +40,7 @@ public class InteractableClothController : MonoBehaviour
                 OnClothUnequipped.Invoke(pair);
             });
 
-            pair.Initialize(match);
+            pair.Initialize(matches);
             pair.IgnorePlayerCollision(playerCollidersToIgnore);
         }
 
@@ -69,7 +68,7 @@ public class InteractableClothController : MonoBehaviour
         bool allEquipped = true;
         foreach (ClothPair pair in clothingPairs)
         {
-            if (!pair.isEquipped)
+            if (!pair.hasOneEquipped)
             {
                 allEquipped = false;
                 break;
@@ -80,6 +79,18 @@ public class InteractableClothController : MonoBehaviour
             teleportManager.OnAllPPEsEquipped();
         }
     }
+
+    public void AddSceneCloth(InteractableCloth sceneCloth)
+    {
+        ClothPair pair = clothingPairs.Find((x) => x.clothName == sceneCloth.clothName);
+        pair.AddSceneCloth(sceneCloth);
+    }
+
+    public void RemoveSceneCloth(InteractableCloth sceneCloth)
+    {
+        ClothPair pair = clothingPairs.Find((x) => x.clothName == sceneCloth.clothName);
+        pair.RemoveSceneCloth(sceneCloth);
+    }
 }
 
 [System.Serializable]
@@ -87,50 +98,51 @@ public class ClothPair
 {
     public string clothName; // Name to be matched at start
     public WornCloth modelCloth; // Clothing object on the model
-    public InteractableCloth sceneCloth; // Clothing object in the scene
+    
     public float distanceThreshold = 0.2f; // Distance from the model cloth that the scene cloth needs to be to equip
     public float angleThreshold = 30f; // Angle between the model cloth that the scene cloth needs to be to equip
     public bool equipAtStart = false;
     public bool manuallyHandleEquip = false; // Use this if equipping PPE depends on external conditions
     public bool manuallyHandleUnequip = false; // Use this if unequipping PPE depends on external conditions
     public bool snapOnGrab = false; // Snap to/from the model when grabbed
-    public bool isEquipped { get; private set; } = false;
+    public bool canEquipMultiple = false;
     public bool ignoreAutomaticMeshHide = false; // Enable or disable automatically disabling the worn PPE when unequipping
 
     public UnityEvent<HVRHandGrabber> OnEquip;
     public UnityEvent<HVRHandGrabber> OnUnequip;
-    public UnityEvent<HVRHandGrabber, ClothPair> OnAttemptedEquip;
+    public UnityEvent<HVRHandGrabber, ClothPair, InteractableCloth> OnAttemptedEquip;
     public UnityEvent<HVRHandGrabber, ClothPair> OnAttemptedUnequip;
 
+    private List<InteractableCloth> sceneCloth = new List<InteractableCloth>(); // Clothing objects in the scene
+    private Queue<InteractableCloth> currentlyEquippedCloth = new Queue<InteractableCloth>();
+    public int equipCount { get { return currentlyEquippedCloth.Count; } private set { } }
+    public bool hasOneEquipped { get { return equipCount > 0; } private set { } }
 
-    private bool movedOutOfThresholdAfterUnequip = true;
+    private List<Collider> modelClothColliders = new List<Collider>();
+    private List<Collider> sceneClothColliders = new List<Collider>();
 
-    public Collider[] modelClothColliders { get; private set; }
-    public Collider[] sceneClothColliders { get; private set; }
-
-    public void Initialize(InteractableCloth pairedCloth)
+    public void Initialize(List<InteractableCloth> pairedCloth)
     {
-        sceneCloth = pairedCloth; // Pair the cloth objects
-        pairedCloth.SetGrabbableState(snapOnGrab); // Toggle the cloth between grabbable and interactable based on snap
+        sceneCloth.AddRange(pairedCloth); // Pair the cloth objects
 
-		if(equipAtStart) {
-            SetModelClothActive(equipAtStart);
+        modelClothColliders.AddRange(modelCloth.gameObject.GetComponentsInChildren<Collider>()); // Get all colliders from the model cloth
+        modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted); // Subscribe to the grab event
+        
+        foreach (InteractableCloth cloth in sceneCloth)
+        {
+            cloth.SetGrabbableState(snapOnGrab); // Toggle the cloth between grabbable and interactable based on snap
+            sceneClothColliders.AddRange(cloth.gameObject.GetComponentsInChildren<Collider>()); // Get all colliders from the scene cloth
+            cloth.onSceneClothInteracted.AddListener((x, y) => OnSceneClothInteracted(x, y, cloth)); // Subscribe to the grab event
         }
-
-        modelClothColliders = modelCloth.gameObject.GetComponentsInChildren<Collider>(); // Get all colliders from the model cloth
-        sceneClothColliders = sceneCloth.gameObject.GetComponentsInChildren<Collider>(); // Get all colliders from the scene cloth
 
         // Make sure any events are triggered based on what is equipped at start
-        if (equipAtStart)
+        if (equipAtStart && sceneCloth.Count > 0)
         {
-            isEquipped = true;
+            currentlyEquippedCloth.Enqueue(sceneCloth[0]);
+            ToggleClothVisibility(true, sceneCloth[0]);
+
             OnEquip.Invoke(null);
         }
-        else
-            isEquipped = false;
-
-        modelCloth.onWornClothInteracted.AddListener(OnWornClothInteracted); // Subscribe to the grab event
-        sceneCloth.onSceneClothInteracted.AddListener(OnSceneClothInteracted); // Subscribe to the grab event
     }
 
     // Ignore collision between player colliders and scene PPE
@@ -158,49 +170,52 @@ public class ClothPair
         }
     }
 
-    // Toggles the active state of both cloth
-    public void ToggleModelCloth()
-    {
-        SetModelClothActive(!modelCloth.isActive);
-    }
-
     // Sets the model cloth to a specific state, sets the model and scene cloth to opposite state
-    public void SetModelClothActive(bool state)
+    public void ToggleClothVisibility(bool equipping, InteractableCloth sceneCloth)
     {
-        modelCloth.SetActive(state, ignoreAutomaticMeshHide);
+        if (equipping && currentlyEquippedCloth.Count == 1)
+            modelCloth.SetActive(true, ignoreAutomaticMeshHide);
+        else if (!equipping && currentlyEquippedCloth.Count == 0)
+            modelCloth.SetActive(false, ignoreAutomaticMeshHide);
 
-        if (modelCloth.isActive)
-            movedOutOfThresholdAfterUnequip = false;
+        if (!equipping)
+            sceneCloth.movedOutOfThresholdAfterUnequip = false;
 
         // Sets the parent of the scene cloth if the model cloth is active
-        sceneCloth.SetActiveAndParent(!state, snapOnGrab ? null : modelCloth.transform);
+        sceneCloth.SetActiveAndParent(!equipping, snapOnGrab ? null : modelCloth.transform);
     }
 
     // Check if the cloth in the scene aligns with the cloth on the model in both position and angle
     public void CheckIfWithinThreshold()
     {
-        if (sceneCloth.isBeingGrabbed)
+        foreach (InteractableCloth cloth in sceneCloth)
         {
-            if (movedOutOfThresholdAfterUnequip && InThresholdDistance() && RotationAligned())
+            if (cloth.isBeingGrabbed)
             {
-                HVRHandGrabber grabber = sceneCloth.GetGrabber();
+                if (!canEquipMultiple && equipCount > 0)
+                    return;
 
-                if (!manuallyHandleEquip)
-                    Equip(grabber);
-                else
-                    OnAttemptedEquip.Invoke(grabber, this);
-            }
-            else if (!InThresholdDistance())
-            {
-                movedOutOfThresholdAfterUnequip = true;
+                if (cloth.movedOutOfThresholdAfterUnequip && InThresholdDistance(cloth) && RotationAligned(cloth))
+                {
+                    HVRHandGrabber grabber = cloth.GetGrabber();
+
+                    if (!manuallyHandleEquip)
+                        Equip(grabber, cloth);
+                    else
+                        OnAttemptedEquip.Invoke(grabber, this, cloth);
+                }
+                else if (!InThresholdDistance(cloth))
+                {
+                    cloth.movedOutOfThresholdAfterUnequip = true;
+                }
             }
         }
     }
 
-    public void ManuallyEquip(HVRHandGrabber grabber)
+    public void ManuallyEquip(HVRHandGrabber grabber, InteractableCloth sceneCloth)
     {
         if (manuallyHandleEquip)
-            Equip(grabber);
+            Equip(grabber, sceneCloth);
     }
 
     public void ManuallyUnequip(HVRHandGrabber grabber)
@@ -209,25 +224,38 @@ public class ClothPair
             Unequip(grabber);
     }
 
-    private void Equip(HVRHandGrabber grabber)
+    public void AddSceneCloth(InteractableCloth cloth)
     {
-        ToggleModelCloth();
-        isEquipped = true;
+        if (!sceneCloth.Contains(cloth))
+            sceneCloth.Add(cloth);
+    }
+    public void RemoveSceneCloth(InteractableCloth cloth)
+    {
+        if (sceneCloth.Contains(cloth))
+            sceneCloth.Remove(cloth);
+    }
+
+    private void Equip(HVRHandGrabber grabber, InteractableCloth sceneCloth)
+    {
+        currentlyEquippedCloth.Enqueue(sceneCloth);
+
+        ToggleClothVisibility(true, sceneCloth);
         OnEquip.Invoke(grabber);
     }
 
     private void Unequip(HVRHandGrabber grabber)
     {
-        ToggleModelCloth();
-        isEquipped = false;
+        InteractableCloth nextSceneCloth = currentlyEquippedCloth.Dequeue();
+
+        ToggleClothVisibility(false, nextSceneCloth);
         OnUnequip.Invoke(grabber);
 
         if (!snapOnGrab)
-            sceneCloth.ManualGrab(grabber);
+            nextSceneCloth.ManualGrab(grabber);
     }
 
     // Check if the scene cloth is within the distance threshold
-    private bool InThresholdDistance()
+    private bool InThresholdDistance(InteractableCloth sceneCloth)
     {
         float distance = Vector3.Distance(modelCloth.GetPosition(), sceneCloth.GetPosition());
 
@@ -235,7 +263,7 @@ public class ClothPair
     }
 
     // Check if the scene cloth is within the rotation threshold
-    private bool RotationAligned()
+    private bool RotationAligned(InteractableCloth sceneCloth)
     {
         float angle = Quaternion.Angle(modelCloth.GetRotation(), sceneCloth.GetRotation());
 
@@ -243,14 +271,14 @@ public class ClothPair
     }
 
     // Called when the scene cloth sends an event and snap is enabled, disables scene cloth and enables worn cloth
-    private void OnSceneClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable)
+    private void OnSceneClothInteracted(HVRHandGrabber grabber, HVRGrabbable grabbable, InteractableCloth sceneCloth)
     {
         if (snapOnGrab)
         {
             if (manuallyHandleEquip)
-                OnAttemptedEquip.Invoke(grabber, this);
+                OnAttemptedEquip.Invoke(grabber, this, sceneCloth);
             else
-                Equip(grabber);
+                Equip(grabber, sceneCloth);
         }
     }
 

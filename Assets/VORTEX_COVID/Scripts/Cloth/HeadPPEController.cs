@@ -28,10 +28,10 @@ public class HeadPPEController : MonoBehaviour
         return true;
     }
 
-    public void CheckBouffantEquip(HVRHandGrabber grabber, ClothPair pair)
+    public void CheckBouffantEquip(HVRHandGrabber grabber, ClothPair pair, InteractableCloth sceneCloth)
     {
         if (BouffantEquipped())
-            pair?.ManuallyEquip(grabber);
+            pair?.ManuallyEquip(grabber, sceneCloth);
         else
             RejectEquipOrder(pair.clothName);
     }
@@ -89,10 +89,10 @@ public class HeadPPEController : MonoBehaviour
         return true;
     }
 
-    public void CheckFaceMaskEquip(HVRHandGrabber grabber, ClothPair pair)
+    public void CheckFaceMaskEquip(HVRHandGrabber grabber, ClothPair pair, InteractableCloth sceneCloth)
     {
         if (FaceMaskEquipped())
-            pair?.ManuallyEquip(grabber);
+            pair?.ManuallyEquip(grabber, sceneCloth);
         else
             RejectEquipOrder(pair.clothName);
     }
@@ -140,10 +140,10 @@ public class HeadPPEController : MonoBehaviour
         return true;
     }
 
-    public void CheckFaceShieldEquip(HVRHandGrabber grabber, ClothPair pair)
+    public void CheckFaceShieldEquip(HVRHandGrabber grabber, ClothPair pair, InteractableCloth sceneCloth)
     {
         if (FaceShieldEquipped())
-            pair?.ManuallyEquip(grabber);
+            pair?.ManuallyEquip(grabber, sceneCloth);
         else
             RejectEquipOrder(pair.clothName);
     }
