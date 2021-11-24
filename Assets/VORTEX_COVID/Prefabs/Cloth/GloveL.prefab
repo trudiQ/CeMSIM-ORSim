@@ -253,6 +253,9 @@ MonoBehaviour:
   Interacted:
     m_PersistentCalls:
       m_Calls: []
+  ForceInteracted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &4900666782917994855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,9 +270,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clothName: Glove L
   isBeingGrabbed: 0
+  movedOutOfThresholdAfterUnequip: 0
   onSceneClothInteracted:
     m_PersistentCalls:
       m_Calls: []
+  interactables:
+  - {fileID: 7681142036845610695}
+  anchor: {fileID: 0}
+  rb: {fileID: 5438262931221890564}
+  kinematicRigidbodies: []
 --- !u!54 &5438262931221890564
 Rigidbody:
   m_ObjectHideFlags: 0

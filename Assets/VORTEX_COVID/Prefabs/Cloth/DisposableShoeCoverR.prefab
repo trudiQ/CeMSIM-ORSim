@@ -359,6 +359,9 @@ MonoBehaviour:
   Interacted:
     m_PersistentCalls:
       m_Calls: []
+  ForceInteracted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1101835937377056452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,9 +376,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clothName: Shoe Cover R
   isBeingGrabbed: 0
+  movedOutOfThresholdAfterUnequip: 0
   onSceneClothInteracted:
     m_PersistentCalls:
       m_Calls: []
+  interactables:
+  - {fileID: 9223199862010366875}
+  anchor: {fileID: 0}
+  rb: {fileID: 323873846249447691}
+  kinematicRigidbodies: []
 --- !u!54 &323873846249447691
 Rigidbody:
   m_ObjectHideFlags: 0

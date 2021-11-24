@@ -142,12 +142,7 @@ public class ClothPair
 
         // Make sure any events are triggered based on what is equipped at start
         if (equipAtStart && sceneCloth.Count > 0)
-        {
-            currentlyEquippedCloth.Enqueue(sceneCloth[0]);
-            ToggleClothVisibility(true, sceneCloth[0]);
-
-            OnEquip.Invoke(null);
-        }
+            Equip(null, sceneCloth[0]);
     }
 
     // Ignore collision between player colliders and scene PPE
@@ -234,7 +229,9 @@ public class ClothPair
         if (!sceneCloth.Contains(cloth))
         {
             sceneCloth.Add(cloth);
+            cloth.SetGrabbableState(snapOnGrab);
             sceneClothColliders.AddRange(cloth.GetComponentsInChildren<Collider>());
+            cloth.onSceneClothInteracted.AddListener((x, y) => OnSceneClothInteracted(x, y, cloth));
         }
     }
     public void RemoveSceneCloth(InteractableCloth cloth)

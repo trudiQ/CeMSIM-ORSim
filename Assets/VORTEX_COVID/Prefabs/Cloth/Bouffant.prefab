@@ -431,6 +431,9 @@ MonoBehaviour:
   Interacted:
     m_PersistentCalls:
       m_Calls: []
+  ForceInteracted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &6584824466910895955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -445,9 +448,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clothName: Bouffant
   isBeingGrabbed: 0
+  movedOutOfThresholdAfterUnequip: 0
   onSceneClothInteracted:
     m_PersistentCalls:
       m_Calls: []
+  interactables:
+  - {fileID: 4990494993597029411}
+  anchor: {fileID: 0}
+  rb: {fileID: 3560837701706233676}
+  kinematicRigidbodies: []
 --- !u!54 &3560837701706233676
 Rigidbody:
   m_ObjectHideFlags: 0

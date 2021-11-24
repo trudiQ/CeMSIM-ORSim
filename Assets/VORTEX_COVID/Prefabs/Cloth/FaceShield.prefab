@@ -431,6 +431,9 @@ MonoBehaviour:
   Interacted:
     m_PersistentCalls:
       m_Calls: []
+  ForceInteracted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2545156077110354630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -445,9 +448,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clothName: Face Shield
   isBeingGrabbed: 0
+  movedOutOfThresholdAfterUnequip: 0
   onSceneClothInteracted:
     m_PersistentCalls:
       m_Calls: []
+  interactables:
+  - {fileID: 8448308665398333844}
+  anchor: {fileID: 0}
+  rb: {fileID: 5091274544307883615}
+  kinematicRigidbodies: []
 --- !u!54 &5091274544307883615
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -147,6 +147,9 @@ MonoBehaviour:
   Interacted:
     m_PersistentCalls:
       m_Calls: []
+  ForceInteracted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1252133160957451843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,9 +164,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clothName: Gown
   isBeingGrabbed: 0
+  movedOutOfThresholdAfterUnequip: 0
   onSceneClothInteracted:
     m_PersistentCalls:
       m_Calls: []
+  interactables:
+  - {fileID: 1839802485017524963}
+  anchor: {fileID: 0}
+  rb: {fileID: 1539230233794142036}
+  kinematicRigidbodies: []
 --- !u!54 &1539230233794142036
 Rigidbody:
   m_ObjectHideFlags: 0

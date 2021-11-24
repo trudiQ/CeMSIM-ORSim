@@ -22,24 +22,24 @@ public class GloveBox : MonoBehaviour
 
     private void OnInteracted(HVRHandGrabber grabber, HVRInteractable interactable)
     {
-        Debug.Log(grabber);
+        StartCoroutine(SpawnGlove(grabber));
+    }
+
+    private IEnumerator SpawnGlove(HVRHandGrabber grabber)
+    {
         if (!clothController)
             clothController = FindObjectOfType<InteractableClothController>();
 
         GameObject glove;
 
         if (grabber.HandSide == HVRHandSide.Left)
-        {
             glove = Instantiate(rightGlovePrefab, grabber.transform.position, grabber.transform.rotation);
-            HVRInteractable gloveInteractable = glove.GetComponent<HVRInteractable>();
-            grabber.TryGrab(gloveInteractable, true);
-        }
         else
-        {
             glove = Instantiate(leftGlovePrefab, grabber.transform.position, grabber.transform.rotation);
-            HVRInteractable gloveInteractable = glove.GetComponent<HVRInteractable>();
-            grabber.TryGrab(gloveInteractable, true);
-        }
+
+        HVRInteractable gloveInteractable = glove.GetComponent<HVRInteractable>();
+        yield return null; // Wait until physics poser Start() is finished
+        grabber.TryGrab(gloveInteractable, true);
 
         if (clothController)
         {
