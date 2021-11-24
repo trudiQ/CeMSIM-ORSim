@@ -1,7 +1,4 @@
-﻿using HurricaneVR.Framework.Core;
-using HurricaneVR.Framework.Core.Grabbers;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MountManager : MonoBehaviour {
 
@@ -20,7 +17,7 @@ public class MountManager : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		if(isAttached) return;
 		Mountable mountable = other.gameObject.GetComponent<Mountable>();
-		Debug.Log(mountable);
+
 		if(mountable) {
 			Transform otherTransform = other.gameObject.transform;
 			otherTransform.parent = transform;
@@ -30,11 +27,10 @@ public class MountManager : MonoBehaviour {
 
 			GameObject otherGameObject = other.gameObject;
 			FixedJoint joint = otherGameObject.AddComponent<FixedJoint>();
-			joint.breakForce = 150f;
-			joint.breakTorque = 150f;
 			joint.connectedBody = GetComponent<Rigidbody>();
 
 			mountable.grabbable.ForceRelease();
+			mountable.mounted = true;
 			isAttached = true;
 		}
 	}
