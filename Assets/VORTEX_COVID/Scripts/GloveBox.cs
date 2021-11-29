@@ -37,7 +37,9 @@ public class GloveBox : MonoBehaviour
         else
             glove = Instantiate(leftGlovePrefab, grabber.transform.position, grabber.transform.rotation);
 
-        HVRInteractable gloveInteractable = glove.GetComponent<HVRInteractable>();
+        InteractableCloth gloveCloth = glove.GetComponent<InteractableCloth>();
+        HVRInteractable gloveInteractable = gloveCloth.FindHvrInteractable(grabber.HandSide == HVRHandSide.Left);
+
         yield return null; // Wait until physics poser Start() is finished
         grabber.TryGrab(gloveInteractable, true);
 

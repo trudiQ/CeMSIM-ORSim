@@ -132,7 +132,7 @@ public class InteractableCloth : MonoBehaviour {
 		return connectedHand;
 	}
 
-	private HVRInteractable FindHvrInteractable(bool isLeftHand) 
+	public HVRInteractable FindHvrInteractable(bool isLeftHand) 
 	{
 		if(interactables.Count == 1) 
 			return interactables[0];
