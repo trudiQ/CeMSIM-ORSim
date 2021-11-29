@@ -8,7 +8,6 @@ using UnityEngine.Events;
 public class InteractableCloth : MonoBehaviour {
 	public string clothName; // Name to be matched at start
 	[HideInInspector] public bool isBeingGrabbed = false;
-	public bool isActive { get; private set; }
 	[HideInInspector] public bool movedOutOfThresholdAfterUnequip = false;
 
 	public UnityEvent<HVRHandGrabber, HVRGrabbable> onSceneClothInteracted;
@@ -70,7 +69,6 @@ public class InteractableCloth : MonoBehaviour {
 		}
 
 		gameObject.SetActive(state);
-		isActive = state;
 	}
 
 	// Stores the hand grabbing this object
