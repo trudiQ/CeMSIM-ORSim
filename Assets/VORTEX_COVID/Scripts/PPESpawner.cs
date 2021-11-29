@@ -30,8 +30,13 @@ public class PPESpawner : MonoBehaviour
 
     private void SpawnPPE()
     {
-        currentlyTrackedObject = Instantiate(ppePrefab, transform.position, transform.rotation);
-        clothController.AddSceneCloth(currentlyTrackedObject.GetComponent<InteractableCloth>());
+        if (ppePrefab)
+        {
+            currentlyTrackedObject = Instantiate(ppePrefab, transform.position, transform.rotation);
+            clothController.AddSceneCloth(currentlyTrackedObject.GetComponent<InteractableCloth>());
+        }
+        else
+            Debug.LogWarning("No prefab specified for " + gameObject.name);
     }
 
     void OnDrawGizmosSelected()
