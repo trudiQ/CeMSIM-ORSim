@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace HurricaneVR.Framework.Shared.HandPoser
 {
+    [Serializable]
     public class HVRPosableHand : MonoBehaviour
     {
         #region EditorState 
