@@ -14,8 +14,6 @@ public class PPESpawner : MonoBehaviour
 
     private void Start()
     {
-        clothController = FindObjectOfType<InteractableClothController>();
-
         if (!sceneObject)
             SpawnPPE();
         else
@@ -30,9 +28,15 @@ public class PPESpawner : MonoBehaviour
 
     private void SpawnPPE()
     {
+        if (!clothController)
+            clothController = FindObjectOfType<InteractableClothController>();
+
         if (ppePrefab)
         {
             currentlyTrackedObject = Instantiate(ppePrefab, transform.position, transform.rotation);
+
+            
+
             clothController.AddSceneCloth(currentlyTrackedObject.GetComponent<InteractableCloth>());
         }
         else
