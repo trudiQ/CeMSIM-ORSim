@@ -26,13 +26,13 @@ public class Mountable : MonoBehaviour {
 				Destroy(joint);
 				OnJointBreak(150f);
 			}
-			Debug.Log(projection.magnitude);
 		}
 
 	}
 
 	void OnJointBreak(float breakForce) {
 		manager.isAttached = false;
+		grabbable.Stationary = false;
 	}
 
 

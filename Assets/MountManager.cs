@@ -30,6 +30,7 @@ public class MountManager : MonoBehaviour {
 			joint.connectedBody = GetComponent<Rigidbody>();
 
 			mountable.grabbable.ForceRelease();
+			mountable.grabbable.Stationary = true;
 			mountable.mounted = true;
 			isAttached = true;
 		}
