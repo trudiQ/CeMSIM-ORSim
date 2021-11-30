@@ -5518,12 +5518,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7965223349348343210}
   - component: {fileID: 883113202106084983}
-  - component: {fileID: 9070763122742356917}
-  - component: {fileID: 9070763122742356914}
-  - component: {fileID: 9070763122742356915}
-  - component: {fileID: 9070763122742356912}
-  - component: {fileID: 9070763122742356913}
-  - component: {fileID: 9070763122742356910}
   m_Layer: 0
   m_Name: CC_Base_Body
   m_TagString: Untagged
@@ -5794,110 +5788,6 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0000012814999, y: 0.0036373883, z: 0.89049184}
     m_Extent: {x: 0.90979064, y: 0.20798431, z: 0.9360477}
   m_DirtyAABB: 0
---- !u!114 &9070763122742356917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5002624177191635716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de39e689c60740a4da35c537f1674552, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  percentInflated: 0
-  maxPressure: 15
-  currentPressure: 0
---- !u!114 &9070763122742356914
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5002624177191635716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1838111e40a675143bb25ff681f1f0ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shapeKeyIndex: 83
-  percentInflated: 0
-  insufflationPressure: {fileID: 9070763122742356917}
---- !u!114 &9070763122742356915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5002624177191635716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bc91681f1ee26045a5415ca4f8390f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  leftJVDKeyIndex: 76
-  rightJVDKeyIndex: 77
-  percentInflatedLeft: 0
-  percentInflatedRight: 0
---- !u!114 &9070763122742356912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5002624177191635716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 158e0227ac5f96f47b2da2a7016f4ede, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  deviationKeyIndex: 78
-  deviationPercent: 0
---- !u!114 &9070763122742356913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5002624177191635716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a89a4e533a00b4443982263c34905a67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  insufflationValue: 13
-  pneumothoraxThreshold: 12
---- !u!114 &9070763122742356910
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5002624177191635716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b91830dc92e7ea9458eb8bb57ef0f0fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dataSource: {fileID: 0}
-  indexOfShapeKey: 80
-  breath: 0
-  inflation: 0
-  holdBreatheTimer: 0
-  holdBreatheTime: 1
-  holdBreathe: 0
-  currentLerpTime: 0
-  totalTime: 0
-  numberOfBreathesIn: 0
-  numberOfBreathesOut: 0
-  audioPlayer: {fileID: 0}
-  beginningTriggered: 0
-  endTriggered: 0
-  inflating: 0
-  breathIn: 0
-  inflationDifference: 0
-  dynamicBreathing: 0
 --- !u!1 &5027653326619043156
 GameObject:
   m_ObjectHideFlags: 0
@@ -7050,7 +6940,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.00081169076, y: 0.016932722, z: 0.020632887}
+  m_ConnectedAnchor: {x: -0.0008116898, y: 0.016932722, z: 0.020632887}
   m_UseSpring: 1
   m_Spring:
     spring: 100
@@ -8958,7 +8848,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.11873126, y: 1.1526245, z: 0.015002216}
+  m_ConnectedAnchor: {x: 0.1532259, y: 1.1336244, z: 0.043231558}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 2
