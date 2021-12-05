@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectWithSkinnedMesh: {fileID: 6778584941427712315}
-  offset: {x: 0, y: 0, z: 0}
   onWornClothInteracted:
     m_PersistentCalls:
       m_Calls: []
+  anchor: {fileID: 0}
 --- !u!1001 &1424168065948927783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -87,6 +87,11 @@ PrefabInstance:
     - target: {fileID: 7222540516185325320, guid: 23463ebebde74d24a9d4161cc46e4ecc,
         type: 3}
       propertyPath: grabbable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7222540516185325320, guid: 23463ebebde74d24a9d4161cc46e4ecc,
+        type: 3}
+      propertyPath: ForceGrabbable
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
