@@ -10,20 +10,44 @@ public class GrabPointHover : MonoBehaviour
 {
     public List<GrabPointHoverEvent> grabPoints;
 
+    private bool hovered = false;
+    private GrabPointHoverEvent closestHoverPoint;
+    private HVRGrabberBase currentGrabber;
+    private HVRGrabbable currentGrabbable;
+
+    private void Update()
+    {
+        if (hovered)
+        {
+            HVRPosableGrabPoint grabPoint = GetHoveredGrabPoint(currentGrabber, currentGrabbable);
+            GrabPointHoverEvent newClosestHoverPoint = grabPoints.Find((x) => x.grabPoint == grabPoint);
+
+            if (newClosestHoverPoint != closestHoverPoint)
+            {
+                closestHoverPoint?.OnUnhovered.Invoke();
+                closestHoverPoint = newClosestHoverPoint;
+                closestHoverPoint.OnHovered.Invoke();
+            }
+        }
+    }
+
     public void OnHandHovered(HVRGrabberBase grabber, HVRGrabbable grabbable)
     {
-        HVRPosableGrabPoint grabPoint = GetHoveredGrabPoint(grabber, grabbable);
-        GrabPointHoverEvent hoverEvent = grabPoints.Find((x) => x.grabPoint == grabPoint);
-
-        hoverEvent.OnHovered.Invoke();
+        currentGrabber = grabber;
+        currentGrabbable = grabbable;
+        
+        hovered = true;
     }
 
     public void OnHandUnhovered(HVRGrabberBase grabber, HVRGrabbable grabbable)
     {
-        HVRPosableGrabPoint grabPoint = GetHoveredGrabPoint(grabber, grabbable);
-        GrabPointHoverEvent hoverEvent = grabPoints.Find((x) => x.grabPoint == grabPoint);
+        closestHoverPoint.OnUnhovered.Invoke();
 
-        hoverEvent.OnUnhovered.Invoke();
+        closestHoverPoint = null;
+        currentGrabber = null;
+        currentGrabbable = null;
+
+        hovered = false;
     }
 
     private HVRPosableGrabPoint GetHoveredGrabPoint(HVRGrabberBase grabber, HVRGrabbable grabbable)

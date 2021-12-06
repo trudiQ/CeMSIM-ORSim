@@ -29,20 +29,17 @@ public class PPEUnequipOptions : MonoBehaviour
 
     public void PointHovered(int index)
     {
-        if (index > 0 && index < unequipPoints.Length)
+        if (index >= 0 && index < unequipPoints.Length)
         {
             unequipPoints[index].Hover();
             hoveredPoint = (GloveUnequipState)index;
-
-            Debug.Log(unequipPoints[index].name + " hovered");
         }
     }
 
     public void PointUnhovered(int index)
     {
-        if (index > 0 && index < unequipPoints.Length)
+        if (index >= 0 && index < unequipPoints.Length)
             unequipPoints[index].Unhover();
-        Debug.Log(unequipPoints[index].name + " unhovered");
     }
 
     public void OnInteracted()
