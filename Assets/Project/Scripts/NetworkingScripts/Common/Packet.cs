@@ -9,43 +9,16 @@ namespace CEMSIM
     namespace Network
     {
         /// <summary>
-        /// Server -> Client
-        /// </summary>
-        public enum ServerPackets
-        {
-            welcome = 1,        // welcome message sent in reply to client's tcp connection
-            pingResponseTCP,    // server response to client's pingTCP
-            pingResponseUDP,    // server response to client's pingUDP
-            spawnPlayer,        // the spawn of a player (also a reply to spawn request)
-            playerPosition,     // update of player position
-            playerRotation,     // update of player rotation
-            playerDisconnected, // inform player the disconnection of another player
-        }
-
-        /// <summary>
-        /// Client -> Server
-        /// </summary>
-        public enum ClientPackets
-        {
-            welcomeReceived = 1,// client's in response to server's welcome packet
-            pingTCP,            // ping message to the server via TCP
-            pingUDP,            // ping message to the server via UDP
-            spawnRequest,       // player request to enter
-            playerDesktopMovement,     // client's control operations on the movement of the desktop player
-            playerVRMovement,     // client's position and orientation of the VR player
-        }
-
-
-
-        /// <summary>
         /// Packet class deals with packet formulation and digestion.
         /// </summary>
         public class Packet : IDisposable
         {
             // data first add to buffer, then transfer to readableBuffer
-            private List<byte> buffer;
-            private byte[] readableBuffer;
+            private List<byte> buffer;     ///> packet bytes (including header and payload)
+            private long utcticks;         ///> packet generation time. 0 (not enabled) or DateTime.UtcNow.Ticks
+            private byte[] readableBuffer; 
             private int readPos;
+            private int id;                ///> packet id
 
             private bool disposed = false; ///> true: this object has been manually disposed
 
@@ -56,7 +29,9 @@ namespace CEMSIM
             public Packet()
             {
                 buffer = new List<byte>(); // initialize an empty buffer
+                utcticks = 0;
                 readPos = 0;
+                id = 0;
             }
 
             /// <summary>
@@ -66,9 +41,11 @@ namespace CEMSIM
             public Packet(int _id)
             {
                 buffer = new List<byte>();
+                utcticks = 0;
                 readPos = 0;
 
-                Write(_id); // write id to the buffer
+                //Write(_id); // write id to the buffer
+                id = _id;
             }
 
             /// <summary>
@@ -78,6 +55,7 @@ namespace CEMSIM
             public Packet(byte[] _data)
             {
                 buffer = new List<byte>();
+                utcticks = 0;
                 readPos = 0;
 
                 SetBytes(_data);
@@ -86,7 +64,8 @@ namespace CEMSIM
 
             #region functions
             /// <summary>
-            /// Set the packet data, and copy the packet to readableBuffer
+            /// Set the packet data, and copy the packet to readableBuffer.
+            /// Append input data to the end of a List<byte>, and then convert to byte[]
             /// </summary>
             /// <param name="_data"></param>
             public void SetBytes(byte[] _data)
@@ -96,10 +75,19 @@ namespace CEMSIM
             }
 
             /// <summary>
-            /// Insert int to the beginning of the packet
+            /// Insert int32 to the beginning of the packet
             /// </summary>
             /// <param name="_value"></param>
             public void InsertInt32(int _value)
+            {
+                buffer.InsertRange(0, BitConverter.GetBytes(_value));
+            }
+
+            /// <summary>
+            /// Insert long(int64) to the beginning of the packet
+            /// </summary>
+            /// <param name="_value"></param>
+            public void InsertInt64(long _value)
             {
                 buffer.InsertRange(0, BitConverter.GetBytes(_value));
             }
@@ -110,6 +98,83 @@ namespace CEMSIM
             public void WriteLength()
             {
                 buffer.InsertRange(0, BitConverter.GetBytes(buffer.Count));
+            }
+
+            /// <summary>
+            /// Generate the header information and add it at the beginning of the packet
+            /// The header includes:
+            ///     Packet length: int32 - everything in the packet except the integer packet length
+            ///     Sending time : int64 (or long) 0 if not used, utctick (e.g. DateTime.UtcNow.Ticks)
+            /// </summary>
+            public void WriteHeader(bool addTime=false)
+            {
+                // we insert from the last segment in the header to the first.
+
+                // add packet id
+                InsertInt32(id);
+
+                // generation time
+                if (addTime)
+                {
+                    InsertInt64(DateTime.UtcNow.Ticks);
+                }
+                else
+                {
+                    InsertInt64(0);
+                }
+
+                // Packet length
+                WriteLength();
+            }
+
+            /// <summary>
+            /// DigestHeader reads the header information except the packet length,
+            /// and assigns the packet object attributions based on the data.
+            /// Packet length is not read because the TCP/UDP handling function
+            /// will first read the packet length to determine the packet size.
+            /// Therefore, the "data" includes everything after the packet length
+            /// segment.
+            /// </summary>
+            public int DigestServerHeader()
+            {
+                // extract packet time
+                utcticks = ReadInt64();
+
+                // extract packet id
+                id = ReadInt32();
+                if (!Enum.IsDefined(typeof(ServerPackets), id))
+                {
+                    Debug.LogWarning($"[Network] Receive an unknown packet with id {id}");
+                    id = (int)ServerPackets.invalidPacket;
+                }
+
+                return id;
+            }
+
+            public int DigestClientHeader()
+            {
+                // extract packet time
+                utcticks = ReadInt64();
+
+                // extract packet id
+                id = ReadInt32();
+                if (!Enum.IsDefined(typeof(ClientPackets), id))
+                {
+                    Debug.LogWarning($"[Network] Receive an unknown packet with id {id}");
+                    id = (int)ClientPackets.invalidPacket;
+                }
+
+                return id;
+            }
+
+            public long getUtcTicks()
+            {
+                return utcticks;
+            }
+
+            public int GetPacketId()
+            {
+                return id;
             }
 
             /// <summary>
@@ -179,6 +244,13 @@ namespace CEMSIM
                 // may need to check whether _value is longer than the size of the buffer.
                 buffer.AddRange(_value);
             }
+
+            public void Write(ArraySegment<byte> _value)
+            {
+                Write(_value.Count);
+                Write(_value.Array);
+            }
+
 
             /// <summary>
             /// Convert a short variable to bytes and add bytes to buffer
@@ -252,9 +324,9 @@ namespace CEMSIM
             /// <param name="_value">Vector3 instance</param>
             public void Write(Vector3 _value)
             {
-                Write(_value.x);
-                Write(_value.y);
-                Write(_value.z);
+                Write((float)_value.x);
+                Write((float)_value.y);
+                Write((float)_value.z);
             }
 
             /// <summary>
@@ -263,10 +335,10 @@ namespace CEMSIM
             /// <param name="_value">Quaternion instance</param>
             public void Write(Quaternion _value)
             {
-                Write(_value.x);
-                Write(_value.y);
-                Write(_value.z);
-                Write(_value.w);
+                Write((float)_value.x);
+                Write((float)_value.y);
+                Write((float)_value.z);
+                Write((float)_value.w);
             }
             #endregion
 
@@ -309,6 +381,12 @@ namespace CEMSIM
                 {
                     throw new Exception($"No space in buffer for {_length} length of 'bytes'");
                 }
+            }
+
+            public ArraySegment<byte> ReadByteArraySegment(bool _moveReadPos = true)
+            {
+                int _length = ReadInt32();
+                return new ArraySegment<byte>(ReadBytes(_length));
             }
 
             public Int16 ReadInt16(bool _moveReadPos = true)
