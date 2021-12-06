@@ -30,13 +30,15 @@ public class ColonMovementController : MonoBehaviour
     public float linearStaplerControlInsertionThreshold; // How deep the LS need to be inserted into the colon in order for the stapler to take over control of the colon motion
     public List<LinearStaplerColonDetector> staplerColonLayerDetectors;
     public Transform activeForcepsHaptic; // Which forceps is the user using
+    public List<sphereJointModel> colonPhysicsManagers;
 
+    public float defaultColonSphereSpeedLimit;
     public HapticPlugin currentGrabbingForcepsController;
     public Transform currentGrabbingForcepsTransform;
     public Vector3 forcepsGrabInitialLocalPosition; // Initial local position of the forceps that's grabbing the colon sphere
     public List<Vector3> controllerStartPosition; // Position of the forceps or the linear stapler when user start to grab the colon with it or inserted the linear stapler while the grabbing forceps is released
     public List<float> controllerStartPercent; // Percentage of spline follower's position when user start to grab the colon with it or inserted the linear stapler
-    public List<int> updateMode; // How the colon sphere position should be updated?
+    public List<int> updateMode; // How the colon sphere position should be updated? index is colon index
     // 0. Do nothing
     // 1. Follow forceps
     // 2. Follow linear stapler tilt
@@ -66,10 +68,13 @@ public class ColonMovementController : MonoBehaviour
 
         splineFollowersStartPositionTop = new List<Vector3>();
         splineFollowersStartPositionBottom = new List<Vector3>();
-        colon0FrontSphereStartPosition = new List<Vector3>();
-        colon1FrontSphereStartPosition = new List<Vector3>();
-        colon0SphereWeights = new List<float>();
-        colon1SphereWeights = new List<float>();
+        if (colon0FrontSphereStartPosition == null)
+        {
+            colon0FrontSphereStartPosition = new List<Vector3>();
+            colon1FrontSphereStartPosition = new List<Vector3>();
+            colon0SphereWeights = new List<float>();
+            colon1SphereWeights = new List<float>();
+        }
         updateMode = new List<int>();
         updateMode.Add(0);
         updateMode.Add(0);
@@ -92,6 +97,7 @@ public class ColonMovementController : MonoBehaviour
         insertionDepth = new List<float>();
         insertionDepth.Add(0);
         insertionDepth.Add(0);
+        defaultColonSphereSpeedLimit = colonPhysicsManagers[0].maxSphereVelocity;
     }
 
     // Update is called once per frame
@@ -107,7 +113,10 @@ public class ColonMovementController : MonoBehaviour
         insertionDepth[0] = globalOperators.m_insertDepth[0];
         insertionDepth[1] = globalOperators.m_insertDepth[1];
 
-        MainUpdatingLoop();
+        if (!LinearStaplerTool.instance.usingRawSensorControl)
+        {
+            MainUpdatingLoop();
+        }
 
         if (isTest)
         {
@@ -179,9 +188,12 @@ public class ColonMovementController : MonoBehaviour
     public void ChangeFollowStates(int controlledColon, int newState, bool resetColonSphereData, bool keepSplineFollowerPosition, Transform newController = null)
     {
         // Determine if we need to re-initialize the colon sphere data
-        if (resetColonSphereData)
+        if (0 == 1) // Disable updating sphere data for now
         {
-            InitializeColonSphereData();
+            if (resetColonSphereData)
+            {
+                InitializeColonSphereData();
+            }
         }
 
         switch (newState)
@@ -227,17 +239,21 @@ public class ColonMovementController : MonoBehaviour
         {
             controllerStartPercent[controlledColon] = Mathf.Clamp01((colonController[controlledColon].position.y - controllerStartPosition[controlledColon].y) / (8.37f - 3.33f));
         }
+
+        colonPhysicsManagers[controlledColon].maxSphereVelocity = 1;
     }
 
     public void StopFollowForceps(int controlledColon)
     {
-        // Do nothing if colon is not currently following forceps
-        if (updateMode[controlledColon] != 1)
-        {
-            return;
-        }
+        //// Do nothing if colon is not currently following forceps
+        //if (updateMode[controlledColon] != 1)
+        //{
+        //    return;
+        //}
 
         colonController[controlledColon] = null;
+
+        colonPhysicsManagers[controlledColon].maxSphereVelocity = defaultColonSphereSpeedLimit;
     }
 
     public void StartFollowLinearStaplerTilt(int controlledColon, Transform newStapler, bool keepSplineFollowerPosition)
@@ -252,31 +268,49 @@ public class ColonMovementController : MonoBehaviour
         {
             controllerStartPercent[controlledColon] = Mathf.Clamp01((colonController[controlledColon].position.y - controllerStartPosition[controlledColon].y) / (8.37f - 3.33f));
         }
+
+        colonPhysicsManagers[controlledColon].maxSphereVelocity = 1;
     }
 
     public void StopFollowLinearStaplerTilt(int controlledColon)
     {
-        // Do nothing if colon is not currently following LS tilt
-        if (updateMode[controlledColon] != 2)
-        {
-            return;
-        }
+        //// Do nothing if colon is not currently following LS tilt
+        //if (updateMode[controlledColon] != 2)
+        //{
+        //    return;
+        //}
 
         colonController[controlledColon] = null;
+
+        colonPhysicsManagers[controlledColon].maxSphereVelocity = defaultColonSphereSpeedLimit;
     }
 
     public void StartFollowLinearStaplerMove(int controlledColon, Transform newStapler)
     {
 
+
+        colonPhysicsManagers[controlledColon].maxSphereVelocity = 1;
     }
 
     public void StopFollowLinearStaplerMove(int controlledColon)
     {
-        // Do nothing if colon is not currently following LS vertical
-        if (updateMode[controlledColon] != 3)
-        {
-            return;
-        }
+        //// Do nothing if colon is not currently following LS vertical
+        //if (updateMode[controlledColon] != 3)
+        //{
+        //    return;
+        //}
+
+        colonPhysicsManagers[controlledColon].maxSphereVelocity = defaultColonSphereSpeedLimit;
+    }
+
+    /// <summary>
+    /// This is used when the stapler is not locked into the colon, and let the colon move with the stapler which is controlled only with raw sensor data
+    /// 
+    /// Colon section that is not reached by stapler insertion will still follow the spline track based on the stapler tip's position
+    /// </summary>
+    public void UpdateColonMotionSegmentDuringStaplerInsertion()
+    {
+
     }
 
     /// <summary>

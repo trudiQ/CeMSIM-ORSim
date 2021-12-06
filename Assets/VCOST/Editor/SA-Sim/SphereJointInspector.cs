@@ -46,17 +46,23 @@ public class SphereJointInspector : Editor
             int sphereIdx = 18;
             physicsModel.splitInlayerJoints_sigle(ref layers2Split, sphereIdx);
         }
+
+        // update joints
+        if (GUILayout.Button("Update Joints Simple"))
+        {
+            physicsModel.UpdatephereJointModelSimple();
+        }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

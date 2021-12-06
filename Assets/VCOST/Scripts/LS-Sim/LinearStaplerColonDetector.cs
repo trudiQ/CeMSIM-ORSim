@@ -63,6 +63,11 @@ public class LinearStaplerColonDetector : MonoBehaviour
                 staplerTipLastTouchedColonLayers.Add(int.Parse(other.name[9].ToString() + other.name[10].ToString()));
             }
 
+            if (LinearStaplerTool.instance.usingRawSensorControl)
+            {
+                return;
+            }
+
             if (belongedStapler != null)
             {
                 int colon = int.Parse(other.name[7].ToString());
@@ -98,6 +103,11 @@ public class LinearStaplerColonDetector : MonoBehaviour
             else
             {
                 staplerTipLastTouchedColonLayers.Remove(int.Parse(other.name[9].ToString() + other.name[10].ToString()));
+            }
+
+            if (LinearStaplerTool.instance.usingRawSensorControl)
+            {
+                return;
             }
 
             if (belongedStapler != null)

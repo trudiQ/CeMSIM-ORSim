@@ -78,13 +78,30 @@ public class globalOperators : MonoBehaviour
     public static bool m_bSimEnd = false; // manual end by the user by pressing space
 
     // Cutting stuff
+    public Transform scissorsValidator;
+    public float upDirectionAngle;
     public float upDirectionThreshold;
+    public float rightDirectionAngle;
     public float rightDirectionThreshold;
+    public float forwardDirectionAngle;
     public float forwardDirectionThreshold;
     public float xDistanceThreshold;
     public float yDistanceThreshold;
     public float zDistanceThreshold;
     public List<GameObject> validCuttingSpheres; // Which colon spheres are valid for cutting
+    public List<GameObject> leftCornerSpheres; // Spheres which belongs to the left cutting corner of each colon
+    public List<GameObject> rightCornerSpheres;
+    public GameObject scissorTouchingSphere;
+    // Testing
+    public float scissorUpDiff;
+    public float scissorRightDiff;
+    public float scissorForwardDiff;
+
+    // Improved grabbing stuff
+    public List<GameObject> colon0Layers;
+    public List<List<Transform>> colon0Spheres;
+    public List<GameObject> colon1Layers;
+    public List<List<Transform>> colon1Spheres;
 
     // UI control
     public LS_UIcontroller uiController;
@@ -131,6 +148,13 @@ public class globalOperators : MonoBehaviour
                 m_numBindColonMeshes += 1;
             }
         }
+
+        colon0Spheres = new List<List<Transform>>();
+        colon0Layers.ForEach(l => colon0Spheres.Add(l.transform.GetComponentsInChildren<Transform>().ToList()));
+        colon0Spheres.ForEach(l => l.RemoveAt(0));
+        colon1Spheres = new List<List<Transform>>();
+        colon1Layers.ForEach(l => colon1Spheres.Add(l.transform.GetComponentsInChildren<Transform>().ToList()));
+        colon1Spheres.ForEach(l => l.RemoveAt(0));
 
         /// initialize opeartor variables
         // Corner-cut
@@ -480,6 +504,9 @@ public class globalOperators : MonoBehaviour
         m_colonMeshes[1].physicsModel2Join = m_sphereJointModels[0];
         m_bJoin = true;
 
+        ColonMovementController.instance.ChangeFollowStates(0, 0, false, true);
+        ColonMovementController.instance.ChangeFollowStates(1, 0, false, true);
+
         Debug.Log("Join succeed!");
         return true;
     }
@@ -575,6 +602,12 @@ public class globalOperators : MonoBehaviour
             return false;
         }
 
+        //m_hapticSurgTools["Scissors"].cutSphereIdx.ToList()
+        if (!VerifyScissorCutTransformCondition())
+        {
+            return false;
+        }
+
         // check which corner of sphereJointModel objIdx to cut
         string[] debuguse = { "left", "right" };
         LorR = -1; // 0: left; 1: right
@@ -614,6 +647,79 @@ public class globalOperators : MonoBehaviour
         }
 
         return true;
+    }
+
+    public bool VerifyScissorCutTransformCondition(List<Transform> cutSphereGroup = null)
+    {
+        if (cutSphereGroup != null && cutSphereGroup.Count > 0)
+        {
+            Vector3 groupPosition = cutSphereGroup.Select(s => s.position).Aggregate(Vector3.zero, (acc, v) => acc + v) / (float)cutSphereGroup.Count;
+        }
+
+        if (!CheckAngleDifference(Vector3.Angle(scissorsValidator.right, Vector3.up), upDirectionAngle, upDirectionThreshold, true))
+        {
+            return false;
+        }
+        if (!CheckAngleDifference(Mathf.Abs(Mathf.Atan(scissorsValidator.forward.x / scissorsValidator.forward.z) * Mathf.Rad2Deg), forwardDirectionAngle, forwardDirectionThreshold, true))
+        {
+            return false;
+        }
+        if (!CheckAngleDifference(Mathf.Abs(Mathf.Atan(scissorsValidator.up.y / Mathf.Sqrt(Mathf.Pow(scissorsValidator.up.z, 2) + Mathf.Pow(scissorsValidator.up.x, 2))) * Mathf.Rad2Deg),
+            rightDirectionAngle, rightDirectionThreshold, true))
+        {
+            return false;
+        }
+        if (leftCornerSpheres.Contains(scissorTouchingSphere)) // If trying to cut left colon corner
+        {
+            if (scissorsValidator.forward.x / scissorsValidator.forward.z > 0)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (scissorsValidator.forward.x / scissorsValidator.forward.z < 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void TestScissorCutConditions()
+    {
+        scissorUpDiff = Vector3.Angle(scissorsValidator.right, Vector3.up);
+        scissorRightDiff = Mathf.Abs(Mathf.Atan(scissorsValidator.up.y / Mathf.Sqrt(Mathf.Pow(scissorsValidator.up.z, 2) + Mathf.Pow(scissorsValidator.up.x, 2))) * Mathf.Rad2Deg);
+        scissorForwardDiff = Mathf.Abs(Mathf.Atan(scissorsValidator.forward.x / scissorsValidator.forward.z) * Mathf.Rad2Deg);
+    }
+
+    public bool CheckAngleDifference(float actualAngle, float targetAngle, float validRange, bool canInverse)
+    {
+        if (Mathf.Abs(actualAngle - targetAngle) <= validRange)
+        {
+            return true;
+        }
+        if (canInverse)
+        {
+            if (targetAngle >= 90)
+            {
+                if (Mathf.Abs(actualAngle - (180 - targetAngle)) <= validRange)
+                {
+                    return true;
+                }
+
+            }
+            else
+            {
+                if (Mathf.Abs((180 - actualAngle) - targetAngle) <= validRange)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -1207,5 +1313,8 @@ public class globalOperators : MonoBehaviour
             // update LS status
             synchLSStas();
         }
+
+        // Testing
+        TestScissorCutConditions();
     }
 }

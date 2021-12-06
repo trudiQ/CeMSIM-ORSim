@@ -93,6 +93,19 @@ public class HapticSurgTools : MonoBehaviour
     public GameObject lockToolDummyMesh; // The dummy mesh to turn on when the tool is locked
     public List<MeshRenderer> toolMesh;
 
+    // Colon lifting
+    public bool isLifting;
+
+    // Improved grabbing
+    public Transform grabbingSphereAnchor;
+    public List<Joint> neighborSphereJoints;
+    public GameObject originalTool;
+    public GameObject dummyManipulator;
+    public Vector3 toolGrabStartPos;
+    public Vector3 hapticsGrabStartRaw;
+    public float forcepsMaxGrabDistance; // How far can foreps grab the colon sphere away from the initial grabbing position before it stops
+    //public Vector3
+
     //! Automatically called for initialization
     void Start()
     {
@@ -214,6 +227,7 @@ public class HapticSurgTools : MonoBehaviour
         defaultParent = transform.parent;
 
         pushColonJoints = new List<Joint>();
+        neighborSphereJoints = new List<Joint>();
     }
 
     void disableUnityCollisions()
@@ -607,6 +621,9 @@ public class HapticSurgTools : MonoBehaviour
                 // right button for tool dropping/holding
                 if (newButtonStatus[1] == true)
                 {
+                    //
+                    ResumeHapticsUpdateVirtualTool();
+
                     // holding
                     if (bTouching && touching && !bHolding)
                     {
@@ -847,7 +864,9 @@ public class HapticSurgTools : MonoBehaviour
                     }
 
                     if (tAnimations)
+                    {
                         tAnimations.CloseOpenScissors(this, cutSphereIdx);
+                    }
                 }
                 if (newButtonStatus[0] == false && curAction != toolAction.cutting)
                 {
@@ -961,6 +980,10 @@ public class HapticSurgTools : MonoBehaviour
             return;
 
         touching = that;
+        if (this.gameObject.name == "Scissors")
+        {
+            gOperators.scissorTouchingSphere = touching;
+        }
 
         if (LinearStaplerTool.instance.simStates < 2 && touching.gameObject.name.Contains("sphere_"))
         {
@@ -976,7 +999,7 @@ public class HapticSurgTools : MonoBehaviour
     {
         Collider other = collisionInfo.collider;
         //Debug.unityLogger.Log("onCollisionrExit : " + other.name);
-        collidingTip = null;
+        //collidingTip = null;
 
         if (collisionInfo.rigidbody != null)
             hapticTouchEvent(false);
@@ -991,6 +1014,10 @@ public class HapticSurgTools : MonoBehaviour
         if (touching == other.gameObject || other.gameObject.transform.IsChildOf(touching.transform))
         {
             touching = null;
+            if (this.gameObject.name == "Scissors")
+            {
+                gOperators.scissorTouchingSphere = null;
+            }
         }
     }
 
@@ -1017,6 +1044,9 @@ public class HapticSurgTools : MonoBehaviour
         //Debug.Log( " Object : " + touchedObject.name + "  Tag : " + touchedObject.tag );
 
         grabbing = touchedObject;
+
+        toolGrabStartPos = transform.position;
+        hapticsGrabStartRaw = hapticDevice.stylusPositionRaw;
 
         //Debug.logger.Log("Grabbing Object : " + grabbing.name);
         Rigidbody body = grabbing.GetComponent<Rigidbody>();
@@ -1046,33 +1076,53 @@ public class HapticSurgTools : MonoBehaviour
             body = grabbing.GetComponent<Rigidbody>();
         }
 
-        bool isLifting = false;
+        isLifting = false;
         // Update colon grabbing states for colon motion controller
-        if (LinearStaplerTool.instance.simStates < 2 && body.gameObject.name.Contains("sphere_"))
+        // If touched colon is already cut
+        int colon = int.Parse(body.gameObject.name[7].ToString());
+        // Don't let surgeon lift colon if grab on further layers
+        int layer = int.Parse(body.gameObject.name[9].ToString());
+        if (!LinearStaplerTool.instance.usingRawSensorControl && gOperators.m_LRCornerCutIdices[colon][1 - colon]) // Temp, disable forceps lifting if testing using raw stapler input
         {
-            // Don't let surgeon lift colon if grab on further layers
-            int layer = int.Parse(body.gameObject.name[9].ToString());
-            if (layer == 0 || layer == 1)
+            // If grabbing first 2 layers
+            if (LinearStaplerTool.instance.simStates < 2 && body.gameObject.name.Contains("sphere_"))
             {
-                int colon = int.Parse(body.gameObject.name[7].ToString());
-                gOperators.lsController.colonSecuredByForceps[colon] = true;
-                ColonMovementController.instance.ChangeFollowStates(colon, 1, ColonMovementController.instance.colon0FrontSphereStartPosition.Count == 0, false, ColonMovementController.instance.activeForcepsHaptic);
-                // Make forceps attach to the colon
-                toolHapticGO[0].GetComponent<HapticPlugin>().updateManipulatorTransform = false;
-                transform.parent = body.transform;
-                GetComponent<Rigidbody>().isKinematic = true;
-                ColonMovementController.instance.currentGrabbingForcepsTransform = transform;
-                ColonMovementController.instance.forcepsGrabInitialLocalPosition = transform.localPosition;
+                if (layer == 0 || layer == 1)
+                {
+                    gOperators.lsController.colonSecuredByForceps[colon] = true;
+                    ColonMovementController.instance.ChangeFollowStates(colon, 1, ColonMovementController.instance.colon0FrontSphereStartPosition.Count == 0, false, ColonMovementController.instance.activeForcepsHaptic);
+                    // Make forceps attach to the colon
+                    toolHapticGO[0].GetComponent<HapticPlugin>().updateManipulatorTransform = false;
+                    transform.parent = body.transform;
+                    GetComponent<Rigidbody>().isKinematic = true;
+                    GetComponent<Rigidbody>().mass = 10000000;
+                    GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                    ColonMovementController.instance.currentGrabbingForcepsTransform = transform;
+                    ColonMovementController.instance.forcepsGrabInitialLocalPosition = transform.localPosition;
 
-                isLifting = true;
+                    isLifting = true;
+                }
             }
         }
 
         if (!isLifting)
         {
-            grabbing.transform.position = collidingTip.position;
+            //grabbing.transform.position = collidingTip.position;
+            grabbing.transform.position = grabbingSphereAnchor.position;
             joint = (FixedJoint)gameObject.AddComponent(typeof(FixedJoint));
             joint.connectedBody = body;
+
+            if (layer > 1)
+            {
+                List<Transform> neighborSpheres = GetNeighborColonSphere(grabbing.transform);
+                foreach (Transform s in neighborSpheres)
+                {
+                    //s.position = s.position + (grabbing.transform.position - s.position) * 0.75f; // Bring neighbor sphere closer to the forceps
+                    Joint joint = (SpringJoint)gameObject.AddComponent(typeof(SpringJoint));
+                    joint.connectedBody = s.GetComponent<Rigidbody>();
+                    neighborSphereJoints.Add(joint);
+                }
+            }
         }
         else
         {
@@ -1096,6 +1146,8 @@ public class HapticSurgTools : MonoBehaviour
     //! Stop grabbing an obhject. (Like opening a claw.) Normally called when the button is released. 
     void release()
     {
+        ResumeHapticsUpdateVirtualTool();
+
         // Update UI
         gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Held by Omni");
 
@@ -1119,6 +1171,7 @@ public class HapticSurgTools : MonoBehaviour
                 toolHapticGO[0].GetComponent<HapticPlugin>().updateManipulatorTransform = true;
                 transform.parent = defaultParent;
                 GetComponent<Rigidbody>().isKinematic = false;
+                GetComponent<Rigidbody>().mass = 1;
             }
         }
 
@@ -1126,6 +1179,9 @@ public class HapticSurgTools : MonoBehaviour
 
         joint.connectedBody = null;
         Destroy(joint);
+
+        neighborSphereJoints.ForEach(j => Destroy(j));
+        neighborSphereJoints.Clear();
 
         grabbing = null;
 
@@ -1148,6 +1204,11 @@ public class HapticSurgTools : MonoBehaviour
             return;
         }
 
+        if (ColonMovementController.instance.currentGrabbingForcepsController == null || toolHapticGO[0].GetComponent<HapticPlugin>() != ColonMovementController.instance.currentGrabbingForcepsController)
+        {
+            return;
+        }
+
         //if (collidingTip != null)
         //{
         //    return;
@@ -1157,9 +1218,9 @@ public class HapticSurgTools : MonoBehaviour
         collidingPoint = collision.GetContact(0).point;
         collidingObjectPoint = collision.collider.transform.position;
         objectCollidingPoint = transform.position;
-        collidingTip = collision.GetContact(0).thisCollider.transform;
+        //collidingTip = collision.GetContact(0).thisCollider.transform;
 
-        AttachColonForPush(collision.GetContact(0).point, collidingTip.gameObject, collisionObjectTrans.gameObject);
+        AttachColonForPush(collision.GetContact(0).point, collision.GetContact(0).thisCollider.gameObject, collisionObjectTrans.gameObject);
     }
 
     public void UpdateCollisionStatus()
@@ -1194,12 +1255,12 @@ public class HapticSurgTools : MonoBehaviour
         //    DetachColonStopPush();
         //}
 
-        if (collidingTip == null)
-        {
-            return;
-        }
+        //if (collidingTip == null)
+        //{
+        //    return;
+        //}
 
-        Vector3 toolTipVector = collidingTip.position - collidingObjectPoint;
+        //Vector3 toolTipVector = collidingTip.position - collidingObjectPoint;
     }
 
     public void LockToolDueColonCollision()
@@ -1256,27 +1317,110 @@ public class HapticSurgTools : MonoBehaviour
     /// </summary>
     /// <param name="centerSphere"></param>
     /// <returns></returns>
-    public List<GameObject> GetNeighborColonSphere(GameObject centerSphere)
+    public List<Transform> GetNeighborColonSphere(Transform centerSphere)
     {
-        List<GameObject> neighbor = new List<GameObject>();
+        List<Transform> neighbors = new List<Transform>();
 
+        int colon = int.Parse(centerSphere.name[7].ToString());
 
+        List<List<Transform>> colonLayers = new List<List<Transform>>();
+        if (colon == 0)
+        {
+            colonLayers = gOperators.colon0Spheres;
+        }
+        else
+        {
+            colonLayers = gOperators.colon1Spheres;
+        }
 
-        return neighbor;
+        int layerIndex = 0;
+        int sphereIndex = 0;
+        for (int i = 0; i < colonLayers.Count; i++)
+        {
+            if (colonLayers[i].Contains(centerSphere))
+            {
+                layerIndex = i;
+                sphereIndex = colonLayers[i].IndexOf(centerSphere);
+            }
+        }
+
+        for (int i = -1; i < 2; i++)
+        {
+            for (int j = -1; j < 2; j++)
+            {
+                if (i == 0 && j == 0) // Skip target sphere
+                {
+                    continue;
+                }
+
+                int neighborLayerIndex = layerIndex + i;
+                if (neighborLayerIndex == -1 || neighborLayerIndex == colonLayers.Count) // Skip out of layer neighbor
+                {
+                    continue;
+                }
+                //if (neighborLayerIndex == -1)
+                //{
+                //    neighborLayerIndex = colonLayers.Count - 1;
+                //}
+                //else if (neighborLayerIndex == colonLayers.Count)
+                //{
+                //    neighborLayerIndex = 0;
+                //}
+
+                int neighborSphereIndex = sphereIndex + j;
+                if (neighborSphereIndex == -1)
+                {
+                    neighborSphereIndex = colonLayers[neighborLayerIndex].Count - 1;
+                }
+                else if (neighborSphereIndex == colonLayers[neighborLayerIndex].Count)
+                {
+                    neighborSphereIndex = 0;
+                }
+
+                neighbors.Add(colonLayers[neighborLayerIndex][neighborSphereIndex]);
+            }
+        }
+
+        return neighbors;
     }
 
     private void LateUpdate()
     {
         //UpdateCollisionStatus();
 
-        if (grabbing)
+        if (grabbing && !isLifting)
         {
-            return;
+            if (Vector3.Distance(transform.position, toolGrabStartPos) > forcepsMaxGrabDistance && hapticDevice.hapticManipulator != dummyManipulator)
+            {
+                PauseHapticsUpdateVirtualTool();
+            }
+
+            if (Vector3.Distance(hapticDevice.stylusPositionRaw, hapticsGrabStartRaw) < (forcepsMaxGrabDistance * 10) && hapticDevice.hapticManipulator == dummyManipulator)
+            {
+                ResumeHapticsUpdateVirtualTool();
+            }
         }
 
         //if (lockToolDueColonContact)
         //{
         //    transform.position = toolLockingPosition;
         //}
+
+
+    }
+
+    /// <summary>
+    /// "Freeze" the current controlled virtual tool in the space without updating its transform from the haptics input
+    /// </summary>
+    public void PauseHapticsUpdateVirtualTool()
+    {
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+        hapticDevice.hapticManipulator = dummyManipulator;
+    }
+
+    public void ResumeHapticsUpdateVirtualTool()
+    {
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+        hapticDevice.hapticManipulator = originalTool;
     }
 }

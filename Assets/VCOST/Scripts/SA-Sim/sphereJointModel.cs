@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Sirenix.OdinInspector;
+using System.Linq;
 
 [ExecuteInEditMode] //allow start() to run in both edit/play mode
 
@@ -777,5 +778,173 @@ public class sphereJointModel : MonoBehaviour
 
         // Initialize layer bounding box
         m_layerBoundingBox = new Bounds[m_numLayers];
+    }
+
+    [ShowInInspector]
+    public void UpdatephereJointModelSimple()
+    {
+        gameObject.GetComponentsInChildren<ConfigurableJoint>().ToList().ForEach(
+            cj => cj.linearLimitSpring = new SoftJointLimitSpring()
+            {
+                spring = m_inLayerSpring,
+                damper = m_inLayerDamper
+            });
+        return;
+
+        // layers
+        for (int i = 0; i < m_numLayers; i++)
+        {
+            // joints
+            int otherObjIdx = 0;
+            Transform tmpObj;
+            Transform[] otherObjects = new Transform[m_numJoints];
+            Transform[] preLayerObjs = new Transform[m_numLayerJoints];
+            for (int j = 0; j < m_numSpheres; j++)
+            {
+                tmpObj = transform.Find("sphere_" + m_objIndex.ToString() + "_" + i.ToString() + "_" + j.ToString());
+
+                // in-layer joints
+                for (int k = 1; k <= m_numJoints; k++)
+                {
+                    // First layer: only add the limited number of configurable joints 
+                    if (i == 0 && k > m_numJoints_firstLayer)
+                        continue;
+
+                    if ((j + k) >= m_numSpheres)
+                        otherObjIdx = j + k - m_numSpheres;
+                    else
+                        otherObjIdx = j + k;
+                    otherObjects[k - 1] = transform.Find("sphere_" + m_objIndex.ToString() + "_" + i.ToString() + "_" + otherObjIdx.ToString());
+                    // joint k
+                    if (tmpObj && otherObjects[k - 1])
+                    {
+                        ConfigurableJoint joint = tmpObj.gameObject.AddComponent<ConfigurableJoint>();
+                        joint.connectedBody = otherObjects[k - 1].GetComponent<Rigidbody>();
+                        // configure
+                        joint.xMotion = ConfigurableJointMotion.Limited;
+                        joint.yMotion = ConfigurableJointMotion.Limited;
+                        joint.zMotion = ConfigurableJointMotion.Limited;
+                        joint.angularXMotion = ConfigurableJointMotion.Locked;
+                        joint.angularYMotion = ConfigurableJointMotion.Locked;
+                        joint.angularZMotion = ConfigurableJointMotion.Locked;
+                        joint.linearLimitSpring = new SoftJointLimitSpring()
+                        {
+                            spring = m_inLayerSpring,
+                            damper = m_inLayerDamper
+                        };
+                        joint.linearLimit = new SoftJointLimit() { limit = m_inLayerLimit, contactDistance = 0.1f };
+                    }
+                }
+
+                //// cross-layer joints
+                for (int b = 1; b <= m_numLayerJoints; b++)
+                {
+                    if (i >= b)
+                        preLayerObjs[b - 1] = transform.Find("sphere_" + m_objIndex.ToString() + "_" + (i - b).ToString() + "_" + j.ToString());
+                    if (tmpObj && preLayerObjs[b - 1])
+                    {
+                        ConfigurableJoint jointL = tmpObj.gameObject.AddComponent<ConfigurableJoint>();
+                        jointL.connectedBody = preLayerObjs[b - 1].GetComponent<Rigidbody>();
+                        // configure
+                        jointL.xMotion = ConfigurableJointMotion.Limited;
+                        jointL.yMotion = ConfigurableJointMotion.Limited;
+                        jointL.zMotion = ConfigurableJointMotion.Limited;
+                        jointL.angularXMotion = ConfigurableJointMotion.Locked;
+                        jointL.angularYMotion = ConfigurableJointMotion.Locked;
+                        jointL.angularZMotion = ConfigurableJointMotion.Locked;
+                        jointL.linearLimitSpring = new SoftJointLimitSpring()
+                        {
+                            spring = m_croLayerSpring,
+                            damper = m_croLayerDamper
+                        };
+                        jointL.linearLimit = new SoftJointLimit() { limit = m_croLayerLimit, contactDistance = 0.1f };
+                    }
+                }
+            }
+        }
+    }
+
+    //[ShowInInspector]
+    public void UpdatephereJointModel(ref GameObject sphereJointGO)
+    {
+        // layers
+        for (int i = 0; i < m_numLayers; i++)
+        {
+            //Transform layer_i = transform.Find("Layer" + m_objIndex.ToString() + "_" + i.ToString());
+
+            //for (int j = 0; j < m_numSpheres; j++)
+            //{
+            //    Transform sphere_j = transform.Find("sphere_" + m_objIndex.ToString() + "_" + i.ToString() + "_" + j.ToString());
+            //}
+            //layer_i.transform.parent = m_sphereJointModel.transform;
+
+            // joints
+            int otherObjIdx = 0;
+            Transform tmpObj;
+            Transform[] otherObjects = new Transform[m_numJoints];
+            Transform[] preLayerObjs = new Transform[m_numLayerJoints];
+            for (int j = 0; j < m_numSpheres; j++)
+            {
+                tmpObj = transform.Find("sphere_" + m_objIndex.ToString() + "_" + i.ToString() + "_" + j.ToString());
+
+                // in-layer joints
+                for (int k = 1; k <= m_numJoints; k++)
+                {
+                    // First layer: only add the limited number of configurable joints 
+                    if (i == 0 && k > m_numJoints_firstLayer)
+                        continue;
+
+                    if ((j + k) >= m_numSpheres)
+                        otherObjIdx = j + k - m_numSpheres;
+                    else
+                        otherObjIdx = j + k;
+                    otherObjects[k - 1] = transform.Find("sphere_" + m_objIndex.ToString() + "_" + i.ToString() + "_" + otherObjIdx.ToString());
+                    // joint k
+                    if (tmpObj && otherObjects[k - 1])
+                    {
+                        ConfigurableJoint joint = tmpObj.gameObject.AddComponent<ConfigurableJoint>();
+                        joint.connectedBody = otherObjects[k - 1].GetComponent<Rigidbody>();
+                        // configure
+                        joint.xMotion = ConfigurableJointMotion.Limited;
+                        joint.yMotion = ConfigurableJointMotion.Limited;
+                        joint.zMotion = ConfigurableJointMotion.Limited;
+                        joint.angularXMotion = ConfigurableJointMotion.Locked;
+                        joint.angularYMotion = ConfigurableJointMotion.Locked;
+                        joint.angularZMotion = ConfigurableJointMotion.Locked;
+                        joint.linearLimitSpring = new SoftJointLimitSpring()
+                        {
+                            spring = m_inLayerSpring,
+                            damper = m_inLayerDamper
+                        };
+                        joint.linearLimit = new SoftJointLimit() { limit = m_inLayerLimit, contactDistance = 0.1f };
+                    }
+                }
+
+                //// cross-layer joints
+                for (int b = 1; b <= m_numLayerJoints; b++)
+                {
+                    if (i >= b)
+                        preLayerObjs[b - 1] = transform.Find("sphere_" + m_objIndex.ToString() + "_" + (i - b).ToString() + "_" + j.ToString());
+                    if (tmpObj && preLayerObjs[b - 1])
+                    {
+                        ConfigurableJoint jointL = tmpObj.gameObject.AddComponent<ConfigurableJoint>();
+                        jointL.connectedBody = preLayerObjs[b - 1].GetComponent<Rigidbody>();
+                        // configure
+                        jointL.xMotion = ConfigurableJointMotion.Limited;
+                        jointL.yMotion = ConfigurableJointMotion.Limited;
+                        jointL.zMotion = ConfigurableJointMotion.Limited;
+                        jointL.angularXMotion = ConfigurableJointMotion.Locked;
+                        jointL.angularYMotion = ConfigurableJointMotion.Locked;
+                        jointL.angularZMotion = ConfigurableJointMotion.Locked;
+                        jointL.linearLimitSpring = new SoftJointLimitSpring()
+                        {
+                            spring = m_croLayerSpring,
+                            damper = m_croLayerDamper
+                        };
+                        jointL.linearLimit = new SoftJointLimit() { limit = m_croLayerLimit, contactDistance = 0.1f };
+                    }
+                }
+            }
+        }
     }
 }

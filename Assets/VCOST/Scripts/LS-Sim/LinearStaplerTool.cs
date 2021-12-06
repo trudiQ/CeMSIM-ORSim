@@ -26,6 +26,7 @@ using Sirenix.OdinInspector;
 /// </summary>
 public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 {
+    public bool usingRawSensorControl;
     public LS_UIcontroller uiController;
     public GameObject FiringHandle;
     public Transform firingHandleStartPosition;
@@ -161,6 +162,10 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public Vector3 joinedColonSixthLayerLowerSpheresPosition;
     public int lastPhaseLockedLayer;
 
+    // Calibration
+    public float positionCalibrationSpeed;
+    public float rotationCalibrationSpeed;
+
     public void Start()
     {
         LoadStapleToolCalibrationData();
@@ -256,7 +261,10 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         // If top half is close to bottom half in the last phase and is on the moving plane then auto adjust it's alignment to always face up
         if (simStates >= 2 && Vector3.Distance(topHalf.transform.position, bottomHalf.transform.position) < 2 && !topTransformLocked && isBottomHalfMovingInCuttingPlane)
         {
-            topHalf.transform.LookAt(topHalf.transform.position + Vector3.down);
+            if (!LinearStaplerTool.instance.usingRawSensorControl)
+            {
+                topHalf.transform.LookAt(topHalf.transform.position + Vector3.down);
+            }
         }
     }
 
@@ -270,7 +278,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         //colonAlastLayerPos = GetPositionMean(colonAlastLayerSpheres);
         //colonBlastLayerPos = GetPositionMean(colonBlastLayerSpheres);
 
-        if (simStates == 1)
+        //if (simStates == 1)
         {
             // Update tool moving axis info
             topPartMovingAxisStartPoint = GetPositionMean(topPartMovingAxisStart);
@@ -278,10 +286,32 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             topPartMovingAxisStartPoint += Vector3.up * joiningPhaseToolMovingAxisDifference;
             topPartMovingAxisEndPoint += Vector3.up * joiningPhaseToolMovingAxisDifference;
         }
-        else if (simStates > 1)
+        //else if (simStates > 1)
         {
             bottomPartMovingAxisStartPoint += Vector3.up * lastPhaseToolBottomMovingAxisDifference;
             bottomPartMovingAxisEndPoint += Vector3.up * lastPhaseToolBottomMovingAxisDifference;
+        }
+
+        if (LinearStaplerTool.instance.usingRawSensorControl)
+        {
+            if (globalOperators.m_bInsert[0] == 1)
+            {
+                globalOperators.m_insertDepth[0] = GetToolInsertionDepth(topHalf.transform, topPartMovingAxisStartPoint, topPartMovingAxisEndPoint, Vector3.up * Mathf.Sign(topHalf.transform.up.y));
+            }
+            if (globalOperators.m_bInsert[1] == 1)
+            {
+                globalOperators.m_insertDepth[1] = GetToolInsertionDepth(topHalf.transform, topPartMovingAxisStartPoint, topPartMovingAxisEndPoint, Vector3.up * Mathf.Sign(topHalf.transform.up.y));
+            }
+            if (globalOperators.m_bInsert[0] == 2)
+            {
+                globalOperators.m_insertDepth[0] = GetToolInsertionDepth(bottomHalf.transform, bottomPartMovingAxisStartPoint, bottomPartMovingAxisEndPoint, Vector3.up * Mathf.Sign(bottomHalf.transform.up.y));
+            }
+            if (globalOperators.m_bInsert[1] == 2)
+            {
+                globalOperators.m_insertDepth[1] = GetToolInsertionDepth(bottomHalf.transform, bottomPartMovingAxisStartPoint, bottomPartMovingAxisEndPoint, Vector3.up * Mathf.Sign(bottomHalf.transform.up.y));
+            }
+
+            return;
         }
 
         if (simStates < 2)
@@ -628,6 +658,16 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         return objectNormalToStartDistance / movementRange;
     }
 
+    public float GetToolInsertionDepth(Transform controlledObject, Vector3 startPosition, Vector3 endPosition, Vector3 rotateUpDir)
+    {
+        Vector3 controlledObjectOriginalPosition = controlledObject.position;
+        Vector3 objectToStartVector = controlledObject.position - startPosition;
+        float movementRange = Vector3.Distance(startPosition, endPosition);
+        float objectNormalToStartDistance = Vector3.Dot(objectToStartVector, Vector3.Normalize(endPosition - startPosition));
+
+        return objectNormalToStartDistance / movementRange;
+    }
+
 
     public float LockToolMovementInPlaneDuringLastStep(Transform controlledObject, Vector3 startPosition, Vector3 endPosition)
     {
@@ -837,7 +877,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         }
 
         // Check for LS tool removal
-        if (globalOperators.m_bInsert[0] == 1) // If top part is entering colon0
+        if (globalOperators.m_bInsert[0] == 1) // If top part is in colon0
         {
             if (topToColonA >= tipProximityCondition * 2) // If tool is far away from colon opening and outside of the colon
             {
@@ -852,12 +892,18 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 
                     DisableTopPartCollision();
 
+                    // If tool is controlling colon movement then stop it from controlling colon movement
+                    if (ColonMovementController.instance.updateMode[0] == 2 || ColonMovementController.instance.updateMode[0] == 3)
+                    {
+                        ColonMovementController.instance.ChangeFollowStates(0, 0, false, false);
+                    }
+
                     // Update tool UI
                     uiController.UpdateToolStatusText("lsTop", "Free");
                 }
             }
         }
-        if (globalOperators.m_bInsert[0] == 2)
+        if (globalOperators.m_bInsert[0] == 2) // If bottom part is in colon0
         {
             if (bottomToColonA >= tipProximityCondition * 2) // If tool is far away from colon opening and outside of the colon
             {
@@ -872,12 +918,18 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 
                     DisableBottomPartCollision();
 
+                    // If tool is controlling colon movement then stop it from controlling colon movement
+                    if (ColonMovementController.instance.updateMode[0] == 2 || ColonMovementController.instance.updateMode[0] == 3)
+                    {
+                        ColonMovementController.instance.ChangeFollowStates(0, 0, false, false);
+                    }
+
                     // Update tool UI
                     uiController.UpdateToolStatusText("lsBottom", "Free");
                 }
             }
         }
-        if (globalOperators.m_bInsert[1] == 1)
+        if (globalOperators.m_bInsert[1] == 1) // If top part is in colon1
         {
             if (topToColonA >= tipProximityCondition * 2) // If tool is far away from colon opening and outside of the colon
             {
@@ -892,12 +944,18 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 
                     DisableTopPartCollision();
 
+                    // If tool is controlling colon movement then stop it from controlling colon movement
+                    if (ColonMovementController.instance.updateMode[1] == 2 || ColonMovementController.instance.updateMode[1] == 3)
+                    {
+                        ColonMovementController.instance.ChangeFollowStates(1, 0, false, false);
+                    }
+
                     // Update tool UI
                     uiController.UpdateToolStatusText("lsTop", "Free");
                 }
             }
         }
-        if (globalOperators.m_bInsert[1] == 2)
+        if (globalOperators.m_bInsert[1] == 2) // If bottom part is in colon1
         {
             if (bottomToColonA >= tipProximityCondition * 2) // If tool is far away from colon opening and outside of the colon
             {
@@ -911,6 +969,12 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
 
                     DisableBottomPartCollision();
+
+                    // If tool is controlling colon movement then stop it from controlling colon movement
+                    if (ColonMovementController.instance.updateMode[1] == 2 || ColonMovementController.instance.updateMode[1] == 3)
+                    {
+                        ColonMovementController.instance.ChangeFollowStates(1, 0, false, false);
+                    }
 
                     // Update tool UI
                     uiController.UpdateToolStatusText("lsBottom", "Free");
@@ -1165,73 +1229,73 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     {
         currentCalibratingHalf = topHalf.transform;
         calibratingPosition = true;
-        currentCalibratingDirection = Vector3.right * direction;
+        currentCalibratingDirection = Vector3.right * direction * positionCalibrationSpeed;
     }
     public void MoveTopHalfLocalYPosition(int direction)
     {
         currentCalibratingHalf = topHalf.transform;
         calibratingPosition = true;
-        currentCalibratingDirection = Vector3.up * direction;
+        currentCalibratingDirection = Vector3.up * direction * positionCalibrationSpeed;
     }
     public void MoveTopHalfLocalZPosition(int direction)
     {
         currentCalibratingHalf = topHalf.transform;
         calibratingPosition = true;
-        currentCalibratingDirection = Vector3.forward * direction;
+        currentCalibratingDirection = Vector3.forward * direction * positionCalibrationSpeed;
     }
     public void MoveTopHalfLocalXEulerAngle(int direction)
     {
         currentCalibratingHalf = topHalf.transform;
         calibratingPosition = false;
-        currentCalibratingDirection = Vector3.right * direction;
+        currentCalibratingDirection = Vector3.right * direction * rotationCalibrationSpeed;
     }
     public void MoveTopHalfLocalYEulerAngle(int direction)
     {
         currentCalibratingHalf = topHalf.transform;
         calibratingPosition = false;
-        currentCalibratingDirection = Vector3.up * direction;
+        currentCalibratingDirection = Vector3.up * direction * rotationCalibrationSpeed;
     }
     public void MoveTopHalfLocalZEulerAngle(int direction)
     {
         currentCalibratingHalf = topHalf.transform;
         calibratingPosition = false;
-        currentCalibratingDirection = Vector3.forward * direction;
+        currentCalibratingDirection = Vector3.forward * direction * rotationCalibrationSpeed;
     }
     public void MoveBottomHalfLocalXPosition(int direction)
     {
         currentCalibratingHalf = bottomHalf.transform;
         calibratingPosition = true;
-        currentCalibratingDirection = Vector3.right * direction;
+        currentCalibratingDirection = Vector3.right * direction * positionCalibrationSpeed;
     }
     public void MoveBottomHalfLocalYPosition(int direction)
     {
         currentCalibratingHalf = bottomHalf.transform;
         calibratingPosition = true;
-        currentCalibratingDirection = Vector3.up * direction;
+        currentCalibratingDirection = Vector3.up * direction * positionCalibrationSpeed;
     }
     public void MoveBottomHalfLocalZPosition(int direction)
     {
         currentCalibratingHalf = bottomHalf.transform;
         calibratingPosition = true;
-        currentCalibratingDirection = Vector3.forward * direction;
+        currentCalibratingDirection = Vector3.forward * direction * positionCalibrationSpeed;
     }
     public void MoveBottomHalfLocalXEulerAngle(int direction)
     {
         currentCalibratingHalf = bottomHalf.transform;
         calibratingPosition = false;
-        currentCalibratingDirection = Vector3.right * direction;
+        currentCalibratingDirection = Vector3.right * direction * rotationCalibrationSpeed;
     }
     public void MoveBottomHalfLocalYEulerAngle(int direction)
     {
         currentCalibratingHalf = bottomHalf.transform;
         calibratingPosition = false;
-        currentCalibratingDirection = Vector3.up * direction;
+        currentCalibratingDirection = Vector3.up * direction * rotationCalibrationSpeed;
     }
     public void MoveBottomHalfLocalZEulerAngle(int direction)
     {
         currentCalibratingHalf = bottomHalf.transform;
         calibratingPosition = false;
-        currentCalibratingDirection = Vector3.forward * direction;
+        currentCalibratingDirection = Vector3.forward * direction * rotationCalibrationSpeed;
     }
     /// <summary>
     /// Things to do when begin and end calibrating rotation
