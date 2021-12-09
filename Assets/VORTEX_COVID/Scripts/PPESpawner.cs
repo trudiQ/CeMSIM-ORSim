@@ -7,6 +7,8 @@ public class PPESpawner : MonoBehaviour
     public GameObject ppePrefab;
     [Tooltip("(Optional) Add a PPE GameObject to this if it is already in the scene at the start.")]
     public GameObject sceneObject;
+    public Vector3 spawnOffsetPosition;
+    public Vector3 spawnOffsetRotation;
     public float respawnThresholdDistance = 0.5f;
 
     private GameObject currentlyTrackedObject;
@@ -22,7 +24,7 @@ public class PPESpawner : MonoBehaviour
 
     private void Update()
     {
-        if (Vector3.Distance(currentlyTrackedObject.transform.position, transform.position) > respawnThresholdDistance)
+        if (Vector3.Distance(currentlyTrackedObject.transform.position, transform.position + spawnOffsetPosition) > respawnThresholdDistance)
             SpawnPPE();
     }
 
@@ -33,10 +35,7 @@ public class PPESpawner : MonoBehaviour
 
         if (ppePrefab)
         {
-            currentlyTrackedObject = Instantiate(ppePrefab, transform.position, transform.rotation);
-
-            
-
+            currentlyTrackedObject = Instantiate(ppePrefab, transform.position + spawnOffsetPosition, transform.rotation * Quaternion.Euler(spawnOffsetRotation));
             clothController.AddSceneCloth(currentlyTrackedObject.GetComponent<InteractableCloth>());
         }
         else
@@ -45,6 +44,7 @@ public class PPESpawner : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
+        Gizmos.DrawSphere(transform.position + spawnOffsetPosition, 0.01f);
         Gizmos.DrawWireSphere(transform.position, respawnThresholdDistance);
     }
 }
