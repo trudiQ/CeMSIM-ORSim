@@ -10,11 +10,14 @@ namespace CEMSIM
         public class BaseEvent : IDisposable
         {
             protected TimeSpan eventTime;
+            protected string eventName;
             private bool disposed = false; ///> true: this object has been manually disposed
+
 
             public BaseEvent()
             {
                 eventTime = DateTime.UtcNow - LogManager.instance.SystemStartTime;
+                eventName = this.GetType().Name;
             }
 
             /// <summary>
@@ -27,10 +30,19 @@ namespace CEMSIM
             }
 
             /// <summary>
-            /// Format the instance to a csv string. 
+            /// Format the instance to a csv record. 
             /// </summary>
             /// <returns></returns>
             public virtual string ToCSV()
+            {
+                return "";
+            }
+
+            /// <summary>
+            /// Serialize the event to a json element.
+            /// </summary>
+            /// <returns></returns>
+            public virtual string ToJson()
             {
                 return "";
             }
@@ -46,6 +58,10 @@ namespace CEMSIM
                 LogManager.instance.playerEventQueue.Enqueue(this);
             }
 
+            public void AddToJsonEventQueue()
+            {
+                LogManager.instance.jsonEventQueue.Enqueue(this);
+            }
 
             /// <summary>
             /// A distructor
@@ -65,6 +81,50 @@ namespace CEMSIM
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
-        }
+
+
+            #region Json Related Functions
+            public static string JsonParsePos(Vector3 pos, Vector3 rot)
+            {
+                string msg = $"{{\"Position\":[{pos.x},{pos.y},{pos.z}],\"Rotation\":[{rot.x},{rot.y},{rot.z}]}}";
+                return msg;
+            }
+            public static string JsonAddElement(string fieldName, string value)
+            {
+                return $",\"{fieldName}\":\"{value}\"";
+            }
+            public static string JsonAddElement(string fieldName, int value)
+            {
+                return $",\"{fieldName}\":{value}";
+            }
+            public static string JsonAddElement(string fieldName, float value)
+            {
+                return $",\"{fieldName}\":{value}";
+            }
+            public static string JsonAddElement(string fieldName, double value)
+            {
+                return $"\",{fieldName}\":{value}";
+            }
+            public static string JsonAddElement(string fieldName, bool value)
+            {
+                return $"\",{fieldName}\":{value}";
+            }
+            public static string JsonAddSubElement(string fieldName, string value)
+            {
+                return $",\"{fieldName}\":{{{value}}}";
+            }
+
+            public string JsonPrefix()
+            {
+                return "{{" + JsonAddElement("Time", eventTime.ToString()) + JsonAddElement("Type", eventName);
+            }
+            public string JsonSuffix()
+            {
+                return "}}";
+            }
+
+
+            #endregion
+            }
     }
 }

@@ -16,15 +16,19 @@ namespace CEMSIM
 
             public static LogManager instance;
             [Tooltip("Period to store events to log files (seconds)")]
+            public bool isClientSide = false;
             public int StorageInterval = 1;
             public string LogDir = "Logs/";
             public DateTime SystemStartTime = DateTime.UtcNow;
 
             private string generalLogFile = "CEMSIM_LOG" + DateTime.UtcNow.ToString("MM_dd_yyyy_HH_mm_ss") + ".log";
             private string playerCSVFile = "CEMSIM_Player" + DateTime.UtcNow.ToString("MM_dd_yyyy_HH_mm_ss") + ".csv";
+            private string jsonLogFile = "CEMSIM_LOG" + DateTime.UtcNow.ToString("MM_dd_yyyy_HH_mm_ss") + ".json";
+
 
             public Queue<BaseEvent> generalEventQueue = new Queue<BaseEvent>();
             public Queue<BaseEvent> playerEventQueue = new Queue<BaseEvent>();
+            public Queue<BaseEvent> jsonEventQueue = new Queue<BaseEvent>();
 
             // Start is called before the first frame update
             private void Awake()
@@ -43,17 +47,21 @@ namespace CEMSIM
 
                 generalLogFile = Path.Combine(LogDir, generalLogFile);
                 playerCSVFile = Path.Combine(LogDir, playerCSVFile);
+                jsonLogFile = Path.Combine(LogDir, jsonLogFile);
 
                 // register event 
                 registerPublicEvent();
                 registerPlayerEvent();
                 registerVoiceChatEvent();
+                registerEnvironmentStateEvent();
 
                 InitializeGeneralLog();
                 InitializePlayerLog();
+                InitializeJsonLog();
 
                 StartCoroutine(StoreGeneralEvents());
                 StartCoroutine(StorePlayerEvents());
+                StartCoroutine(StoreJsonEvents());
             }
 
             private void InitializeGeneralLog()
@@ -69,6 +77,14 @@ namespace CEMSIM
                 using (StreamWriter sw = File.CreateText(playerCSVFile))
                 {
                     sw.WriteLine(PlayerEvent.GetHeader());
+                }
+            }
+
+            private void InitializeJsonLog()
+            {
+                using (StreamWriter sw = File.CreateText(jsonLogFile))
+                {
+                    //
                 }
             }
 
@@ -111,32 +127,85 @@ namespace CEMSIM
                 StartCoroutine(StorePlayerEvents());
             }
 
+            private IEnumerator StoreJsonEvents()
+            {
+                yield return new WaitForSeconds(StorageInterval);
+
+                ServerThreadManager.ExecuteOnMainThread(() =>
+                {
+                    using (StreamWriter sw = File.AppendText(jsonLogFile))
+                    {
+                        while (jsonEventQueue.Count > 0)
+                        {
+                            sw.WriteLine(jsonEventQueue.Dequeue().ToJson());
+                        }
+                    }
+
+                });
+
+                StartCoroutine(StoreJsonEvents());
+            }
+
+
             #endregion
 
             #region register triggers
 
             private void registerPublicEvent()
             {
-                ServerInstance.onServerStartTrigger += GeneralEvent.GenSeverStartEvent;
-                ServerInstance.onServerStopTrigger += GeneralEvent.GenServerStopEvent;
-                ServerItemManager.onItemInitializeTrigger += GeneralEvent.GenInitializeItemsEvent;
+                if (isClientSide)
+                {
+
+                }
+                else
+                {
+                    ServerInstance.onServerStartTrigger += GeneralEvent.GenSeverStartEvent;
+                    ServerInstance.onServerStopTrigger += GeneralEvent.GenServerStopEvent;
+                    ServerItemManager.onItemInitializeTrigger += GeneralEvent.GenInitializeItemsEvent;
+                }
             }
 
             private void registerPlayerEvent()
             {
-                ServerHandle.onPlayerEnterTrigger += PlayerEvent.GenPlayerEnterEvent;
-                ServerHandle.onPlayerMoveTrigger += PlayerEvent.GenPlayerMoveEvent;
-                ServerHandle.onPlayerItemPickupTrigger += PlayerEvent.GenPlayerItemPickupEvent;
-                ServerHandle.onPlayerItemDropoffTrigger += PlayerEvent.GenPlayerItemDropoffEvent;
-                ServerHandle.onPlayerItemMoveTrigger += PlayerEvent.GenPlayerItemMoveEvent;
-                ServerSend.onPlayerExitTrigger += PlayerEvent.GenPlayerExitEvent;
+                if (isClientSide)
+                {
+
+                }
+                else
+                {
+                    ServerHandle.onPlayerEnterTrigger += PlayerEvent.GenPlayerEnterEvent;
+                    ServerHandle.onPlayerMoveTrigger += PlayerEvent.GenPlayerMoveEvent;
+                    ServerHandle.onPlayerItemPickupTrigger += PlayerEvent.GenPlayerItemPickupEvent;
+                    ServerHandle.onPlayerItemDropoffTrigger += PlayerEvent.GenPlayerItemDropoffEvent;
+                    ServerHandle.onPlayerItemMoveTrigger += PlayerEvent.GenPlayerItemMoveEvent;
+                    ServerSend.onPlayerExitTrigger += PlayerEvent.GenPlayerExitEvent;
+                }
             }
 
             private void registerVoiceChatEvent()
             {
-                SamplePlaybackComponent.onPlayerSpeechFileCreating += VoiceChatEvent.GenAudioFileCreateEvent;
-                CEMSIMSpeakIndicator.onPlayerStartSpeaking += VoiceChatEvent.GenStartSpeakEvent;
-                CEMSIMSpeakIndicator.onPlayerStopSpeaking += VoiceChatEvent.GenStopSpeakEvent;
+                if (isClientSide)
+                {
+                    // Actually, client alone won't be able to run the voice chat by itself. 
+                }
+                else
+                {
+                    SamplePlaybackComponent.onPlayerSpeechFileCreating += VoiceChatEvent.GenAudioFileCreateEvent;
+                    CEMSIMSpeakIndicator.onPlayerStartSpeaking += VoiceChatEvent.GenStartSpeakEvent;
+                    CEMSIMSpeakIndicator.onPlayerStopSpeaking += VoiceChatEvent.GenStopSpeakEvent;
+                }
+            }
+
+            private void registerEnvironmentStateEvent()
+            {
+                if (isClientSide)
+                {
+
+                }
+                else
+                {
+                    ServerNetworkManager.onRoomLightBtnTrigger += RoomLightEvent.GenRoomLightEvent;
+                }
             }
 
             #endregion

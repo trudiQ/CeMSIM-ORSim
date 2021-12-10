@@ -15,6 +15,9 @@ namespace CEMSIM
         {
             public static ServerNetworkManager instance;
 
+            // event system
+            public static event Action<bool> onRoomLightBtnTrigger;
+
             [Header("Player Prefabs")]
             [Tooltip("The order of the prefabs should match the enumation order of Roles in GameConstants.cs")]
             public List<GameObject> playerPrefabs = new List<GameObject>();
@@ -171,6 +174,10 @@ namespace CEMSIM
                 List<byte> message = new List<byte>();
                 instance.roomLightButton.GetComponent<RoomLightsOnOff>().SetSwitchState(switchState);
 
+                RoomLightBtnTrigger(switchState);
+
+
+
                 message.AddRange(BitConverter.GetBytes(switchState));
 
                 ServerSend.SendEnvironmentState(_fromClient, (int)EnvironmentId.roomLight, message.ToArray());
@@ -217,7 +224,11 @@ namespace CEMSIM
 
 
             #region event system
-
+            public static void RoomLightBtnTrigger(bool _btnState)
+            {
+                if (onRoomLightBtnTrigger != null)
+                    onRoomLightBtnTrigger(_btnState);
+            }
             #endregion
 
         }

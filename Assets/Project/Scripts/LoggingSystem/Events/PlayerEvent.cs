@@ -23,7 +23,7 @@ namespace CEMSIM
             /// TODO: both controllers and item positions are not stored into files. This also includes the item state.
             /// </summary>
             private int clientId;
-            private PlayerActionType playerAction;
+            private PlayerActionType eventType;
             private Vector3 player_pos;
             private Vector3 player_rot;
             private Vector3 lft_ctl_pos;
@@ -38,12 +38,16 @@ namespace CEMSIM
             {
                 //eventTime = DateTime.UtcNow - LogManager.instance.SystemStartTime;
                 clientId = _clientId;
-                playerAction = _playerAction;
+                eventType = _playerAction;
                 player_pos = _position;
                 player_rot = _rotation.eulerAngles;
                 itemId = _itemId;
             }
 
+            /// <summary>
+            /// Generate the title line of the CSV file
+            /// </summary>
+            /// <returns></returns>
             public static string GetHeader()
             {
                 string msg = "EventTime,PlayerId,ActionId,Pos_x,Pos_y,Pos_z,Rot_x,Rot_y,Rot_z,ItemId";
@@ -52,35 +56,42 @@ namespace CEMSIM
 
             public override string ToString()
             {
-                string msg = string.Format("{0}: player{1},{2}, item{3},{4},{5},{6},{7},{8}{9}",
-                    eventTime,
-                    clientId,
-                    playerAction,
-                    itemId,
-                    player_pos.x,
-                    player_pos.y,
-                    player_pos.z,
-                    player_rot.x,
-                    player_rot.y,
-                    player_rot.z
-                    );
+                string msg = $"{eventTime}: player{clientId},{eventType},item{itemId},{player_pos.x},{player_pos.y},{player_pos.z},{player_rot.x},{player_rot.y},{player_rot.z}";
                 return msg;
             }
 
             public override string ToCSV()
             {
-                string msg = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
-                    eventTime,
-                    clientId,
-                    playerAction,
-                    player_pos.x,
-                    player_pos.y,
-                    player_pos.z,
-                    player_rot.x,
-                    player_rot.y,
-                    player_rot.z,
-                    itemId
-                    );
+                string msg = $"{eventTime},{clientId},{eventType},{player_pos.x},{player_pos.y},{player_pos.z},{player_rot.x},{player_rot.y},{player_rot.z},{itemId}";
+                return msg;
+            }
+
+            public override string ToJson()
+            {
+                string msg = JsonPrefix();
+                msg += JsonAddElement("EventType", eventType.ToString());
+                msg += JsonAddElement("PlayerId", clientId);
+
+                switch (eventType)
+                {
+                    case PlayerActionType.EnterGame:
+                    case PlayerActionType.ExitGame:
+                        break;
+                    case PlayerActionType.PickupItem:
+                    case PlayerActionType.DropoffItem:
+                        msg += JsonAddElement("ItemId", itemId);
+                        break;
+                    case PlayerActionType.Move:
+                        string posMsg = JsonAddElement("Body", JsonParsePos(player_pos, player_rot)) + JsonAddElement("LeftController", JsonParsePos(lft_ctl_pos, lft_ctl_rot)) + JsonAddElement("RightController", JsonParsePos(rgt_ctl_pos, rgt_ctl_rot));
+                        msg += JsonAddSubElement("Position", posMsg);
+                        break;
+                    case PlayerActionType.MoveItem:
+                        string itemStateMsg = JsonAddElement("ItemPosition", JsonParsePos(item_pos, item_rot));
+                        msg += JsonAddElement("ItemId", itemId) + JsonAddSubElement("ItemState", itemStateMsg);
+                        break;
+
+                }
+                msg += "}}";
                 return msg;
             }
 
@@ -98,6 +109,7 @@ namespace CEMSIM
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToPlayerEventQueue();
+                    e.AddToJsonEventQueue();
                 }
             }
 
@@ -107,6 +119,7 @@ namespace CEMSIM
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToPlayerEventQueue();
+                    e.AddToJsonEventQueue();
                 }
             }
 
@@ -124,6 +137,7 @@ namespace CEMSIM
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToPlayerEventQueue();
+                    e.AddToJsonEventQueue();
                 }
             }
 
@@ -133,6 +147,7 @@ namespace CEMSIM
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToPlayerEventQueue();
+                    e.AddToJsonEventQueue();
                 }
             }
 

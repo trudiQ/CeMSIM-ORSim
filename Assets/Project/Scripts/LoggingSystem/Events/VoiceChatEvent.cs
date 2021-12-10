@@ -17,7 +17,7 @@ namespace CEMSIM
         public class VoiceChatEvent : BaseEvent
         {
             private VoiceChatEventType eventType;
-            private int clientid;
+            private int clientId;
             private string clientuuid;
             private string audioFilename;
 
@@ -25,15 +25,15 @@ namespace CEMSIM
             {
                 eventType = (VoiceChatEventType)_eventType;
                 clientuuid = _clientuuid;
-                clientid = ServerInstance.clientuuid2IdDict[_clientuuid];
+                clientId = ServerInstance.clientuuid2IdDict[_clientuuid];
                 audioFilename = _audioFilename;
             }
 
-            public VoiceChatEvent(int _clientid, VoiceChatEventType _eventType, string _audioFilename = "")
+            public VoiceChatEvent(int _clientId, VoiceChatEventType _eventType, string _audioFilename = "")
             {
                 eventType = (VoiceChatEventType)_eventType;
-                clientid = _clientid;
-                clientuuid = ServerInstance.clientId2uuidDict[_clientid];
+                clientId = _clientId;
+                clientuuid = ServerInstance.clientId2uuidDict[_clientId];
                 audioFilename = _audioFilename;
             }
 
@@ -44,14 +44,33 @@ namespace CEMSIM
                 switch (eventType)
                 {
                     case VoiceChatEventType.AudioFileRecording:
-                        msg += $"{eventTime}: Player {clientid} {eventType} > {audioFilename}";
+                        msg += $"{eventTime}: Player {clientId} {eventType} > {audioFilename}";
                         break;
                     case VoiceChatEventType.SpeakingStarts:
                     case VoiceChatEventType.SpeakingEnds:
-                        msg += $"{eventTime}: Player {clientid} {eventType}";
+                        msg += $"{eventTime}: Player {clientId} {eventType}";
                         break;
                 }
             
+                return msg;
+            }
+
+            public override string ToJson()
+            {
+                string msg = JsonPrefix();
+                msg += JsonAddElement("EventType", eventType.ToString());
+                msg += JsonAddElement("PlayerId", clientId);
+                switch (eventType)
+                {
+                    case VoiceChatEventType.AudioFileRecording:
+                        msg += JsonAddElement("AudioFilename", audioFilename);
+                        break;
+                    case VoiceChatEventType.SpeakingStarts:
+                    case VoiceChatEventType.SpeakingEnds:
+                        // no more elements
+                        break;
+                }
+                msg += JsonSuffix();
                 return msg;
             }
 
@@ -62,6 +81,7 @@ namespace CEMSIM
                 using (VoiceChatEvent e = new VoiceChatEvent(_clientuuid, VoiceChatEventType.AudioFileRecording, _filename))
                 {
                     e.AddToGeneralEventQueue();
+                    e.AddToJsonEventQueue();
                 }
             }
 
@@ -70,6 +90,7 @@ namespace CEMSIM
                 using (VoiceChatEvent e = new VoiceChatEvent(_clientuuid, VoiceChatEventType.SpeakingStarts))
                 {
                     e.AddToGeneralEventQueue();
+                    e.AddToJsonEventQueue();
                 }
             }
 
@@ -78,6 +99,7 @@ namespace CEMSIM
                 using (VoiceChatEvent e = new VoiceChatEvent(_clientuuid, VoiceChatEventType.SpeakingEnds))
                 {
                     e.AddToGeneralEventQueue();
+                    e.AddToJsonEventQueue();
                 }
             }
             #endregion

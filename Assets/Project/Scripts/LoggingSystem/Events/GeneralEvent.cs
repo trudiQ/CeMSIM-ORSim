@@ -26,9 +26,15 @@ namespace CEMSIM
             }
             public override string ToString()
             {
-                string msg = string.Format("{0}: {1}",
-                    eventTime,
-                    eventType);
+                string msg = $"{eventTime}: {eventType}";
+                return msg;
+            }
+
+            public override string ToJson()
+            {
+                string msg = JsonPrefix();
+                msg += JsonAddElement("EventType", eventType.ToString());
+                msg += JsonSuffix();
                 return msg;
             }
 
@@ -39,6 +45,7 @@ namespace CEMSIM
                 using (GeneralEvent e = new GeneralEvent(_eventType))
                 {
                     e.AddToGeneralEventQueue();
+                    e.AddToJsonEventQueue();
                 }
             }
 

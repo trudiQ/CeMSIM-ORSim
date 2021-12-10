@@ -347,7 +347,7 @@ namespace CEMSIM
                 ServerSend.SendVoiceChatPlayerId(id, ServerInstance.dissonancePlayerId, false);
 
                 // Send current environment state to newly added user
-                ServerNetworkManager.SendCurrentEnvironmentStates(id);
+                //ServerNetworkManager.SendCurrentEnvironmentStates(id);
 
             }
 
