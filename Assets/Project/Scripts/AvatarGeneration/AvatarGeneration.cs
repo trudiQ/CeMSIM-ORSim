@@ -20,7 +20,7 @@ public class AvatarGeneration : EditorWindow
     string assetPath;
     GameObject avatar;
     GameObject VRIKRig;
-
+    bool useIKPosing = false;
 
     [MenuItem("Window/Avatar Generation")]
     public static void ShowWindow()
@@ -57,6 +57,11 @@ public class AvatarGeneration : EditorWindow
         mirrorSettings = EditorGUILayout.ObjectField(mirrorSettings, typeof(Object), true);
         EditorGUILayout.EndHorizontal();
 
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("Use IK Hand Posing");
+        useIKPosing = EditorGUILayout.Toggle(useIKPosing);
+        EditorGUILayout.EndHorizontal();
+
         if(GUI.Button(new Rect(140, 150, 50, 25), "setup"))
         {
             GenerateAvatar();
@@ -69,11 +74,19 @@ public class AvatarGeneration : EditorWindow
         CacheReferences();
         ClearAnimatorController();
         SetupIKTargets();
+        SetupVRIK();
         SetupAvatarHeightUtilities();
-        SetupHVRHands();
+        if(useIKPosing)
+        {
+            SetupHVRHandsWithIKPosing();
+        }
+        else
+        {
+            SetUpHVRHandsWithDetachedHands();
+        }
         AddForearmTwistRelaxers();
         
-        SaveGeneratedAvatar();
+        // SaveGeneratedAvatar();
     }
 
     public void GetPrefabAssetPath()
@@ -107,9 +120,41 @@ public class AvatarGeneration : EditorWindow
         vrik.solver.spine.headTarget = VRIKRig.transform.Find("PlayerController/CameraRig/FloorOffset/Camera/CameraIKTarget");
         vrik.solver.leftArm.target = VRIKRig.transform.Find("LeftHand/LeftIKTarget");
         vrik.solver.rightArm.target = VRIKRig.transform.Find("RightHand/RightIKTarget");
+    }
 
-        // vrik.references.spine = avatar.transform.Find("Armature/CC_Base_BoneRoot/CC_Base_Hip/CC_Base_Waist/CC_Base_Spine01");
-        // vrik.references.chest = avatar.transform.Find("Armature/CC_Base_BoneRoot/CC_Base_Hip/CC_Base_Waist/CC_Base_Spine01/CC_Base_Spine02");
+    public void SetupVRIK()
+    {
+        VRIK vrik = VRIKRig.GetComponentInChildren<VRIK>();
+
+        Transform pelvis = avatar.transform.Find("Armature/CC_Base_BoneRoot/CC_Base_Hip");
+        Transform spine = avatar.transform.Find("Armature/CC_Base_BoneRoot/CC_Base_Hip/CC_Base_Waist/CC_Base_Spine01");
+        Transform chest = spine.transform.Find("CC_Base_Spine02");
+        Transform leftClavicle = chest.transform.Find("CC_Base_L_Clavicle");
+        Transform rightClavicle = chest.transform.Find("CC_Base_R_Clavicle");
+        Transform leftThigh = pelvis.transform.Find("CC_Base_Pelvis/CC_Base_L_Thigh");
+        Transform rightThigh = pelvis.transform.Find("CC_Base_Pelvis/CC_Base_R_Thigh");
+
+        vrik.references.pelvis = pelvis;
+        vrik.references.spine = spine;
+        vrik.references.chest = chest;
+        vrik.references.neck = chest.transform.Find("CC_Base_NeckTwist01");
+        vrik.references.head = chest.transform.Find("CC_Base_NeckTwist01/CC_Base_NeckTwist02/CC_Base_Head");
+        vrik.references.leftShoulder = leftClavicle;
+        vrik.references.leftUpperArm = leftClavicle.transform.Find("CC_Base_L_Upperarm");
+        vrik.references.leftForearm = leftClavicle.transform.Find("CC_Base_L_Upperarm/CC_Base_L_Forearm");
+        vrik.references.leftHand = leftClavicle.transform.Find("CC_Base_L_Upperarm/CC_Base_L_Forearm/CC_Base_L_Hand");
+        vrik.references.rightShoulder = rightClavicle;
+        vrik.references.rightUpperArm = rightClavicle.transform.Find("CC_Base_R_Upperarm");
+        vrik.references.rightForearm = rightClavicle.transform.Find("CC_Base_R_Upperarm/CC_Base_R_Forearm");
+        vrik.references.rightHand = rightClavicle.transform.Find("CC_Base_R_Upperarm/CC_Base_R_Forearm/CC_Base_R_Hand");
+        vrik.references.leftThigh = leftThigh;
+        vrik.references.leftCalf = leftThigh.transform.Find("CC_Base_L_Calf");
+        vrik.references.leftFoot = leftThigh.transform.Find("CC_Base_L_Calf/CC_Base_L_Foot");
+        vrik.references.leftToes = leftThigh.transform.Find("CC_Base_L_Calf/CC_Base_L_Foot/CC_Base_L_ToeBase");
+        vrik.references.rightThigh = rightThigh;
+        vrik.references.rightCalf = rightThigh.transform.Find("CC_Base_R_Calf");
+        vrik.references.rightFoot = rightThigh.transform.Find("CC_Base_R_Calf/CC_Base_R_Foot");
+        vrik.references.rightToes = rightThigh.transform.Find("CC_Base_R_Calf/CC_Base_R_Foot/CC_Base_R_ToeBase");
     }
 
     public void SetupAvatarHeightUtilities()
@@ -133,7 +178,7 @@ public class AvatarGeneration : EditorWindow
         return centerEye;
     }
 
-    public void SetupHVRHands()
+    public void SetupHVRHandsWithIKPosing()
     {
         Transform spine = avatar.transform.Find("Armature/CC_Base_BoneRoot/CC_Base_Hip/CC_Base_Waist/CC_Base_Spine01/CC_Base_Spine02");
         Transform leftHand = spine.transform.Find("CC_Base_L_Clavicle/CC_Base_L_Upperarm/CC_Base_L_Forearm/CC_Base_L_Hand");
@@ -233,9 +278,6 @@ public class AvatarGeneration : EditorWindow
         rightHandPoser.Blends[0].PinkyType = HVRFingerType.Close;
         rightHandPoser.Blends[0].PinkyStart = 0;
 
-        
-        
-
         // Setup Rotation Limiters
         leftRotationLimiter.axis = new Vector3(0, 1, 0);
         leftRotationLimiter.limit = 90;
@@ -266,6 +308,31 @@ public class AvatarGeneration : EditorWindow
 
         rightHandGrabber.HandAnimator = rightHandAnimator;
         rightHandGrabber.PhysicsPoser = rightPhysicsPoser;
+    }
+
+    public void SetUpHVRHandsWithDetachedHands()
+    {
+        SyncronizeHand leftHandSync = VRIKRig.transform.Find("LeftHand").GetComponentInChildren<SyncronizeHand>();
+        SyncronizeHand rightHandSync = VRIKRig.transform.Find("RightHand").GetComponentInChildren<SyncronizeHand>();
+
+        Transform spine = avatar.transform.Find("Armature/CC_Base_BoneRoot/CC_Base_Hip/CC_Base_Waist/CC_Base_Spine01/CC_Base_Spine02");
+        Transform leftHand = spine.transform.Find("CC_Base_L_Clavicle/CC_Base_L_Upperarm/CC_Base_L_Forearm/CC_Base_L_Hand");
+        Transform rightHand = spine.transform.Find("CC_Base_R_Clavicle/CC_Base_R_Upperarm/CC_Base_R_Forearm/CC_Base_R_Hand");
+
+        List<Transform> leftAvatarHandTransforms = new List<Transform>();
+        List<Transform> rightAvatarHandTransforms = new List<Transform>();
+
+        foreach(Transform handFeature in leftHand.GetComponentsInChildren<Transform>())
+        {
+            leftAvatarHandTransforms.Add(handFeature);
+        }
+        leftHandSync.visualTransforms = leftAvatarHandTransforms;
+        
+        foreach(Transform handFeature in rightHand.GetComponentsInChildren<Transform>())
+        {
+            rightAvatarHandTransforms.Add(handFeature);
+        }
+        rightHandSync.visualTransforms = rightAvatarHandTransforms;
 
     }
 
