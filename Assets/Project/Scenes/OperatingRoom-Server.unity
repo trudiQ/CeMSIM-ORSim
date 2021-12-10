@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12809429, g: 0.15871584, b: 0.21006814, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1797,48 +1797,6 @@ Transform:
   m_Father: {fileID: 505617245}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &583380802
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1001 &605244000
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1967,7 +1925,7 @@ PrefabInstance:
     - target: {fileID: 6396212367946863591, guid: bc52dbcd8d426b04ab5284fabf70b989,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6396212367946863591, guid: bc52dbcd8d426b04ab5284fabf70b989,
         type: 3}
@@ -2059,7 +2017,8 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 967749667, guid: bc52dbcd8d426b04ab5284fabf70b989, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: bc52dbcd8d426b04ab5284fabf70b989, type: 3}
 --- !u!4 &630342979 stripped
 Transform:
@@ -2372,6 +2331,29 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 630342978}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &756230764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756230763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d7121f9c8bd4ed4abf326577915a46b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MinLocalY: 0.25
+  MaxLocalY: 0.55
+  ClickTolerance: 0.01
+  ButtonClick: {fileID: 8300000, guid: 296617768f8f9c449adb49075db66927, type: 3}
+  ButtonClickUp: {fileID: 8300000, guid: 296617768f8f9c449adb49075db66927, type: 3}
+  onButtonDown:
+    m_PersistentCalls:
+      m_Calls: []
+  onButtonUp:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &756230765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2381,7 +2363,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 756230763}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaff4429c3c1cc648823b94503194291, type: 3}
+  m_Script: {fileID: 11500000, guid: a82fbfc9b2986c440bda666aed44225f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   postProcessingVolume: {fileID: 1780108789}
@@ -7340,6 +7322,48 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0.15
   m_ShadowAngle: 0
+--- !u!114 &1866469402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &1867216388
 GameObject:
   m_ObjectHideFlags: 0
@@ -9060,6 +9084,18 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 688140071, guid: 9f8d57207961cb645b659a35ab4962f1, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.34338152
+      objectReference: {fileID: 0}
+    - target: {fileID: 688140071, guid: 9f8d57207961cb645b659a35ab4962f1, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 2.5222018
+      objectReference: {fileID: 0}
+    - target: {fileID: 688140071, guid: 9f8d57207961cb645b659a35ab4962f1, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.35634017
+      objectReference: {fileID: 0}
     - target: {fileID: 5004959203513272724, guid: 9f8d57207961cb645b659a35ab4962f1,
         type: 3}
       propertyPath: m_RootOrder
@@ -9114,6 +9150,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290446480210746194, guid: 9f8d57207961cb645b659a35ab4962f1,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: -2.1989038
       objectReference: {fileID: 0}
     - target: {fileID: 6271163380950954872, guid: 9f8d57207961cb645b659a35ab4962f1,
         type: 3}
@@ -10496,7 +10537,7 @@ PrefabInstance:
     - target: {fileID: 6460739635985847597, guid: f29cb43d0f0588f46a8bd0765c0503d9,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6460739635985847597, guid: f29cb43d0f0588f46a8bd0765c0503d9,
         type: 3}
@@ -11399,7 +11440,7 @@ PrefabInstance:
     - target: {fileID: 1434267796244735403, guid: aae29466c0149024ebb4180dc99613e4,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1434267796244735403, guid: aae29466c0149024ebb4180dc99613e4,
         type: 3}

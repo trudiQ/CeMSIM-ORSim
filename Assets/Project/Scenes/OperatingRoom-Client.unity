@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12809429, g: 0.15871584, b: 0.21006814, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1871,7 +1871,7 @@ PrefabInstance:
     - target: {fileID: 967749667, guid: bc52dbcd8d426b04ab5284fabf70b989, type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 756230765}
+      objectReference: {fileID: 0}
     - target: {fileID: 967749667, guid: bc52dbcd8d426b04ab5284fabf70b989, type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -1998,7 +1998,8 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 967749667, guid: bc52dbcd8d426b04ab5284fabf70b989, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: bc52dbcd8d426b04ab5284fabf70b989, type: 3}
 --- !u!4 &630342979 stripped
 Transform:
@@ -2708,7 +2709,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 630342978}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &756230765
+--- !u!114 &756230764
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2717,7 +2718,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 756230763}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaff4429c3c1cc648823b94503194291, type: 3}
+  m_Script: {fileID: 11500000, guid: a82fbfc9b2986c440bda666aed44225f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   postProcessingVolume: {fileID: 1780108789}
@@ -2733,6 +2734,41 @@ MonoBehaviour:
   surgicalLightsOffMaterial: {fileID: 2100000, guid: 87535d4fb8f225440a5478f544035f83,
     type: 2}
   lightSurfaces: []
+--- !u!114 &756230765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756230763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d7121f9c8bd4ed4abf326577915a46b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MinLocalY: 0.25
+  MaxLocalY: 0.55
+  ClickTolerance: 0.01
+  ButtonClick: {fileID: 8300000, guid: 296617768f8f9c449adb49075db66927, type: 3}
+  ButtonClickUp: {fileID: 8300000, guid: 296617768f8f9c449adb49075db66927, type: 3}
+  onButtonDown:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 756230764}
+        m_TargetAssemblyTypeName: CEMSIM.GameLogic.RoomLightsOnOff, Assembly-CSharp
+        m_MethodName: SwitchActivation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onButtonUp:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &783544000
 GameObject:
   m_ObjectHideFlags: 0
@@ -3391,6 +3427,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClientSide: 1
   printNetworkTraffic: 0
+  player: {fileID: 0}
 --- !u!114 &880726743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4883,48 +4920,6 @@ Transform:
   m_Father: {fileID: 505617245}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1290047322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &1300211231
 GameObject:
   m_ObjectHideFlags: 0
@@ -6636,6 +6631,48 @@ Transform:
   m_Father: {fileID: 1126014338}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: -0.000015258789, z: -0.000015258789}
+--- !u!114 &1662752720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &1670254898
 GameObject:
   m_ObjectHideFlags: 0
