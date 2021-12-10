@@ -22,7 +22,7 @@ public class AvatarGeneration : EditorWindow
     GameObject VRIKRig;
     bool useIKPosing = false;
 
-    [MenuItem("Window/Avatar Generation")]
+    [MenuItem("Window/Avatar Generation/Generate VRIK Rig")]
     public static void ShowWindow()
     {
         EditorWindow.GetWindow(typeof(AvatarGeneration));
@@ -111,7 +111,8 @@ public class AvatarGeneration : EditorWindow
 
     public void ClearAnimatorController()
     {
-        avatar.GetComponent<Animator>().runtimeAnimatorController = null;
+        if(avatar.GetComponent<Animator>() != null)
+            avatar.GetComponent<Animator>().runtimeAnimatorController = null;
     }
 
     public void SetupIKTargets()
