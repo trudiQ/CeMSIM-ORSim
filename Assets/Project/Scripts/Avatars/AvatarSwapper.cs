@@ -5,6 +5,7 @@ using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.UI;
 using UnityEditor;
 using UnityEngine.Events;
+using CEMSIM.GameLogic;
 
 [RequireComponent(typeof(UserHeightUtility))]
 public class AvatarSwapper : MonoBehaviour
@@ -84,6 +85,8 @@ public class AvatarSwapper : MonoBehaviour
                 avatarNetworkedComponents?.DeepCopy(spawnedAvatar.GetComponent<AvatarNetworkedComponents>());
                 currentAvatarComponents.SetHVRComponents(manager, uiInputModule);
                 currentAvatarComponents.SetUserHeightUtility(userHeightUtility);
+
+                GameManager.instance.localPlayerVR = spawnedAvatar;
 
                 userHeightUtility.floor = currentAvatarComponents.floor;
                 userHeightUtility.camera = currentAvatarComponents.camera;
