@@ -3,20 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using HurricaneVR.Framework.Shared.HandPoser;
 
-public class SyncronizeHand : MonoBehaviour
+namespace CEMSIM
 {
-    public List<Transform> colliderTransforms;
-    public List<Transform> visualTransforms;
-
-    // Update is called once per frame
-    void Update()
+    public class SyncronizeHand : MonoBehaviour
     {
-        int i = 0;
-        foreach(Transform t in colliderTransforms)
+        public List<Transform> colliderTransforms;
+        public List<Transform> visualTransforms;
+
+        // Update is called once per frame
+        void Update()
         {
-            visualTransforms[i].rotation = t.rotation;
-            i++;
+            SynchronizeHands();
         }
 
+        /// <summary>
+        /// Synchronizes visual hand rotations with invisible hand rotations
+        /// </summary>
+        public void SynchronizeHands()
+        {
+            int i = 0;
+            foreach(Transform t in colliderTransforms)
+            {
+                visualTransforms[i].rotation = t.rotation;
+                i++;
+            }
+        }
     }
 }
