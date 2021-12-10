@@ -89,6 +89,13 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public List<Rigidbody> colonAfrictionSpheres; // Spheres to add force while LS is moving inside to simulate friction
     public List<Rigidbody> colonBfrictionSpheres;
     public float frictionForceStrength;
+    public List<sphereJointModel> colonControllers;
+    // For LS collision with colon
+    public Transform topLineStart; // Start point of the collision line of the top LS part
+    public Transform topLineEnd; // End point of the collision line of the top LS part
+    public Transform bottomLineStart; // Start point of the collision line of the bottom LS part
+    public Transform bottomLineEnd; // End point of the collision line of the bottom LS part
+    public float staplerInsertionCollisionThreshold; // Distance from any sphere to the LS to be pushed back
 
     public Transform currentCalibratingHalf; // Which half of the tool is being calibrated;
     public Vector3 currentCalibratingDirection; // Which direction (local position or local eulerangles) is being calibrated
@@ -144,6 +151,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public List<float> colonBInsertDepthRecord;
     public List<float> insertDepthRecordTimeStamps;
     public static LinearStaplerTool instance;
+    public List<List<List<Transform>>> colonSpheres;
+    public List<List<Vector3>> colonLayerSpherePositionAVG; // Average position of the spheres in each layer for each colons
 
     // Tool moving axis
     public List<Transform> topPartMovingAxisStart;
@@ -181,11 +190,45 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         colonSecuredByForceps.Add(false);
         colonSecuredByForceps.Add(false);
 
+        colonSpheres = new List<List<List<Transform>>>();
+        colonLayerSpherePositionAVG = new List<List<Vector3>>();
+        for (int c = 0; c < colonControllers.Count; c++)
+        {
+            colonLayerSpherePositionAVG.Add(new List<Vector3>());
+            for (int l = 0; l < 20; l++)
+            {
+                colonLayerSpherePositionAVG[c].Add(Vector3.zero);
+            }
+        }
+
         instance = this;
+    }
+
+    public void InitializaColonSphereRef()
+    {
+        for (int c = 0; c < colonControllers.Count; c++)
+        {
+            colonSpheres.Add(new List<List<Transform>>());
+            for (int l = 0; l < colonControllers[0].m_sphereGameObjects.GetLength(0); l++)
+            {
+                colonSpheres[c].Add(new List<Transform>());
+                for (int s = 0; s < colonControllers[0].m_sphereGameObjects.GetLength(1); s++)
+                {
+                    colonSpheres[c][l].Add(colonControllers[c].m_sphereGameObjects[l, s].transform);
+                }
+            }
+        }
     }
 
     void Update() //Checks status of knob, lever, and linear stapler in every frame
     {
+        if (colonSpheres.Count == 0 && colonControllers[0].m_sphereGameObjects != null && colonControllers[1].m_sphereGameObjects != null)
+        {
+            InitializaColonSphereRef();
+        }
+
+        UpdateColonLayerPosition();
+
         // Prevent user interaction if the tool is currently in an animation
         if (inAnimation)
         {
@@ -288,6 +331,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         }
         //else if (simStates > 1)
         {
+            bottomPartMovingAxisStartPoint = GetPositionMean(bottomPartMovingAxisStart);
+            bottomPartMovingAxisEndPoint = GetPositionMean(bottomPartMovingAxisEnd);
             bottomPartMovingAxisStartPoint += Vector3.up * lastPhaseToolBottomMovingAxisDifference;
             bottomPartMovingAxisEndPoint += Vector3.up * lastPhaseToolBottomMovingAxisDifference;
         }
@@ -296,27 +341,30 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         {
             if (globalOperators.m_bInsert[0] == 1)
             {
-                globalOperators.m_insertDepth[0] = GetToolInsertionDepth(topHalf.transform, topPartMovingAxisStartPoint, topPartMovingAxisEndPoint, Vector3.up * Mathf.Sign(topHalf.transform.up.y));
+                globalOperators.m_insertDepth[0] = GetToolInsertionDepth(topLineStart, topPartMovingAxisStartPoint, topPartMovingAxisEndPoint);
             }
             if (globalOperators.m_bInsert[1] == 1)
             {
-                globalOperators.m_insertDepth[1] = GetToolInsertionDepth(topHalf.transform, topPartMovingAxisStartPoint, topPartMovingAxisEndPoint, Vector3.up * Mathf.Sign(topHalf.transform.up.y));
+                globalOperators.m_insertDepth[1] = GetToolInsertionDepth(topLineStart.transform, topPartMovingAxisStartPoint, topPartMovingAxisEndPoint);
             }
             if (globalOperators.m_bInsert[0] == 2)
             {
-                globalOperators.m_insertDepth[0] = GetToolInsertionDepth(bottomHalf.transform, bottomPartMovingAxisStartPoint, bottomPartMovingAxisEndPoint, Vector3.up * Mathf.Sign(bottomHalf.transform.up.y));
+                globalOperators.m_insertDepth[0] = GetToolInsertionDepth(bottomLineStart.transform, bottomPartMovingAxisStartPoint, bottomPartMovingAxisEndPoint);
             }
             if (globalOperators.m_bInsert[1] == 2)
             {
-                globalOperators.m_insertDepth[1] = GetToolInsertionDepth(bottomHalf.transform, bottomPartMovingAxisStartPoint, bottomPartMovingAxisEndPoint, Vector3.up * Mathf.Sign(bottomHalf.transform.up.y));
+                globalOperators.m_insertDepth[1] = GetToolInsertionDepth(bottomLineStart.transform, bottomPartMovingAxisStartPoint, bottomPartMovingAxisEndPoint);
             }
+
+            CheckAndUpdateLStoolInsertionStates();
+            LinearStaplerColonInsertionCollisionInteraction();
 
             return;
         }
 
         if (simStates < 2)
         {
-            CheckAndUpdateLStoolInsertionStates();
+            CheckAndUpdateLStoolInsertionStatesForConfinedLSmovement();
         }
         if (globalOperators.m_bInsert[0] == 1)
         {
@@ -565,7 +613,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         bottomHalf.transform.localRotation = Quaternion.identity;
         simStates = 1; // Update the simulation step state
         topPartMovingAxisStart = joinedColonFirstLayerSpheres;
-        topPartMovingAxisEnd = joinedColon10thLayerSpheres;
+        topPartMovingAxisEnd = joinedColon10thLayerSpheres; // ### PROBABLY NEED UPDATE
         DisableBottomPartCollision();
         DisableTopPartCollision();
 
@@ -658,9 +706,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         return objectNormalToStartDistance / movementRange;
     }
 
-    public float GetToolInsertionDepth(Transform controlledObject, Vector3 startPosition, Vector3 endPosition, Vector3 rotateUpDir)
+    public float GetToolInsertionDepth(Transform controlledObject, Vector3 startPosition, Vector3 endPosition)
     {
-        Vector3 controlledObjectOriginalPosition = controlledObject.position;
         Vector3 objectToStartVector = controlledObject.position - startPosition;
         float movementRange = Vector3.Distance(startPosition, endPosition);
         float objectNormalToStartDistance = Vector3.Dot(objectToStartVector, Vector3.Normalize(endPosition - startPosition));
@@ -779,9 +826,208 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     }
 
     /// <summary>
-    /// Check if either part of the LS tool meets the condition to enter colon model through the opening
+    /// Check if either part of the LS tool is inserting into the colon
     /// </summary>
     public void CheckAndUpdateLStoolInsertionStates()
+    {
+        if (!globalOperators.m_bSimStart)
+        {
+            return;
+        }
+
+        // Get the distance from each LS tip to each colon opening
+        float topToColonA = Vector3.Distance(topHalfFrontTip.position, colonAopeningPos);
+        float topToColonB = Vector3.Distance(topHalfFrontTip.position, colonBopeningPos);
+        float bottomToColonA = Vector3.Distance(bottomHalfFrontTip.position, colonAopeningPos);
+        float bottomToColonB = Vector3.Distance(bottomHalfFrontTip.position, colonBopeningPos);
+
+        // If colon0 is not being inserted
+        if (globalOperators.m_bInsert[0] == 0)
+        {
+            // Check for angle and colon secure and stapler status
+            if (topToColonA <= tipProximityCondition)
+            {
+                topPartMovingAxisStart = colonAsecondLayerSpheres;
+                topPartMovingAxisEnd = colonAlastLayerSpheres;
+                //if (Vector3.Angle(topHalf.transform.right, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) < angleDifferenceCondition)
+                {
+                    globalOperators.m_bInsert[0] = 1;
+                    topHalfInserted = true;
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsTop", "Inserting in colon");
+                }
+            }
+
+            if (bottomToColonA <= tipProximityCondition)
+            {
+                bottomPartMovingAxisStart = colonAsecondLayerSpheres;
+                bottomPartMovingAxisEnd = colonAlastLayerSpheres;
+                //if (Vector3.Angle(bottomHalf.transform.right, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) < angleDifferenceCondition)
+                {
+                    globalOperators.m_bInsert[0] = 2;
+                    bottomHalfInserted = true;
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsBottom", "Inserting in colon");
+                }
+            }
+
+        }
+        // If colon1 is not being inserted
+        if (globalOperators.m_bInsert[1] == 0)
+        {
+            // Check for angle and colon secure and stapler status
+            if (topToColonB <= tipProximityCondition)
+            {
+                topPartMovingAxisStart = colonBsecondLayerSpheres;
+                topPartMovingAxisEnd = colonBlastLayerSpheres;
+                //if (Vector3.Angle(topHalf.transform.right, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) < angleDifferenceCondition)
+                {
+                    globalOperators.m_bInsert[1] = 1;
+                    topHalfInserted = true;
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsTop", "Inserting in colon");
+                }
+            }
+
+            if (bottomToColonB <= tipProximityCondition)
+            {
+                bottomPartMovingAxisStart = colonBsecondLayerSpheres;
+                bottomPartMovingAxisEnd = colonBlastLayerSpheres;
+                //if (Vector3.Angle(bottomHalf.transform.right, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) < angleDifferenceCondition)
+                {
+                    globalOperators.m_bInsert[1] = 2;
+                    bottomHalfInserted = true;
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsBottom", "Inserting in colon");
+                }
+            }
+        }
+
+        // Check for LS tool removal
+        if (globalOperators.m_bInsert[0] == 1) // If top part is in colon0
+        {
+            if (topToColonA >= tipProximityCondition * 2) // If tool is far away from colon opening and outside of the colon
+            {
+                if (Vector3.Angle(colonAopeningPos - topHalfFrontTip.position, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) > 90)
+                {
+                    globalOperators.m_bInsert[0] = 0;
+                    topHalfInserted = false;
+
+                    // Put tool back to default local position and rotation
+                    topHalf.transform.localPosition = topPartRelativeTrackerPosition;
+                    topHalf.transform.localRotation = topPartRelativeTrackerRotation;
+
+                    DisableTopPartCollision();
+
+                    // If tool is controlling colon movement then stop it from controlling colon movement
+                    if (ColonMovementController.instance.updateMode[0] == 2 || ColonMovementController.instance.updateMode[0] == 3)
+                    {
+                        ColonMovementController.instance.ChangeFollowStates(0, 0, false, false);
+                    }
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsTop", "Free");
+                }
+            }
+        }
+        if (globalOperators.m_bInsert[0] == 2) // If bottom part is in colon0
+        {
+            if (bottomToColonA >= tipProximityCondition * 2) // If tool is far away from colon opening and outside of the colon
+            {
+                if (Vector3.Angle(colonAopeningPos - bottomHalfFrontTip.position, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) > 90)
+                {
+                    globalOperators.m_bInsert[0] = 0;
+                    bottomHalfInserted = false;
+
+                    // Put tool back to default local position and rotation
+                    bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
+                    bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
+
+                    DisableBottomPartCollision();
+
+                    // If tool is controlling colon movement then stop it from controlling colon movement
+                    if (ColonMovementController.instance.updateMode[0] == 2 || ColonMovementController.instance.updateMode[0] == 3)
+                    {
+                        ColonMovementController.instance.ChangeFollowStates(0, 0, false, false);
+                    }
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsBottom", "Free");
+                }
+            }
+        }
+        if (globalOperators.m_bInsert[1] == 1) // If top part is in colon1
+        {
+            if (topToColonA >= tipProximityCondition * 2) // If tool is far away from colon opening and outside of the colon
+            {
+                if (Vector3.Angle(colonBopeningPos - topHalfFrontTip.position, GetPositionMean(topPartMovingAxisStart) - GetPositionMean(topPartMovingAxisEnd)) > 90)
+                {
+                    globalOperators.m_bInsert[1] = 0;
+                    topHalfInserted = false;
+
+                    // Put tool back to default local position and rotation
+                    topHalf.transform.localPosition = topPartRelativeTrackerPosition;
+                    topHalf.transform.localRotation = topPartRelativeTrackerRotation;
+
+                    DisableTopPartCollision();
+
+                    // If tool is controlling colon movement then stop it from controlling colon movement
+                    if (ColonMovementController.instance.updateMode[1] == 2 || ColonMovementController.instance.updateMode[1] == 3)
+                    {
+                        ColonMovementController.instance.ChangeFollowStates(1, 0, false, false);
+                    }
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsTop", "Free");
+                }
+            }
+        }
+        if (globalOperators.m_bInsert[1] == 2) // If bottom part is in colon1
+        {
+            if (bottomToColonA >= tipProximityCondition * 2) // If tool is far away from colon opening and outside of the colon
+            {
+                if (Vector3.Angle(colonBopeningPos - bottomHalfFrontTip.position, GetPositionMean(bottomPartMovingAxisStart) - GetPositionMean(bottomPartMovingAxisEnd)) > 90)
+                {
+                    globalOperators.m_bInsert[1] = 0;
+                    bottomHalfInserted = false;
+
+                    // Put tool back to default local position and rotation
+                    bottomHalf.transform.localPosition = bottomPartRelativeTrackerPosition;
+                    bottomHalf.transform.localRotation = bottomPartRelativeTrackerRotation;
+
+                    DisableBottomPartCollision();
+
+                    // If tool is controlling colon movement then stop it from controlling colon movement
+                    if (ColonMovementController.instance.updateMode[1] == 2 || ColonMovementController.instance.updateMode[1] == 3)
+                    {
+                        ColonMovementController.instance.ChangeFollowStates(1, 0, false, false);
+                    }
+
+                    // Update tool UI
+                    uiController.UpdateToolStatusText("lsBottom", "Free");
+                }
+            }
+        }
+
+        // If user finish joining and moved both LS parts out of the colon then enter next phase
+        if (simStates == 1 && globalOperators.m_bInsert[0] == 0 && globalOperators.m_bInsert[1] == 0)
+        {
+            simStates = 2;
+
+            // Stop colon motion control from stapler for joining phase
+            ColonMovementController.instance.ChangeFollowStates(0, 0, false, false);
+            ColonMovementController.instance.ChangeFollowStates(1, 0, false, false);
+        }
+    }
+
+    /// <summary>
+    /// Check if either part of the LS tool meets the condition to enter colon model through the opening
+    /// </summary>
+    public void CheckAndUpdateLStoolInsertionStatesForConfinedLSmovement()
     {
         if (!globalOperators.m_bSimStart)
         {
@@ -1093,6 +1339,49 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     }
 
     /// <summary>
+    /// Extra logic handles the collision between the LS and the colon sphere during LS insertion
+    /// </summary>
+    public void LinearStaplerColonInsertionCollisionInteraction()
+    {
+        if (globalOperators.m_bInsert[0] == 0 && globalOperators.m_bInsert[1] == 0)
+        {
+            return;
+        }
+
+        Ray topRay = new Ray(topLineEnd.position, topLineStart.position - topLineEnd.position);
+        Ray bottomRay = new Ray(bottomLineEnd.position, bottomLineStart.position - bottomLineEnd.position);
+
+        for (int colon = 0; colon < colonSpheres.Count; colon++)
+        {
+            for (int layer = 0; layer < colonSpheres[colon].Count; layer++)
+            {
+                // If LS reached this layer
+                if (globalOperators.m_insertDepth[colon] * colonSpheres[colon].Count >= layer)
+                {
+                    Ray partRay = new Ray();
+                    if (globalOperators.m_bInsert[colon] == 1)
+                    {
+                        partRay = topRay;
+                    }
+                    else if (globalOperators.m_bInsert[colon] == 2)
+                    {
+                        partRay = bottomRay;
+                    }
+
+                    foreach (Transform sphere in colonSpheres[colon][layer])
+                    {
+                        if (MathUtil.DistancePointToLine(partRay, sphere.position) < staplerInsertionCollisionThreshold)
+                        {
+                            Vector3 proj = MathUtil.ProjectionPointOnLine(partRay, sphere.position);
+                            sphere.position = proj + (sphere.position - proj).normalized * staplerInsertionCollisionThreshold;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Update the tool insertion depth record and status
     /// </summary>
     public void RecordToolInsertionStatus()
@@ -1159,6 +1448,17 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         {
             isBottomInserting = isColonBInserting;
             isBottomRemoving = isColonBRemoving;
+        }
+    }
+
+    public void UpdateColonLayerPosition()
+    {
+        for (int c = 0; c < colonSpheres.Count; c++)
+        {
+            for (int l = 0; l < colonSpheres[0].Count; l++)
+            {
+                colonLayerSpherePositionAVG[c][l] = GetPositionMean(colonSpheres[c][l]);
+            }
         }
     }
 

@@ -768,7 +768,7 @@ public class sphereJointModel : MonoBehaviour
         {
             for (int s = 0; s < m_numSpheres; s++)
             {
-                GameObject sphere = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + l.ToString() + "_" + s.ToString());
+                GameObject sphere = transform.FindDeepChild("sphere_" + m_objIndex.ToString() + "_" + l.ToString() + "_" + s.ToString()).gameObject;
                 if (sphere)
                 {
                     m_sphereGameObjects[l, s] = sphere;
