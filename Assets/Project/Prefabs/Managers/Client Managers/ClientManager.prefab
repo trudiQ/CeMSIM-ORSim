@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4531919474393089602}
-  - component: {fileID: 4531919474393089600}
-  - component: {fileID: 4531919474393089603}
+  - component: {fileID: 2005933585307661833}
+  - component: {fileID: 4007734923297667982}
   m_Layer: 0
   m_Name: ClientManager
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4531919474393089600
+--- !u!114 &2005933585307661833
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,24 +41,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 4531919474393089605}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03174856f09cba640bea41cd3b36626b, type: 3}
+  m_Script: {fileID: 11500000, guid: 679a26f33dc4940e19bac5a9fcf121c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultIP: orsimserver.ddns.net
-  ip: 
+--- !u!114 &4007734923297667982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4531919474393089605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08e4de13b43af4faaabbde165d89e39b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PCConnectMenu: {fileID: 0}
+  VRConnectMenu: {fileID: 0}
+  ip: 127.0.0.1
   port: 54321
   myId: 0
   myUsername: DEFAULT_USERNAME
+  role: 0
+  printNetworkTraffic: 0
+  isReady: 0
   isConnected: 0
---- !u!114 &4531919474393089603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4531919474393089605}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 395dc8cc036bd4144a33fda9ec4abeb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
