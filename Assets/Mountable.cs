@@ -6,6 +6,7 @@ public class Mountable : MonoBehaviour {
 	public HVRGrabbable grabbable;
 	public MountManager manager;
 	public float breakForce = 150f;
+	public GameObject lightGroup;
 
 	[HideInInspector]
 	public bool mounted;
@@ -36,6 +37,7 @@ public class Mountable : MonoBehaviour {
 	void OnJointBreak(float breakForce) {
 		manager.isAttached = false;
 		grabbable.Stationary = false;
+		lightGroup.SetActive(false);
 	}
 
 

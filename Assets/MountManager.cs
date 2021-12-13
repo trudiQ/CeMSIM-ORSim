@@ -32,6 +32,9 @@ public class MountManager : MonoBehaviour {
 			mountable.grabbable.ForceRelease();
 			mountable.grabbable.Stationary = true;
 			mountable.mounted = true;
+
+			mountable.lightGroup.SetActive(true);
+
 			isAttached = true;
 		}
 	}
