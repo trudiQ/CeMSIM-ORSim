@@ -64,6 +64,35 @@ namespace CEMSIM
                 StartCoroutine(StoreJsonEvents());
             }
 
+            private void OnApplicationQuit()
+            {
+                using (StreamWriter sw = File.AppendText(generalLogFile))
+                {
+                    while (generalEventQueue.Count > 0)
+                    {
+                        sw.WriteLine(generalEventQueue.Dequeue().ToString());
+                    }
+                }
+
+                using (StreamWriter sw = File.AppendText(playerCSVFile))
+                {
+                    while (playerEventQueue.Count > 0)
+                    {
+                        sw.WriteLine(playerEventQueue.Dequeue().ToCSV());
+                    }
+                }
+
+                using (StreamWriter sw = File.AppendText(jsonLogFile))
+                {
+                    while (jsonEventQueue.Count > 0)
+                    {
+                        sw.WriteLine(jsonEventQueue.Dequeue().ToJson() + ",");
+                    }
+                    sw.WriteLine("]");
+                }
+            }
+
+
             private void InitializeGeneralLog()
             {
                 using (StreamWriter sw = File.CreateText(generalLogFile))
@@ -84,7 +113,7 @@ namespace CEMSIM
             {
                 using (StreamWriter sw = File.CreateText(jsonLogFile))
                 {
-                    //
+                    sw.WriteLine("[");
                 }
             }
 
@@ -137,7 +166,7 @@ namespace CEMSIM
                     {
                         while (jsonEventQueue.Count > 0)
                         {
-                            sw.WriteLine(jsonEventQueue.Dequeue().ToJson());
+                            sw.WriteLine(jsonEventQueue.Dequeue().ToJson()+",");
                         }
                     }
 

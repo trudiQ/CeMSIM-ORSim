@@ -89,38 +89,57 @@ namespace CEMSIM
                 string msg = $"{{\"Position\":[{pos.x},{pos.y},{pos.z}],\"Rotation\":[{rot.x},{rot.y},{rot.z}]}}";
                 return msg;
             }
-            public static string JsonAddElement(string fieldName, string value)
+            public static string JsonAddElement(string fieldName, string value, bool isFirstElement=false)
             {
-                return $",\"{fieldName}\":\"{value}\"";
+                string prefix = "";
+                if (!isFirstElement)
+                    prefix += ",";
+
+                return prefix + $"\"{fieldName}\":\"{value}\"";
             }
-            public static string JsonAddElement(string fieldName, int value)
+            public static string JsonAddElement(string fieldName, int value, bool isFirstElement = false)
             {
-                return $",\"{fieldName}\":{value}";
+                string prefix = "";
+                if (!isFirstElement)
+                    prefix += ",";
+                return prefix + $"\"{fieldName}\":{value}";
             }
-            public static string JsonAddElement(string fieldName, float value)
+            public static string JsonAddElement(string fieldName, float value, bool isFirstElement = false)
             {
-                return $",\"{fieldName}\":{value}";
+                string prefix = "";
+                if (!isFirstElement)
+                    prefix += ",";
+                return prefix + $"\"{fieldName}\":{value}";
             }
-            public static string JsonAddElement(string fieldName, double value)
+            public static string JsonAddElement(string fieldName, double value, bool isFirstElement = false)
             {
-                return $"\",{fieldName}\":{value}";
+                string prefix = "";
+                if (!isFirstElement)
+                    prefix += ",";
+                return prefix + $"\"{fieldName}\":{value}";
             }
-            public static string JsonAddElement(string fieldName, bool value)
+            public static string JsonAddElement(string fieldName, bool value, bool isFirstElement = false)
             {
-                return $"\",{fieldName}\":{value}";
+                string prefix = "";
+                if (!isFirstElement)
+                    prefix += ",";
+                return prefix + $"\"{fieldName}\":{value}";
             }
-            public static string JsonAddSubElement(string fieldName, string value)
+            public static string JsonAddSubElement(string fieldName, string value, bool isFirstElement = false)
             {
-                return $",\"{fieldName}\":{{{value}}}";
+                string prefix = "";
+                if (!isFirstElement)
+                    prefix += ",";
+                return prefix + $"\"{fieldName}\":{{{value}}}";
             }
 
             public string JsonPrefix()
             {
-                return "{{" + JsonAddElement("Time", eventTime.ToString()) + JsonAddElement("Type", eventName);
+                return "{" + JsonAddElement("Time", eventTime.ToString(), true) + JsonAddElement("Type", eventName);
             }
             public string JsonSuffix()
             {
-                return "}}";
+                return "}";
             }
 
 

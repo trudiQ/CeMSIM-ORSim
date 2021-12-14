@@ -91,7 +91,7 @@ namespace CEMSIM
                         break;
 
                 }
-                msg += "}}";
+                msg += JsonSuffix();
                 return msg;
             }
 
