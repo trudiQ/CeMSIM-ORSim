@@ -123,7 +123,12 @@ namespace CEMSIM
                 string prefix = "";
                 if (!isFirstElement)
                     prefix += ",";
-                return prefix + $"\"{fieldName}\":{value}";
+                string boolmsg = ""; // c# uses "True/False" rather than "true/false"
+                if (value)
+                    boolmsg = "true";
+                else
+                    boolmsg = "false";
+                return prefix + $"\"{fieldName}\":{boolmsg}";
             }
             public static string JsonAddSubElement(string fieldName, string value, bool isFirstElement = false)
             {

@@ -176,8 +176,6 @@ namespace CEMSIM
 
                 RoomLightBtnTrigger(switchState);
 
-
-
                 message.AddRange(BitConverter.GetBytes(switchState));
 
                 ServerSend.SendEnvironmentState(_fromClient, (int)EnvironmentId.roomLight, message.ToArray());
