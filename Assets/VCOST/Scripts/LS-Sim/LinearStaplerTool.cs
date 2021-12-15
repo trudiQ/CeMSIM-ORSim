@@ -1358,24 +1358,27 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 // If LS reached this layer
                 if (globalOperators.m_insertDepth[colon] * colonSpheres[colon].Count >= layer)
                 {
-                    Ray partRay = new Ray();
-                    if (globalOperators.m_bInsert[colon] == 1)
-                    {
-                        partRay = topRay;
-                    }
-                    else if (globalOperators.m_bInsert[colon] == 2)
-                    {
-                        partRay = bottomRay;
-                    }
 
-                    foreach (Transform sphere in colonSpheres[colon][layer])
-                    {
-                        if (MathUtil.DistancePointToLine(partRay, sphere.position) < staplerInsertionCollisionThreshold)
-                        {
-                            Vector3 proj = MathUtil.ProjectionPointOnLine(partRay, sphere.position);
-                            sphere.position = proj + (sphere.position - proj).normalized * staplerInsertionCollisionThreshold;
-                        }
-                    }
+
+                    //Ray partRay = new Ray();
+                    //if (globalOperators.m_bInsert[colon] == 1)
+                    //{
+                    //    partRay = topRay;
+                    //}
+                    //else if (globalOperators.m_bInsert[colon] == 2)
+                    //{
+                    //    partRay = bottomRay;
+                    //}
+
+                    //foreach (Transform sphere in colonSpheres[colon][layer])
+                    //{
+                    //    if (MathUtil.DistancePointToLine(partRay, sphere.position) < staplerInsertionCollisionThreshold)
+                    //    {
+                    //        Vector3 proj = MathUtil.ProjectionPointOnLine(partRay, sphere.position);
+                    //        //sphere.position = proj + (sphere.position - proj).normalized * Mathf.Clamp(staplerInsertionCollisionThreshold, 0, 0.02f);
+                    //        sphere.GetComponent<Rigidbody>().AddForce( proj + (sphere.position - proj).normalized * Mathf.Clamp(staplerInsertionCollisionThreshold, 0, 0.1f),ForceMode.VelocityChange);
+                    //    }
+                    //}
                 }
             }
         }
