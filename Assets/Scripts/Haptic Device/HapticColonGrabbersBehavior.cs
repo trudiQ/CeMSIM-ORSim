@@ -1,0 +1,92 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
+using Obi;
+
+
+public class HapticColonGrabbersBehavior : MonoBehaviour
+{
+    public GameObject p_grabber;
+    public HapticPlugin hapticPlugin;
+    public BlueprintParticleIndividualizer colon;
+    public Transform grabberParent;
+
+    public float maxGrabberDistance = 0.1f;
+    
+    public List<ForcepBehavior> attachedForceps = new List<ForcepBehavior>();
+    public ForcepBehavior activeForceps;
+    private bool canSpawnForceps = false;
+
+    public UnityEvent _E_PlacedGrabber = new UnityEvent();
+
+    private void Start()
+    {
+        activeForceps = grabberParent.GetChild(0).GetComponentInChildren<ForcepBehavior>();
+        activeForceps.obiObject = colon;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            AddNewGrabber();
+        }
+    }
+
+    public void SendOpenSignal(bool start)
+    {
+        if (start)
+            activeForceps.SignalOpen();
+        else
+            activeForceps.SignalStopOpen();
+    }
+
+    public void SendCloseSignal(bool start)
+    {
+        if (start)
+            activeForceps.SignalClose();
+        else
+            activeForceps.SignalStopClose();
+    }
+
+    public void SetForcepSpawning(bool canSpawn) { }
+    
+    public void SwitchToObject(GameObject obj)
+    {
+        Destroy(activeForceps.gameObject);
+        hapticPlugin.hapticManipulator = obj;
+        gameObject.transform.SetParent(grabberParent);
+    }
+
+    public void AddNewGrabber()
+    {
+        //if (currentGrabberAttachment == null) return;
+
+        //Freeze old grabber
+        if (activeForceps != null)
+        {
+            attachedForceps.Add(activeForceps);
+            FreezeGrabber(activeForceps.transform);
+        }
+
+        //Add new grabber to control
+        activeForceps = Instantiate(
+            p_grabber, 
+            Vector3.zero, 
+            Quaternion.identity, 
+            grabberParent).
+            GetComponentInChildren<ForcepBehavior>();
+        activeForceps.obiObject = colon;
+        hapticPlugin.hapticManipulator = activeForceps.gameObject;
+    }
+
+    private bool FreezeGrabber(Transform grabber)
+    {
+        Rigidbody r = grabber.GetComponent<Rigidbody>();
+        if (r == null) return false;
+
+        r.constraints = RigidbodyConstraints.FreezeAll;
+        return true;
+    }
+}
