@@ -14,6 +14,7 @@ namespace CEMSIM
             public int id;                  //< id of the avatar (specified by the server)
             public string username;         //< username specified by the player
             public Roles role;              //< surgeon, nurse, etc?
+            public int avatarIdx;           // which avatar prefab in the avatar list
             public bool isClientSide;       //< specify whether the current avatar is spawned at the client or the server side
             public bool isVR;               //< a VR-controlled or keyboard-controlled avatar
 
@@ -147,11 +148,12 @@ namespace CEMSIM
             #endregion
 
             #region Set rig mode attributes
-            public void InitializePlayerManager(int _id, string _username, Roles _role, bool _isClientSide, bool _isVR)
+            public void InitializePlayerManager(int _id, string _username, Roles _role, int _avatar_i, bool _isClientSide, bool _isVR)
             {
                 id = _id;
                 username = _username;
                 role = _role;
+                avatarIdx = _avatar_i;
                 isClientSide = _isClientSide;
                 isVR = _isVR;
 

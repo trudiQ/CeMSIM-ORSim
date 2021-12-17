@@ -182,6 +182,7 @@ namespace CEMSIM
                     _packet.Write(_player.id);
                     _packet.Write(_player.username);
                     _packet.Write((int)_player.role);
+                    _packet.Write(_player.avatarIdx);
                     _packet.Write(_avatar.position);
                     _packet.Write(_avatar.rotation);
 

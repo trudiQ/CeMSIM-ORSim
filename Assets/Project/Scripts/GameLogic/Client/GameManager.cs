@@ -21,7 +21,9 @@ namespace CEMSIM
             public GameObject localPlayerVR;
             public GameObject localPlayerPrefab;
             //public GameObject playerPrefab;
-            public List<GameObject> playerPrefabs = new List<GameObject>();
+            //public List<GameObject> playerPrefabs = new List<GameObject>();
+            public List<NetRoleAvatarList> remotePlayerPrefabs;
+
 
             [Header("Events")]
             public GameObject roomLightButton;
@@ -56,7 +58,7 @@ namespace CEMSIM
             /// <param name="_name">The player's name.</param>
             /// <param name="_position">The player's starting position.</param>
             /// <param name="_rotation">The player's starting rotation.</param>
-            public void SpawnPlayer(int _id, string _username, int _role_i, Vector3 _position, Quaternion _rotation)
+            public void SpawnPlayer(int _id, string _username, int _role_i, int _avatar_i, Vector3 _position, Quaternion _rotation)
             {
                 GameObject _player;
                 bool _isVR = true;
@@ -93,7 +95,7 @@ namespace CEMSIM
                 {
                     // create the player avatar of one existing client
                     int _role_id = (int)_role;
-                    _player = Instantiate(playerPrefabs[_role_id], new Vector3(_position.x, 0f, _position.z), Quaternion.identity);
+                    _player = Instantiate(remotePlayerPrefabs[_role_id].avatars[_avatar_i].avatarPrefab_NetRig, new Vector3(_position.x, 0f, _position.z), Quaternion.identity);
                     // Since the new rig model treats the initial y-axis as the floor, we should first spawn it to a coordinate with 0 as y-axis
                     // then pull it to the correct position.
                     _player.GetComponent<PlayerManager>().enabled = true;
@@ -104,7 +106,7 @@ namespace CEMSIM
 
 
                 }
-                _player.GetComponent<PlayerManager>().InitializePlayerManager(_id, _username, _role, true, _isVR);
+                _player.GetComponent<PlayerManager>().InitializePlayerManager(_id, _username, _role, _avatar_i, true, _isVR);
 
                 // record the player instance in the players dictionary
                 players.Add(_id, _player.GetComponent<PlayerManager>());

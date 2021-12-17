@@ -16,7 +16,9 @@ namespace CEMSIM
 
             [Header("Player Prefabs")]
             [Tooltip("The order of the prefabs should match the enumation order of Roles in GameConstants.cs")]
-            public List<GameObject> playerPrefabs = new List<GameObject>();
+            //public List<GameObject> playerPrefabs = new List<GameObject>();
+            public List<NetRoleAvatarList> remotePlayerPrefabs;
+
 
             //[Header("Player Spawning")]
             //public Vector3 spawnLocation;
@@ -87,11 +89,11 @@ namespace CEMSIM
             /// Call the instantiate function to create a player gameObject and return the reference.
             /// </summary>
             /// <returns></returns>
-            public PlayerManager InstantiatePlayer(Roles role)
+            public PlayerManager InstantiatePlayer(Roles _role, int _avatar_i)
             {
                 // initialize a player at the initial location and return the reference
-                int role_idx = (int)role;
-                return Instantiate(playerPrefabs[role_idx], ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, playersContainer.transform).GetComponent<PlayerManager>();
+                int role_i = (int)_role;
+                return Instantiate(remotePlayerPrefabs[role_i].avatars[_avatar_i].avatarPrefab_NetRig, ServerGameConstants.INIT_SPAWNING_POSITION, ServerGameConstants.INIT_SPAWNING_ROTATION, playersContainer.transform).GetComponent<PlayerManager>();
             }
 
 

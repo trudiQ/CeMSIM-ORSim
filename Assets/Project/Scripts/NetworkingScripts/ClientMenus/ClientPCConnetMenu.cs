@@ -79,8 +79,9 @@ namespace CEMSIM
                 // we use Player + id to temporarily represent the player username
                 //string _username = "Player" + ClientInstance.instance.myId.ToString();
                 string _username = usernameField.text;
+                int avatar_idx = 0; // force the player to use the first avatar.
 
-                ClientSend.SendSpawnRequest(_username, GameManager.instance.localPlayerVR.activeInHierarchy, ClientInstance.instance.role);
+                ClientSend.SendSpawnRequest(_username, GameManager.instance.localPlayerVR.activeInHierarchy, ClientInstance.instance.role, avatar_idx);
             }
 
             public void UpdateServerMessage(string serverMsg)

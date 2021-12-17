@@ -79,13 +79,14 @@ namespace CEMSIM
                 }
             }
 
-            public static void SendSpawnRequest(string _username, bool _vrEnabled, Roles _role)
+            public static void SendSpawnRequest(string _username, bool _vrEnabled, Roles _role, int _avatar_i)
             {
                 using (Packet _packet = new Packet((int)ClientPackets.spawnRequest))
                 {
                     _packet.Write(_username);
                     _packet.Write(_vrEnabled);
                     _packet.Write((int)_role);
+                    _packet.Write(_avatar_i);
 
                     SendTCPData(_packet);
                 }

@@ -13,7 +13,7 @@ namespace CEMSIM
         {
             private CEMSIMCommsNetwork comm;
 
-            private int counter = 0; // debug use only
+            //private int counter = 0; // debug use only
 
             // We allow the server to fake a client for monitoring. so we need to distinguish whether it's a server side fake client or a real client.
             public bool printNetworkTraffic = false;
