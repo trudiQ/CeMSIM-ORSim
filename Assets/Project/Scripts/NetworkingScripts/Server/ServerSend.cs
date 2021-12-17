@@ -192,7 +192,6 @@ namespace CEMSIM
 
             public static void PlayerPosition(PlayerManager _player)
             {
-                //TODO: Get rid of function GetChild
                 // get the position of both VR controllers
                 Transform _avatar = _player.body.transform;
                 Transform _lefthand = _player.leftHandController.transform;

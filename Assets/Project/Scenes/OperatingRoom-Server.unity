@@ -1924,6 +1924,36 @@ PrefabInstance:
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 5742167842422251184, guid: bc52dbcd8d426b04ab5284fabf70b989,
+        type: 3}
+      propertyPath: surgicalLight01
+      value: 
+      objectReference: {fileID: 35517590}
+    - target: {fileID: 5742167842422251184, guid: bc52dbcd8d426b04ab5284fabf70b989,
+        type: 3}
+      propertyPath: surgicalLight02
+      value: 
+      objectReference: {fileID: 1843892318}
+    - target: {fileID: 5742167842422251184, guid: bc52dbcd8d426b04ab5284fabf70b989,
+        type: 3}
+      propertyPath: ceilingAreaLights
+      value: 
+      objectReference: {fileID: 1126014337}
+    - target: {fileID: 5742167842422251184, guid: bc52dbcd8d426b04ab5284fabf70b989,
+        type: 3}
+      propertyPath: ceilingLightsMesh
+      value: 
+      objectReference: {fileID: 280815015}
+    - target: {fileID: 5742167842422251184, guid: bc52dbcd8d426b04ab5284fabf70b989,
+        type: 3}
+      propertyPath: ceilingPointLights
+      value: 
+      objectReference: {fileID: 1815556896}
+    - target: {fileID: 5742167842422251184, guid: bc52dbcd8d426b04ab5284fabf70b989,
+        type: 3}
+      propertyPath: postProcessingVolume
+      value: 
+      objectReference: {fileID: 1780108789}
     - target: {fileID: 6396212367946863584, guid: bc52dbcd8d426b04ab5284fabf70b989,
         type: 3}
       propertyPath: m_UseGravity
@@ -1937,7 +1967,7 @@ PrefabInstance:
     - target: {fileID: 6396212367946863588, guid: bc52dbcd8d426b04ab5284fabf70b989,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6396212367946863591, guid: bc52dbcd8d426b04ab5284fabf70b989,
         type: 3}
@@ -2278,6 +2308,48 @@ MonoBehaviour:
   surgicalLightsOffMaterial: {fileID: 2100000, guid: 87535d4fb8f225440a5478f544035f83,
     type: 2}
   lightSurfaces: []
+--- !u!114 &727664299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &739978752
 GameObject:
   m_ObjectHideFlags: 0
@@ -4263,7 +4335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isClientSide: 0
-  printNetworkTraffic: 1
+  printNetworkTraffic: 0
   player: {fileID: 0}
 --- !u!114 &1145889834
 MonoBehaviour:
@@ -7067,48 +7139,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1730848341
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &1780108788
 GameObject:
   m_ObjectHideFlags: 0
