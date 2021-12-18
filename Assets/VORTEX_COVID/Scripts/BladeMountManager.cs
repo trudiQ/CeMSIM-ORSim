@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MountManager : MonoBehaviour {
+public class BladeMountManager : MonoBehaviour {
 
 	[HideInInspector]
 	public bool isAttached;
@@ -16,7 +16,7 @@ public class MountManager : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other) {
 		if(isAttached) return;
-		Mountable mountable = other.gameObject.GetComponent<Mountable>();
+		MountableBlade mountable = other.gameObject.GetComponent<MountableBlade>();
 
 		if(mountable) {
 			Transform otherTransform = other.gameObject.transform;

@@ -1,12 +1,13 @@
 ﻿using HurricaneVR.Framework.Core;
 using UnityEngine;
 
-public class Mountable : MonoBehaviour {
+public class MountableSyringe : MonoBehaviour {
+
 	public Vector3 desiredPosition;
+	public Vector3 desiredRotation;
 	public HVRGrabbable grabbable;
-	public MountManager manager;
-	public float breakForce = 150f;
-	public GameObject lightGroup;
+	public SyringeMountManager manager;
+	public float breakForce;
 
 	[HideInInspector]
 	public bool mounted;
@@ -25,20 +26,22 @@ public class Mountable : MonoBehaviour {
 			mounted = false;
 		}
 		if (joint) {
-			Vector3 projection = Vector3.Project(joint.currentForce, transform.right);
+			Vector3 projection = Vector3.Project(joint.currentForce, transform.forward);
 			if (projection.magnitude > breakForce) {
+				Debug.Log(projection.magnitude);
 				Destroy(joint);
 				OnJointBreak(projection.magnitude);
 			}
 		}
-
 	}
 
 	void OnJointBreak(float breakForce) {
-		manager.isAttached = false;
-		grabbable.Stationary = false;
-		lightGroup.SetActive(false);
+		Invoke(nameof(CallDelayed), 1f);
+		manager.Regrab();
 	}
 
+	private void CallDelayed() {
+		SyringeMountManager.isAttached = false;
+	}
 
 }

@@ -8,6 +8,8 @@ public class SyringeInteractions : MonoBehaviour {
 	public Vector3 plungerEndPos;
 	public float speed = 16;
 	public HVRHandPoser poser;
+	public Transform balloon;
+	public Vector3 balloonInflatedSize;
 
 	public bool isGrabbed { get; set; } = false;
 	public bool isPrimaryButtonPressed { get; set; } = false;
@@ -21,6 +23,7 @@ public class SyringeInteractions : MonoBehaviour {
 	void Update() {
 		if (isGrabbed) {
 			if (isPrimaryButtonPressed) {
+				CheckBalloonStatus();
 				poser.PrimaryPose.Type = BlendType.BooleanParameter;
 				plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, Time.deltaTime * speed);
 			} else {
@@ -31,4 +34,9 @@ public class SyringeInteractions : MonoBehaviour {
 		}
 	}
 
+	private void CheckBalloonStatus() {
+		if (SyringeMountManager.isAttached) {
+			balloon.localScale = Vector3.Lerp(balloon.localScale, balloonInflatedSize, Time.deltaTime * speed);
+		}
+	}
 }
