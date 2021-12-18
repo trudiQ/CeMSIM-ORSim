@@ -7,6 +7,9 @@ public class TeleportManager : MonoBehaviour
     public GameObject anteroomTeleportationPad;
     public GameObject operationRoomTeleportationPad;
     public GameObject teleportationPrompt;
+    public GameObject anteroom;
+    public GameObject operationRoom;
+
     public Room currentRoom { get; set; } = Room.ANTEROOM;
 
     // Start is called before the first frame update
@@ -54,6 +57,7 @@ public class TeleportManager : MonoBehaviour
 
     public void AnteroomTeleportationTriggered()
     {
+        operationRoomTeleportationPad.SetActive(false);
         Teleport(operationRoomTeleportationPad.transform, Room.OPERATIONROOM);
     }
 
@@ -75,6 +79,8 @@ public class TeleportManager : MonoBehaviour
         rigToBeTeleported.transform.position = new Vector3(destination.position.x, rigToBeTeleported.transform.position.y, destination.position.z);
         currentRoom = destinationRoom;
         SwitchColliders(colliders, true);
+        anteroom.SetActive(destinationRoom == Room.ANTEROOM);
+        operationRoom.SetActive(destinationRoom == Room.OPERATIONROOM);
     }
 
     private void SwitchColliders(Collider[] colliders, bool enabled)
