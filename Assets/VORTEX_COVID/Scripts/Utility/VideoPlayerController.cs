@@ -6,6 +6,8 @@ using UnityEngine.Video;
 [RequireComponent(typeof(VideoPlayer))]
 public class VideoPlayerController : MonoBehaviour
 {
+    public VideoClip[] videoClips;
+
     private VideoPlayer videoPlayer;
 
     private void Awake()
@@ -13,8 +15,15 @@ public class VideoPlayerController : MonoBehaviour
         videoPlayer = GetComponent<VideoPlayer>();
     }
 
-    public void PlayClip()
+    public void PlayClip(int index)
     {
-        videoPlayer.Play();
+        if (index >= 0 && index < videoClips.Length)
+        {
+            if (videoPlayer.isPlaying)
+                videoPlayer.Stop();
+
+            videoPlayer.clip = videoClips[index];
+            videoPlayer.Play();
+        }
     }
 }
