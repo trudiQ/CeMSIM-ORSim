@@ -25,7 +25,6 @@ public class TubeInteraction : MonoBehaviour {
 		StyletInteraction styletInteraction = other.gameObject.GetComponent<StyletInteraction>();
 
 		if (styletInteraction == null || styletInteraction.isDetached) return;
-		Debug.Log(other);
 
 		styletInteraction.RemoveJoint();
 		styletInteraction.isDetached = true;

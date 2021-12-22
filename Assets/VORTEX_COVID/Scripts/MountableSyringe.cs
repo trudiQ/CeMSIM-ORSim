@@ -28,7 +28,6 @@ public class MountableSyringe : MonoBehaviour {
 		if (joint) {
 			Vector3 projection = Vector3.Project(joint.currentForce, transform.forward);
 			if (projection.magnitude > breakForce) {
-				Debug.Log(projection.magnitude);
 				Destroy(joint);
 				OnJointBreak(projection.magnitude);
 			}
