@@ -35,6 +35,8 @@ public class ColonQuadColliderBehavior : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         // if collision from inserting LS
+        //if (collision.collider.name == "StretchedDST_CLIP.001") //Top
+
         followSphere = false;
     }
 
@@ -59,6 +61,7 @@ public class ColonQuadColliderBehavior : MonoBehaviour
         quadMesh.mesh.triangles = quadTris.ToArray();
 
         // Update collider mesh (maybe no need)
+        quadCollider.sharedMesh = quadMesh.mesh;
     }
 
     /// <summary>

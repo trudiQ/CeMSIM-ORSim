@@ -1360,25 +1360,42 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 {
 
 
-                    //Ray partRay = new Ray();
-                    //if (globalOperators.m_bInsert[colon] == 1)
-                    //{
-                    //    partRay = topRay;
-                    //}
-                    //else if (globalOperators.m_bInsert[colon] == 2)
-                    //{
-                    //    partRay = bottomRay;
-                    //}
+                    Ray partRay = new Ray();
+                    if (globalOperators.m_bInsert[colon] == 1)
+                    {
+                        partRay = topRay;
+                    }
+                    else if (globalOperators.m_bInsert[colon] == 2)
+                    {
+                        partRay = bottomRay;
+                    }
 
-                    //foreach (Transform sphere in colonSpheres[colon][layer])
-                    //{
-                    //    if (MathUtil.DistancePointToLine(partRay, sphere.position) < staplerInsertionCollisionThreshold)
-                    //    {
-                    //        Vector3 proj = MathUtil.ProjectionPointOnLine(partRay, sphere.position);
-                    //        //sphere.position = proj + (sphere.position - proj).normalized * Mathf.Clamp(staplerInsertionCollisionThreshold, 0, 0.02f);
-                    //        sphere.GetComponent<Rigidbody>().AddForce( proj + (sphere.position - proj).normalized * Mathf.Clamp(staplerInsertionCollisionThreshold, 0, 0.1f),ForceMode.VelocityChange);
-                    //    }
-                    //}
+                    for (int sphere = 0; sphere < 20; sphere++)
+                    {
+                        ColonStaplerJointBehavior anchor = ColonStaplerJointManager.instance.colonJointAnchors[colon][layer * 20 + sphere];
+                        if (MathUtil.DistancePointToLine(partRay, colonSpheres[colon][layer][sphere].position) < staplerInsertionCollisionThreshold)
+                        {
+                            if (!anchor.gameObject.activeInHierarchy)
+                            {
+                                anchor.transform.position = MathUtil.ProjectionPointOnLine(partRay, colonSpheres[colon][layer][sphere].position);
+                                anchor.detachDistance = staplerInsertionCollisionThreshold;
+                                anchor.gameObject.SetActive(true);
+                                anchor.AttachColonSphere();
+                            }
+
+                            //Vector3 proj = MathUtil.ProjectionPointOnLine(partRay, sphere.position);
+                            ////sphere.position = proj + (sphere.position - proj).normalized * Mathf.Clamp(staplerInsertionCollisionThreshold, 0, 0.02f);
+                            //sphere.GetComponent<Rigidbody>().AddForce(proj + (sphere.position - proj).normalized * Mathf.Clamp(staplerInsertionCollisionThreshold, 0, 0.1f), ForceMode.VelocityChange);
+                        }
+                        else
+                        {
+                            if (anchor.gameObject.activeInHierarchy)
+                            {
+                                anchor.DetachColonSphere();
+                                anchor.gameObject.SetActive(false);
+                            }
+                        }
+                    }
                 }
             }
         }

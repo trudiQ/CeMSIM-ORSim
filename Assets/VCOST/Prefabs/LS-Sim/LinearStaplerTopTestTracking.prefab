@@ -127,6 +127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92c18d06179f81844bbb7b5ab9240b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  usingRawSensorControl: 0
+  uiController: {fileID: 0}
   FiringHandle: {fileID: 0}
   firingHandleStartPosition: {fileID: 0}
   firingHandleEndPosition: {fileID: 0}
@@ -145,6 +147,10 @@ MonoBehaviour:
   bottomPartDesignatedCalibrationReference: {fileID: 0}
   topPartColliders: []
   bottomPartColliders: []
+  calibrationMoveSpeed: 0
+  calibrationRotateSpeed: 0
+  calibrateRotationParent: {fileID: 0}
+  calibratingToolOriginalParent: {fileID: 0}
   colonAopenSpheres: []
   colonBopenSpheres: []
   topHalfFrontTip: {fileID: 0}
@@ -152,12 +158,17 @@ MonoBehaviour:
   tipProximityCondition: 0
   colonAsecondLayerSpheres: []
   colonAlastLayerSpheres: []
+  colonA10thLayerSpheres: []
   colonBsecondLayerSpheres: []
   colonBlastLayerSpheres: []
+  colonB10thLayerSpheres: []
   angleDifferenceCondition: 0
   tipExitProximityMultiplier: 0
+  topHalfColonDetector: {fileID: 0}
+  bottomHalfColonDetector: {fileID: 0}
   joinedColonFirstLayerSpheres: []
   joinedColonLastLayerSpheres: []
+  joinedColon10thLayerSpheres: []
   joiningPhaseToolMovingAxisDifference: 0
   bottomPartLastPhaseProximityDetector: {fileID: 0}
   joinedColonFirstLayerLowerSpheres: []
@@ -172,6 +183,18 @@ MonoBehaviour:
   lsToolInsertDepthRecordTime: 0
   lsToolMovingStateThreshold: 0
   lsToolMovingStateThresholdTime: 0
+  colonAfrictionSpheres: []
+  colonBfrictionSpheres: []
+  frictionForceStrength: 0
+  colonControllers: []
+  topLineStart: {fileID: 0}
+  topLineEnd: {fileID: 0}
+  bottomLineStart: {fileID: 0}
+  bottomLineEnd: {fileID: 0}
+  staplerInsertionCollisionThreshold: 0
+  currentCalibratingHalf: {fileID: 0}
+  currentCalibratingDirection: {x: 0, y: 0, z: 0}
+  calibratingPosition: 0
   handlePushed: 0
   inAnimation: 0
   handleReading: 0
@@ -194,6 +217,7 @@ MonoBehaviour:
   bottomLocalPositionBeforeLock: {x: 0, y: 0, z: 0}
   bottomLocalRotationBeforeLock: {x: 0, y: 0, z: 0, w: 0}
   simStates: 0
+  insertionStates: 0
   colonAopeningPos: {x: 0, y: 0, z: 0}
   colonBopeningPos: {x: 0, y: 0, z: 0}
   insertionDepthInspector: []
@@ -205,6 +229,7 @@ MonoBehaviour:
   isColonARemoving: 0
   isColonBInserting: 0
   isColonBRemoving: 0
+  colonSecuredByForceps: 
   isBottomHalfMovingInCuttingPlane: 0
   bottomLastPhaseX: 0
   colonAInsertDepthRecord: []
@@ -225,6 +250,8 @@ MonoBehaviour:
   joinedColonFifthLayerLowerSpheresPosition: {x: 0, y: 0, z: 0}
   joinedColonSixthLayerLowerSpheresPosition: {x: 0, y: 0, z: 0}
   lastPhaseLockedLayer: 0
+  positionCalibrationSpeed: 0
+  rotationCalibrationSpeed: 0
 --- !u!54 &1788120002
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -577,7 +604,6 @@ GameObject:
   - component: {fileID: 7240033228498845742}
   - component: {fileID: 1073041712461788337}
   - component: {fileID: 4484286432943568537}
-  - component: {fileID: 3265418941864309661}
   m_Layer: 0
   m_Name: StretchedLinearStaplerTestTracking
   m_TagString: Untagged
@@ -10281,19 +10307,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!65 &3265418941864309661
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2572275253200986855}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 0.85, y: 0.03, z: -0.03}
-  m_Center: {x: -0.86, y: 0, z: -0.035}
 --- !u!1 &3198066918107186447
 GameObject:
   m_ObjectHideFlags: 0
