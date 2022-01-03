@@ -34,7 +34,10 @@ namespace CEMSIM
             //public bool isVR = true;
             public int myId = 0;
             public string myUsername = "DEFAULT_USERNAME";
+
+            [Header("Role Selection (display only)")]
             public Roles role=Roles.surgeon;
+            public int avatar_id = 0;
 
             [Header("Traffic Visualization")]
             public bool printNetworkTraffic = false;        // True: print out the inbound and outbound traffic in console.
@@ -116,14 +119,14 @@ namespace CEMSIM
             {
                 yield return new WaitForSeconds(_seconds);
                 //string _username = "Player" + ClientInstance.instance.myId.ToString();
-                string _username = ClientInstance.instance.myUsername;
 
                 isReady = true;
                 // configure the local player
                 GameManager.instance.localPlayerVR.GetComponent<PlayerManager>().InitializePlayerManager(
                     ClientInstance.instance.myId,
-                    _username,
+                    ClientInstance.instance.myUsername,
                     ClientInstance.instance.role,
+                    ClientInstance.instance.avatar_id,
                     true,   // at the client side?
                     true    // VR player?
                     );
@@ -131,7 +134,7 @@ namespace CEMSIM
 
                 //TO DO: ConnectOnStart (the connect button in the VR Menu) is used for VR mode at the moment. 
                 
-                ClientSend.SendSpawnRequest(_username, true, role);
+                ClientSend.SendSpawnRequest(ClientInstance.instance.myUsername, true, ClientInstance.instance.role, ClientInstance.instance.avatar_id);
                 //GameManager.instance.localPlayerVR.GetComponent<PlayerVRController>().enabled = true;
             }
 

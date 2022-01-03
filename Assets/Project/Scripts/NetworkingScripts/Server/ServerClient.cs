@@ -293,7 +293,7 @@ namespace CEMSIM
             }
 
             // Spawn the player 
-            public void SendIntoGame(string _username, bool _vr, int _role_i)
+            public void SendIntoGame(string _username, bool _vr, int _role_i, int _avatar_i)
             {
                 // sanitize check
                 Roles _role = Roles.surgeon;
@@ -312,8 +312,8 @@ namespace CEMSIM
                 ServerItemManager.SendCurrentItemList(id);
 
                 // instantialize and configure a player 
-                player = ServerNetworkManager.instance.InstantiatePlayer(_role);
-                player.InitializePlayerManager(id, _username, _role, false, _vr);
+                player = ServerNetworkManager.instance.InstantiatePlayer(_role, _avatar_i);
+                player.InitializePlayerManager(id, _username, _role, _avatar_i, false, _vr);
 
                 // 1. inform all other players the creation of current player
                 foreach (ServerClient _client in ServerInstance.clients.Values)

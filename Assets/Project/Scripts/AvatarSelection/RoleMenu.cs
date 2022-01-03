@@ -145,8 +145,6 @@ public class RoleMenu : MonoBehaviour
 
             activeAvatarDropdown.value = 0; // Make sure new dropdown has the same value as the selected role
             activeAvatarDropdown.RefreshShownValue();
-
-            ClientInstance.instance.role = (Roles)index;
         }
     }
 

@@ -13,6 +13,8 @@ namespace CEMSIM
             anesthesiologist,
             scrubbingNurse,
             circulatingNurse,
+            Clinician,
+            Other,
         }
 
         public enum ToolType

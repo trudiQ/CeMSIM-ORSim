@@ -182,6 +182,7 @@ namespace CEMSIM
                     _packet.Write(_player.id);
                     _packet.Write(_player.username);
                     _packet.Write((int)_player.role);
+                    _packet.Write(_player.avatarIdx);
                     _packet.Write(_avatar.position);
                     _packet.Write(_avatar.rotation);
 
@@ -191,7 +192,6 @@ namespace CEMSIM
 
             public static void PlayerPosition(PlayerManager _player)
             {
-                //TODO: Get rid of function GetChild
                 // get the position of both VR controllers
                 Transform _avatar = _player.body.transform;
                 Transform _lefthand = _player.leftHandController.transform;
