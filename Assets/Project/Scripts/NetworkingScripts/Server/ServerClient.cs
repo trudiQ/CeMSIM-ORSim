@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Collections;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CEMSIM.GameLogic;
+using CEMSIM.VoiceChat;
 
 namespace CEMSIM
 {
@@ -19,7 +20,7 @@ namespace CEMSIM
             public int id;
             public TCP tcp;
             public UDP udp;
-            public ServerPlayer player;  // the player corresponding to the client machine
+            public PlayerManager player;  // the player corresponding to the client machine
 
             public ServerClient(int _id)
             {
@@ -30,21 +31,27 @@ namespace CEMSIM
             }
 
 
+            #region TCP
             /// <summary>
             /// TCP connection between client-server
             /// </summary>
             public class TCP
             {
                 public TcpClient socket;
+                public long rtt; // round trip time
+                public long lastHeartBeat; // tick for the last heart beat
 
                 private readonly int id;
                 private NetworkStream stream;
                 private byte[] receiveBuffer;
                 private Packet receivedData;
+                
 
                 public TCP(int _id)
                 {
                     id = _id;
+                    rtt = 0;
+                    lastHeartBeat = 0;
                 }
 
                 /// <summary>
@@ -76,12 +83,17 @@ namespace CEMSIM
                     {
                         if (socket != null)
                         {
+                            if (ServerNetworkManager.instance.printNetworkTraffic)
+                            {
+                                Debug.Log($"[Send] TCP to {id} {(ServerPackets)_packet.GetPacketId()}");
+                            }
+                            
                             stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
                         }
                     }
                     catch (Exception e)
                     {
-                        Debug.Log($"Error sending packet to client {id} via TCP. Exception {e}");
+                        Debug.LogWarning($"Error sending packet to client {id} via TCP. Exception {e}");
                         NetworkOverlayMenu.Instance.Log($"Error sending packet to client {id} via TCP. Exception {e}");
                     }
                 }
@@ -113,7 +125,7 @@ namespace CEMSIM
                     }
                     catch (Exception e)
                     {
-                        Debug.Log($"Server exception {e}");
+                        Debug.LogWarning($"Server exception {e}");
                         NetworkOverlayMenu.Instance.Log($"Server exception {e}");
                         ServerInstance.clients[id].Disconnect();
                         // disconnect
@@ -152,10 +164,13 @@ namespace CEMSIM
                             // create a packet containing just the data
                             using (Packet _packet = new Packet(_packetBytes))
                             {
-                                int _packetId = _packet.ReadInt32();
+                                int _packetId = _packet.DigestClientHeader(); // extract header information
 
-                                Debug.Log($"Receive a packet with id {_packetId} from client {id}");
-                                NetworkOverlayMenu.Instance.Log($"Receive a packet with id {_packetId} from client {id}");
+                                if (ServerNetworkManager.instance.printNetworkTraffic)
+                                {
+                                    Debug.Log($"[Recv] TCP {(ClientPackets)_packetId} from {id}");
+                                }
+                                //NetworkOverlayMenu.Instance.Log($"Receive a packet with id {_packetId} from client {id}");
                                 // call proper handling function based on packet id
                                 ServerInstance.packetHandlers[_packetId](id, _packet);
                             }
@@ -191,22 +206,30 @@ namespace CEMSIM
                     receivedData = null;
                     receiveBuffer = null;
                     socket = null;
+                    lastHeartBeat = 0;
                 }
 
             }
+            #endregion
 
+
+            #region UDP
             /// <summary>
             /// UDP connection between client-server
             /// </summary>
             public class UDP
             {
                 public IPEndPoint endPoint;
+                public long rtt; // udp rtt
+                public long lastHeartBeat; // tick for the last heart beat response
 
                 private int id;
 
                 public UDP(int _id)
                 {
                     id = _id;
+                    rtt = 0;
+                    lastHeartBeat = 0;
                 }
 
                 public void Connect(IPEndPoint _endPoint)
@@ -216,11 +239,31 @@ namespace CEMSIM
 
                 public void SendData(Packet _packet)
                 {
-                    ServerInstance.SendUDPData(endPoint, _packet);
+                    try
+                    {
+                        if (endPoint != null)
+                        {
+                            if (ServerNetworkManager.instance.printNetworkTraffic)
+                            {
+                                Debug.Log($"[Send] UDP to {id} {(ServerPackets)_packet.GetPacketId()}");
+                            }
+                            ServerInstance.SendUDPData(endPoint, _packet);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarning($"Error sending packet to client {id} via UDP. Exception {e}");
+                        NetworkOverlayMenu.Instance.Log($"Error sending packet to client {id} via UDP. Exception {e}");
+                    }
                 }
 
                 public void HandleData(Packet _packetData)
                 {
+                    if(_packetData.UnreadLength() < 4)
+                    {
+                        Debug.LogWarning($"UDP received a packet of size {_packetData.UnreadLength()} <= 4");
+                        return;
+                    }
                     int _packetLength = _packetData.ReadInt32();
                     byte[] _data = _packetData.ReadBytes(_packetLength);
 
@@ -228,31 +271,49 @@ namespace CEMSIM
                     {
                         using (Packet _packet = new Packet(_data))
                         {
-                            int _packetId = _packet.ReadInt32();
+                            // extract header information
+                            int _packetId = _packet.DigestClientHeader();
+                            if (ServerNetworkManager.instance.printNetworkTraffic)
+                            {
+                                Debug.Log($"[Recv] UDP {(ClientPackets)_packetId} from {id}");
+                            }
                             ServerInstance.packetHandlers[_packetId](id, _packet);
                         }
                     });
 
                 }
 
+                // UDP disconnect handling
                 public void Disconnect()
                 {
                     endPoint = null;
+                    lastHeartBeat = 0;
                 }
 
             }
 
             // Spawn the player 
-            public void SendIntoGame(string _playerName, bool _vr)
+            public void SendIntoGame(string _username, bool _vr, int _role_i, int _avatar_i)
             {
-                Debug.Log($"Send player {id}: {_playerName} into game");
-                NetworkOverlayMenu.Instance.Log($"Send player {id}: {_playerName} into game");
+                // sanitize check
+                Roles _role = Roles.surgeon;
+                if (Enum.IsDefined(typeof(Roles), _role_i))
+                    _role = (Roles)_role_i;
 
-                if(_vr)
-                    player = ServerNetworkManager.instance.InstantiatePlayerVR();
-                else
-                    player = ServerNetworkManager.instance.InstantiatePlayerDesktop();
-                player.Initialize(id, _playerName);
+
+                Debug.Log($"Send player {id}: {_username} - {_role} into game");
+                NetworkOverlayMenu.Instance.Log($"Send player {id}: {_username} - {_role} into game");
+
+                
+                // Send current environment state to newly added user
+                ServerNetworkManager.SendCurrentEnvironmentStates(id);
+
+                // Send current item information to the newly added user
+                ServerItemManager.SendCurrentItemList(id);
+
+                // instantialize and configure a player 
+                player = ServerNetworkManager.instance.InstantiatePlayer(_role, _avatar_i);
+                player.InitializePlayerManager(id, _username, _role, _avatar_i, false, _vr);
 
                 // 1. inform all other players the creation of current player
                 foreach (ServerClient _client in ServerInstance.clients.Values)
@@ -266,14 +327,23 @@ namespace CEMSIM
                     }
                 }
 
-                // 2. inform the current player the existance of other players
+                // 2. inform the current player the existence of other players
                 foreach (ServerClient _client in ServerInstance.clients.Values)
                 {
                     if (_client.player != null)
                     {
                         ServerSend.SpawnPlayer(_client.id, player);
+                        string _dissonancePlayerId = _client.player.GetComponent<CEMSIMVoicePlayer>().PlayerId;
+                        Debug.Log($"inform client {id} that client {_client.id} - {_dissonancePlayerId}");
+                        ServerSend.SendVoiceChatPlayerId(_client.id, _dissonancePlayerId, false);
                     }
                 }
+
+                // 3. inform the current player the dissonance player ID of the dummy server player
+                ServerSend.SendVoiceChatPlayerId(id, ServerInstance.dissonancePlayerId, false);
+
+                // Send current environment state to newly added user
+                ServerNetworkManager.SendCurrentEnvironmentStates(id); 
 
 
             }
@@ -297,6 +367,8 @@ namespace CEMSIM
                 });
                     
             }
+            #endregion
+
         }
     }
 }
