@@ -17,6 +17,7 @@ public class ColonQuadColliderBehavior : MonoBehaviour
     void Start()
     {
         followSphere = true;
+        quadMesh.sharedMesh = new Mesh();
     }
 
     // Update is called once per frame
@@ -56,12 +57,12 @@ public class ColonQuadColliderBehavior : MonoBehaviour
         transform.position = (targetSpheres[0].position + targetSpheres[1].position + targetSpheres[2].position + targetSpheres[3].position) / 4;
 
         // Update quad mesh 
-        quadMesh.mesh.Clear();
-        quadMesh.mesh.vertices = targetSpheres.Select(t => transform.InverseTransformPoint(t.position)).ToArray();
-        quadMesh.mesh.triangles = quadTris.ToArray();
+        quadMesh.sharedMesh.Clear();
+        quadMesh.sharedMesh.vertices = targetSpheres.Select(t => transform.InverseTransformPoint(t.position)).ToArray();
+        quadMesh.sharedMesh.triangles = quadTris.ToArray();
 
         // Update collider mesh (maybe no need)
-        quadCollider.sharedMesh = quadMesh.mesh;
+        quadCollider.sharedMesh = quadMesh.sharedMesh;
     }
 
     /// <summary>
@@ -71,7 +72,7 @@ public class ColonQuadColliderBehavior : MonoBehaviour
     {
         for (int i = 0; i < targetSpheres.Count; i++)
         {
-            targetSpheres[i].position = transform.TransformPoint(quadMesh.mesh.vertices[i]);
+            targetSpheres[i].position = transform.TransformPoint(quadMesh.sharedMesh.vertices[i]);
         }
     }
 }

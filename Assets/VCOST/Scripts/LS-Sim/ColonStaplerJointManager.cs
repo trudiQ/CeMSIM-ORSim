@@ -11,7 +11,7 @@ public class ColonStaplerJointManager : MonoBehaviour
     public List<List<List<Transform>>> targetColonSpheres;
     public globalOperators gOperator;
 
-    public List<List<ColonStaplerJointBehavior>> colonJointAnchors;
+    public List<ColonStaplerJointBehavior> colonJointAnchors;
     public static ColonStaplerJointManager instance;
 
     private void Start()
@@ -41,13 +41,12 @@ public class ColonStaplerJointManager : MonoBehaviour
     [ShowInInspector]
     public void CreateAnchorObjects()
     {
-        colonJointAnchors = new List<List<ColonStaplerJointBehavior>>();
+        colonJointAnchors = new List<ColonStaplerJointBehavior>();
 
         for (int c = 0; c < targetColonSpheres.Count; c++)
         {
             GameObject newColonQuads = new GameObject("Colon_" + c.ToString() + "_Anchors");
             newColonQuads.transform.parent = transform;
-            colonJointAnchors.Add(new List<ColonStaplerJointBehavior>());
             for (int l = 0; l < targetColonSpheres[0].Count; l++)
             {
                 for (int s = 0; s < targetColonSpheres[0][0].Count; s++)
@@ -56,7 +55,7 @@ public class ColonStaplerJointManager : MonoBehaviour
                     ColonStaplerJointBehavior newAnchorBehavior = newAnchor.GetComponent<ColonStaplerJointBehavior>();
                     newAnchorBehavior.targetSphere = targetColonSpheres[c][l][s].GetComponent<Rigidbody>();
 
-                    colonJointAnchors[c].Add(newAnchorBehavior);
+                    colonJointAnchors.Add(newAnchorBehavior);
                 }
             }
         }

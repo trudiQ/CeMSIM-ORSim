@@ -1358,25 +1358,37 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 // If LS reached this layer
                 if (globalOperators.m_insertDepth[colon] * colonSpheres[colon].Count >= layer)
                 {
-
-
-                    Ray partRay = new Ray();
+                    Ray partRay;
+                    Transform anchorFollowedStart;
+                    Transform anchorFollowedEnd;
                     if (globalOperators.m_bInsert[colon] == 1)
                     {
                         partRay = topRay;
+                        anchorFollowedStart = topLineStart;
+                        anchorFollowedEnd = topLineEnd;
                     }
-                    else if (globalOperators.m_bInsert[colon] == 2)
+                    else// if (globalOperators.m_bInsert[colon] == 2)
                     {
                         partRay = bottomRay;
+                        anchorFollowedStart = bottomLineStart;
+                        anchorFollowedEnd = bottomLineEnd;
                     }
 
                     for (int sphere = 0; sphere < 20; sphere++)
                     {
-                        ColonStaplerJointBehavior anchor = ColonStaplerJointManager.instance.colonJointAnchors[colon][layer * 20 + sphere];
+                        // ###Test
+                        if (layer > 0 || sphere > 0)
+                        {
+                            //continue;
+                        }
+
+                        ColonStaplerJointBehavior anchor = ColonStaplerJointManager.instance.colonJointAnchors[colon * 20 * 20 + layer * 20 + sphere];
                         if (MathUtil.DistancePointToLine(partRay, colonSpheres[colon][layer][sphere].position) < staplerInsertionCollisionThreshold)
                         {
                             if (!anchor.gameObject.activeInHierarchy)
                             {
+                                anchor.followedStaplerStart = anchorFollowedStart;
+                                anchor.followedStaplerEnd = anchorFollowedEnd;
                                 anchor.transform.position = MathUtil.ProjectionPointOnLine(partRay, colonSpheres[colon][layer][sphere].position);
                                 anchor.detachDistance = staplerInsertionCollisionThreshold;
                                 anchor.gameObject.SetActive(true);

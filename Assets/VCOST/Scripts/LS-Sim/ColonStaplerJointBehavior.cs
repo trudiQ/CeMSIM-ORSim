@@ -11,6 +11,7 @@ public class ColonStaplerJointBehavior : MonoBehaviour
     public Transform followedStaplerStart;
     public Transform followedStaplerEnd;
     public float detachDistance;
+    public Ray followedRay;
 
     // Start is called before the first frame update
     void Start()
@@ -36,8 +37,15 @@ public class ColonStaplerJointBehavior : MonoBehaviour
 
     public void UpdateAnchorPosition()
     {
-        Ray staplerRay = new Ray(followedStaplerEnd.position, followedStaplerStart.position - followedStaplerEnd.position);
-        Vector3 newPos = MathUtil.ProjectionPointOnLine(staplerRay, targetSphere.transform.position);
+        if (followedStaplerStart == null || followedStaplerEnd == null)
+        {
+            DetachColonSphere();
+            gameObject.SetActive(false);
+        }
+
+        followedRay.origin = followedStaplerEnd.position;
+        followedRay.direction = followedStaplerStart.position - followedStaplerEnd.position;
+        Vector3 newPos = MathUtil.ProjectionPointOnLine(followedRay, targetSphere.transform.position);
         if (Vector3.Distance(targetSphere.transform.position, newPos) < Vector3.Distance(targetSphere.transform.position, transform.position))
         {
             transform.position = newPos;
