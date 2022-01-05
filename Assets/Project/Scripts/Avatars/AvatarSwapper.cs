@@ -11,6 +11,7 @@ using CEMSIM.Network;
 [RequireComponent(typeof(UserHeightUtility))]
 public class AvatarSwapper : MonoBehaviour
 {
+    public bool isSinglePlayer = false;
     [Header("Components")]
     public HVRManager manager;
     public HVRInputModule uiInputModule;
@@ -87,10 +88,13 @@ public class AvatarSwapper : MonoBehaviour
                 currentAvatarComponents.SetHVRComponents(manager, uiInputModule);
                 currentAvatarComponents.SetUserHeightUtility(userHeightUtility);
 
-                // modify the prefab to spawn
-                GameManager.instance.localPlayerVR = spawnedAvatar;
-                ClientInstance.instance.role = (Roles)roleIndex;
-                ClientInstance.instance.avatar_id = avatarIndex;
+                if(!isSinglePlayer)
+                {
+                    // modify the prefab to spawn
+                    GameManager.instance.localPlayerVR = spawnedAvatar;
+                    ClientInstance.instance.role = (Roles)roleIndex;
+                    ClientInstance.instance.avatar_id = avatarIndex;
+                }
 
                 userHeightUtility.floor = currentAvatarComponents.floor;
                 userHeightUtility.camera = currentAvatarComponents.camera;

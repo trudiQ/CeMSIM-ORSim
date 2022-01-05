@@ -8,6 +8,7 @@ using CEMSIM.Network;
 
 public class RoleMenu : MonoBehaviour
 {
+    public bool isSinglePlayer = false;
     public AvatarSwapper avatarSwapper;
 
     [Header("Dynamic Dropdown")]
@@ -39,11 +40,13 @@ public class RoleMenu : MonoBehaviour
 
     void Start()
     {
-        // Set initial values to each field 
-        nameField.text = ClientInstance.instance.myUsername;
-        ipHostnameField.text = ClientInstance.instance.ip;
-        portField.text = ClientInstance.instance.port.ToString();
-
+        if(!isSinglePlayer)
+        {
+            // Set initial values to each field 
+            nameField.text = ClientInstance.instance.myUsername;
+            ipHostnameField.text = ClientInstance.instance.ip;
+            portField.text = ClientInstance.instance.port.ToString();
+        }
 
         // Subscribe to events when values change or buttons are pressed
         nameField.onValueChanged.AddListener(onNameChanged.Invoke);             // Name change
@@ -93,7 +96,7 @@ public class RoleMenu : MonoBehaviour
 
     void Update()
     {
-        if (connectionCheck)
+        if (connectionCheck && !isSinglePlayer)
         {
             // the connect button has been pressed
             if(ClientInstance.instance.CheckConnection())
@@ -184,10 +187,11 @@ public class RoleMenu : MonoBehaviour
         string _ip = ipHostnameField.text;
         int _port = int.Parse(portField.text);
 
-
-        ClientInstance.instance.SetUsername(nameField.text);
-        ClientInstance.instance.ConnectToServer(_ip, _port);
-
+        if(!isSinglePlayer)
+        {
+            ClientInstance.instance.SetUsername(nameField.text);
+            ClientInstance.instance.ConnectToServer(_ip, _port);
+        }
         connectionCheck = true;
     }
 
