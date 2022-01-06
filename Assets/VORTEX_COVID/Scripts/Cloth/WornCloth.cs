@@ -13,10 +13,12 @@ public class WornCloth : MonoBehaviour
     // It has to be different from the skinned object since its position doesn't move, only the vertices
     // The below GameObject contains the SkinnedMeshRenderer and is enabled/disabled to show/hide
     public GameObject objectWithSkinnedMesh;
-    public bool isActive { get; private set; }
+    public bool isActive { get; private set; } = false;
 
     // Events that trigger when the user grabs the object
     public VRInteractableEvent onWornClothInteracted;
+
+    public Transform anchor;
 
     private HVRInteractable interactable;
 
@@ -30,17 +32,23 @@ public class WornCloth : MonoBehaviour
     // Returns the position in the world where the offset of the object would be
     public Vector3 GetPosition()
     {
+		if(anchor) {
+            return anchor.position;
+		}
         return transform.position;
     }
 
     public Quaternion GetRotation()
     {
+		if(anchor) {
+            return anchor.rotation;
+		}
         return transform.rotation;
     }
 
-    public void SetActive(bool state, bool hideMesh)
+    public void SetActive(bool state, bool ignoreMeshHide)
     {
-        if(objectWithSkinnedMesh)
+        if(objectWithSkinnedMesh && !ignoreMeshHide)
             objectWithSkinnedMesh.SetActive(state);
 
         gameObject.SetActive(state);

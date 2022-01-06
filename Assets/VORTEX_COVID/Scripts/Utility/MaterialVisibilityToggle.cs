@@ -16,7 +16,7 @@ public class MaterialVisibilityToggle : MonoBehaviour
             SetOpacity(materialSlotsToToggle[index], false);
         }
         else
-            Debug.LogWarning("MaterialVisibilityToggle material index out of range: Requested " + index + ", Max " + (materialSlotsToToggle.Length - 1));
+            Debug.LogWarning("MaterialVisibilityToggle material index out of range (" + name + "): Requested " + index + ", Max " + (materialSlotsToToggle.Length - 1));
     }
 
     public void HideMaterial(int index)
@@ -26,7 +26,7 @@ public class MaterialVisibilityToggle : MonoBehaviour
             SetOpacity(materialSlotsToToggle[index], true);
         }
         else
-            Debug.LogWarning("MaterialVisibilityToggle material index out of range: Requested " + index + ", Max " + (materialSlotsToToggle.Length - 1));
+            Debug.LogWarning("MaterialVisibilityToggle material index out of range ("+ name +") : Requested " + index + ", Max " + (materialSlotsToToggle.Length - 1));
     }
 
     public void ShowAll()

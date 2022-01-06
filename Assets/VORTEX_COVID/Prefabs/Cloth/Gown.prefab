@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1839802485017524963}
   - component: {fileID: 1252133160957451843}
   - component: {fileID: 1539230233794142036}
+  - component: {fileID: 5316989788741907782}
   m_Layer: 0
   m_Name: Gown
   m_TagString: Untagged
@@ -146,6 +147,9 @@ MonoBehaviour:
   Interacted:
     m_PersistentCalls:
       m_Calls: []
+  ForceInteracted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1252133160957451843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -160,9 +164,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clothName: Gown
   isBeingGrabbed: 0
+  movedOutOfThresholdAfterUnequip: 0
   onSceneClothInteracted:
     m_PersistentCalls:
       m_Calls: []
+  interactables:
+  - {fileID: 1839802485017524963}
+  anchor: {fileID: 0}
+  rb: {fileID: 1539230233794142036}
+  kinematicRigidbodies: []
 --- !u!54 &1539230233794142036
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -179,6 +189,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &5316989788741907782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3637411207177636653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73fee08514f8a954cbd7197f84d4d40f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSoiled:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4253947288619324141
 GameObject:
   m_ObjectHideFlags: 0

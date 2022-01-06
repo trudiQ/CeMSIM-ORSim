@@ -324,6 +324,9 @@ MonoBehaviour:
   Interacted:
     m_PersistentCalls:
       m_Calls: []
+  ForceInteracted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2937445462989768739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,11 +340,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clothName: Hat
-  offset: {x: 0, y: 0, z: 0}
   isBeingGrabbed: 0
+  movedOutOfThresholdAfterUnequip: 0
   onSceneClothInteracted:
     m_PersistentCalls:
       m_Calls: []
+  interactables:
+  - {fileID: 7222540516185325320}
+  anchor: {fileID: 0}
+  rb: {fileID: 6946640051531309225}
+  kinematicRigidbodies: []
 --- !u!54 &6946640051531309225
 Rigidbody:
   m_ObjectHideFlags: 0
