@@ -1,5 +1,111 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1481841498
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1481841499}
+  - component: {fileID: 1481841501}
+  - component: {fileID: 1481841500}
+  m_Layer: 0
+  m_Name: GrabPointLeft
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1481841499
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1481841498}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0475, y: -0.0053, z: -0.1157}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4489352951759212381}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1481841501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1481841498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d1b667b6234620a01e126539c3f6d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LeftHandPreview: {fileID: 0}
+  RightHandPreview: {fileID: 0}
+  BodyPreview: {fileID: 0}
+  PreviewLeft: 0
+  PreviewRight: 0
+  LeftAutoPose: 0
+  RightAutoPose: 0
+  SelectionIndex: 0
+  PoseNames:
+  - 'Primary: OxygenMaskVentilationBagHandPose'
+  PrimaryPose:
+    Pose: {fileID: 11400000, guid: 048e9029319a1da4d82d2f8f17fd787f, type: 2}
+    Weight: 1
+    Mask: 0
+    Disabled: 0
+    Type: 1
+    Speed: 16
+    AnimationParameter: None
+    ButtonParameter: 1
+    Button: 2
+    ThumbType: 1
+    IndexType: 0
+    MiddleType: 0
+    RingType: 0
+    PinkyType: 0
+    ThumbStart: 0
+    IndexStart: 1
+    MiddleStart: 0
+    RingStart: 0
+    PinkyStart: 0
+  Blends: []
+  ReferencePose: {fileID: 0}
+  MirrorAxis: 0
+--- !u!114 &1481841500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1481841498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79cd113ec3a24073b5bab8cbfb533d1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsJointAnchor: 0
+  AllowedAngleDifference: 360
+  LeftHand: 1
+  RightHand: 0
+  jointOffset: {x: 0, y: 0, z: 0}
+  GrabIndicatorPosition: {fileID: 0}
+  VisualGrabPoint: {fileID: 0}
+  HandPoser: {fileID: 1481841501}
+  IsLineGrab: 0
+  LineStart: {fileID: 0}
+  LineEnd: {fileID: 0}
+  CanLineFlip: 1
+  LooseDamper: 100
+  LooseAngularDamper: 1
+  LineCanReposition: 1
+  LineCanRotate: 1
+  UpdateJointOffset: 0
 --- !u!1 &1808922275064327219
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,8 +286,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.0978815, y: 0.123724096, z: 0.08892823}
-  m_Center: {x: 0.0027661645, y: 0.07150913, z: 0.043827932}
+  m_Size: {x: 0.1010715, y: 0.1237241, z: 0.08892824}
+  m_Center: {x: 0.0032813922, y: 0.07150913, z: 0.043827426}
 --- !u!54 &3003669036588206141
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -338,7 +444,7 @@ GameObject:
   - component: {fileID: 4489352951056933383}
   - component: {fileID: 4489352951056933382}
   m_Layer: 0
-  m_Name: GrabPoint
+  m_Name: GrabPointRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -356,7 +462,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4489352951759212381}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4489352951056933383
 MonoBehaviour:
@@ -460,6 +566,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1481841499}
   - {fileID: 4489352951056933385}
   m_Father: {fileID: 8073896579256937377}
   m_RootOrder: 0
@@ -667,7 +774,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5378873535625272908}
   m_Layer: 0
-  m_Name: OxygenMaskWithVentilationBag 1
+  m_Name: OxygenMaskWithVentilationBag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -887,8 +994,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.09747317, y: 0.06525838, z: 0.24094045}
-  m_Center: {x: -0.00077432266, y: 0.0067936, z: -0.11828643}
+  m_Size: {x: 0.10234151, y: 0.06525838, z: 0.19221939}
+  m_Center: {x: -0.0032085187, y: 0.006793599, z: -0.142646}
 --- !u!114 &1842466962611855344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -902,7 +1009,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshRenderer: {fileID: 349616710775866243}
-  poser: {fileID: 4489352951056933383}
+  leftHandPoser: {fileID: 1481841501}
+  rightHandPoser: {fileID: 4489352951056933383}
   speed: 16
 --- !u!114 &1842466962611855345
 MonoBehaviour:
@@ -919,7 +1027,7 @@ MonoBehaviour:
   AllowMultiplayerSwap: 0
   GrabType: 0
   TrackingType: 0
-  HoldType: 1
+  HoldType: 2
   GrabControl: 0
   OverrideGrabTrigger: 0
   GrabTrigger: 0
@@ -1000,8 +1108,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1842466962611855344}
         m_TargetAssemblyTypeName: OxygenMaskBagSqueezeManager, Assembly-CSharp
-        m_MethodName: set_isGrabbed
-        m_Mode: 6
+        m_MethodName: Grabbed
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1015,8 +1123,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1842466962611855344}
         m_TargetAssemblyTypeName: OxygenMaskBagSqueezeManager, Assembly-CSharp
-        m_MethodName: set_isGrabbed
-        m_Mode: 6
+        m_MethodName: Released
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1039,6 +1147,5 @@ MonoBehaviour:
   Interacted:
     m_PersistentCalls:
       m_Calls: []
-  shouldSwitchColliders: 1
-  switchColliders:
-  - {fileID: 1842466962611855342}
+  shouldSwitchColliders: 0
+  switchColliders: []
