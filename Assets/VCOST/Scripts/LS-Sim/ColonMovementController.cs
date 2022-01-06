@@ -113,7 +113,7 @@ public class ColonMovementController : MonoBehaviour
         insertionDepth[0] = globalOperators.m_insertDepth[0];
         insertionDepth[1] = globalOperators.m_insertDepth[1];
 
-        if (!LinearStaplerTool.instance.usingRawSensorControl)
+        //if (!LinearStaplerTool.instance.usingRawSensorControl)
         {
             MainUpdatingLoop();
         }
@@ -323,7 +323,7 @@ public class ColonMovementController : MonoBehaviour
             // If colon is currently controlled by forceps and the stapler inserted over 25% of total insertion depth, switch control over to stapler
             if (linearStaplerTool.simStates < 2 && globalOperators.m_bInsert[0] > 0 && staplerColonLayerDetectors[globalOperators.m_bInsert[0] - 1].touchingLayerAverage >= 1.3 && updateMode[0] == 1)
             {
-                ChangeFollowStates(0, 2, false, true, globalOperators.m_bInsert[0] == 1 ? linearStaplerTool.topTracker : linearStaplerTool.bottomTracker);
+                //ChangeFollowStates(0, 2, false, true, globalOperators.m_bInsert[0] == 1 ? linearStaplerTool.topTracker : linearStaplerTool.bottomTracker);
             }
 
             // If colon is currently controlled by the stapler and stapler insertion is below 18% of total insertion depth, switch control over to forceps or slip out
@@ -346,7 +346,7 @@ public class ColonMovementController : MonoBehaviour
             // If colon is currently controlled by forceps and the stapler inserted over 25% of total insertion depth, switch control over to stapler
             if (linearStaplerTool.simStates < 2 && globalOperators.m_bInsert[1] > 0 && staplerColonLayerDetectors[globalOperators.m_bInsert[1] - 1].touchingLayerAverage >= 1.3 && updateMode[1] == 1)
             {
-                ChangeFollowStates(1, 2, false, true, globalOperators.m_bInsert[1] == 1 ? linearStaplerTool.topTracker : linearStaplerTool.bottomTracker);
+                //ChangeFollowStates(1, 2, false, true, globalOperators.m_bInsert[1] == 1 ? linearStaplerTool.topTracker : linearStaplerTool.bottomTracker);
             }
 
             // If colon is currently controlled by the stapler and stapler insertion is below 18% of total insertion depth, switch control over to forceps
@@ -391,6 +391,16 @@ public class ColonMovementController : MonoBehaviour
     }
 
     /// <summary>
+    /// Check if colon is colliding with inserting linear stapler, if yes then stop it from following the motion
+    /// </summary>
+    /// <param name="colonSphereAnchorToCheck"></param>
+    /// <returns></returns>
+    public bool IsColonSphereCollidingStapler(int colonSphereAnchorToCheck)
+    {
+        return ColonStaplerJointManager.instance.colonJointAnchors[colonSphereAnchorToCheck].gameObject.activeInHierarchy;
+    }
+
+    /// <summary>
     /// 
     /// </summary>
     [ShowInInspector]
@@ -429,6 +439,11 @@ public class ColonMovementController : MonoBehaviour
         {
             for (int i = 0; i < colon0FrontSpheres.Count; i++)
             {
+                if (IsColonSphereCollidingStapler(i))
+                {
+                    continue;
+                }
+
                 Vector3 topFollowerDisplacement = splineFollowersTop0[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionTop[Mathf.FloorToInt(i / 20f)];
                 Vector3 bottomFollowerDisplacement = splineFollowersBottom0[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionBottom[Mathf.FloorToInt(i / 20f)];
 
@@ -439,6 +454,11 @@ public class ColonMovementController : MonoBehaviour
         {
             for (int i = 0; i < colon1FrontSpheres.Count; i++)
             {
+                if (IsColonSphereCollidingStapler(i + 400)) // Colon1 start from index 400
+                {
+                    continue;
+                }
+
                 Vector3 topFollowerDisplacement = splineFollowersTop1[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionTop[Mathf.FloorToInt(i / 20f)];
                 Vector3 bottomFollowerDisplacement = splineFollowersBottom1[Mathf.FloorToInt(i / 20f)].position - splineFollowersStartPositionBottom[Mathf.FloorToInt(i / 20f)];
 

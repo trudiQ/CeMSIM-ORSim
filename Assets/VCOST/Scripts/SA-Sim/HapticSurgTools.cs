@@ -1082,7 +1082,7 @@ public class HapticSurgTools : MonoBehaviour
         int colon = int.Parse(body.gameObject.name[7].ToString());
         // Don't let surgeon lift colon if grab on further layers
         int layer = int.Parse(body.gameObject.name[9].ToString());
-        if (!LinearStaplerTool.instance.usingRawSensorControl && gOperators.m_LRCornerCutIdices[colon][1 - colon]) // Temp, disable forceps lifting if testing using raw stapler input
+        //if (!LinearStaplerTool.instance.usingRawSensorControl && gOperators.m_LRCornerCutIdices[colon][1 - colon]) // Temp, disable forceps lifting if testing using raw stapler input
         {
             // If grabbing first 2 layers
             if (LinearStaplerTool.instance.simStates < 2 && body.gameObject.name.Contains("sphere_"))
