@@ -13,10 +13,15 @@ public class HVRInteractable : HVRGrabbable
     public VRInteractableEvent Interacted = new VRInteractableEvent();
     public VRGrabberEvent ForceInteracted = new VRGrabberEvent();
 
+    public bool shouldSwitchColliders = false;
+    public List<Collider> switchColliders;
+
     protected override void OnGrabbed(HVRGrabberBase grabber)
     {
-        if (grabbable)
+        if (grabbable) {
             base.OnGrabbed(grabber);
+            SwithCollider(false);
+        }
         else if (grabber.IsHandGrabber)
         {
             ForceRelease();
@@ -26,6 +31,17 @@ public class HVRInteractable : HVRGrabbable
         {
             ForceRelease();
             ForceInteracted.Invoke(grabber, this);
+        }
+    }
+
+	protected override void OnReleased(HVRGrabberBase grabber) {
+		base.OnReleased(grabber);
+        SwithCollider(true);
+    }
+
+    private void SwithCollider(bool enabled) {
+        foreach (Collider col in switchColliders) {
+            col.enabled = enabled;
         }
     }
 }
