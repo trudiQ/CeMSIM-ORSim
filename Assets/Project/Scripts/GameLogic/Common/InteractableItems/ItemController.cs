@@ -91,14 +91,16 @@ namespace CEMSIM
 
             public void GainOwnership()
             {
-                ClientItemManager.instance.GainOwnership(itemId);
+                if(ClientItemManager.instance != null)
+                    ClientItemManager.instance.GainOwnership(itemId);
                 //Debug.Log($"Grabbing item {id}");
                 ItemPickupTrigger(toolType, itemId);
             }
 
             public void DropOwnership()
             {
-                ClientItemManager.instance.DropOwnership(itemId, true);
+                if (ClientItemManager.instance != null)
+                    ClientItemManager.instance.DropOwnership(itemId, true);
                 //Debug.Log($"Release item {id}");
                 ItemDropoffTrigger(toolType, itemId);
             }
