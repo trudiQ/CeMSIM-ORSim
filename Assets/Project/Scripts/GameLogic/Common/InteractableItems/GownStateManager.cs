@@ -1,29 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using CEMSIM.GameLogic;
 using CEMSIM.Network;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 
 namespace CEMSIM
 {
     namespace GameLogic
     {
-        public class ScalpelStateManager : ItemStateManager
+        public class GownStateManager : ItemStateManager
         {
-            // State of scalpel, e.g. no blood
-            public enum ScalpelStateList
+            public enum GownStateList
             {
                 defaultState = 0,
             }
 
-            private ScalpelStateList state;
-            public static event Action<int, ScalpelStateList> onScalpelStateUpdateTrigger;
+            private GownStateList state;
 
-            public ScalpelStateManager()
+            public static event Action<int, GownStateList> onGownStateUpdateTrigger;
+
+            public GownStateManager()
             {
-                toolCategory = ToolType.scalpel;
-                UpdateState(ScalpelStateList.defaultState); // 
-                //Debug.Log($"Initialize {toolCategory} - {state}");
+                toolCategory = ToolType.catheter;
+                UpdateState(GownStateList.defaultState); // 
+
+                Debug.Log($"Initialize {toolCategory} - {state}");
 
             }
 
@@ -43,19 +46,19 @@ namespace CEMSIM
             public override void DigestStateMessage(Packet _remainderPacket)
             {
                 int _specId = _remainderPacket.ReadInt32();
-                if (!Enum.IsDefined(typeof(ScalpelStateList), _specId))
+                if (!Enum.IsDefined(typeof(GownStateList), _specId))
                 {
                     Debug.LogWarning($"{toolCategory} does't have state {_specId}. State ignored");
                     return;
                 }
 
-                UpdateState((ScalpelStateList)_specId);
+                UpdateState((GownStateList)_specId);
             }
 
             /// <summary>
             /// Update state
             /// </summary>
-            public void UpdateState(ScalpelStateList _newState)
+            public void UpdateState(GownStateList _newState)
             {
                 state = _newState;
                 ItemStateUpdateTrigger(itemId, state);
@@ -63,11 +66,11 @@ namespace CEMSIM
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, ScalpelStateList _state)
+            public static void ItemStateUpdateTrigger(int _itemId, GownStateList _state)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
-                if (onScalpelStateUpdateTrigger != null)
-                    onScalpelStateUpdateTrigger(_itemId, _state);
+                if (onGownStateUpdateTrigger != null)
+                    onGownStateUpdateTrigger(_itemId, _state);
             }
             #endregion
         }

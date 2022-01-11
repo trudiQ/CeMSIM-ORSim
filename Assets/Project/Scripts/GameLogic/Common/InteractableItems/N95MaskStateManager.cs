@@ -1,29 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using CEMSIM.GameLogic;
 using CEMSIM.Network;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 
 namespace CEMSIM
 {
     namespace GameLogic
     {
-        public class ScalpelStateManager : ItemStateManager
+        public class N95MaskStateManager : ItemStateManager
         {
-            // State of scalpel, e.g. no blood
-            public enum ScalpelStateList
+
+            public enum N95MaskStateList
             {
                 defaultState = 0,
             }
 
-            private ScalpelStateList state;
-            public static event Action<int, ScalpelStateList> onScalpelStateUpdateTrigger;
+            private N95MaskStateList state;
+            public static event Action<int, N95MaskStateList> onN95MaskStateUpdateTrigger;
 
-            public ScalpelStateManager()
+            public N95MaskStateManager()
             {
-                toolCategory = ToolType.scalpel;
-                UpdateState(ScalpelStateList.defaultState); // 
-                //Debug.Log($"Initialize {toolCategory} - {state}");
+                toolCategory = ToolType.N95Mask;
+                UpdateState(N95MaskStateList.defaultState); // 
+                                                            //Debug.Log($"Initialize {toolCategory} - {state}");
 
             }
 
@@ -43,19 +45,19 @@ namespace CEMSIM
             public override void DigestStateMessage(Packet _remainderPacket)
             {
                 int _specId = _remainderPacket.ReadInt32();
-                if (!Enum.IsDefined(typeof(ScalpelStateList), _specId))
+                if (!Enum.IsDefined(typeof(N95MaskStateList), _specId))
                 {
                     Debug.LogWarning($"{toolCategory} does't have state {_specId}. State ignored");
                     return;
                 }
 
-                UpdateState((ScalpelStateList)_specId);
+                UpdateState((N95MaskStateList)_specId);
             }
 
             /// <summary>
             /// Update state
             /// </summary>
-            public void UpdateState(ScalpelStateList _newState)
+            public void UpdateState(N95MaskStateList _newState)
             {
                 state = _newState;
                 ItemStateUpdateTrigger(itemId, state);
@@ -63,11 +65,11 @@ namespace CEMSIM
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, ScalpelStateList _state)
+            public static void ItemStateUpdateTrigger(int _itemId, N95MaskStateList _state)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
-                if (onScalpelStateUpdateTrigger != null)
-                    onScalpelStateUpdateTrigger(_itemId, _state);
+                if (onN95MaskStateUpdateTrigger != null)
+                    onN95MaskStateUpdateTrigger(_itemId, _state);
             }
             #endregion
         }

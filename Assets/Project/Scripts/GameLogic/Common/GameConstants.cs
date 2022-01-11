@@ -19,7 +19,13 @@ namespace CEMSIM
         {
             simpleTool=0,       // a tool doesn't have any difformation behavior
             scalpel,
-            decompressionNeedle,
+            catheter,
+            N95Mask,
+            boufant,
+            visor,
+            shoeCover,
+            gown,
+            glove,
         }
     }
 }

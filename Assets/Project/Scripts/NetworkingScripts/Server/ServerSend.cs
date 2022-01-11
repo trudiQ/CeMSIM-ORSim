@@ -251,7 +251,7 @@ namespace CEMSIM
                 // ServerItemManager.cs calls this method to multicase an item's position
                 using (Packet _packet = new Packet((int)ServerPackets.itemState))
                 {
-                    _packet.Write(_itemCon.id);
+                    _packet.Write(_itemCon.itemId);
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);
                     _packet.Write(_itemCon.GetItemState());
@@ -270,7 +270,7 @@ namespace CEMSIM
                 using (Packet _packet = new Packet((int)ServerPackets.itemList))
                 {
                     _packet.Write(ServerItemManager.instance.GetItemNum());     // different from BroadcastItemState
-                    _packet.Write(_itemCon.id);
+                    _packet.Write(_itemCon.itemId);
                     _packet.Write((int)_itemCon.toolType);                      // different from BroadcastItemState
                     //_packet.Write(_itemCon.ownerId);                          // the newly spawned user cannot hold an item. So no need to transmit this value
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using CEMSIM.GameLogic;
 using CEMSIM.Network;
 using CEMSIM.VoiceChat;
 using Dissonance.Audio.Playback;
@@ -15,8 +16,9 @@ namespace CEMSIM
         {
 
             public static LogManager instance;
-            [Tooltip("Period to store events to log files (seconds)")]
             public bool isClientSide = false;
+
+            [Tooltip("Period to store events to log files (seconds)")]
             public int StorageInterval = 1;
             public string LogDir = "Logs/";
             public DateTime SystemStartTime = DateTime.UtcNow;
@@ -54,6 +56,7 @@ namespace CEMSIM
                 registerPlayerEvent();
                 registerVoiceChatEvent();
                 registerEnvironmentStateEvent();
+                registerItemEvent();
 
                 InitializeGeneralLog();
                 InitializePlayerLog();
@@ -234,6 +237,28 @@ namespace CEMSIM
                 else
                 {
                     ServerNetworkManager.onRoomLightBtnTrigger += RoomLightEvent.GenRoomLightEvent;
+                    ServerNetworkManager.onSinkOnOffTrigger += SinkEvent.GenSinkEvent;
+                }
+            }
+
+            private void registerItemEvent()
+            {
+                if (isClientSide)
+                {
+                    ItemController.onItemPickupTrigger += ItemBaseEvent.GenItemPickup;
+                    ItemController.onItemDropoffTrigger += ItemBaseEvent.GenItemDropdown;
+                    // Item Specific State Update
+                    ScalpelStateManager.onScalpelStateUpdateTrigger += ScalpelEvent.GenScalpelStateUpdate;
+                    CatheterStateManager.onCatheterStateUpdateTrigger += CatheterEvent.GenCatheterStateUpdate;
+                    N95MaskStateManager.onN95MaskStateUpdateTrigger += N95MaskEvent.GenN95MaskStateUpdate;
+                    BoufantStateManager.onN95MaskStateUpdateTrigger += BouffantEvent.GenBoufantStateUpdate;
+                    VisorStateManager.onVisorStateUpdateTrigger += VisorEvent.GenVisorStateUpdate;
+                    ShoeCoverStateManager.onShoeCoverOnUpdateTrigger += ShoeCoverEvent.GenShoeCoverStateUpdate;
+                    GownStateManager.onGownStateUpdateTrigger += GownEvent.GenGownStateUpdate;
+                    GloveStateManager.onGloveWearStateTrigger += GloveEvent.GenGloveWearStateUpdate;
+                }
+                else
+                {
                 }
             }
 

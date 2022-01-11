@@ -17,6 +17,7 @@ namespace CEMSIM
 
             // event system
             public static event Action<bool> onRoomLightBtnTrigger;
+            public static event Action<bool> onSinkOnOffTrigger;
 
             [Header("Player Prefabs")]
             [Tooltip("The order of the prefabs should match the enumation order of Roles in GameConstants.cs")]
@@ -226,6 +227,12 @@ namespace CEMSIM
             {
                 if (onRoomLightBtnTrigger != null)
                     onRoomLightBtnTrigger(_btnState);
+            }
+
+            public static void SinkOnOffTrigger(bool _sinkState)
+            {
+                if (onSinkOnOffTrigger != null)
+                    onSinkOnOffTrigger(_sinkState);
             }
             #endregion
 

@@ -1,30 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using CEMSIM.GameLogic;
 using CEMSIM.Network;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 
 namespace CEMSIM
 {
     namespace GameLogic
     {
-        public class ScalpelStateManager : ItemStateManager
+        public class ShoeCoverStateManager : ItemStateManager
         {
-            // State of scalpel, e.g. no blood
-            public enum ScalpelStateList
+            public enum ShoeCoverOnFootList
             {
-                defaultState = 0,
+                noneDetermined = 0,
+                left,
+                right
             }
 
-            private ScalpelStateList state;
-            public static event Action<int, ScalpelStateList> onScalpelStateUpdateTrigger;
+            private ShoeCoverOnFootList state;
+            public static event Action<int, ShoeCoverOnFootList> onShoeCoverOnUpdateTrigger;
 
-            public ScalpelStateManager()
+            public ShoeCoverStateManager()
             {
-                toolCategory = ToolType.scalpel;
-                UpdateState(ScalpelStateList.defaultState); // 
-                //Debug.Log($"Initialize {toolCategory} - {state}");
-
+                toolCategory = ToolType.N95Mask;
+                UpdateState(ShoeCoverOnFootList.noneDetermined); // 
+                                                          //Debug.Log($"Initialize {toolCategory} - {state}");
             }
 
             public override void initializeItem(int _id)
@@ -43,19 +45,19 @@ namespace CEMSIM
             public override void DigestStateMessage(Packet _remainderPacket)
             {
                 int _specId = _remainderPacket.ReadInt32();
-                if (!Enum.IsDefined(typeof(ScalpelStateList), _specId))
+                if (!Enum.IsDefined(typeof(ShoeCoverOnFootList), _specId))
                 {
                     Debug.LogWarning($"{toolCategory} does't have state {_specId}. State ignored");
                     return;
                 }
 
-                UpdateState((ScalpelStateList)_specId);
+                UpdateState((ShoeCoverOnFootList)_specId);
             }
 
             /// <summary>
             /// Update state
             /// </summary>
-            public void UpdateState(ScalpelStateList _newState)
+            public void UpdateState(ShoeCoverOnFootList _newState)
             {
                 state = _newState;
                 ItemStateUpdateTrigger(itemId, state);
@@ -63,11 +65,11 @@ namespace CEMSIM
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, ScalpelStateList _state)
+            public static void ItemStateUpdateTrigger(int _itemId, ShoeCoverOnFootList _state)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
-                if (onScalpelStateUpdateTrigger != null)
-                    onScalpelStateUpdateTrigger(_itemId, _state);
+                if (onShoeCoverOnUpdateTrigger != null)
+                    onShoeCoverOnUpdateTrigger(_itemId, _state);
             }
             #endregion
         }
