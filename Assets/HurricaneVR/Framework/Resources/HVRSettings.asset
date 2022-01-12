@@ -17,17 +17,16 @@ MonoBehaviour:
   LocalResourcesDirectory: Assets\HurricaneVR\Framework\Resources\
   LocalReferencePoseDirectory: Assets\HurricaneVR\Framework\Resources\ReferencePoses\
   LocalRuntimePosesDirectory: Assets\HurricaneVR\Framework\Resources\RuntimePoses\
-  LocalPosesDirectory: 
+  LocalPosesDirectory: Assets/Project/Models/MedicalStaff
   AutoApplyGrabbableLayer: 1
-  LeftHand: {fileID: 7050223169496405804, guid: bb680487e200bb1458405debc0da3606,
+  LeftHand: {fileID: 4058951749256491028, guid: c7e86794e5829c048820a50c53979a7a,
     type: 3}
-  RightHand: {fileID: 1575721949135083507, guid: d9420cd6b732c874e805d2daa66f8409,
+  RightHand: {fileID: 2786741767472878518, guid: 85650298395de6b40aebae289bdd5170,
     type: 3}
-  InverseKinematics: 1
-  FullBody: {fileID: 3389278162299881995, guid: fc0375487348d9b41896726146ffc2df,
-    type: 3}
+  InverseKinematics: 0
+  FullBody: {fileID: 0}
   HandPoseHandleOffset: {x: 0, y: 0.08, z: 0}
-  OpenHandPose: {fileID: 0}
+  OpenHandPose: {fileID: 11400000, guid: f791a45e77b92354eb8ebbbcd7761519, type: 2}
   PoserShowsOneFinger: 0
   ThumbCurlType: 0
   IndexCurlType: 0
@@ -42,7 +41,8 @@ MonoBehaviour:
   UseAttachedRigidBody: 0
   ComponentInParentFallback: 0
   LineGrabTriggerLoose: 0
-  AnimationParameters: []
+  AnimationParameters:
+  - handClose
   DefaultJointSettings: {fileID: 11400000, guid: d420bd8890e2c264eb9ec97c4963f6ce,
     type: 2}
   LineGrabSettings: {fileID: 11400000, guid: 203d545f2b6cc724aa3a0d6e4fafd082, type: 2}

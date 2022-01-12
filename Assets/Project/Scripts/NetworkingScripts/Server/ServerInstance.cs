@@ -21,6 +21,9 @@ namespace CEMSIM
             public delegate void PacketHandler(int _fromClient, Packet _packet);
             public static Dictionary<int, PacketHandler> packetHandlers;
 
+            public static string dissonancePlayerId; // the player id of a dummy dissonance client running at the server
+
+
             public static void Start(int _maxPlayers, int _port)
             {
                 maxPlayers = _maxPlayers;
@@ -121,7 +124,10 @@ namespace CEMSIM
                         {
                             // build up the connection
                             clients[_clientId].udp.Connect(_clientEndPoint);
-                            return;
+
+                            // // In the new system, the welcome packet is also a valid packet with proper head. The client also expects a welcome response packet.
+                            //return; 
+
                         }
 
                         // compare whether the packet is sent from a client we know
@@ -159,14 +165,24 @@ namespace CEMSIM
                 }
 
 
-                packetHandlers = new Dictionary<int, PacketHandler>
+                packetHandlers = new Dictionary<int, PacketHandler>()
                 {
+                    { (int)ClientPackets.invalidPacket, ServerHandle.InvalidPacketResponse},
+                    { (int)ClientPackets.welcome, ServerHandle.Welcome},
                     { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
+                    { (int)ClientPackets.welcomeUDP, ServerHandle.WelcomeUDP },
                     { (int)ClientPackets.pingTCP, ServerHandle.PingTCP},
                     { (int)ClientPackets.pingUDP, ServerHandle.PingUDP},
                     { (int)ClientPackets.spawnRequest, ServerHandle.SpawnRequest},
                     { (int)ClientPackets.playerDesktopMovement, ServerHandle.PlayerDesktopMovement},
                     { (int)ClientPackets.playerVRMovement, ServerHandle.PlayerVRMovement},
+                    { (int)ClientPackets.heartBeatDetectionTCP, ServerHandle.HeartBeatDetectionTCP},
+                    { (int)ClientPackets.heartBeatDetectionUDP, ServerHandle.HeartBeatDetectionUDP},
+                    { (int)ClientPackets.itemState, ServerHandle.ItemState},
+                    { (int)ClientPackets.itemOwnershipChange, ServerHandle.ItemOwnershipChange},
+                    { (int)ClientPackets.environmentState, ServerHandle.EnvironmentState},
+                    { (int)ClientPackets.voiceChatData, ServerHandle.VoiceChatData},
+                    { (int)ClientPackets.voiceChatPlayerId, ServerHandle.VoiceChatPlayerId},
                 };
 
                 Debug.Log("Initialized Server Data");
