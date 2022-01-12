@@ -280,7 +280,6 @@ GameObject:
   - component: {fileID: 364518689470124501}
   - component: {fileID: 967749669}
   - component: {fileID: 4943188802910584813}
-  - component: {fileID: 5742167842422251184}
   m_Layer: 0
   m_Name: InnerButton
   m_TagString: Untagged
@@ -540,9 +539,9 @@ MonoBehaviour:
   onButtonDown:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5742167842422251184}
-        m_TargetAssemblyTypeName: CEMSIM.GameLogic.RoomLightsOnOff, Assembly-CSharp
-        m_MethodName: SwitchActivation
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: LightController, Assembly-CSharp
+        m_MethodName: ToggleLights
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -555,31 +554,6 @@ MonoBehaviour:
   onButtonUp:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5742167842422251184
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6396212369312976515}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a82fbfc9b2986c440bda666aed44225f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  postProcessingVolume: {fileID: 0}
-  ceilingAreaLights: {fileID: 0}
-  ceilingPointLights: {fileID: 0}
-  ceilingLightsMesh: {fileID: 0}
-  surgicalLight01: {fileID: 0}
-  surgicalLight02: {fileID: 0}
-  ceilingLightsOnMaterial: {fileID: 0}
-  ceilingLightsOffMaterial: {fileID: 0}
-  surgicalLightsOnMaterial: {fileID: 2100000, guid: fa59d75d3179fbf429ac7df824e33ec1,
-    type: 2}
-  surgicalLightsOffMaterial: {fileID: 2100000, guid: 87535d4fb8f225440a5478f544035f83,
-    type: 2}
-  lightSurfaces: []
 --- !u!1 &8286415597205697860
 GameObject:
   m_ObjectHideFlags: 0
