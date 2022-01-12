@@ -15,7 +15,7 @@ namespace CEMSIM
             private GloveStateManager.GloveWearStateList wearState;
             private int quantity;               // number of layers of gloves
 
-            public GloveEvent(int _itemId, ItemEventType _action, GloveStateManager.GloveOnHandList _hand, GloveStateManager.GloveWearStateList _gloveWearState, int _quantity) : base(ToolType.glove, _itemId, _action)
+            public GloveEvent(int _itemId, ItemEventType _action, GloveStateManager.GloveOnHandList _hand, GloveStateManager.GloveWearStateList _gloveWearState, int _quantity, int _clientId) : base(ToolType.glove, _itemId, _action, _clientId)
             {
                 hand = _hand;
                 wearState = _gloveWearState;
@@ -56,9 +56,9 @@ namespace CEMSIM
                 return msg;
             }
 
-            public static void GenGloveWearStateUpdate(int _itemId, GloveStateManager.GloveOnHandList _hand, GloveStateManager.GloveWearStateList _gloveWearState, int _quantity)
+            public static void GenGloveWearStateUpdate(int _itemId, GloveStateManager.GloveOnHandList _hand, GloveStateManager.GloveWearStateList _gloveWearState, int _quantity, int _clientId)
             {
-                using (ItemBaseEvent e = new GloveEvent(_itemId, ItemEventType.StateUpdate, _hand, _gloveWearState, _quantity))
+                using (ItemBaseEvent e = new GloveEvent(_itemId, ItemEventType.StateUpdate, _hand, _gloveWearState, _quantity, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

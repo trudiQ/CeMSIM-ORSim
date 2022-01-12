@@ -20,7 +20,7 @@ namespace CEMSIM
             }
 
             private ShoeCoverOnFootList state;
-            public static event Action<int, ShoeCoverOnFootList> onShoeCoverOnUpdateTrigger;
+            public static event Action<int, ShoeCoverOnFootList, int> onShoeCoverOnUpdateTrigger;
 
             public ShoeCoverStateManager()
             {
@@ -60,16 +60,22 @@ namespace CEMSIM
             public void UpdateState(ShoeCoverOnFootList _newState)
             {
                 state = _newState;
-                ItemStateUpdateTrigger(itemId, state);
+                if (ClientItemManager.instance != null)
+                {
+                    ClientItemManager.instance.GainOwnership(itemId);
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
+                }
+                else
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
 
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, ShoeCoverOnFootList _state)
+            public static void ItemStateUpdateTrigger(int _itemId, ShoeCoverOnFootList _state, int _clientId)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onShoeCoverOnUpdateTrigger != null)
-                    onShoeCoverOnUpdateTrigger(_itemId, _state);
+                    onShoeCoverOnUpdateTrigger(_itemId, _state, _clientId);
             }
             #endregion
         }

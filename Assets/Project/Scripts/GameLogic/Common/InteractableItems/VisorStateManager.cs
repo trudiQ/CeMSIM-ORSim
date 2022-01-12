@@ -18,7 +18,7 @@ namespace CEMSIM
             }
 
             private VisorStateList state;
-            public static event Action<int, VisorStateList> onVisorStateUpdateTrigger;
+            public static event Action<int, VisorStateList, int> onVisorStateUpdateTrigger;
 
             public VisorStateManager()
             {
@@ -58,16 +58,22 @@ namespace CEMSIM
             public void UpdateState(VisorStateList _newState)
             {
                 state = _newState;
-                ItemStateUpdateTrigger(itemId, state);
+                if (ClientItemManager.instance != null)
+                {
+                    ClientItemManager.instance.GainOwnership(itemId);
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
+                }
+                else
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
 
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, VisorStateList _state)
+            public static void ItemStateUpdateTrigger(int _itemId, VisorStateList _state, int _clientId)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onVisorStateUpdateTrigger != null)
-                    onVisorStateUpdateTrigger(_itemId, _state);
+                    onVisorStateUpdateTrigger(_itemId, _state, _clientId);
             }
             #endregion
         }

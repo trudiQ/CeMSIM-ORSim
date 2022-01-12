@@ -19,7 +19,7 @@ namespace CEMSIM
 
             private GownStateList state;
 
-            public static event Action<int, GownStateList> onGownStateUpdateTrigger;
+            public static event Action<int, GownStateList, int> onGownStateUpdateTrigger;
 
             public GownStateManager()
             {
@@ -61,16 +61,22 @@ namespace CEMSIM
             public void UpdateState(GownStateList _newState)
             {
                 state = _newState;
-                ItemStateUpdateTrigger(itemId, state);
+                if (ClientItemManager.instance != null)
+                {
+                    ClientItemManager.instance.GainOwnership(itemId);
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
+                }
+                else
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
 
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, GownStateList _state)
+            public static void ItemStateUpdateTrigger(int _itemId, GownStateList _state, int _clientId)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onGownStateUpdateTrigger != null)
-                    onGownStateUpdateTrigger(_itemId, _state);
+                    onGownStateUpdateTrigger(_itemId, _state, _clientId);
             }
             #endregion
         }

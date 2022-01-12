@@ -241,25 +241,22 @@ namespace CEMSIM
                 }
             }
 
+            /// <summary>
+            /// This function should work 
+            /// </summary>
             private void registerItemEvent()
             {
-                if (isClientSide)
-                {
-                    ItemController.onItemPickupTrigger += ItemBaseEvent.GenItemPickup;
-                    ItemController.onItemDropoffTrigger += ItemBaseEvent.GenItemDropdown;
-                    // Item Specific State Update
-                    ScalpelStateManager.onScalpelStateUpdateTrigger += ScalpelEvent.GenScalpelStateUpdate;
-                    CatheterStateManager.onCatheterStateUpdateTrigger += CatheterEvent.GenCatheterStateUpdate;
-                    N95MaskStateManager.onN95MaskStateUpdateTrigger += N95MaskEvent.GenN95MaskStateUpdate;
-                    BoufantStateManager.onN95MaskStateUpdateTrigger += BouffantEvent.GenBoufantStateUpdate;
-                    VisorStateManager.onVisorStateUpdateTrigger += VisorEvent.GenVisorStateUpdate;
-                    ShoeCoverStateManager.onShoeCoverOnUpdateTrigger += ShoeCoverEvent.GenShoeCoverStateUpdate;
-                    GownStateManager.onGownStateUpdateTrigger += GownEvent.GenGownStateUpdate;
-                    GloveStateManager.onGloveWearStateTrigger += GloveEvent.GenGloveWearStateUpdate;
-                }
-                else
-                {
-                }
+                ItemController.onItemPickupTrigger += ItemBaseEvent.GenItemPickup;
+                ItemController.onItemDropoffTrigger += ItemBaseEvent.GenItemDropdown;
+                // Item Specific State Update
+                ScalpelStateManager.onScalpelStateUpdateTrigger += ScalpelEvent.GenScalpelStateUpdate;
+                CatheterStateManager.onCatheterStateUpdateTrigger += CatheterEvent.GenCatheterStateUpdate;
+                N95MaskStateManager.onN95MaskStateUpdateTrigger += N95MaskEvent.GenN95MaskStateUpdate;
+                BoufantStateManager.onN95MaskStateUpdateTrigger += BouffantEvent.GenBoufantStateUpdate;
+                VisorStateManager.onVisorStateUpdateTrigger += VisorEvent.GenVisorStateUpdate;
+                ShoeCoverStateManager.onShoeCoverOnUpdateTrigger += ShoeCoverEvent.GenShoeCoverStateUpdate;
+                GownStateManager.onGownStateUpdateTrigger += GownEvent.GenGownStateUpdate;
+                GloveStateManager.onGloveWearStateTrigger += GloveEvent.GenGloveWearStateUpdate;
             }
 
             #endregion

@@ -13,7 +13,7 @@ namespace CEMSIM
             ScalpelStateManager.ScalpelStateList scalpelState;
 
             // Currently, the scalpel has no state, so this is a dummy event
-            public ScalpelEvent(int _itemId, ItemEventType _action, ScalpelStateManager.ScalpelStateList _scalpelState) : base(ToolType.scalpel, _itemId, _action)
+            public ScalpelEvent(int _itemId, ItemEventType _action, ScalpelStateManager.ScalpelStateList _scalpelState, int _clientId) : base(ToolType.scalpel, _itemId, _action, _clientId)
             {
                 scalpelState = _scalpelState;
             }
@@ -50,9 +50,9 @@ namespace CEMSIM
                 return msg;
             }
 
-            public static void GenScalpelStateUpdate(int _itemId, ScalpelStateManager.ScalpelStateList _scalpelState)
+            public static void GenScalpelStateUpdate(int _itemId, ScalpelStateManager.ScalpelStateList _scalpelState, int _clientId)
             {
-                using (ItemBaseEvent e = new ScalpelEvent(_itemId, ItemEventType.StateUpdate, _scalpelState))
+                using (ItemBaseEvent e = new ScalpelEvent(_itemId, ItemEventType.StateUpdate, _scalpelState, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

@@ -11,7 +11,7 @@ namespace CEMSIM
         {
             VisorStateManager.VisorStateList visorState;
 
-            public VisorEvent(int _itemId, ItemEventType _action, VisorStateManager.VisorStateList _visorState) : base(ToolType.visor, _itemId, _action)
+            public VisorEvent(int _itemId, ItemEventType _action, VisorStateManager.VisorStateList _visorState, int _clientId) : base(ToolType.visor, _itemId, _action, _clientId)
             {
                 visorState = _visorState;
             }
@@ -48,9 +48,9 @@ namespace CEMSIM
                 return msg;
             }
 
-            public static void GenVisorStateUpdate(int _itemId, VisorStateManager.VisorStateList _visorState)
+            public static void GenVisorStateUpdate(int _itemId, VisorStateManager.VisorStateList _visorState, int _clientId)
             {
-                using (ItemBaseEvent e = new VisorEvent(_itemId, ItemEventType.StateUpdate, _visorState))
+                using (ItemBaseEvent e = new VisorEvent(_itemId, ItemEventType.StateUpdate, _visorState, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

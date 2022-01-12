@@ -22,8 +22,8 @@ namespace CEMSIM
             private ItemStateManager itemStateManager; // pointed to the specific controller
 
             // event system
-            public static event Action<ToolType, int> onItemPickupTrigger;
-            public static event Action<ToolType, int> onItemDropoffTrigger;
+            public static event Action<ToolType, int, int> onItemPickupTrigger;
+            public static event Action<ToolType, int, int> onItemDropoffTrigger;
 
             private void Awake()
             {
@@ -91,35 +91,41 @@ namespace CEMSIM
 
             public void GainOwnership()
             {
-                if(ClientItemManager.instance != null)
+                if (ClientItemManager.instance != null)
+                {
                     ClientItemManager.instance.GainOwnership(itemId);
-                //Debug.Log($"Grabbing item {id}");
-                ItemPickupTrigger(toolType, itemId);
+                    ItemPickupTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
+                }
+                else
+                    ItemPickupTrigger(toolType, itemId, ClientInstance.instance.myId);
             }
 
             public void DropOwnership()
             {
                 if (ClientItemManager.instance != null)
+                {
                     ClientItemManager.instance.DropOwnership(itemId, true);
-                //Debug.Log($"Release item {id}");
-                ItemDropoffTrigger(toolType, itemId);
+                    ItemDropoffTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
+                }
+                else
+                    ItemDropoffTrigger(toolType, itemId, ClientInstance.instance.myId);
             }
 
 
 
             #region
-            public static void ItemPickupTrigger(ToolType _toolType, int _itemId)
+            public static void ItemPickupTrigger(ToolType _toolType, int _itemId, int _clientId)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onItemPickupTrigger != null)
-                    onItemPickupTrigger(_toolType, _itemId);
+                    onItemPickupTrigger(_toolType, _itemId, _clientId);
             }
 
-            public static void ItemDropoffTrigger(ToolType _toolType, int _itemId)
+            public static void ItemDropoffTrigger(ToolType _toolType, int _itemId, int _clientId)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onItemDropoffTrigger != null)
-                    onItemDropoffTrigger(_toolType, _itemId);
+                    onItemDropoffTrigger(_toolType, _itemId, _clientId);
             }
             #endregion
         }

@@ -12,7 +12,7 @@ namespace CEMSIM
         {
             N95MaskStateManager.N95MaskStateList n95MaskState;
 
-            public N95MaskEvent(int _itemId, ItemEventType _action, N95MaskStateManager.N95MaskStateList _n95MaskState) : base(ToolType.N95Mask, _itemId, _action)
+            public N95MaskEvent(int _itemId, ItemEventType _action, N95MaskStateManager.N95MaskStateList _n95MaskState, int _clientId) : base(ToolType.N95Mask, _itemId, _action, _clientId)
             {
                 n95MaskState = _n95MaskState;
             }
@@ -49,9 +49,9 @@ namespace CEMSIM
                 return msg;
             }
 
-            public static void GenN95MaskStateUpdate(int _itemId, N95MaskStateManager.N95MaskStateList _n95MaskState)
+            public static void GenN95MaskStateUpdate(int _itemId, N95MaskStateManager.N95MaskStateList _n95MaskState, int _clientId)
             {
-                using (ItemBaseEvent e = new N95MaskEvent(_itemId, ItemEventType.StateUpdate, _n95MaskState))
+                using (ItemBaseEvent e = new N95MaskEvent(_itemId, ItemEventType.StateUpdate, _n95MaskState, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

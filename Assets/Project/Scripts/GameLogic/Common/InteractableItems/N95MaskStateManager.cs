@@ -19,7 +19,7 @@ namespace CEMSIM
             }
 
             private N95MaskStateList state;
-            public static event Action<int, N95MaskStateList> onN95MaskStateUpdateTrigger;
+            public static event Action<int, N95MaskStateList, int> onN95MaskStateUpdateTrigger;
 
             public N95MaskStateManager()
             {
@@ -60,16 +60,22 @@ namespace CEMSIM
             public void UpdateState(N95MaskStateList _newState)
             {
                 state = _newState;
-                ItemStateUpdateTrigger(itemId, state);
+                if (ClientItemManager.instance != null)
+                {
+                    ClientItemManager.instance.GainOwnership(itemId);
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
+                }
+                else
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
 
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, N95MaskStateList _state)
+            public static void ItemStateUpdateTrigger(int _itemId, N95MaskStateList _state, int _clientId)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onN95MaskStateUpdateTrigger != null)
-                    onN95MaskStateUpdateTrigger(_itemId, _state);
+                    onN95MaskStateUpdateTrigger(_itemId, _state, _clientId);
             }
             #endregion
         }

@@ -11,7 +11,7 @@ namespace CEMSIM
         {
             ShoeCoverStateManager.ShoeCoverOnFootList showCoverState;
 
-            public ShoeCoverEvent(int _itemId, ItemEventType _action, ShoeCoverStateManager.ShoeCoverOnFootList _showCoverState) : base(ToolType.shoeCover, _itemId, _action)
+            public ShoeCoverEvent(int _itemId, ItemEventType _action, ShoeCoverStateManager.ShoeCoverOnFootList _showCoverState, int _clientId) : base(ToolType.shoeCover, _itemId, _action, _clientId)
             {
                 showCoverState = _showCoverState;
             }
@@ -48,9 +48,9 @@ namespace CEMSIM
                 return msg;
             }
 
-            public static void GenShoeCoverStateUpdate(int _itemId, ShoeCoverStateManager.ShoeCoverOnFootList _showCoverState)
+            public static void GenShoeCoverStateUpdate(int _itemId, ShoeCoverStateManager.ShoeCoverOnFootList _showCoverState, int _clientId)
             {
-                using (ItemBaseEvent e = new ShoeCoverEvent(_itemId, ItemEventType.StateUpdate, _showCoverState))
+                using (ItemBaseEvent e = new ShoeCoverEvent(_itemId, ItemEventType.StateUpdate, _showCoverState, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

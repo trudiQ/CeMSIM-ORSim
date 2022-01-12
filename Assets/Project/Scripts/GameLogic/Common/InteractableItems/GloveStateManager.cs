@@ -30,7 +30,7 @@ namespace CEMSIM
             private GloveWearStateList wearState;
             private int quantity;
 
-            public static event Action<int, GloveOnHandList, GloveWearStateList, int> onGloveWearStateTrigger;
+            public static event Action<int, GloveOnHandList, GloveWearStateList, int, int> onGloveWearStateTrigger;
 
             public GloveStateManager()
             {
@@ -84,17 +84,23 @@ namespace CEMSIM
                 wearState = _wearState;
                 quantity = _quantity;
 
-                GloveWearStateTrigger(itemId, hand, wearState, quantity);
+                if (ClientItemManager.instance != null)
+                {
+                    ClientItemManager.instance.GainOwnership(itemId);
+                    GloveWearStateTrigger(itemId, hand, wearState, quantity, GameConstants.SINGLE_PLAYER_CLIENTID);
+                }
+                else
+                    GloveWearStateTrigger(itemId, hand, wearState, quantity, ClientInstance.instance.myId);
 
             }
 
             #region Event System
 
-            public static void GloveWearStateTrigger(int _itemId, GloveOnHandList _hand, GloveWearStateList _wearState, int _quantity)
+            public static void GloveWearStateTrigger(int _itemId, GloveOnHandList _hand, GloveWearStateList _wearState, int _quantity, int _clientId)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onGloveWearStateTrigger != null)
-                    onGloveWearStateTrigger(_itemId, _hand, _wearState, _quantity);
+                    onGloveWearStateTrigger(_itemId, _hand, _wearState, _quantity, _clientId);
             }
             #endregion
         }

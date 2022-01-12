@@ -11,7 +11,7 @@ namespace CEMSIM
         {
             private CatheterStateManager.CatheterStateList catheterState;
 
-            public CatheterEvent(int _itemId, ItemEventType _action, CatheterStateManager.CatheterStateList _catheterState) : base(ToolType.catheter, _itemId, _action)
+            public CatheterEvent(int _itemId, ItemEventType _action, CatheterStateManager.CatheterStateList _catheterState, int _clientId) : base(ToolType.catheter, _itemId, _action, _clientId)
             {
                 catheterState = _catheterState;
             }
@@ -48,9 +48,9 @@ namespace CEMSIM
                 return msg;
             }
 
-            public static void GenCatheterStateUpdate(int _itemId, CatheterStateManager.CatheterStateList _catheterState)
+            public static void GenCatheterStateUpdate(int _itemId, CatheterStateManager.CatheterStateList _catheterState, int _clientId)
             {
-                using (ItemBaseEvent e = new CatheterEvent(_itemId, ItemEventType.StateUpdate, _catheterState))
+                using (ItemBaseEvent e = new CatheterEvent(_itemId, ItemEventType.StateUpdate, _catheterState, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

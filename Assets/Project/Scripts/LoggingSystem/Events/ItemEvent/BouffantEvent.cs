@@ -13,7 +13,7 @@ namespace CEMSIM
             // state related variables
             private BoufantStateManager.BoufantStateList boufantState;
 
-            public BouffantEvent(int _itemId, ItemEventType _action, BoufantStateManager.BoufantStateList _boufantState) : base(ToolType.boufant, _itemId, _action)
+            public BouffantEvent(int _itemId, ItemEventType _action, BoufantStateManager.BoufantStateList _boufantState, int _clientId) : base(ToolType.boufant, _itemId, _action, _clientId)
             {
                 boufantState = _boufantState;
             }
@@ -50,9 +50,9 @@ namespace CEMSIM
                 return msg;
             }
 
-            public static void GenBoufantStateUpdate(int _itemId, BoufantStateManager.BoufantStateList _boufantState)
+            public static void GenBoufantStateUpdate(int _itemId, BoufantStateManager.BoufantStateList _boufantState, int _clientId)
             {
-                using (ItemBaseEvent e = new BouffantEvent(_itemId, ItemEventType.StateUpdate, _boufantState))
+                using (ItemBaseEvent e = new BouffantEvent(_itemId, ItemEventType.StateUpdate, _boufantState, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

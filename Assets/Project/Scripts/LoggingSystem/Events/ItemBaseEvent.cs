@@ -22,12 +22,14 @@ namespace CEMSIM
             protected ItemEventType action;
             protected ToolType toolType;
             protected int itemId;
+            protected int clientId;
 
-            public ItemBaseEvent(ToolType _toolType, int _itemId, ItemEventType _action)
+            public ItemBaseEvent(ToolType _toolType, int _itemId, ItemEventType _action, int _clientId)
             {
                 toolType = _toolType;
                 itemId = _itemId;
                 action = (ItemEventType)_action;
+                clientId = _clientId;
             }
             public override string ToString()
             {
@@ -36,7 +38,7 @@ namespace CEMSIM
                 {
                     case ItemEventType.Pickup:
                     case ItemEventType.Dropdown:
-                        msg += $"{eventTime}: {toolType}, {itemId}, {action}";
+                        msg += $"{eventTime}: {clientId}, {toolType}, {itemId}, {action}";
                         break;
                     case ItemEventType.StateUpdate:
                         msg += "";
@@ -48,6 +50,7 @@ namespace CEMSIM
             public override string ToJson()
             {
                 string msg = JsonPrefix();
+                msg += JsonAddElement("Subject", clientId);
                 msg += JsonAddElement("ToolType", toolType.ToString());
                 msg += JsonAddElement("ItemId", itemId);
                 switch (action)
@@ -67,18 +70,18 @@ namespace CEMSIM
             #region generate events
 
 
-            public static void GenItemPickup(ToolType _toolType, int _itemId)
+            public static void GenItemPickup(ToolType _toolType, int _itemId, int _clientId)
             {
-                using (ItemBaseEvent e = new ItemBaseEvent(_toolType, _itemId, ItemEventType.Pickup))
+                using (ItemBaseEvent e = new ItemBaseEvent(_toolType, _itemId, ItemEventType.Pickup, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();
                 }
             }
 
-            public static void GenItemDropdown(ToolType _toolType, int _itemId)
+            public static void GenItemDropdown(ToolType _toolType, int _itemId, int _clientId)
             {
-                using (ItemBaseEvent e = new ItemBaseEvent(_toolType, _itemId, ItemEventType.Dropdown))
+                using (ItemBaseEvent e = new ItemBaseEvent(_toolType, _itemId, ItemEventType.Dropdown, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

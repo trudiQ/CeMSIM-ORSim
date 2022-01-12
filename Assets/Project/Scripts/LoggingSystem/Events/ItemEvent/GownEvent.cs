@@ -12,7 +12,7 @@ namespace CEMSIM
         {
             GownStateManager.GownStateList gownState;
 
-            public GownEvent(int _itemId, ItemEventType _action, GownStateManager.GownStateList _gownState) : base(ToolType.gown, _itemId, _action)
+            public GownEvent(int _itemId, ItemEventType _action, GownStateManager.GownStateList _gownState, int _clientId) : base(ToolType.gown, _itemId, _action, _clientId)
             {
                 gownState = _gownState;
             }
@@ -49,9 +49,9 @@ namespace CEMSIM
                 return msg;
             }
 
-            public static void GenGownStateUpdate(int _itemId, GownStateManager.GownStateList _gownState)
+            public static void GenGownStateUpdate(int _itemId, GownStateManager.GownStateList _gownState, int _clientId)
             {
-                using (ItemBaseEvent e = new GownEvent(_itemId, ItemEventType.StateUpdate, _gownState))
+                using (ItemBaseEvent e = new GownEvent(_itemId, ItemEventType.StateUpdate, _gownState, _clientId))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

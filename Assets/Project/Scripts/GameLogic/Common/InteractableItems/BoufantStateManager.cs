@@ -18,7 +18,7 @@ namespace CEMSIM
             }
 
             private BoufantStateList state;
-            public static event Action<int, BoufantStateList> onN95MaskStateUpdateTrigger;
+            public static event Action<int, BoufantStateList, int> onN95MaskStateUpdateTrigger;
 
             public BoufantStateManager()
             {
@@ -58,16 +58,22 @@ namespace CEMSIM
             public void UpdateState(BoufantStateList _newState)
             {
                 state = _newState;
-                ItemStateUpdateTrigger(itemId, state);
+                if (ClientItemManager.instance != null)
+                {
+                    ClientItemManager.instance.GainOwnership(itemId);
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
+                }
+                else
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
 
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, BoufantStateList _state)
+            public static void ItemStateUpdateTrigger(int _itemId, BoufantStateList _state, int _clientId)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onN95MaskStateUpdateTrigger != null)
-                    onN95MaskStateUpdateTrigger(_itemId, _state);
+                    onN95MaskStateUpdateTrigger(_itemId, _state, _clientId);
             }
             #endregion
         }
