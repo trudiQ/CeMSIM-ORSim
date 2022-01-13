@@ -17,7 +17,7 @@ namespace CEMSIM
             }
 
             private ScalpelStateList state;
-            public static event Action<int, ScalpelStateList> onScalpelStateUpdateTrigger;
+            public static event Action<int, ScalpelStateList, int> onScalpelStateUpdateTrigger;
 
             public ScalpelStateManager()
             {
@@ -58,16 +58,22 @@ namespace CEMSIM
             public void UpdateState(ScalpelStateList _newState)
             {
                 state = _newState;
-                ItemStateUpdateTrigger(itemId, state);
 
+                if (ClientItemManager.instance != null)
+                {
+                    ClientItemManager.instance.GainOwnership(itemId);
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
+                }
+                else
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, ScalpelStateList _state)
+            public static void ItemStateUpdateTrigger(int _itemId, ScalpelStateList _state, int _clientId)
             {
                 //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
                 if (onScalpelStateUpdateTrigger != null)
-                    onScalpelStateUpdateTrigger(_itemId, _state);
+                    onScalpelStateUpdateTrigger(_itemId, _state, _clientId);
             }
             #endregion
         }

@@ -64,10 +64,10 @@ namespace CEMSIM
                 if (ClientItemManager.instance != null)
                 {
                     ClientItemManager.instance.GainOwnership(itemId);
-                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
                 }
                 else
-                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
 
             }
 
