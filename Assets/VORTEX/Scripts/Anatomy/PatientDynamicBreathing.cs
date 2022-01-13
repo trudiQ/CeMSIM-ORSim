@@ -6,6 +6,7 @@ public class PatientDynamicBreathing : MonoBehaviour
 {
     private SkinnedMeshRenderer meshRenderer;
     public PulseDataNumberRenderer dataSource;
+    public int shapeKeyIndex;
 
     private float breath = 0f;
     private float inflation = 0;
@@ -59,7 +60,7 @@ public class PatientDynamicBreathing : MonoBehaviour
             breathingRate = 60/currentValue;
         }
 
-        Breathe(breathingRate, 100, 2);
+        Breathe(breathingRate, 100);
 
         //TODO (MH 5/21/2021): implement dynamic, asynchronous collapsed lung behaviors
         // if(ScenarioManager.Instance.pneumothoraxSeverity <= .1f)
@@ -81,7 +82,7 @@ public class PatientDynamicBreathing : MonoBehaviour
 
     }
 
-    public void Breathe(float breathDuration, float breatheMagnitude, int shapeKeyIndex)
+    public void Breathe(float breathDuration, float breatheMagnitude)
     {
         if(breath > 1 && mod == 1)
         {
