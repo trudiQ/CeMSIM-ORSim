@@ -94,10 +94,10 @@ namespace CEMSIM
                 if (ClientItemManager.instance != null)
                 {
                     ClientItemManager.instance.GainOwnership(itemId);
-                    ItemPickupTrigger(toolType, itemId, ClientInstance.instance.myId);
+                    ItemPickupTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
                 }
                 else
-                    ItemPickupTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
+                    ItemPickupTrigger(toolType, itemId, ClientInstance.instance.myId);
             }
 
             public void DropOwnership()
@@ -105,10 +105,10 @@ namespace CEMSIM
                 if (ClientItemManager.instance != null)
                 {
                     ClientItemManager.instance.DropOwnership(itemId, true);
-                    ItemDropoffTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
+                    ItemDropoffTrigger(toolType, itemId, ClientInstance.instance.myId);
                 }
                 else
-                    ItemDropoffTrigger(toolType, itemId, ClientInstance.instance.myId);
+                    ItemDropoffTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
             }
 
 
