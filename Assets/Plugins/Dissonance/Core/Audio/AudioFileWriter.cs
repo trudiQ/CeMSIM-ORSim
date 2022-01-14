@@ -3,6 +3,7 @@ using System.IO;
 using Dissonance.Threading;
 using JetBrains.Annotations;
 using NAudio.Wave;
+//using UnityEngine; // debug use only.
 
 namespace Dissonance.Audio
 {
@@ -25,6 +26,7 @@ namespace Dissonance.Audio
             if (!string.IsNullOrEmpty(directory))
                 Directory.CreateDirectory(directory);
 
+            //Debug.Log($"store audio data to file {directory} {filename}");
             _lock = new LockedValue<WaveFileWriter>(
                 new WaveFileWriter(File.Open(filename, FileMode.CreateNew), format)
             );

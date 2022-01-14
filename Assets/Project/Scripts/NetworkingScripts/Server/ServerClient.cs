@@ -7,6 +7,7 @@ using UnityEngine;
 
 using CEMSIM.GameLogic;
 using CEMSIM.VoiceChat;
+using CEMSIM.Logger;
 
 namespace CEMSIM
 {
@@ -21,6 +22,9 @@ namespace CEMSIM
             public TCP tcp;
             public UDP udp;
             public PlayerManager player;  // the player corresponding to the client machine
+
+            
+
 
             public ServerClient(int _id)
             {
@@ -333,7 +337,7 @@ namespace CEMSIM
                     if (_client.player != null)
                     {
                         ServerSend.SpawnPlayer(_client.id, player);
-                        string _dissonancePlayerId = _client.player.GetComponent<CEMSIMVoicePlayer>().PlayerId;
+                        string _dissonancePlayerId = _client.player.GetComponent<CEMSIMVoicePlayer>().clientuuid;
                         Debug.Log($"inform client {id} that client {_client.id} - {_dissonancePlayerId}");
                         ServerSend.SendVoiceChatPlayerId(_client.id, _dissonancePlayerId, false);
                     }
@@ -343,8 +347,7 @@ namespace CEMSIM
                 ServerSend.SendVoiceChatPlayerId(id, ServerInstance.dissonancePlayerId, false);
 
                 // Send current environment state to newly added user
-                ServerNetworkManager.SendCurrentEnvironmentStates(id); 
-
+                //ServerNetworkManager.SendCurrentEnvironmentStates(id);
 
             }
 
@@ -365,9 +368,12 @@ namespace CEMSIM
                     tcp.Disconnect();
                     udp.Disconnect();
                 });
-                    
+
+
             }
             #endregion
+
+            
 
         }
     }

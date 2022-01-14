@@ -16,7 +16,10 @@ namespace Dissonance.Audio.Playback
     {
         #region fields
         private static readonly Log Log = Logs.Create(LogCategory.Playback, typeof(SamplePlaybackComponent).Name);
-        
+
+        // customized event system
+        public static event Action<string, string> onPlayerSpeechFileCreating;
+
         /// <summary>
         /// Temporary buffer to hold data read from source
         /// </summary>
@@ -49,8 +52,10 @@ namespace Dissonance.Audio.Playback
 
             if (DebugSettings.Instance.EnablePlaybackDiagnostics && DebugSettings.Instance.RecordFinalAudio)
             {
-                var filename = string.Format("Dissonance_Diagnostics/Output_{0}_{1}_{2}", session.Context.PlayerName, session.Context.Id, DateTime.UtcNow.ToFileTime());
+                long speakTime = DateTime.UtcNow.ToFileTime();
+                var filename = string.Format("Dissonance_Diagnostics/Output_{0}_{1}_{2}", session.Context.PlayerName, session.Context.Id, speakTime);
                 Interlocked.Exchange(ref _diagnosticOutput, new AudioFileWriter(filename, session.OutputWaveFormat));
+                PlayerSpeechFileCreating(session.Context.PlayerName, filename);
             }
 
             _sessionLock.EnterWriteLock();
@@ -188,5 +193,14 @@ namespace Dissonance.Audio.Playback
 
             return complete;
         }
+
+
+        #region event system
+        public static void PlayerSpeechFileCreating(string _playerId, string _audioFilename)
+        {
+            if (onPlayerSpeechFileCreating != null)
+                onPlayerSpeechFileCreating(_playerId, _audioFilename);
+        }
+        #endregion
     }
 }

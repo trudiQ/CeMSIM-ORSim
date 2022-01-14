@@ -11,19 +11,20 @@ namespace CEMSIM
         public class ScalpelStateManager : ItemStateManager
         {
             // State of scalpel, e.g. no blood
-            private enum StateList
+            public enum ScalpelStateList
             {
                 defaultState = 0,
             }
 
-            private StateList state;
+            private ScalpelStateList state;
+            public static event Action<int, ScalpelStateList, int> onScalpelStateUpdateTrigger;
 
             public ScalpelStateManager()
             {
-                state = StateList.defaultState;
                 toolCategory = ToolType.scalpel;
+                UpdateState(ScalpelStateList.defaultState); // 
+                //Debug.Log($"Initialize {toolCategory} - {state}");
 
-                Debug.Log($"Initialize {toolCategory} - {state}");
             }
 
             public override void initializeItem(int _id)
@@ -42,14 +43,39 @@ namespace CEMSIM
             public override void DigestStateMessage(Packet _remainderPacket)
             {
                 int _specId = _remainderPacket.ReadInt32();
-                if (!Enum.IsDefined(typeof(StateList), _specId))
+                if (!Enum.IsDefined(typeof(ScalpelStateList), _specId))
                 {
                     Debug.LogWarning($"{toolCategory} does't have state {_specId}. State ignored");
                     return;
                 }
 
-                state = (StateList)_specId;
+                UpdateState((ScalpelStateList)_specId);
             }
+
+            /// <summary>
+            /// Update state
+            /// </summary>
+            public void UpdateState(ScalpelStateList _newState)
+            {
+                state = _newState;
+
+                if (ClientItemManager.instance != null)
+                {
+                    ClientItemManager.instance.GainOwnership(itemId);
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
+                }
+                else
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
+            }
+
+            #region Event System
+            public static void ItemStateUpdateTrigger(int _itemId, ScalpelStateList _state, int _clientId)
+            {
+                //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
+                if (onScalpelStateUpdateTrigger != null)
+                    onScalpelStateUpdateTrigger(_itemId, _state, _clientId);
+            }
+            #endregion
         }
     }
 }
