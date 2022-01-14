@@ -1107,8 +1107,12 @@ public class HapticSurgTools : MonoBehaviour
 
         if (!isLifting)
         {
-            //grabbing.transform.position = collidingTip.position;
-            grabbing.transform.position = grabbingSphereAnchor.position;
+            // Don't move grabbed sphere if the colon is joined and the grabbed sphere is the supported sphere
+            if (LinearStaplerTool.instance.simStates < 1 || !gOperators.supportedColonSpheresAfterJoining.Contains(grabbing.transform))
+            {
+                //grabbing.transform.position = collidingTip.position;
+                grabbing.transform.position = grabbingSphereAnchor.position;
+            }
             joint = (FixedJoint)gameObject.AddComponent(typeof(FixedJoint));
             joint.connectedBody = body;
 
@@ -1146,13 +1150,14 @@ public class HapticSurgTools : MonoBehaviour
     //! Stop grabbing an obhject. (Like opening a claw.) Normally called when the button is released. 
     void release()
     {
-        ResumeHapticsUpdateVirtualTool();
-
         // Update UI
         gOperators.uiController.UpdateToolStatusText(LS_UIcontroller.GetForcepsNameForToolStatusUI(LSSimDataRecording.currentPickedForceps), "Held by Omni");
 
         if (grabbing == null) //Nothing to release
+        {
+            ResumeHapticsUpdateVirtualTool();
             return;
+        }
 
         // Update colon grabbing states for colon motion controller
         if (joint.connectedBody.gameObject.name.Contains("sphere_"))
@@ -1185,10 +1190,17 @@ public class HapticSurgTools : MonoBehaviour
 
         grabbing = null;
 
+        StartCoroutine(AfterRelease());
+    }
+    private IEnumerator AfterRelease()
+    {
+        yield return null;
+
         if (physicsToggleStyle != PhysicsToggleStyle.none)
             hapticDevice.PhysicsManipulationEnabled = false;
         //hapticDevice.GetComponent<HapticPlugin>().PhysicsManipulationEnabled = false;
 
+        ResumeHapticsUpdateVirtualTool();
     }
 
     //! Returns true if there is a current object. 
@@ -1317,7 +1329,7 @@ public class HapticSurgTools : MonoBehaviour
     /// </summary>
     /// <param name="centerSphere"></param>
     /// <returns></returns>
-    public List<Transform> GetNeighborColonSphere(Transform centerSphere)
+    public static List<Transform> GetNeighborColonSphere(Transform centerSphere)
     {
         List<Transform> neighbors = new List<Transform>();
 
@@ -1326,11 +1338,11 @@ public class HapticSurgTools : MonoBehaviour
         List<List<Transform>> colonLayers = new List<List<Transform>>();
         if (colon == 0)
         {
-            colonLayers = gOperators.colon0Spheres;
+            colonLayers = globalOperators.instance.colon0Spheres;
         }
         else
         {
-            colonLayers = gOperators.colon1Spheres;
+            colonLayers = globalOperators.instance.colon1Spheres;
         }
 
         int layerIndex = 0;
@@ -1382,6 +1394,72 @@ public class HapticSurgTools : MonoBehaviour
         }
 
         return neighbors;
+    }
+
+    /// <summary>
+    /// Is the lookedUpSphere a neighbor of the targetSphere
+    /// </summary>
+    /// <param name="lookedUpSphere"></param>
+    /// <param name="targetSphere"></param>
+    /// <returns></returns>
+    public static bool IsNeighborOfColonSphere(Transform lookedUpSphere, Transform targetSphere)
+    {
+        int colon = int.Parse(targetSphere.name[7].ToString());
+
+        List<List<Transform>> colonLayers = new List<List<Transform>>();
+        if (colon == 0)
+        {
+            colonLayers = globalOperators.instance.colon0Spheres;
+        }
+        else
+        {
+            colonLayers = globalOperators.instance.colon1Spheres;
+        }
+
+        int layerIndex = 0;
+        int sphereIndex = 0;
+        for (int i = 0; i < colonLayers.Count; i++)
+        {
+            if (colonLayers[i].Contains(targetSphere))
+            {
+                layerIndex = i;
+                sphereIndex = colonLayers[i].IndexOf(targetSphere);
+            }
+        }
+
+        for (int i = -1; i < 2; i++)
+        {
+            for (int j = -1; j < 2; j++)
+            {
+                if (i == 0 && j == 0) // Skip target sphere
+                {
+                    continue;
+                }
+
+                int neighborLayerIndex = layerIndex + i;
+                if (neighborLayerIndex == -1 || neighborLayerIndex == colonLayers.Count) // Skip out of layer neighbor
+                {
+                    continue;
+                }
+
+                int neighborSphereIndex = sphereIndex + j;
+                if (neighborSphereIndex == -1)
+                {
+                    neighborSphereIndex = colonLayers[neighborLayerIndex].Count - 1;
+                }
+                else if (neighborSphereIndex == colonLayers[neighborLayerIndex].Count)
+                {
+                    neighborSphereIndex = 0;
+                }
+
+                if (colonLayers[neighborLayerIndex][neighborSphereIndex] == lookedUpSphere)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void LateUpdate()

@@ -106,6 +106,12 @@ public class globalOperators : MonoBehaviour
     // UI control
     public LS_UIcontroller uiController;
 
+    // Colon joining
+    public List<Transform> supportedColonSpheresAfterJoining; // Colon spheres that's been connected with extra fixedjoints to support mesh after joining
+    public List<FixedJoint> supportingJointsForJoining;
+
+    public static globalOperators instance;
+
     /// <summary>
     /// Start simulation logic
     /// </summary>
@@ -118,6 +124,8 @@ public class globalOperators : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        instance = this;
+
         /// access sphereJointModels and colon meshes
         if (m_numSphereModels <= 0)
         {
@@ -202,6 +210,10 @@ public class globalOperators : MonoBehaviour
 
         // Metrics scoring manager
         MetricsScoringManager = FindObjectOfType<globalOperators>().GetComponent<LSMetricsScoring>();
+
+        // List initialization
+        supportedColonSpheresAfterJoining = new List<Transform>();
+        supportingJointsForJoining = new List<FixedJoint>();
     }
 
     /// <summary>
@@ -292,12 +304,15 @@ public class globalOperators : MonoBehaviour
     /// </summary>
     bool joinSphereJointModels(int numLayer2Join, int[] objIdx, int[] sphereIdxB, float[] sphereRadius)
     {
+        ColonStaplerJointManager.instance.DeactivateAllAnchors();
         // Adding two new joints between two models
         //      m_sphereIdx2Split[0] -> sphereIdxB[1] &
         //      m_sphereIdx2Split[1] -> sphereIdxB[0]
         int numJointsAdded = 0;
+
         float dist0A1B, dist1A0B; // initial distance between each pair of spheres to join
         Vector3 vec0A1B, vec1A0B; // unit vector between each pair of spheres to join
+
         for (int l = 0; l < numLayer2Join; l++)
         {
             // connect sphereA of object0 to sphereB of object1
@@ -344,18 +359,30 @@ public class globalOperators : MonoBehaviour
                 dist1A0B = Vector3.Distance(sphere1A.transform.position, sphere0B.transform.position);
                 //sphere1A.transform.position = sphere1A.transform.position + (0.5f * dist1A0B - sphereRadius[1]) * vec1A0B;
                 //sphere0B.transform.position = sphere0B.transform.position - (0.5f * dist1A0B - sphereRadius[0]) * vec1A0B;
-                // move the spheres up a bit
-                sphere1A.transform.position = new Vector3(sphere1A.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere1A.transform.position.z);
-                sphere0B.transform.position = new Vector3(sphere0B.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere0B.transform.position.z);
                 // add a fixed joint
                 FixedJoint joint1A0B = sphere1A.AddComponent<FixedJoint>();
                 joint1A0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
-                // add more fixed joint
+
+                // Save modified spheres and joints
+                supportedColonSpheresAfterJoining.Add(sphere0A.transform);
+                supportedColonSpheresAfterJoining.Add(sphere0B.transform);
+                supportedColonSpheresAfterJoining.Add(sphere1A.transform);
+                supportedColonSpheresAfterJoining.Add(sphere1B.transform);
+
+                // move the upper spheres up a bit
+                sphere1A.transform.position = new Vector3(sphere1A.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere1A.transform.position.z);
+                sphere0B.transform.position = new Vector3(sphere0B.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere0B.transform.position.z);
+                // add supporting vertical fixed joint
                 FixedJoint joint0A0B = sphere0A.AddComponent<FixedJoint>();
                 joint0A0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
                 FixedJoint joint1A1B = sphere1A.AddComponent<FixedJoint>();
                 joint1A1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
 
+                // Save modified spheres and joints
+                supportingJointsForJoining.Add(joint0A0B);
+                supportingJointsForJoining.Add(joint1A1B);
+
+                // Move more spheres up and add vertical supportive joints
                 GameObject sphere0C = m_sphereJointObjects.Find(g => g.name == "sphere_" + 0.ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + 5.ToString());
                 sphere0C.transform.position = new Vector3(sphere0C.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere0C.transform.position.z);
                 FixedJoint joint0C0B = sphere0C.AddComponent<FixedJoint>();
@@ -374,6 +401,18 @@ public class globalOperators : MonoBehaviour
                 joint1D0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
                 FixedJoint joint1D1B = sphere1D.AddComponent<FixedJoint>();
                 joint1D1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
+
+                // Save modified spheres and joints
+                supportedColonSpheresAfterJoining.Add(sphere0C.transform);
+                supportedColonSpheresAfterJoining.Add(sphere1C.transform);
+                supportedColonSpheresAfterJoining.Add(sphere1D.transform);
+                supportingJointsForJoining.Add(joint0C0B);
+                supportingJointsForJoining.Add(joint0C1B);
+                supportingJointsForJoining.Add(joint1C0B);
+                supportingJointsForJoining.Add(joint1C1B);
+                supportingJointsForJoining.Add(joint1D0B);
+                supportingJointsForJoining.Add(joint1D1B);
+
                 // reconfigure neighbor joints
                 List<ConfigurableJoint> joints0 = sphere0B.GetComponents<ConfigurableJoint>().ToList();
                 foreach (ConfigurableJoint j in joints0)

@@ -31,6 +31,8 @@ public class ColonMovementController : MonoBehaviour
     public List<LinearStaplerColonDetector> staplerColonLayerDetectors;
     public Transform activeForcepsHaptic; // Which forceps is the user using
     public List<sphereJointModel> colonPhysicsManagers;
+    public List<int> colon0StaplerInsertionSpheres; // Spheres to stop following movement when inserting stapler while lifting
+    public List<int> colon1StaplerInsertionSpheres;
 
     public float defaultColonSphereSpeedLimit;
     public HapticPlugin currentGrabbingForcepsController;
@@ -51,6 +53,7 @@ public class ColonMovementController : MonoBehaviour
     public List<Vector3> colon1FrontSphereStartPosition;
     public List<float> colon0SphereWeights; // Determine how spheres will move with spline followers
     public List<float> colon1SphereWeights;
+    public List<int> stopFollowMovementLayersDuringInsertion; // Colon layers to stop follow movement when inserting LS (colon0:0-19, colon1:20-39)
 
     public globalOperators globalOperators; // Main manager of the simulation
     public LinearStaplerTool linearStaplerTool; // LS manager
@@ -419,13 +422,13 @@ public class ColonMovementController : MonoBehaviour
         }
 
         // Get colon sphere initial local vertical weight
-        colon0SphereWeights = GetColonSphereVerticlaWeight(colon0FrontSpheres);
+        colon0SphereWeights = GetColonSphereVerticalWeight(colon0FrontSpheres);
         //colon0SphereWeights.Clear();
         //for (int i = 0; i < colon0FrontSpheres.Count; i += 20)
         //{
         //    colon0SphereWeights.AddRange(GetColonSphereVerticlaWeight(colon0FrontSpheres.GetRange(i, 20)));
         //}
-        colon1SphereWeights = GetColonSphereVerticlaWeight(colon1FrontSpheres);
+        colon1SphereWeights = GetColonSphereVerticalWeight(colon1FrontSpheres);
         //colon1SphereWeights.Clear();
         //for (int i = 0; i < colon1FrontSpheres.Count; i += 20)
         //{
@@ -439,7 +442,7 @@ public class ColonMovementController : MonoBehaviour
         {
             for (int i = 0; i < colon0FrontSpheres.Count; i++)
             {
-                if (IsColonSphereCollidingStapler(i))
+                if (IsColonSphereCollidingStapler(i) || ColonStaplerJointManager.instance.IsNeighborAnchorActive(i))
                 {
                     continue;
                 }
@@ -454,7 +457,7 @@ public class ColonMovementController : MonoBehaviour
         {
             for (int i = 0; i < colon1FrontSpheres.Count; i++)
             {
-                if (IsColonSphereCollidingStapler(i + 400)) // Colon1 start from index 400
+                if (IsColonSphereCollidingStapler(i + 400) || ColonStaplerJointManager.instance.IsNeighborAnchorActive(i + 400)) // Colon1 start from index 400
                 {
                     continue;
                 }
@@ -480,7 +483,7 @@ public class ColonMovementController : MonoBehaviour
     /// </summary>
     /// <param name="evaluatedSpheres"></param>
     /// <returns></returns>
-    public List<float> GetColonSphereVerticlaWeight(List<Transform> evaluatedSpheres)
+    public List<float> GetColonSphereVerticalWeight(List<Transform> evaluatedSpheres)
     {
         float maxHeight = Mathf.Max(evaluatedSpheres.Select(t => t.position.y).ToArray());
         float minHeight = Mathf.Min(evaluatedSpheres.Select(t => t.position.y).ToArray());

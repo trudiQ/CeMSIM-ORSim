@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using System.Linq;
 
 public class ColonStaplerJointManager : MonoBehaviour
 {
@@ -13,10 +14,27 @@ public class ColonStaplerJointManager : MonoBehaviour
 
     public List<ColonStaplerJointBehavior> colonJointAnchors;
     public static ColonStaplerJointManager instance;
+    public List<ColonStaplerJointBehavior> activeAnchors;
 
     private void Start()
     {
         instance = this;
+
+        GetAnchorNeighbor();
+    }
+
+    public void DeactivateAllAnchors()
+    {
+        colonJointAnchors.ForEach(a => a.DetachColonSphere());
+    }
+
+    public bool IsNeighborAnchorActive(ColonStaplerJointBehavior centerAnchor)
+    {
+        return centerAnchor.anchorForNeighborSpheres.Find(t => t.gameObject.activeInHierarchy);
+    }
+    public bool IsNeighborAnchorActive(int centerAnchorIndex)
+    {
+        return colonJointAnchors[centerAnchorIndex].anchorForNeighborSpheres.Find(t => t.gameObject.activeInHierarchy);
     }
 
     [ShowInInspector]
@@ -59,6 +77,19 @@ public class ColonStaplerJointManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    //[ShowInInspector]
+    public void GetAnchorNeighbor()
+    {
+        //globalOperators.instance = gOperator;
+        //foreach (ColonStaplerJointBehavior anchor in colonJointAnchors)
+        //{
+        //    List<Transform> neighbor = HapticSurgTools.GetNeighborColonSphere(a.targetSphere.transform);
+        //    anchor.anchorForNeighborSpheres = colonJointAnchors.FindAll(j => neighbor.Contains(j.targetSphere.transform)).Select(j => j.transform).ToList();
+        //}
+        colonJointAnchors.ForEach(
+            a => a.anchorForNeighborSpheres = HapticSurgTools.GetNeighborColonSphere(a.targetSphere.transform).Select(s => colonJointAnchors.Find(j => j.targetSphere.transform == s).transform).ToList());
     }
 
     ///// <summary>

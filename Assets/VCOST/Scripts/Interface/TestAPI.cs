@@ -20,6 +20,7 @@ public class TestAPI : MonoBehaviour
     public Transform trackerMarker1;
     public Transform tracker0OriginPosition;
     public Transform tracker1OriginPosition;
+    public float staplerLowestPoint = 0.5211259f;
 
     public Vector3 trackerMarkerStartPosition0;
     public Vector3 trackerMarkerStartEuler0;
@@ -204,8 +205,12 @@ public class TestAPI : MonoBehaviour
 
         // Apply filtered position data
         trackerData[0].UpdateFilter();
-        trackerMarker0.position = trackerData[0].filteredPosition;
         trackerData[1].UpdateFilter();
+        if (globalOperators.instance.m_bSAStarted)
+        {
+            KeepStaplerAboveTable();
+        }
+        trackerMarker0.position = trackerData[0].filteredPosition;
         trackerMarker1.position = trackerData[1].filteredPosition;
 
         ////Update the position and orientation of Trackers
@@ -213,6 +218,21 @@ public class TestAPI : MonoBehaviour
         //trackers[0].angles = new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
         //trackers[1].positions = tracker1OriginPosition.position + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
         //trackers[1].angles = new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
+    }
+
+    public void KeepStaplerAboveTable()
+    {
+        float topStaplerLowest = Mathf.Min(LinearStaplerTool.instance.topLineStart.position.y, LinearStaplerTool.instance.topLineEnd.position.y);
+        if (topStaplerLowest < staplerLowestPoint)
+        {
+            trackerData[1].filteredPosition.y += staplerLowestPoint - topStaplerLowest;
+        }
+
+        float bottomStaplerLowest = Mathf.Min(LinearStaplerTool.instance.bottomLineStart.position.y, LinearStaplerTool.instance.bottomLineEnd.position.y);
+        if (bottomStaplerLowest < staplerLowestPoint)
+        {
+            trackerData[0].filteredPosition.y += staplerLowestPoint - bottomStaplerLowest;
+        }
     }
 
     /// <summary>

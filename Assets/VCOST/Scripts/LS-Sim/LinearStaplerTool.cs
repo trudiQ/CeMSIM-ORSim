@@ -357,7 +357,10 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             }
 
             CheckAndUpdateLStoolInsertionStates();
-            LinearStaplerColonInsertionCollisionInteraction();
+            if (simStates < 1)
+            {
+                LinearStaplerColonInsertionCollisionInteraction();
+            }
 
             return;
         }
@@ -466,7 +469,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                 // If the tool parts are in valid locking position then lock the tools together
                 if (ValidateToolLockingCondition())
                 {
-                    if (!isBottomHalfMovingInCuttingPlane)
+                    //if (!isBottomHalfMovingInCuttingPlane)
                     {
                         if (bottomTransformLocked)
                         {
@@ -564,17 +567,13 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public void LockToolPartsTogether()
     {
         // If the tool is locked during insertion phase or last phase then dont let them come too much close together
-        if (globalOperators.m_bInsert[0] == 0 && !isBottomHalfMovingInCuttingPlane)
+        //if (globalOperators.m_bInsert[0] == 0 && !isBottomHalfMovingInCuttingPlane)
+        //{
+        //    bottomHalf.transform.parent = bottomPartFullyLockingPosition;
+        //}
+        //else
         {
-            bottomHalf.transform.parent = bottomPartFullyLockingPosition;
-        }
-        else
-        {
-            if (simStates == 0)
-            {
-                bottomHalf.transform.parent = bottomPartLockingPosition;
-            }
-            else if (simStates < 2)
+            if (simStates < 2)
             {
                 bottomHalf.transform.parent = bottomPartFullyLockingPosition;
             }
@@ -1392,6 +1391,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                                 anchor.transform.position = MathUtil.ProjectionPointOnLine(partRay, colonSpheres[colon][layer][sphere].position);
                                 anchor.detachDistance = staplerInsertionCollisionThreshold;
                                 anchor.gameObject.SetActive(true);
+                                ColonStaplerJointManager.instance.activeAnchors.Add(anchor);
                                 anchor.AttachColonSphere();
                             }
 
@@ -1404,7 +1404,6 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                             if (anchor.gameObject.activeInHierarchy)
                             {
                                 anchor.DetachColonSphere();
-                                anchor.gameObject.SetActive(false);
                             }
                         }
                     }
