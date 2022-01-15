@@ -201,7 +201,7 @@ namespace CEMSIM
             {
                 if (isClientSide)
                 {
-
+                    // 
                 }
                 else
                 {
@@ -246,17 +246,24 @@ namespace CEMSIM
             /// </summary>
             private void registerItemEvent()
             {
-                ItemController.onItemPickupTrigger += ItemBaseEvent.GenItemPickup;
-                ItemController.onItemDropoffTrigger += ItemBaseEvent.GenItemDropdown;
-                // Item Specific State Update
-                ScalpelStateManager.onScalpelStateUpdateTrigger += ScalpelEvent.GenScalpelStateUpdate;
-                CatheterStateManager.onCatheterStateUpdateTrigger += CatheterEvent.GenCatheterStateUpdate;
-                N95MaskStateManager.onN95MaskStateUpdateTrigger += N95MaskEvent.GenN95MaskStateUpdate;
-                BoufantStateManager.onN95MaskStateUpdateTrigger += BouffantEvent.GenBoufantStateUpdate;
-                VisorStateManager.onVisorStateUpdateTrigger += VisorEvent.GenVisorStateUpdate;
-                ShoeCoverStateManager.onShoeCoverOnUpdateTrigger += ShoeCoverEvent.GenShoeCoverStateUpdate;
-                GownStateManager.onGownStateUpdateTrigger += GownEvent.GenGownStateUpdate;
-                GloveStateManager.onGloveWearStateTrigger += GloveEvent.GenGloveWearStateUpdate;
+                if (isClientSide)
+                {
+                    ItemController.onItemPickupTrigger += ItemBaseEvent.GenItemPickup;
+                    ItemController.onItemDropoffTrigger += ItemBaseEvent.GenItemDropdown;
+                    // Item Specific State Update
+                    ScalpelStateManager.onScalpelStateUpdateTrigger += ScalpelEvent.GenScalpelStateUpdate;
+                    CatheterStateManager.onCatheterStateUpdateTrigger += CatheterEvent.GenCatheterStateUpdate;
+                    N95MaskStateManager.onN95MaskStateUpdateTrigger += N95MaskEvent.GenN95MaskStateUpdate;
+                    BoufantStateManager.onN95MaskStateUpdateTrigger += BouffantEvent.GenBoufantStateUpdate;
+                    VisorStateManager.onVisorStateUpdateTrigger += VisorEvent.GenVisorStateUpdate;
+                    ShoeCoverStateManager.onShoeCoverOnUpdateTrigger += ShoeCoverEvent.GenShoeCoverStateUpdate;
+                    GownStateManager.onGownStateUpdateTrigger += GownEvent.GenGownStateUpdate;
+                    GloveStateManager.onGloveWearStateTrigger += GloveEvent.GenGloveWearStateUpdate;
+                }
+                else
+                {
+                    // for server, this information is acquired through ServerHandle.cs and doesn't need to use the triggers attached on the server side items.
+                }
             }
 
             #endregion

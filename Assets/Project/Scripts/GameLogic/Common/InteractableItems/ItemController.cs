@@ -25,6 +25,7 @@ namespace CEMSIM
             public static event Action<ToolType, int, int> onItemPickupTrigger;
             public static event Action<ToolType, int, int> onItemDropoffTrigger;
 
+
             private void Awake()
             {
                 switch (toolType)
@@ -97,7 +98,9 @@ namespace CEMSIM
                     ItemPickupTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
                 }
                 else
-                    ItemPickupTrigger(toolType, itemId, ClientInstance.instance.myId);
+                {
+                    ItemPickupTrigger(toolType, itemId, ownerId);
+                }
             }
 
             public void DropOwnership()
@@ -108,7 +111,9 @@ namespace CEMSIM
                     ItemDropoffTrigger(toolType, itemId, ClientInstance.instance.myId);
                 }
                 else
-                    ItemDropoffTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
+                {
+                    ItemDropoffTrigger(toolType, itemId, ownerId);
+                }
             }
 
 

@@ -86,7 +86,6 @@ namespace CEMSIM
 
                 if (ClientItemManager.instance != null)
                 {
-                    ClientItemManager.instance.GainOwnership(itemId);
                     GloveWearStateTrigger(itemId, hand, wearState, quantity, ClientInstance.instance.myId);
                 }
                 else

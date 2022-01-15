@@ -61,7 +61,6 @@ namespace CEMSIM
 
                 if (ClientItemManager.instance != null)
                 {
-                    ClientItemManager.instance.GainOwnership(itemId);
                     ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
                 }
                 else
