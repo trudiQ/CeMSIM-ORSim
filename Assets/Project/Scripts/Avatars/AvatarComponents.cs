@@ -17,6 +17,7 @@ public class AvatarComponents : MonoBehaviour
     public AvatarHeightCalibration calibration;
     public Transform floor;
     public new Transform camera;
+    public HVRCameraRig cameraRig;
     public HVRUIPointer leftPointer;
     public HVRUIPointer rightPointer;
 

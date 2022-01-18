@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using RootMotion.FinalIK;
+using HurricaneVR.Framework.Core.Player;
 
 public class UserHeightUtility : MonoBehaviour
 {
@@ -10,12 +11,16 @@ public class UserHeightUtility : MonoBehaviour
     public Transform floor;
     [Tooltip("The object that follows the user camera.")]
     public new Transform camera;
+    public HVRCameraRig cameraRig;
 
     public float height;
 
     public void CalculateUserHeight()
     {
-        height = camera.position.y - floor.position.y;
+        if (cameraRig)
+            height = cameraRig.AdjustedCameraHeight;
+        else
+            Debug.LogWarning("Camera Rig missing in UserHeightUtility.");
     }
 }
 
@@ -28,7 +33,7 @@ public class UserHeightUtilityEditor : Editor
 
         UserHeightUtility userHeightUtility = target as UserHeightUtility;
 
-        if (Application.isPlaying && userHeightUtility.floor && userHeightUtility.camera && GUILayout.Button("Calculate Height"))
+        if (Application.isPlaying && userHeightUtility.cameraRig && GUILayout.Button("Calculate Height"))
             (target as UserHeightUtility).CalculateUserHeight();
     }
 }

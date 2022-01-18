@@ -98,6 +98,7 @@ public class AvatarSwapper : MonoBehaviour
 
                 userHeightUtility.floor = currentAvatarComponents.floor;
                 userHeightUtility.camera = currentAvatarComponents.camera;
+                userHeightUtility.cameraRig = currentAvatarComponents.cameraRig;
 
                 OnAvatarSwapped.Invoke(activeRole, activeAvatar);
             }
