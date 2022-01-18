@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,7 +23,6 @@ public class JointController : MonoBehaviour
         if(!rb.isKinematic && rb.GetComponent<ConfigurableJoint>().connectedBody.isKinematic)
         {
             rb.isKinematic = true;
-            // rb.GetComponent<ConfigurableJoint>().connectedBody.isKinematic = true;
             Rigidbody[] childJoints = rb.GetComponentsInChildren<Rigidbody>();
             foreach(Rigidbody joint in childJoints)
             {
@@ -36,7 +35,6 @@ public class JointController : MonoBehaviour
         if(rb.isKinematic)
         {
             rb.isKinematic = false;
-            // rb.GetComponent<ConfigurableJoint>().connectedBody.isKinematic = false;
             Rigidbody[] childJoints = rb.GetComponentsInChildren<Rigidbody>();
             foreach(Rigidbody joint in childJoints)
             {
