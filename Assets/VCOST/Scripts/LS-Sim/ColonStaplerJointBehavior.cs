@@ -5,7 +5,6 @@ using UnityEngine;
 public class ColonStaplerJointBehavior : MonoBehaviour
 {
 
-
     public Rigidbody targetSphere;
     public FixedJoint jointToSphere;
     public Transform followedStaplerStart;
@@ -13,6 +12,8 @@ public class ColonStaplerJointBehavior : MonoBehaviour
     public float detachDistance;
     public Ray followedRay;
     public List<Transform> anchorForNeighborSpheres;
+    public int targetSphereLayer;
+    public int targetSphereColon;
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +23,11 @@ public class ColonStaplerJointBehavior : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+
+    }
+
+    private void FixedUpdate()
     {
         UpdateAnchorPosition();
     }
@@ -57,7 +63,12 @@ public class ColonStaplerJointBehavior : MonoBehaviour
             DetachColonSphere();
         }
 
-        if (transform.position.z - followedStaplerStart.position.z > 1)
+        if (transform.position.z - followedStaplerStart.position.z > ColonStaplerJointManager.instance.insertionDepthDetatch)
+        {
+            DetachColonSphere();
+        }
+
+        if (Mathf.Abs(globalOperators.instance.colonLayerAveragePosition[targetSphereColon][targetSphereLayer].z - transform.position.z) > ColonStaplerJointManager.instance.layerDisplacementDetatch) // If the sphere is "squeezed" too far away from its layer's z-position
         {
             DetachColonSphere();
         }

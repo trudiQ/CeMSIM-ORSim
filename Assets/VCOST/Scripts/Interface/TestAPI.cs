@@ -206,7 +206,7 @@ public class TestAPI : MonoBehaviour
         // Apply filtered position data
         trackerData[0].UpdateFilter();
         trackerData[1].UpdateFilter();
-        if (globalOperators.instance.m_bSAStarted)
+        if (globalOperators.m_bSimStart)
         {
             KeepStaplerAboveTable();
         }

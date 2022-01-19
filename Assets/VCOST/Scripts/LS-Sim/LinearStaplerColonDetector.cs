@@ -54,14 +54,7 @@ public class LinearStaplerColonDetector : MonoBehaviour
         {
             touchingColonSpheres++;
 
-            if (other.name[10] == '_')
-            {
-                staplerTipLastTouchedColonLayers.Add(int.Parse(other.name[9].ToString()));
-            }
-            else
-            {
-                staplerTipLastTouchedColonLayers.Add(int.Parse(other.name[9].ToString() + other.name[10].ToString()));
-            }
+            staplerTipLastTouchedColonLayers.Add(globalOperators.GetSphereLayer(other.name));
 
             if (LinearStaplerTool.instance.usingRawSensorControl)
             {
@@ -96,14 +89,7 @@ public class LinearStaplerColonDetector : MonoBehaviour
         {
             touchingColonSpheres--;
 
-            if (other.name[10] == '_')
-            {
-                staplerTipLastTouchedColonLayers.Remove(int.Parse(other.name[9].ToString()));
-            }
-            else
-            {
-                staplerTipLastTouchedColonLayers.Remove(int.Parse(other.name[9].ToString() + other.name[10].ToString()));
-            }
+            staplerTipLastTouchedColonLayers.Remove(globalOperators.GetSphereLayer(other.name));
 
             if (LinearStaplerTool.instance.usingRawSensorControl)
             {

@@ -11,6 +11,8 @@ public class ColonStaplerJointManager : MonoBehaviour
     [ShowInInspector]
     public List<List<List<Transform>>> targetColonSpheres;
     public globalOperators gOperator;
+    public float insertionDepthDetatch;
+    public float layerDisplacementDetatch;
 
     public List<ColonStaplerJointBehavior> colonJointAnchors;
     public static ColonStaplerJointManager instance;
@@ -20,7 +22,7 @@ public class ColonStaplerJointManager : MonoBehaviour
     {
         instance = this;
 
-        GetAnchorNeighbor();
+        InitializeAnchorInfo();
     }
 
     public void DeactivateAllAnchors()
@@ -80,7 +82,7 @@ public class ColonStaplerJointManager : MonoBehaviour
     }
 
     //[ShowInInspector]
-    public void GetAnchorNeighbor()
+    public void InitializeAnchorInfo()
     {
         //globalOperators.instance = gOperator;
         //foreach (ColonStaplerJointBehavior anchor in colonJointAnchors)
@@ -88,8 +90,16 @@ public class ColonStaplerJointManager : MonoBehaviour
         //    List<Transform> neighbor = HapticSurgTools.GetNeighborColonSphere(a.targetSphere.transform);
         //    anchor.anchorForNeighborSpheres = colonJointAnchors.FindAll(j => neighbor.Contains(j.targetSphere.transform)).Select(j => j.transform).ToList();
         //}
+
+        // Get neighbor anchors
         colonJointAnchors.ForEach(
             a => a.anchorForNeighborSpheres = HapticSurgTools.GetNeighborColonSphere(a.targetSphere.transform).Select(s => colonJointAnchors.Find(j => j.targetSphere.transform == s).transform).ToList());
+
+        // Get target sphere layer
+        colonJointAnchors.ForEach(a => a.targetSphereLayer = globalOperators.GetSphereLayer(a.targetSphere.name));
+
+        // Get target sphere colon
+        colonJointAnchors.ForEach(a => a.targetSphereColon = int.Parse(a.targetSphere.name[7].ToString()));
     }
 
     ///// <summary>

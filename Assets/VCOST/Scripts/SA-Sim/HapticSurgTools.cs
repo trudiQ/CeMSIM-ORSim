@@ -988,7 +988,7 @@ public class HapticSurgTools : MonoBehaviour
         if (LinearStaplerTool.instance.simStates < 2 && touching.gameObject.name.Contains("sphere_"))
         {
             // Don't let surgeon lift colon if grab on further layers
-            int layer = int.Parse(touching.gameObject.name[9].ToString());
+            int layer = globalOperators.GetSphereLayer(touching.gameObject.name);
             if (layer > 1)
             {
                 OnCollidingColon(collisionInfo);
@@ -1081,26 +1081,30 @@ public class HapticSurgTools : MonoBehaviour
         // If touched colon is already cut
         int colon = int.Parse(body.gameObject.name[7].ToString());
         // Don't let surgeon lift colon if grab on further layers
-        int layer = int.Parse(body.gameObject.name[9].ToString());
-        //if (!LinearStaplerTool.instance.usingRawSensorControl && gOperators.m_LRCornerCutIdices[colon][1 - colon]) // Temp, disable forceps lifting if testing using raw stapler input
+        int layer = globalOperators.GetSphereLayer(body.gameObject.name);
+        //if (!LinearStaplerTool.instance.usingRawSensorControl) // Temp, disable forceps lifting if testing using raw stapler input
         {
-            // If grabbing first 2 layers
-            if (LinearStaplerTool.instance.simStates < 2 && body.gameObject.name.Contains("sphere_"))
+            if (gOperators.m_LRCornerCutIdices[colon][1 - colon]) 
             {
-                if (layer == 0 || layer == 1)
+                // If grabbing first 2 layers
+                if (LinearStaplerTool.instance.simStates < 2 && body.gameObject.name.Contains("sphere_"))
                 {
-                    gOperators.lsController.colonSecuredByForceps[colon] = true;
-                    ColonMovementController.instance.ChangeFollowStates(colon, 1, ColonMovementController.instance.colon0FrontSphereStartPosition.Count == 0, false, ColonMovementController.instance.activeForcepsHaptic);
-                    // Make forceps attach to the colon
-                    toolHapticGO[0].GetComponent<HapticPlugin>().updateManipulatorTransform = false;
-                    transform.parent = body.transform;
-                    GetComponent<Rigidbody>().isKinematic = true;
-                    GetComponent<Rigidbody>().mass = 10000000;
-                    GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-                    ColonMovementController.instance.currentGrabbingForcepsTransform = transform;
-                    ColonMovementController.instance.forcepsGrabInitialLocalPosition = transform.localPosition;
+                    if (layer == 0 || layer == 1)
+                    {
+                        gOperators.lsController.colonSecuredByForceps[colon] = true;
+                        ColonMovementController.instance.ChangeFollowStates(colon, 1, ColonMovementController.instance.colon0FrontSphereStartPosition.Count == 0, false, ColonMovementController.instance.activeForcepsHaptic);
+                        // Make forceps attach to the colon
+                        toolHapticGO[0].GetComponent<HapticPlugin>().updateManipulatorTransform = false;
+                        transform.parent = body.transform;
+                        GetComponent<Rigidbody>().isKinematic = true;
+                        GetComponent<Rigidbody>().mass = 10000000;
+                        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                        ColonMovementController.instance.currentGrabbingForcepsTransform = transform;
+                        ColonMovementController.instance.forcepsGrabInitialLocalPosition = transform.localPosition;
 
-                    isLifting = true;
+                        isLifting = true;
+
+                    }
                 }
             }
         }
@@ -1163,7 +1167,7 @@ public class HapticSurgTools : MonoBehaviour
         if (joint.connectedBody.gameObject.name.Contains("sphere_"))
         {
             // Do nothing if released sphere is not at front layers
-            int layer = int.Parse(joint.connectedBody.gameObject.name[9].ToString());
+            int layer = globalOperators.GetSphereLayer(joint.connectedBody.gameObject.name);
             if (layer == 0 || layer == 1)
             {
                 int colon = int.Parse(joint.connectedBody.gameObject.name[7].ToString());

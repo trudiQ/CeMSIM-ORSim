@@ -16,6 +16,7 @@ public class globalOperators : MonoBehaviour
     public GameObject[] m_sphereJointObjs;
     public sphereJointModel[] m_sphereJointModels;
     public List<GameObject> m_sphereJointObjects;
+    public List<List<Vector3>> colonLayerAveragePosition; // Average of position for spheres in each layer
 
     /// meshes
     public int m_numBindColonMeshes = 0; // #colon meshs bound to sphereJointModels
@@ -163,6 +164,15 @@ public class globalOperators : MonoBehaviour
         colon1Spheres = new List<List<Transform>>();
         colon1Layers.ForEach(l => colon1Spheres.Add(l.transform.GetComponentsInChildren<Transform>().ToList()));
         colon1Spheres.ForEach(l => l.RemoveAt(0));
+        colonLayerAveragePosition = new List<List<Vector3>>();
+        for (int i = 0; i < 2; i++)
+        {
+            colonLayerAveragePosition.Add(new List<Vector3>());
+            for (int l = 0; l < 20; l++)
+            {
+                colonLayerAveragePosition[i].Add(Vector3.zero);
+            }
+        }
 
         /// initialize opeartor variables
         // Corner-cut
@@ -994,6 +1004,7 @@ public class globalOperators : MonoBehaviour
     {
         if (Application.isPlaying)
         {
+            UpdateLayerPosition();
             /// find the forceps currently holding or grasping objs
             HapticSurgTools graspingForceps = null;
             HapticSurgTools holdingForceps = null;
@@ -1355,5 +1366,40 @@ public class globalOperators : MonoBehaviour
 
         // Testing
         TestScissorCutConditions();
+    }
+
+    public void UpdateLayerPosition()
+    {
+        for (int l = 0; l < colonLayerAveragePosition[0].Count; l++)
+        {
+            Vector3 sum = Vector3.zero;
+            for (int s = 0; s < colon0Spheres[l].Count; s++)
+            {
+                sum += colon0Spheres[l][s].position;
+            }
+            colonLayerAveragePosition[0][l] = sum / (float)colon0Spheres[l].Count;
+        }
+
+        for (int l = 0; l < colonLayerAveragePosition[1].Count; l++)
+        {
+            Vector3 sum = Vector3.zero;
+            for (int s = 0; s < colon1Spheres[l].Count; s++)
+            {
+                sum += colon1Spheres[l][s].position;
+            }
+            colonLayerAveragePosition[1][l] = sum / (float)colon1Spheres[l].Count;
+        }
+    }
+
+    public static int GetSphereLayer(string sphereName)
+    {
+        if (sphereName[10] == '_')
+        {
+            return int.Parse(sphereName[9].ToString());
+        }
+        else
+        {
+            return int.Parse(sphereName[9].ToString() + sphereName[10].ToString());
+        }
     }
 }
