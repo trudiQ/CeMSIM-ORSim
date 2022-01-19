@@ -11,11 +11,11 @@ public class StaticHoleColliderBehavior : MonoBehaviour
     public ObiParticleAttachment heldAttachment;
     private StaticHoleColliderManager parentManager;
 
-    public List<ObiCollider> heldColliders = new List<ObiCollider>();
+    public List<Collider> heldColliders = new List<Collider>();
 
     public void DisableColliders()
     {
-        foreach(ObiCollider o in heldColliders)
+        foreach(Collider o in heldColliders)
         {
             o.enabled = false;
         }
@@ -68,7 +68,7 @@ public class StaticHoleColliderBehavior : MonoBehaviour
 
     public void DisableUnityCollisions()
     {
-        foreach (ObiCollider o in heldColliders)
+        foreach (Collider o in heldColliders)
         {
             o.gameObject.layer = 9;
         }

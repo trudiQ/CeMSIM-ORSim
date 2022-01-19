@@ -65,7 +65,7 @@ public class NeedleGuideBehavior : MonoBehaviour
         if(!needleContained && !holeShrunk)
         {
             //StartCoroutine(WaitAFrame());
-            MoveAndShrink();
+            //MoveAndShrink();
             holeShrunk = true;
         }
     }

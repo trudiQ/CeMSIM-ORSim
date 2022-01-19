@@ -118,6 +118,11 @@ public class NeedleBehavior : MonoBehaviour
 
         Vector3 modifiedNeedleEnterPosition = pointTransform.position + (pointTransform.up * -0.2f);
         StaticHoleColliderBehavior holeCollider = Instantiate(p_HoleCollider, modifiedNeedleEnterPosition, pointTransform.rotation);
+        ParticleTriggerField[] particleTriggerFields = holeCollider.GetComponentsInChildren<ParticleTriggerField>();
+        foreach(ParticleTriggerField particleTriggerField in particleTriggerFields)
+        {
+            particleTriggerField.solver = rod.solver;
+        }
         holeCollider.AddToManager(holeManager);
 
         if (attachHoleColliderToParticle)
