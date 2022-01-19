@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using CEMSIM.GameLogic;
+using CEMSIM.Network;
 
 public class RoleMenu : MonoBehaviour
 {
+    public bool isSinglePlayer = false;
     public AvatarSwapper avatarSwapper;
 
     [Header("Dynamic Dropdown")]
@@ -32,8 +35,19 @@ public class RoleMenu : MonoBehaviour
     public UnityEvent<string> onPortChanged;
     public UnityEvent onConnect;
 
+    private bool connectionCheck = false;
+    private bool isPlayerSpawned = false;
+
     void Start()
     {
+        if(!isSinglePlayer)
+        {
+            // Set initial values to each field 
+            nameField.text = ClientInstance.instance.myUsername;
+            ipHostnameField.text = ClientInstance.instance.ip;
+            portField.text = ClientInstance.instance.port.ToString();
+        }
+
         // Subscribe to events when values change or buttons are pressed
         nameField.onValueChanged.AddListener(onNameChanged.Invoke);             // Name change
 
@@ -78,6 +92,33 @@ public class RoleMenu : MonoBehaviour
         SetRoleDropdownsInteractable(false); // To prevent swapping avatars before height calibration
 
         ChooseRoleAndAvatar(avatarSwapper.defaultRole, avatarSwapper.defaultAvatar);
+    }
+
+    void Update()
+    {
+        if (connectionCheck && !isSinglePlayer)
+        {
+            // the connect button has been pressed
+            if(ClientInstance.instance.CheckConnection())
+            {
+                if (!isPlayerSpawned)
+                {
+                    // use to guarantee that player will only be spawned once.
+                    isPlayerSpawned = true;
+                    connectButton.GetComponent<Selectable>().interactable = false;
+                    connectButton.GetComponentInChildren<Text>().text = "Entering";
+                    StartCoroutine(ClientInstance.instance.DelaySpawnRequest(1f));
+                    StartCoroutine(DelayDestroy());
+                    
+                }
+            }
+            else
+            {
+                connectButton.GetComponentInChildren<Text>().text = "Reconnect";
+                connectButton.GetComponent<Selectable>().interactable = true;
+                Debug.Log($"TCP: {ClientInstance.instance.tcp.isTCPConnected} UDP: {ClientInstance.instance.udp.isUDPConnected}");
+            }
+        }
     }
 
     public void SetRoleDropdownsInteractable(bool state)
@@ -135,5 +176,51 @@ public class RoleMenu : MonoBehaviour
         GameObject previewPrefab = avatarSwapper.avatarLists[selectedRole].avatars[selectedAvatar].previewPrefab;
 
         preview.Preview(previewPrefab);
+    }
+
+    public void OnConnectClick()
+    {
+
+        connectButton.GetComponentInChildren<Text>().text = "Connecting";
+        //connectButton.GetComponent<Selectable>().interactable = !ClientInstance.instance.isConnected;
+        connectButton.GetComponent<Selectable>().interactable = false;
+        string _ip = ipHostnameField.text;
+        int _port = int.Parse(portField.text);
+
+        if(!isSinglePlayer)
+        {
+            ClientInstance.instance.SetUsername(nameField.text);
+            ClientInstance.instance.ConnectToServer(_ip, _port);
+        }
+        connectionCheck = true;
+    }
+
+
+
+    IEnumerator DelayDestroy()
+    {
+        yield return new WaitForSeconds(3f);
+
+        this.gameObject.SetActive(false);
+
+        //Debug.Log($"Connection {ClientInstance.instance.CheckConnection()}");
+        //this.gameObject.SetActive(!ClientInstance.instance.isConnected); //conceal the menu if connected
+        //connectButton.GetComponent<Selectable>().interactable = !ClientInstance.instance.isConnected;
+        //if (ClientInstance.instance.CheckConnection())
+        //{
+        //    Debug.Log($"user id {ClientInstance.instance.myId}");
+        //    StartCoroutine(ClientInstance.instance.DelaySpawnRequest(1f));
+        //    GameManager.instance.localPlayerVR.GetComponent<PlayerManager>().InitializePlayerManager(
+        //            ClientInstance.instance.myId,
+        //            nameField.text,
+        //            ClientInstance.instance.role,
+        //            true,   // at the client side?
+        //            true    // VR player?
+        //            );
+        //}
+        //else
+        //{
+        //    connectButton.GetComponentInChildren<Text>().text = "Reconnection";
+        //}
     }
 }

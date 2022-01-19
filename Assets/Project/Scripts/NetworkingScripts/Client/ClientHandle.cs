@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 
+using CEMSIM.VoiceChat;
 using CEMSIM.GameLogic;
 
 namespace CEMSIM
@@ -14,6 +16,11 @@ namespace CEMSIM
         /// </summary>
         public class ClientHandle : MonoBehaviour
         {
+
+            public static void InvalidPacketResponse(Packet _packet)
+            {
+                Debug.Log($"Received an invalid packet from Server");
+            }
 
             public static void Welcome(Packet _packet)
             {
@@ -33,6 +40,13 @@ namespace CEMSIM
 
                 // Mark TCP ready-to-use
                 ClientInstance.instance.tcp.isTCPConnected = true;
+                ClientInstance.instance.CheckConnection();
+            }
+
+            public static void WelcomeUDP(Packet _packet)
+            {
+                Debug.Log("UDP connection success");
+                ClientInstance.instance.udp.isUDPConnected = true;
                 ClientInstance.instance.CheckConnection();
             }
 
@@ -67,12 +81,14 @@ namespace CEMSIM
             {
                 int _id = _packet.ReadInt32();
                 string _username = _packet.ReadString();
+                int _role_i = _packet.ReadInt32();
+                int _avatar_i = _packet.ReadInt32();
                 Vector3 _position = _packet.ReadVector3();
                 Quaternion _rotation = _packet.ReadQuaternion();
 
                 Debug.Log($"Spawn Player {_id} at {_position}");
                 // spawn the player
-                GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
+                GameManager.instance.SpawnPlayer(_id, _username, _role_i, _avatar_i, _position, _rotation);
 
             }
 
@@ -84,42 +100,28 @@ namespace CEMSIM
             {
                 int _id = _packet.ReadInt32();
                 Vector3 _position = _packet.ReadVector3();
-
-
-                //Debug.Log($"Player {_id} position to {_position}");
-
-                // update corresponding player's position
-                if (GameManager.players.ContainsKey(_id))
-                {
-                    GameManager.players[_id].transform.position = _position;
-                }
-                else
-                {
-                    Debug.LogWarning($"Player {_id} has not been created yet");
-                }
-
-            }
-
-            /// <summary>
-            /// Update a player's rotation.
-            /// </summary>
-            /// <param name="_packet"></param>
-            public static void PlayerRotation(Packet _packet)
-            {
-                int _id = _packet.ReadInt32();
                 Quaternion _rotation = _packet.ReadQuaternion();
 
-                Debug.Log($"Player {_id} rotation to {_rotation}");
+                Vector3 _leftPosition = _packet.ReadVector3();
+                Quaternion _leftRotation = _packet.ReadQuaternion();
+                Vector3 _rightPosition = _packet.ReadVector3();
+                Quaternion _rightRotation = _packet.ReadQuaternion();
 
-                // update corresponding player's position
+                // TODO: needs to update both controllers' position
+                
+
+                // update corresponding player's position and hand position
                 if (GameManager.players.ContainsKey(_id))
                 {
-                    GameManager.players[_id].transform.rotation = _rotation;
+                    //Player
+                    GameManager.players[_id].SetPosition(_position, _rotation);
+                    GameManager.players[_id].SetControllerPositions(_leftPosition, _leftRotation, _rightPosition, _rightRotation);
                 }
                 else
                 {
                     Debug.LogWarning($"Player {_id} has not been created yet");
                 }
+
             }
 
             /// <summary>
@@ -137,6 +139,82 @@ namespace CEMSIM
                 // remove the value in the player dictionary
                 GameManager.players.Remove(_id);
             }
+
+            public static void HeartBeatDetectionUDP(Packet _packet)
+            {
+                long sendTicks = _packet.getUtcTicks(); // the utc ticks that generates the received packet
+                ClientSend.SendHeartBeatResponseUDP(sendTicks);
+            }
+
+            public static void HeartBeatDetectionTCP(Packet _packet)
+            {
+                long sendTicks = _packet.getUtcTicks(); // the utc ticks that generates the received packet
+                ClientSend.SendHeartBeatResponseTCP(sendTicks);
+            }
+
+            public static void ItemList(Packet _packet)
+            {
+                int _listSize = _packet.ReadInt32();
+                int _itemId = _packet.ReadInt32();
+                int _itemTypeId = _packet.ReadInt32();
+
+                Vector3 _position = _packet.ReadVector3();
+                Quaternion _rotation = _packet.ReadQuaternion();
+
+                ClientItemManager.instance.InitializeItem(_listSize, _itemId, _itemTypeId, _position, _rotation, _packet);
+            }
+
+            /// <summary>
+            /// Update an item's position as instructed in packet
+            /// </summary>
+            /// <param name="_packet"></param>
+            public static void ItemState(Packet _packet)
+            {
+                // interpret the packet
+                int _itemId = _packet.ReadInt32();
+                Vector3 _position = _packet.ReadVector3();
+                Quaternion _rotation = _packet.ReadQuaternion();
+
+                // update item
+                ClientItemManager.instance.UpdateItemState(_itemId, _position, _rotation, _packet);
+            }
+
+
+            /// <summary>
+            /// An item's ownership request sent by this client is denied by server, update ownership info accordingly
+            /// </summary>
+            /// <param name="_packet"></param>
+            public static void OwnershipDeprivation(Packet _packet)
+            {
+                int _itemId = _packet.ReadInt32();
+                ClientItemManager.instance.DropOwnership(_itemId, false);
+            }
+
+
+            public static void EnvironmentState(Packet _packet)
+            {
+                int _eventId = _packet.ReadInt32();
+                GameManager.handleEventPacket(_eventId, _packet);
+            }
+
+            public static void VoiceChatData(Packet _packet)
+            {
+                ArraySegment<byte> _voiceData = _packet.ReadByteArraySegment();
+                if (ClientInstance.instance.dissonanceClient != null)
+                {
+                    ClientInstance.instance.dissonanceClient.PacketDelivered(_voiceData); // any data, either TCP/UDP voice/message
+                }
+            }
+
+            public static void VoiceChatPlayerId(Packet _packet)
+            {
+                int _fromClient = _packet.ReadInt32();
+                string _playerId = _packet.ReadString();
+
+                GameManager.players[_fromClient].gameObject.GetComponent<CEMSIMVoicePlayer>().ChangePlayerName(_playerId);
+            }
+
+
         }
     }
 }

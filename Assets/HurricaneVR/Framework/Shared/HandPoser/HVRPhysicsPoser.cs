@@ -44,7 +44,7 @@ namespace HurricaneVR.Framework.Shared.HandPoser
         [SerializeField]
         private bool[] _collidedBoneTracker;
         [SerializeField]
-        private int[] _fingerIndices;
+        public int[] _fingerIndices;
 
         private int[] _boneIteration;
 
