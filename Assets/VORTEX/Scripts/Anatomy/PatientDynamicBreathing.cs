@@ -6,8 +6,10 @@ public class PatientDynamicBreathing : MonoBehaviour
 {
     private SkinnedMeshRenderer meshRenderer;
     public PulseDataNumberRenderer dataSource;
-    public int shapeKeyIndex;
-
+    public int bothLungsShapeKeyIndex;
+    public int rightLungShapeKeyIndex;
+    public int leftLungShapeKeyIndex;
+    private int currentShapeKeyIndex;
     private float breath = 0f;
     private float inflation = 0;
     private float currentValue = 0f;
@@ -48,6 +50,15 @@ public class PatientDynamicBreathing : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(ScenarioManager.Instance.pneumothoraxSeverity <= .1f)
+        {
+            currentShapeKeyIndex = bothLungsShapeKeyIndex;
+        }
+        else
+        {
+            currentShapeKeyIndex = rightLungShapeKeyIndex;
+        }
+
         // totalTime = Time.timeSinceLevelLoad;
         if(Mathf.Abs(currentValue - dataSource.currentValue) > .1f)
         {
@@ -78,6 +89,7 @@ public class PatientDynamicBreathing : MonoBehaviour
         //     Breathe(breathingRate, 100, 4);
         //     // Breathe(breathingRate, 100 * (1.2f - ScenarioManager.Instance.pneumothoraxSeverity), 4);
         // }
+        
         
 
     }
@@ -117,7 +129,7 @@ public class PatientDynamicBreathing : MonoBehaviour
             breath = breath * breath * breath * (breath * (6f * breath - 15f) + 10f);   //smootherstep lerp
             inflation = Mathf.Lerp(0, (int)breatheMagnitude, breath);
 
-            meshRenderer.SetBlendShapeWeight(shapeKeyIndex, inflation);
+            meshRenderer.SetBlendShapeWeight(currentShapeKeyIndex, inflation);
         }
         
         // breathIn = lastInflation - inflation < -.0001f ? true : false;
