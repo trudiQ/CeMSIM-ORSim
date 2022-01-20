@@ -2923,7 +2923,7 @@ GameObject:
   - component: {fileID: 4348079207746812416}
   - component: {fileID: 5658975742508582854}
   m_Layer: 0
-  m_Name: AdultCaucasianFemale_01_Heavy_Patient_Rigged_Animations 1
+  m_Name: AdultCaucasianFemale_01_Heavy_Patient_LapChole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5516,6 +5516,73 @@ Transform:
   m_Father: {fileID: 8552745631113723901}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &254505344490220264
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3995668245480489335}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &254505344490220265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3995668245480489335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 508d0664bf3da4243a39187ac857246e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Settings: {fileID: 11400000, guid: c1ef1bbfb61e6b44aa072c231506de93, type: 2}
+  Stabbed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3995668245480489333}
+        m_TargetAssemblyTypeName: LungBehavior, Assembly-CSharp
+        m_MethodName: NeedleDecompression
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  UnStabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  FullStabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  Stabbers: []
+--- !u!114 &254505344490220266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3995668245480489335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc11dd55031d5b544b5404de503c4095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collidersToIgnore:
+  - {fileID: 2296241685439690933}
+  - {fileID: 2296241686575759849}
+  - {fileID: 5658975744120611611}
 --- !u!1 &4097024697767224236
 GameObject:
   m_ObjectHideFlags: 0
@@ -7294,73 +7361,6 @@ Transform:
   m_Father: {fileID: 4416122530429894710}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &254505344490220264
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3995668245480489335}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!114 &254505344490220266
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3995668245480489335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc11dd55031d5b544b5404de503c4095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  collidersToIgnore:
-  - {fileID: 2296241685439690933}
-  - {fileID: 2296241686575759849}
-  - {fileID: 5658975744120611611}
---- !u!114 &254505344490220265
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3995668245480489335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 508d0664bf3da4243a39187ac857246e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Settings: {fileID: 11400000, guid: c1ef1bbfb61e6b44aa072c231506de93, type: 2}
-  Stabbed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3995668245480489333}
-        m_TargetAssemblyTypeName: LungBehavior, Assembly-CSharp
-        m_MethodName: NeedleDecompression
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  UnStabbed:
-    m_PersistentCalls:
-      m_Calls: []
-  FullStabbed:
-    m_PersistentCalls:
-      m_Calls: []
-  Stabbers: []
 --- !u!1 &5699277750063749792
 GameObject:
   m_ObjectHideFlags: 0
@@ -9584,7 +9584,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataSource: {fileID: 0}
-  shapeKeyIndex: 143
+  bothLungsShapeKeyIndex: 148
+  rightLungShapeKeyIndex: 149
+  leftLungShapeKeyIndex: 150
   audioPlayer: {fileID: 0}
   dynamicBreathing: 0
 --- !u!114 &5658975744382346279
@@ -9631,7 +9633,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   insufflationValue: 16
   pneumothoraxThreshold: 12
-  thresholdExceeded: 0
 --- !u!1 &7918235963822381344
 GameObject:
   m_ObjectHideFlags: 0
@@ -11625,7 +11626,7 @@ PrefabInstance:
     - target: {fileID: 4045525174221288579, guid: c85434cc5ef50194784c128e0a785293,
         type: 3}
       propertyPath: m_Name
-      value: LapCholeInstruments (1)
+      value: LapCholeInstruments
       objectReference: {fileID: 0}
     - target: {fileID: 5335383542235934370, guid: c85434cc5ef50194784c128e0a785293,
         type: 3}
