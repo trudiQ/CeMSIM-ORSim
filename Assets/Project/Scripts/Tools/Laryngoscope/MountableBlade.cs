@@ -1,4 +1,5 @@
-﻿using HurricaneVR.Framework.Core;
+using HurricaneVR.Framework.Core;
+using HurricaneVR.Framework.Core.Grabbers;
 using UnityEngine;
 
 public class MountableBlade : MonoBehaviour {
@@ -12,9 +13,12 @@ public class MountableBlade : MonoBehaviour {
 	public bool mounted;
 
 	private FixedJoint joint;
+	private bool isGrabbed;
 
 	// Start is called before the first frame update
 	void Start() {
+		grabbable.Grabbed.AddListener(OnGrabbed);
+		grabbable.Released.AddListener(OnReleased);
 		if (!manager) {
 			manager = FindObjectOfType<BladeMountManager>();
 		}
@@ -22,18 +26,8 @@ public class MountableBlade : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		if (mounted) {
-			joint = GetComponent<FixedJoint>();
-			mounted = false;
-		}
-		if (joint) {
-			Vector3 projection = Vector3.Project(joint.currentForce, transform.right);
-			if (projection.magnitude > breakForce) {
-				Destroy(joint);
-				OnJointBreak(projection.magnitude);
-			}
-		}
-
+		CheckMountState();
+		CheckBreakForce();
 	}
 
 	void OnJointBreak(float breakForce) {
@@ -42,5 +36,28 @@ public class MountableBlade : MonoBehaviour {
 		lightGroup.SetActive(false);
 	}
 
+	private void CheckMountState() {
+		if (mounted) {
+			joint = GetComponent<FixedJoint>();
+			mounted = false;
+		}
+	}
+
+	private void CheckBreakForce() {
+		if (joint && isGrabbed) {
+			Vector3 projection = Vector3.Project(joint.currentForce, transform.right);
+			if (projection.magnitude > breakForce) {
+				Destroy(joint);
+				OnJointBreak(projection.magnitude);
+			}
+		}
+	}
+	private void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable) {
+		isGrabbed = true;
+	}
+
+	private void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable) {
+		isGrabbed = false;
+	}
 
 }
