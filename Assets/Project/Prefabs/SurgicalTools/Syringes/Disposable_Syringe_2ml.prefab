@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5523855966871735241
+--- !u!1 &7577139786705715954
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,45 +8,204 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2084544056665852674}
-  - component: {fileID: 8991429694512203361}
-  - component: {fileID: 5224648508839025177}
+  - component: {fileID: 7577139786705715955}
+  - component: {fileID: 7577139786705715953}
+  - component: {fileID: 7577139786705715952}
   m_Layer: 0
-  m_Name: Syringe_2ml_piston
+  m_Name: GrabPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2084544056665852674
+--- !u!4 &7577139786705715955
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5523855966871735241}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.00010650187, z: 0.000000028610229}
+  m_GameObject: {fileID: 7577139786705715954}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.00000023841854, y: -0.00000062584877, z: -0.00000029802348}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 8066747032167486358}
+  m_Father: {fileID: 7577139787168755048}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7577139786705715953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139786705715954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d1b667b6234620a01e126539c3f6d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LeftHandPreview: {fileID: 0}
+  RightHandPreview: {fileID: 0}
+  BodyPreview: {fileID: 0}
+  PreviewLeft: 0
+  PreviewRight: 0
+  LeftAutoPose: 0
+  RightAutoPose: 0
+  SelectionIndex: 0
+  PoseNames:
+  - 'Primary: SyringeHandPose'
+  PrimaryPose:
+    Pose: {fileID: 11400000, guid: 0e5583df407102742b5942bcd2c174f5, type: 2}
+    Weight: 1
+    Mask: 0
+    Disabled: 0
+    Type: 1
+    Speed: 5
+    AnimationParameter: None
+    ButtonParameter: 1
+    Button: 2
+    ThumbType: 1
+    IndexType: 0
+    MiddleType: 0
+    RingType: 0
+    PinkyType: 0
+    ThumbStart: 0
+    IndexStart: 1
+    MiddleStart: 0
+    RingStart: 0
+    PinkyStart: 0
+  Blends: []
+  ReferencePose: {fileID: 0}
+  MirrorAxis: 0
+--- !u!114 &7577139786705715952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139786705715954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79cd113ec3a24073b5bab8cbfb533d1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsJointAnchor: 0
+  AllowedAngleDifference: 360
+  LeftHand: 0
+  RightHand: 1
+  jointOffset: {x: 0, y: 0, z: 0}
+  GrabIndicatorPosition: {fileID: 0}
+  VisualGrabPoint: {fileID: 0}
+  HandPoser: {fileID: 7577139786705715953}
+  IsLineGrab: 0
+  LineStart: {fileID: 0}
+  LineEnd: {fileID: 0}
+  CanLineFlip: 1
+  LooseDamper: 100
+  LooseAngularDamper: 1
+  LineCanReposition: 1
+  LineCanRotate: 1
+  UpdateJointOffset: 0
+--- !u!1 &7577139787168755051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7577139787168755048}
+  - component: {fileID: 7577139787168755049}
+  m_Layer: 0
+  m_Name: GrabPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7577139787168755048
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787168755051}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 7577139786705715955}
+  m_Father: {fileID: 7577139787204249151}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8991429694512203361
+--- !u!114 &7577139787168755049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787168755051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7737b083a4a391b49adfccaf05aeb91e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &7577139787204249150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7577139787204249151}
+  - component: {fileID: 7577139787204249146}
+  - component: {fileID: 7577139787204249149}
+  - component: {fileID: 7577139787204249147}
+  - component: {fileID: 7577139787204249145}
+  - component: {fileID: 7577139787204249141}
+  - component: {fileID: 7577139787204249140}
+  - component: {fileID: 7577139787204249143}
+  - component: {fileID: 7577139787204249144}
+  - component: {fileID: 7577139787204249142}
+  m_Layer: 0
+  m_Name: Syringe
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7577139787204249151
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787204249150}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.0941, y: 0.261, z: -0.03}
+  m_LocalScale: {x: 1, y: 1, z: 0.5000002}
+  m_Children:
+  - {fileID: 7577139788383700000}
+  - {fileID: 7577139787168755048}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!33 &7577139787204249146
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5523855966871735241}
-  m_Mesh: {fileID: -4037400398890112933, guid: 8c42baf0e28d692498a238994aee1110, type: 3}
---- !u!23 &5224648508839025177
+  m_GameObject: {fileID: 7577139787204249150}
+  m_Mesh: {fileID: 3346168432286702358, guid: 77f8adb222259ee41be91883fb62d463, type: 3}
+--- !u!23 &7577139787204249149
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5523855966871735241}
+  m_GameObject: {fileID: 7577139787204249150}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -59,8 +218,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 230bcf5d4f8254741a9cdfbf794ef03b, type: 2}
-  - {fileID: 2100000, guid: e62377400cdd0c849b8f0b7fad26fd72, type: 2}
+  - {fileID: -5439970045428603212, guid: 77f8adb222259ee41be91883fb62d463, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82,7 +240,465 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &7257839984688220460
+--- !u!54 &7577139787204249147
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787204249150}
+  serializedVersion: 2
+  m_Mass: 0.1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &7577139787204249145
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787204249150}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.030732859, y: 0.018597828, z: 0.19990717}
+  m_Center: {x: 0.0000000038047765, y: -0.0000002530205, z: -0.007939246}
+--- !u!114 &7577139787204249141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787204249150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd07f8606d5a2184ca2bab0e57b64ef7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LeftGripActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftGripDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightGripActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightGripDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTriggerActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTriggerDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTriggerActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTriggerDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftPrimaryActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftPrimaryDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightPrimaryActivated:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7577139787204249140}
+        m_TargetAssemblyTypeName: SyringeInteractions, Assembly-CSharp
+        m_MethodName: set_isPrimaryButtonPressed
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  RightPrimaryDeactivated:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7577139787204249140}
+        m_TargetAssemblyTypeName: SyringeInteractions, Assembly-CSharp
+        m_MethodName: set_isPrimaryButtonPressed
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  LeftSecondaryActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftSecondaryDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightSecondaryActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightSecondaryDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftMenuActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftMenuDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightMenuActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightMenuDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftPrimaryTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftPrimaryTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightPrimaryTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightPrimaryTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftSecondaryTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftSecondaryTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightSecondaryTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightSecondaryTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftJoystickActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftJoystickDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightJoystickActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightJoystickDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackpadActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackpadDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackpadActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackpadDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftJoystickTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftJoystickTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightJoystickTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightJoystickTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTriggerTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTriggerTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTriggerTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTriggerTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftThumbTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftThumbTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightThumbTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightThumbTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadUpActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadUpDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadUpActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadUpDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadLeftActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadLeftDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadLeftActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadLeftDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadRightActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadRightDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadRightActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadRightDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadDownActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadDownDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadDownActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadDownDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &7577139787204249140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787204249150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01fa203157e509449ebbde2605b7c36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plunger: {fileID: 7577139788383700003}
+  plungerStartPos: {x: -0.0001, y: 0.0001, z: 0.082}
+  plungerEndPos: {x: 0, y: 0, z: 0.0152}
+  speed: 10
+  poser: {fileID: 7577139786705715953}
+  balloon: {fileID: 0}
+  balloonInflatedSize: {x: 1.14301, y: 1.1, z: 1.1}
+--- !u!114 &7577139787204249143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787204249150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be9a3bf696d0b4a4bba10e041f987e61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AllowMultiplayerSwap: 0
+  GrabType: 0
+  TrackingType: 0
+  HoldType: 1
+  GrabControl: 0
+  OverrideGrabTrigger: 0
+  GrabTrigger: 0
+  RequireLineOfSight: 1
+  EnableInvisibleHand: 0
+  PhysicsPoserFallback: 1
+  ParentHandModelImmediately: 0
+  ParentHandModel: 1
+  BreakDistance: 1
+  RemainsKinematic: 1
+  Stationary: 0
+  ReleasedAngularConversionFactor: 1
+  ReleasedVelocityFactor: 1
+  ReleasedAngularFactor: 1
+  GrabIndicator: {fileID: 0}
+  ForceGrabIndicator: {fileID: 0}
+  ShowGrabIndicator: 1
+  ShowTriggerGrabIndicator: 1
+  ShowForceGrabIndicator: 1
+  LeftForceGrabberGrabPoint: {fileID: 0}
+  RightForceGrabberGrabPoint: {fileID: 0}
+  UseDefaultHighlighter: 1
+  ForceGrabberHighlighter: {fileID: 0}
+  ForceGrabbable: 1
+  ForcePullOverride: {fileID: 0}
+  JointOverride: {fileID: 0}
+  OneHandJointSettings: {fileID: 0}
+  TwoHandJointSettings: {fileID: 0}
+  PullingSettingsOverride: {fileID: 0}
+  PalmCenterOfMass: 0
+  CanJointBreak: 0
+  JointBreakForce: 2000
+  JointBreakTorque: 2000
+  HandGrabbedClip: {fileID: 0}
+  StartingSocket: {fileID: 0}
+  LinkStartingSocket: 0
+  AutoApplyLayer: 1
+  RequireOverlapClearance: 0
+  OverlapTimeout: 5
+  FinalJointMaxAngle: 3
+  FinalJointQuick: 1
+  FinalJointTimeout: 2
+  CollisionParents: []
+  ExtraIgnoreCollisionParents: []
+  GrabColliders: []
+  ConsiderGrabPointAngle: 1
+  UseColliderClosestPoint: 1
+  CollisionDetection: 2
+  ShowBoundingBox: 0
+  DrawCenterOfMass: 0
+  GrabPoints: []
+  Deactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  Activated:
+    m_PersistentCalls:
+      m_Calls: []
+  Grabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  Released:
+    m_PersistentCalls:
+      m_Calls: []
+  HoverEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  HoverExit:
+    m_PersistentCalls:
+      m_Calls: []
+  Collided:
+    m_PersistentCalls:
+      m_Calls: []
+  Destroyed:
+    m_PersistentCalls:
+      m_Calls: []
+  HandGrabbed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7577139787204249140}
+        m_TargetAssemblyTypeName: SyringeInteractions, Assembly-CSharp
+        m_MethodName: set_isGrabbed
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  HandReleased:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7577139787204249140}
+        m_TargetAssemblyTypeName: SyringeInteractions, Assembly-CSharp
+        m_MethodName: set_isGrabbed
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  Socketed:
+    m_PersistentCalls:
+      m_Calls: []
+  UnSocketed:
+    m_PersistentCalls:
+      m_Calls: []
+  Grabbers: []
+  HandGrabbers: []
+  Stabbers: []
+  Stabbable: {fileID: 0}
+  grabbable: 1
+  Interacted:
+    m_PersistentCalls:
+      m_Calls: []
+  shouldSwitchColliders: 1
+  switchColliders:
+  - {fileID: 7577139787204249145}
+--- !u!114 &7577139787204249144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787204249150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d13f3b6cf3b67294baf0b82792933618, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  desiredPosition: {x: -0.001886, y: -0.062194, z: 0.0058098}
+  desiredRotation: {x: 83.682, y: -19.335, z: -61.983}
+  grabbable: {fileID: 7577139787204249143}
+  manager: {fileID: 0}
+  breakForce: 100
+  mounted: 0
+--- !u!136 &7577139787204249142
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787204249150}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.0032558031
+  m_Height: 0.024689777
+  m_Direction: 2
+  m_Center: {x: 0.0000000038115013, y: 0.000114750655, z: -0.097344786}
+--- !u!1 &7577139788383700003
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -90,77 +706,46 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8066747032167486358}
+  - component: {fileID: 7577139788383700000}
+  - component: {fileID: 7577139788383700012}
+  - component: {fileID: 7577139788383700015}
   m_Layer: 0
-  m_Name: Disposable_Syringe_2ml
+  m_Name: Syringe_Small_Stock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8066747032167486358
+--- !u!4 &7577139788383700000
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7257839984688220460}
-  m_LocalRotation: {x: -0.8828387, y: 0.11370861, z: 0.23250298, w: -0.39192927}
-  m_LocalPosition: {x: -0.55701125, y: -1.6066687, z: 3.3585181}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 302034896326328691}
-  - {fileID: 2084544056665852674}
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -177.877, y: 0, z: 0}
---- !u!1 &7257861633682020368
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 302034896326328691}
-  - component: {fileID: 642399389758591595}
-  - component: {fileID: 7763941504616081474}
-  m_Layer: 0
-  m_Name: Syringe_2ml_cylinder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &302034896326328691
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7257861633682020368}
-  m_LocalRotation: {x: 0.00000008742278, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.00010650187, z: 0.014737043}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_GameObject: {fileID: 7577139788383700003}
+  m_LocalRotation: {x: -0.000000028812785, y: -0.00000003505459, z: -0.00000021162674,
+    w: 1}
+  m_LocalPosition: {x: -0.0001, y: 0.0001, z: 0.082}
+  m_LocalScale: {x: 1, y: 1, z: 0.8}
   m_Children: []
-  m_Father: {fileID: 8066747032167486358}
+  m_Father: {fileID: 7577139787204249151}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &642399389758591595
+--- !u!33 &7577139788383700012
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7257861633682020368}
-  m_Mesh: {fileID: -5016451840584456173, guid: 8c42baf0e28d692498a238994aee1110, type: 3}
---- !u!23 &7763941504616081474
+  m_GameObject: {fileID: 7577139788383700003}
+  m_Mesh: {fileID: 1912551159338115663, guid: 77f8adb222259ee41be91883fb62d463, type: 3}
+--- !u!23 &7577139788383700015
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7257861633682020368}
+  m_GameObject: {fileID: 7577139788383700003}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -173,7 +758,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d06de93be20177043bf8871820d9d9fe, type: 2}
+  - {fileID: -5439970045428603212, guid: 77f8adb222259ee41be91883fb62d463, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
