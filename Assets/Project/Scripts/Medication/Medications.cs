@@ -12,7 +12,8 @@ namespace CEMSIM
         /// </summary>
         public enum Medicine
         {
-            empty,              // empty
+            empty,              // empty, nothing, even no air. 
+            air,                // air
             distilledWater,     //
             saline_09,          // 0.9% saline, aka normal saline
         }

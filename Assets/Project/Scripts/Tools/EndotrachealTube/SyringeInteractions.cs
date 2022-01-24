@@ -11,16 +11,45 @@ namespace CEMSIM
         /// </summary>
 		public class SyringeState: ToolBaseState
         {
-			public MedicationMixture content = new MedicationMixture();
-			float capacity; // capacity of the syringe
-			float speed; // injection speed
+			public MedicineMixture content = new MedicineMixture();
+			public float capacity { get; } // capacity of the syringe (ml)
+			public float speed { get; set; } // injection speed (ml/sec)
+			public float volume { get; set; } // volume of liquid/medication in syringe
 
-			public SyringeState(float _capacity)
+			public SyringeState(float _capacity, float _speed, float _volume=0)
             {
 				capacity = _capacity;
+				speed = _speed;
+				volume = _volume;
 			}
 
-			
+			public float Injection(float _deltaVolume) {
+				if (_deltaVolume <= volume)
+					volume -= _deltaVolume;
+				else
+					volume = 0;
+				return volume;
+			}
+
+			public float Refill(MedicineMixture medicationMixture)
+            {
+				float refillVolume = Mathf.Min(medicationMixture.volume, capacity - volume);
+
+				content.Mix(medicationMixture.Split(refillVolume));
+
+				volume += refillVolume;
+
+				return refillVolume;
+            }
+
+			public float Refill(Medicine medicine, float _volume)
+			{
+				float refillVolume = Mathf.Min(_volume, capacity - volume);
+
+				content.Mix(medicine, refillVolume);
+				volume += refillVolume;
+				return refillVolume;
+			}
 		}
 
 		public class SyringeInteractions : ToolBaseInteraction<SyringeState>
@@ -29,10 +58,20 @@ namespace CEMSIM
 			public GameObject plunger;
 			public Vector3 plungerStartPos;
 			public Vector3 plungerEndPos;
+			private float plungerLength;
 
 			[Tooltip("Capacity of the syringe (ml)")]
-			public float syringeCapacity = 2; 
-			public float speed = 16;
+			public float syringeCapacity = 2;
+
+			[Tooltip("Injection speed ml/sec")]
+			public float injectSpeed = 16;
+			private float speed; // # of moving distance of the plunger per second, speed = injectSpeed / syringeCapacity * (plungerEndPos-plungerStartPos)
+
+			[Tooltip("Contained Medication")]
+			public MedicineMixture medication;
+
+			private SyringeState state;
+
 			public HVRHandPoser poser;
 			public Transform balloon;
 			public Vector3 balloonInflatedSize;
@@ -40,35 +79,47 @@ namespace CEMSIM
 			public bool isGrabbed { get; set; } = false;
 			public bool isPrimaryButtonPressed { get; set; } = false;
 
+			public SyringeInteractions(){
+				plungerLength = Vector3.Distance(plungerStartPos, plungerEndPos); // the length of the plunger measured by the model
+				state = new SyringeState(syringeCapacity, injectSpeed, medication.volume);
+				speed = injectSpeed / syringeCapacity * plungerLength;
+			}
+
 
 
 			public override SyringeState GetState()
             {
-				return new SyringeState(syringeCapacity); // TODO: just a placeholder. Need to be implemented
+				return state;
             }
 
 
             public override void SetState(SyringeState curState)
             {
-                // TODO: adjust thje state of the syringe gameobject based on the input state
-            }
+				// TODO: adjust thje state of the syringe gameobject based on the input state
+				plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, medication.volume/ plungerLength* syringeCapacity);
+
+			}
 
 
-            // Update is called once per frame
-            void Update()
+			// Update is called once per frame
+			void Update()
 			{
 				if (isGrabbed)
 				{
-					if (isPrimaryButtonPressed)
+					if (isPrimaryButtonPressed) // inject
 					{
 						CheckBalloonStatus();
 						poser.PrimaryPose.Type = BlendType.BooleanParameter;
 						plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, Time.deltaTime * speed);
+
+						state.Injection(Time.deltaTime * injectSpeed);
 					}
-					else
+					else // should we assign a separate button for pulling back the plunger? 
 					{
 						plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerStartPos, Time.deltaTime * speed);
+						state.Refill(Medicine.empty, Time.deltaTime * injectSpeed);
 					}
+
 				}
 				else
 				{

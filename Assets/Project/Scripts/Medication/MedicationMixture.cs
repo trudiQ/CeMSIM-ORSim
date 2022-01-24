@@ -40,7 +40,7 @@ namespace CEMSIM
             /// Mix this medicine mixture with another medicine mixture.
             /// </summary>
             /// <param name="anotherMedicine"></param>
-            public void mix(MedicineMixture anotherMedicine)
+            public void Mix(MedicineMixture anotherMedicine)
             {
                 foreach (KeyValuePair<Medicine, float> kvp in anotherMedicine.mixture)
                 {
@@ -52,11 +52,20 @@ namespace CEMSIM
                 }
             }
 
+            public void Mix(Medicine medicine, float _volume)
+            {
+                if (mixture.ContainsKey(medicine))
+                    mixture[medicine] += _volume;
+                else
+                    mixture[medicine] = _volume;
+                volume += _volume;
+            }
+
             /// <summary>
             /// Separate tgtVolume amount of medicine mixture out
             /// </summary>
             /// <param name="volume"></param>
-            public MedicineMixture split(float tgtVolume)
+            public MedicineMixture Split(float tgtVolume)
             {
                 tgtVolume = Mathf.Min(tgtVolume, volume);
 
