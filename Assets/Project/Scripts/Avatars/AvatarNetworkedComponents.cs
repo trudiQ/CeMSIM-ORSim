@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using CEMSIM;
 
 // Included on the avatar prefab and avatar swapper if the simulation is multiplayer and avatars are synchronized
 [Serializable]

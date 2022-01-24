@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using CEMSIM.GameLogic;
 using CEMSIM.Network;
+using CEMSIM;
 
 public class RoleMenu : MonoBehaviour
 {
