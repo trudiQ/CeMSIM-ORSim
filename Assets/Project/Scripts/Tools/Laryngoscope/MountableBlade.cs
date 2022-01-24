@@ -8,6 +8,7 @@ public class MountableBlade : MonoBehaviour {
 	public BladeMountManager manager;
 	public float breakForce = 150f;
 	public GameObject lightGroup;
+	public Collider[] colliders;
 
 	[HideInInspector]
 	public bool mounted;
@@ -34,10 +35,12 @@ public class MountableBlade : MonoBehaviour {
 		manager.isAttached = false;
 		grabbable.Stationary = false;
 		lightGroup.SetActive(false);
+		SwitchColliders();
 	}
 
 	private void CheckMountState() {
 		if (mounted) {
+			SwitchColliders();
 			joint = GetComponent<FixedJoint>();
 			mounted = false;
 		}
@@ -60,4 +63,9 @@ public class MountableBlade : MonoBehaviour {
 		isGrabbed = false;
 	}
 
+	private void SwitchColliders() {
+		foreach (Collider c in colliders) {
+			c.enabled = !c.enabled;
+		}
+	}
 }
