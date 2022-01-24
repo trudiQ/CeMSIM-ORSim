@@ -8,13 +8,12 @@ namespace CEMSIM
     namespace Medications
     {
         /// <summary>
-        /// A enumeration of all possible medicine.
+        /// A enumeration of all possible medications.
         /// </summary>
-        public enum Medications
+        public enum Medicine
         {
             empty,              // empty
-            air,                // not empty, but with air
-            distilledWater,
+            distilledWater,     //
             saline_09,          // 0.9% saline, aka normal saline
         }
     }

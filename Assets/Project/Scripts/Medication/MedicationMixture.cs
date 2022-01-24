@@ -9,12 +9,71 @@ namespace CEMSIM
         /// <summary>
         /// This class handles the mixing of multiple medicine, add/remove a certain quantity/volume
         /// </summary>
-        public class MedicationMixture
+        public class MedicineMixture
         {
-            private Dictionary<Medications, float> mixture = new Dictionary<Medications, float>(); // type of medication and its volume
-            private float volume = 0; // total volume of all medications
+            public Dictionary<Medicine, float> mixture; // type of medication and its volume
 
-            public MedicationMixture() { }
+            public float volume = 0; // total volume of all medications
+
+            public MedicineMixture()
+            {
+                volume = 0;
+                mixture = new Dictionary<Medicine, float>();
+            }
+
+            public MedicineMixture(Dictionary<Medicine, float> _mixture)
+            {
+                mixture = new Dictionary<Medicine, float>(_mixture);
+                foreach (KeyValuePair<Medicine, float> kvp in mixture)
+                {
+                    volume += kvp.Value;
+                }
+            }
+
+            public MedicineMixture(Dictionary<Medicine, float> _mixture, float _volume)
+            {
+                mixture = new Dictionary<Medicine, float>(_mixture);
+                volume = _volume;
+            }
+
+            /// <summary>
+            /// Mix this medicine mixture with another medicine mixture.
+            /// </summary>
+            /// <param name="anotherMedicine"></param>
+            public void mix(MedicineMixture anotherMedicine)
+            {
+                foreach (KeyValuePair<Medicine, float> kvp in anotherMedicine.mixture)
+                {
+                    if (mixture.ContainsKey(kvp.Key))
+                        mixture[kvp.Key] += kvp.Value;
+                    else
+                        mixture[kvp.Key] = kvp.Value;
+                    volume += kvp.Value;
+                }
+            }
+
+            /// <summary>
+            /// Separate tgtVolume amount of medicine mixture out
+            /// </summary>
+            /// <param name="volume"></param>
+            public MedicineMixture split(float tgtVolume)
+            {
+                tgtVolume = Mathf.Min(tgtVolume, volume);
+
+                Dictionary<Medicine, float> tgtMixture = new Dictionary<Medicine, float>(); // the mixture to be split out
+                float componentVolumn = 0;
+                foreach (KeyValuePair<Medicine, float> kvp in mixture)
+                {
+                    componentVolumn = kvp.Value / volume * tgtVolume;
+
+                    mixture[kvp.Key] -= componentVolumn;
+                    tgtMixture[kvp.Key] = componentVolumn;
+                }
+                // we cannot modify volume inside the for-loop, because it is used in the calculation of componentVolume
+                volume -= tgtVolume;
+                return new MedicineMixture(tgtMixture, tgtVolume);
+            }
+
         }
     }
 }
