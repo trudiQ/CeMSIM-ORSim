@@ -4,35 +4,35 @@ using UnityEngine;
 
 namespace CEMSIM
 {
-    namespace Medications
+    namespace Medication
     {
         /// <summary>
         /// This class handles the mixing of multiple medicine, add/remove a certain quantity/volume
         /// </summary>
         public class MedicineMixture
         {
-            public Dictionary<Medicine, float> mixture; // type of medication and its volume
+            public Dictionary<Medication.Drugs, float> mixture; // type of medication and its volume
 
             public float volume = 0; // total volume of all medications
 
             public MedicineMixture()
             {
                 volume = 0;
-                mixture = new Dictionary<Medicine, float>();
+                mixture = new Dictionary<Medication.Drugs, float>();
             }
 
-            public MedicineMixture(Dictionary<Medicine, float> _mixture)
+            public MedicineMixture(Dictionary<Medication.Drugs, float> _mixture)
             {
-                mixture = new Dictionary<Medicine, float>(_mixture);
-                foreach (KeyValuePair<Medicine, float> kvp in mixture)
+                mixture = new Dictionary<Medication.Drugs, float>(_mixture);
+                foreach (KeyValuePair<Medication.Drugs, float> kvp in mixture)
                 {
                     volume += kvp.Value;
                 }
             }
 
-            public MedicineMixture(Dictionary<Medicine, float> _mixture, float _volume)
+            public MedicineMixture(Dictionary<Medication.Drugs, float> _mixture, float _volume)
             {
-                mixture = new Dictionary<Medicine, float>(_mixture);
+                mixture = new Dictionary<Medication.Drugs, float>(_mixture);
                 volume = _volume;
             }
 
@@ -42,7 +42,7 @@ namespace CEMSIM
             /// <param name="anotherMedicine"></param>
             public void Mix(MedicineMixture anotherMedicine)
             {
-                foreach (KeyValuePair<Medicine, float> kvp in anotherMedicine.mixture)
+                foreach (KeyValuePair<Medication.Drugs, float> kvp in anotherMedicine.mixture)
                 {
                     if (mixture.ContainsKey(kvp.Key))
                         mixture[kvp.Key] += kvp.Value;
@@ -52,7 +52,7 @@ namespace CEMSIM
                 }
             }
 
-            public void Mix(Medicine medicine, float _volume)
+            public void Mix(Medication.Drugs medicine, float _volume)
             {
                 if (mixture.ContainsKey(medicine))
                     mixture[medicine] += _volume;
@@ -69,9 +69,9 @@ namespace CEMSIM
             {
                 tgtVolume = Mathf.Min(tgtVolume, volume);
 
-                Dictionary<Medicine, float> tgtMixture = new Dictionary<Medicine, float>(); // the mixture to be split out
+                Dictionary<Medication.Drugs, float> tgtMixture = new Dictionary<Medication.Drugs, float>(); // the mixture to be split out
                 float componentVolumn = 0;
-                foreach (KeyValuePair<Medicine, float> kvp in mixture)
+                foreach (KeyValuePair<Medication.Drugs, float> kvp in mixture)
                 {
                     componentVolumn = kvp.Value / volume * tgtVolume;
 

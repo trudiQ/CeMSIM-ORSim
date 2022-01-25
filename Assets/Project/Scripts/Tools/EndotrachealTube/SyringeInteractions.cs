@@ -1,6 +1,6 @@
 ﻿using HurricaneVR.Framework.Shared.HandPoser;
 using UnityEngine;
-using CEMSIM.Medications;
+using CEMSIM.Medication;
 
 namespace CEMSIM
 {
@@ -42,7 +42,7 @@ namespace CEMSIM
 				return refillVolume;
             }
 
-			public float Refill(Medicine medicine, float _volume)
+			public float Refill(Medication.Medication.Drugs medicine, float _volume)
 			{
 				float refillVolume = Mathf.Min(_volume, capacity - volume);
 
@@ -77,7 +77,8 @@ namespace CEMSIM
 			public Vector3 balloonInflatedSize;
 
 			public bool isGrabbed { get; set; } = false;
-			public bool isPrimaryButtonPressed { get; set; } = false;
+			public bool isRightPrimaryButtonPressed { get; set; } = false;
+			public bool isRightSecondaryButtonPressed { get; set; } = false;
 
 			public SyringeInteractions(){
 				plungerLength = Vector3.Distance(plungerStartPos, plungerEndPos); // the length of the plunger measured by the model
@@ -106,7 +107,7 @@ namespace CEMSIM
 			{
 				if (isGrabbed)
 				{
-					if (isPrimaryButtonPressed) // inject
+					if (isRightPrimaryButtonPressed) // inject
 					{
 						CheckBalloonStatus();
 						poser.PrimaryPose.Type = BlendType.BooleanParameter;
@@ -114,10 +115,10 @@ namespace CEMSIM
 
 						state.Injection(Time.deltaTime * injectSpeed);
 					}
-					else // should we assign a separate button for pulling back the plunger? 
+					if (isRightSecondaryButtonPressed) // refill
 					{
 						plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerStartPos, Time.deltaTime * speed);
-						state.Refill(Medicine.empty, Time.deltaTime * injectSpeed);
+						state.Refill(Medication.Medication.Drugs.empty, Time.deltaTime * injectSpeed); // TODO: refill empty content?
 					}
 
 				}
