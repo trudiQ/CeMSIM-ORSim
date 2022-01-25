@@ -14,6 +14,7 @@ namespace CEMSIM
         [Tooltip("The object that follows the user camera.")]
         public new Transform camera;
         public HVRCameraRig cameraRig;
+        public AvatarHeightCalibration avatarHeightCalibration;
 
         public float height;
 
@@ -23,6 +24,12 @@ namespace CEMSIM
                 height = cameraRig.AdjustedCameraHeight;
             else
                 Debug.LogWarning("Camera Rig missing in UserHeightUtility.");
+
+
+            if (avatarHeightCalibration)
+                avatarHeightCalibration.Calibrate();
+            else
+                Debug.LogWarning("Avatar Height Calibration missing in UserHeightUtility.");
         }
     }
 

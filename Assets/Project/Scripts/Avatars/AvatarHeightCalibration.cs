@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using RootMotion.FinalIK;
 using UnityEngine.Events;
 using HurricaneVR.Framework.Core.Player;
 
@@ -11,12 +10,11 @@ namespace CEMSIM
     [RequireComponent(typeof(AvatarPrefabHeightUtility))]
     public class AvatarHeightCalibration : MonoBehaviour
     {
-        public VRIK ik;
         public AvatarPrefabHeightUtility avatarHeightUtility;
         public HVRCameraRig cameraRig;
 
         [Tooltip("A multiplier to the scale of the avatar. Used if the avatar is too short or tall after calibration.")]
-        [Range(0.8f, 1.2f)] public float heightAdjustmentMultiplier = 1f;
+        [Range(0.9f, 1.0f)] public float heightAdjustmentMultiplier = 0.98f;
 
         [HideInInspector] public UserHeightUtility userHeightUtility;
 

@@ -101,6 +101,7 @@ namespace CEMSIM
                     userHeightUtility.floor = currentAvatarComponents.floor;
                     userHeightUtility.camera = currentAvatarComponents.camera;
                     userHeightUtility.cameraRig = currentAvatarComponents.cameraRig;
+                    userHeightUtility.avatarHeightCalibration = currentAvatarComponents.calibration;
 
                     OnAvatarSwapped.Invoke(activeRole, activeAvatar);
                 }
