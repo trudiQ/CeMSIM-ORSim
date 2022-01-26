@@ -27,6 +27,7 @@ public class InstructionDonDoffRSIController : MonoBehaviour
         }
     }
 
+    // Update the role of each panel and display the next message
     public void RoleSelected(string role)
     {
         foreach (InstructionUI panel in instructionPanels)
@@ -41,8 +42,12 @@ public class InstructionDonDoffRSIController : MonoBehaviour
         }
     }
 
+    // Update the role of each panel and display the next message
     public void RoleSelected(int roleIndex, int avatarIndex)
     {
+        if (!roleSelected && roleIndex == avatarSwapper.defaultRole && avatarIndex == avatarSwapper.defaultAvatar)
+            return;
+
         string role = avatarSwapper.avatarLists[roleIndex].name;
 
         foreach (InstructionUI panel in instructionPanels)
