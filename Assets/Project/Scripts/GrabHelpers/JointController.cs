@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class JointController : MonoBehaviour
 {
     public Rigidbody[] rbs;
+    public List<Rigidbody> ignoreRigidbodies;
     // Start is called before the first frame update
     void Start()
     {
         rbs = GetComponentsInChildren<Rigidbody>();
+  
         StartCoroutine(DisableJointsAfterDelay());
     }
 
@@ -26,7 +29,8 @@ public class JointController : MonoBehaviour
             Rigidbody[] childJoints = rb.GetComponentsInChildren<Rigidbody>();
             foreach(Rigidbody joint in childJoints)
             {
-                joint.isKinematic = true;
+                if (!ignoreRigidbodies.Contains(joint))
+                    joint.isKinematic = true;
             }
         }
     }
@@ -38,7 +42,8 @@ public class JointController : MonoBehaviour
             Rigidbody[] childJoints = rb.GetComponentsInChildren<Rigidbody>();
             foreach(Rigidbody joint in childJoints)
             {
-                joint.isKinematic = false;
+                if(!ignoreRigidbodies.Contains(joint))
+                    joint.isKinematic = false;
             }
         }
     }
@@ -46,7 +51,8 @@ public class JointController : MonoBehaviour
     {
         foreach(Rigidbody rb in rbs)
         {
-            rb.isKinematic = state;
+            if (!ignoreRigidbodies.Contains(rb))
+                rb.isKinematic = state;
         }
     }
 

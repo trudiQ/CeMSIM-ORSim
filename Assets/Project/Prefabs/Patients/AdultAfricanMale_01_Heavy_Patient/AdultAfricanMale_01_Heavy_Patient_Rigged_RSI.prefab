@@ -800,7 +800,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.18100178, y: 1.1002874, z: 0.04730797}
+  m_ConnectedAnchor: {x: 0.18222201, y: 1.1002874, z: 0.04101062}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 2
@@ -977,10 +977,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675623275445}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675623275445}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -1092,8 +1116,9 @@ GameObject:
   m_Component:
   - component: {fileID: 99916365224189680}
   - component: {fileID: 5607097737232952675}
+  - component: {fileID: 1927614396}
   m_Layer: 0
-  m_Name: AdultAfricanMale_01_Heavy_Patient_Rigged 1
+  m_Name: AdultAfricanMale_01_Heavy_Patient_Rigged_RSI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1106,7 +1131,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2194427987477051728}
-  m_LocalRotation: {x: -0.4872922, y: 0.5123928, z: 0.5123928, w: 0.4872922}
+  m_LocalRotation: {x: -0.48729047, y: 0.51239437, z: 0.51239437, w: 0.48729047}
   m_LocalPosition: {x: -0.18548667, y: -3.5229998, z: 3.236872}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1137,6 +1162,21 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1927614396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2194427987477051728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eae06cc53bed1e45a82bc9aaad72b51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rbs: []
+  ignoreRigidbodies:
+  - {fileID: 392337970201665675}
 --- !u!1 &2216177649687646509
 GameObject:
   m_ObjectHideFlags: 0
@@ -1868,7 +1908,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.00003540517, y: 0.27255243, z: 0.0000706762}
+  m_ConnectedAnchor: {x: -0.000034838926, y: 0.2725521, z: 0.00007057934}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 0, z: 1}
   m_XMotion: 0
@@ -2045,10 +2085,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673775844668}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673775844668}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -2381,7 +2445,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.0000002127345, y: 0.4737908, z: 0.000056184137}
+  m_ConnectedAnchor: {x: 0.00000010842635, y: 0.4737908, z: 0.000056184137}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -2558,10 +2622,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673776302787}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673776302787}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -3212,7 +3300,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.09204538, y: -0.0201209, z: -0.00264878}
+  m_ConnectedAnchor: {x: -0.0920455, y: -0.020121139, z: -0.0026485415}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 0, z: 1}
   m_XMotion: 0
@@ -3389,10 +3477,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673548864774}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673548864774}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -3670,7 +3782,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.1953863, y: 0.3797109, z: -0.044129867}
+  m_ConnectedAnchor: {x: -0.19538625, y: 0.3797104, z: -0.044129927}
   serializedVersion: 2
   m_SecondaryAxis: {x: -1, y: 0, z: 0}
   m_XMotion: 0
@@ -3847,10 +3959,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675371664684}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675371664684}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -4091,7 +4227,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: -0, y: -0, z: -1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.19540739, y: 0.37977436, z: -0.044163693}
+  m_ConnectedAnchor: {x: 0.19540711, y: 0.3797738, z: -0.044163767}
   serializedVersion: 2
   m_SecondaryAxis: {x: 1, y: 0, z: 0}
   m_XMotion: 0
@@ -4268,10 +4404,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675350079665}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675350079665}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -4394,7 +4554,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: -0, y: -0, z: -1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000000036554418, y: 0.25932002, z: 0.0000014070393}
+  m_ConnectedAnchor: {x: 0.00000061537156, y: 0.25931978, z: 0.0000010756559}
   serializedVersion: 2
   m_SecondaryAxis: {x: 1, y: 0, z: 0}
   m_XMotion: 0
@@ -4571,10 +4731,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673517185841}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673517185841}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -4785,7 +4969,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.09206154, y: -0.02004559, z: -0.002676116}
+  m_ConnectedAnchor: {x: 0.09206134, y: -0.020045947, z: -0.002676116}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 0, z: 1}
   m_XMotion: 0
@@ -4962,10 +5146,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673952354038}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673952354038}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -5119,7 +5327,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000000054016727, y: 0.25931397, z: 0.0000008912248}
+  m_ConnectedAnchor: {x: -0.00000043772178, y: 0.25931397, z: 0.0000010747754}
   serializedVersion: 2
   m_SecondaryAxis: {x: -1, y: 0, z: 0}
   m_XMotion: 0
@@ -5296,10 +5504,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675014916116}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675014916116}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -5451,7 +5683,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: -1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.00003509969, y: 0.2725692, z: 0.00007033442}
+  m_ConnectedAnchor: {x: 0.000034675006, y: 0.2725693, z: 0.00007042848}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 0, z: 1}
   m_XMotion: 0
@@ -5628,10 +5860,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675531163838}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675531163838}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -5847,7 +6103,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.00000027621007, y: 0.4738331, z: 0.000056091696}
+  m_ConnectedAnchor: {x: -0.00000026130888, y: 0.4738331, z: 0.000056091696}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -6024,10 +6280,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673502654232}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924673502654232}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -6238,7 +6518,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000012120559, y: 0.50471514, z: 0.008994714}
+  m_ConnectedAnchor: {x: -0.00001240366, y: 0.5047146, z: 0.008994878}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 0, z: 1}
   m_XMotion: 0
@@ -6415,10 +6695,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924674895852287}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924674895852287}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -7464,7 +7768,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.00040199366, y: 0.02357492, z: 0.025500169}
+  m_ConnectedAnchor: {x: 0.00040191913, y: 0.023574388, z: 0.0255004}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 1
@@ -7641,10 +7945,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675394735115}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675394735115}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -8197,7 +8525,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000066764645, y: 0.455938, z: -0.0000021383162}
+  m_ConnectedAnchor: {x: -0.000066658475, y: 0.4559382, z: -0.0000020787115}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 0, z: 1}
   m_XMotion: 0
@@ -8374,10 +8702,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924674603689601}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924674603689601}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -9118,7 +9470,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.00006663798, y: 0.45601645, z: -0.0000024512342}
+  m_ConnectedAnchor: {x: 0.00006682797, y: 0.45601666, z: -0.0000022798713}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 0, z: 1}
   m_XMotion: 0
@@ -9295,10 +9647,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924674325319516}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924674325319516}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -9445,7 +9821,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000003540752, y: 0.12252661, z: 0.026113968}
+  m_ConnectedAnchor: {x: 0.0000032724402, y: 0.12252613, z: 0.026113968}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 0, z: 1}
   m_XMotion: 0
@@ -9622,10 +9998,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: EnableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675493887049}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1927614396}
+        m_TargetAssemblyTypeName: JointController, Assembly-CSharp
+        m_MethodName: DisableJoint
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 6315924675493887049}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Socketed:
     m_PersistentCalls:
       m_Calls: []
@@ -9712,7 +10112,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6837055336736567067
 Transform:
   m_ObjectHideFlags: 0
