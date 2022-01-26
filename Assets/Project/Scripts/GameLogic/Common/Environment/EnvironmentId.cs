@@ -9,6 +9,7 @@ namespace CEMSIM
         public enum EnvironmentId
         {
             roomLight=1,        // celling lights
+            sink,               // sink
         }
     }
 }

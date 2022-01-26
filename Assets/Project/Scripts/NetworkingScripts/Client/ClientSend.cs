@@ -185,7 +185,7 @@ namespace CEMSIM
                 ItemController itemCon = _item.GetComponent<ItemController>();
                 using (Packet _packet = new Packet((int)ClientPackets.itemState))
                 {
-                    _packet.Write(itemCon.id);
+                    _packet.Write(itemCon.itemId);
                     _packet.Write(_item.transform.position);
                     _packet.Write(_item.transform.rotation);
                     
@@ -203,7 +203,7 @@ namespace CEMSIM
                 using (Packet _packet = new Packet((int)ClientPackets.itemOwnershipChange))
                 {
                     ItemController itemCon = _item.GetComponent<ItemController>();
-                    _packet.Write(itemCon.id);
+                    _packet.Write(itemCon.itemId);
                     _packet.Write(_toGrab); // if ownerId = 0, it only means that the user release the item. The true owner may not be user 0 (server)
                     SendTCPData(_packet);
                 }
@@ -239,11 +239,11 @@ namespace CEMSIM
             /// Inform server your dissonance player id.
             /// </summary>
             /// <param name="_playerId">The uid of the dissonance player</param>
-            public static void SendVoiceChatPlayerId(string _playerId)
+            public static void SendVoiceChatPlayerId(string _playeruuid)
             {
                 using (Packet _packet = new Packet((int)ClientPackets.voiceChatPlayerId))
                 {
-                    _packet.Write(_playerId);
+                    _packet.Write(_playeruuid);
                     SendTCPData(_packet);
                 }
             }

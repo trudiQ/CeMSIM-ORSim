@@ -51,7 +51,7 @@ namespace Dissonance
             //Save the tracker. The player could rejoin the session, in which case we'd need this tracker again
             var tracker = state.Tracker;
             if (tracker != null)
-                _unlinkedPlayerTrackers.Add(tracker.PlayerId, tracker);
+                _unlinkedPlayerTrackers.Add(tracker.clientuuid, tracker);
 
             state.Tracker = null;
         }
@@ -65,15 +65,15 @@ namespace Dissonance
 
             //Associate tracker with player state
             VoicePlayerState state;
-            if (_players.TryGet(player.PlayerId, out state))
+            if (_players.TryGet(player.clientuuid, out state))
             {
                 state.Tracker = player;
-                Log.Debug("Associated position tracking for '{0}'", player.PlayerId);
+                Log.Debug("Associated position tracking for '{0}'", player.clientuuid);
             }
             else
             {
-                _unlinkedPlayerTrackers[player.PlayerId] = player;
-                Log.Debug("Got a player tracker for player '{0}' but that player doesn't exist yet", player.PlayerId);
+                _unlinkedPlayerTrackers[player.clientuuid] = player;
+                Log.Debug("Got a player tracker for player '{0}' but that player doesn't exist yet", player.clientuuid);
             }
         }
 
@@ -83,16 +83,16 @@ namespace Dissonance
                 throw new ArgumentNullException("player", "Cannot stop tracking a null player");
 
             //Try to remove the player from the list of untracked players, just in case we haven't linked it up yet
-            if (_unlinkedPlayerTrackers.Remove(player.PlayerId))
-                Log.Debug("Removed unlinked state tracker for '{0}' (because RemoveTracker called)", player.PlayerId);
+            if (_unlinkedPlayerTrackers.Remove(player.clientuuid))
+                Log.Debug("Removed unlinked state tracker for '{0}' (because RemoveTracker called)", player.clientuuid);
             else
             {
                 //Disassociate the tracker from the player state
                 VoicePlayerState state;
-                if (_players.TryGet(player.PlayerId, out state))
+                if (_players.TryGet(player.clientuuid, out state))
                 {
                     state.Tracker = null;
-                    Log.Debug("Disassociated position tracking for '{0}' (because RemoveTracker called)", player.PlayerId);
+                    Log.Debug("Disassociated position tracking for '{0}' (because RemoveTracker called)", player.clientuuid);
                 }
             }
         }

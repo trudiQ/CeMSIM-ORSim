@@ -28,7 +28,7 @@ namespace Dissonance
         /// <summary>
         /// The ID of the player this object represents
         /// </summary>
-        string PlayerId { get; }
+        string clientuuid { get; }
 
         /// <summary>
         /// The position of this player

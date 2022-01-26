@@ -5,6 +5,7 @@ using UnityEngine;
 using CEMSIM.GameLogic;
 using System;
 using CEMSIM.VoiceChat;
+using CEMSIM.Logger;
 
 namespace CEMSIM
 {
@@ -13,6 +14,10 @@ namespace CEMSIM
         public class ServerNetworkManager : MonoBehaviour
         {
             public static ServerNetworkManager instance;
+
+            // event system
+            public static event Action<bool> onRoomLightBtnTrigger;
+            public static event Action<bool> onSinkOnOffTrigger;
 
             [Header("Player Prefabs")]
             [Tooltip("The order of the prefabs should match the enumation order of Roles in GameConstants.cs")]
@@ -45,6 +50,7 @@ namespace CEMSIM
             private static Dictionary<int, eventHandler> eventHandlerDict;
             private delegate void eventStatePush(int _fromClient);
             private static Dictionary<int, eventStatePush> eventStatePushDict;
+
 
             private void Awake()
             {
@@ -171,6 +177,8 @@ namespace CEMSIM
                 List<byte> message = new List<byte>();
                 instance.roomLightButton.GetComponent<RoomLightsOnOff>().SetSwitchState(switchState);
 
+                RoomLightBtnTrigger(switchState);
+
                 message.AddRange(BitConverter.GetBytes(switchState));
 
                 ServerSend.SendEnvironmentState(_fromClient, (int)EnvironmentId.roomLight, message.ToArray());
@@ -212,6 +220,21 @@ namespace CEMSIM
                 {
                     {(int)EnvironmentId.roomLight, GetRoomLightState}
                 };
+            }
+            #endregion
+
+
+            #region event system
+            public static void RoomLightBtnTrigger(bool _btnState)
+            {
+                if (onRoomLightBtnTrigger != null)
+                    onRoomLightBtnTrigger(_btnState);
+            }
+
+            public static void SinkOnOffTrigger(bool _sinkState)
+            {
+                if (onSinkOnOffTrigger != null)
+                    onSinkOnOffTrigger(_sinkState);
             }
             #endregion
 

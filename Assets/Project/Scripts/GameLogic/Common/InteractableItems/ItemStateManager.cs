@@ -1,8 +1,9 @@
-﻿using CEMSIM.Network;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CEMSIM.GameLogic;
+using CEMSIM.Network;
 
 namespace CEMSIM
 {
@@ -14,24 +15,28 @@ namespace CEMSIM
         public class ItemStateManager
         {
 
-            private enum StateList
+            public enum StateList
             {
                 defaultState=0,   // item has no other working state
             }
 
             protected ToolType toolCategory;
-            protected int id;
+            protected int itemId;
             private StateList state;
+
+            public static event Action<int, StateList, int> onItemStateUpdateTrigger;
+
+
 
             public ItemStateManager()
             {
-                state = StateList.defaultState;
                 toolCategory = ToolType.simpleTool;
+                UpdateState(StateList.defaultState);
             }
 
             public virtual void initializeItem(int _id)
             {
-                id = _id;
+                itemId = _id;
             }
 
 
@@ -60,8 +65,31 @@ namespace CEMSIM
                     return;
                 }
 
-                state = (StateList)_specId;
+                UpdateState((StateList)_specId);
             }
+
+            /// <summary>
+            /// Update state
+            /// </summary>
+            public void UpdateState(StateList _newState)
+            {
+                state = _newState;
+                if (ClientItemManager.instance != null)
+                {
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
+                }
+                else
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
+            }
+
+            #region Event System
+            public static void ItemStateUpdateTrigger(int _itemId, StateList _state, int _clientId)
+            {
+                //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
+                if (onItemStateUpdateTrigger != null)
+                    onItemStateUpdateTrigger(_itemId, _state, _clientId);
+            }
+            #endregion
 
         }
     }

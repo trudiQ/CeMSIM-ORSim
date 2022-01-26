@@ -14,16 +14,19 @@ namespace CEMSIM
         {
 
             // State of the catheter, e.g. empty
-            private enum StateList
+            public enum CatheterStateList
             {
                 defaultState=0,
             }
-            private StateList state;
-         
+
+            private CatheterStateList state;
+
+            public static event Action<int, CatheterStateList, int> onCatheterStateUpdateTrigger;
+
             public CatheterStateManager()
             {
-                state = StateList.defaultState;
-                toolCategory = ToolType.decompressionNeedle;
+                toolCategory = ToolType.catheter;
+                UpdateState(CatheterStateList.defaultState); // 
 
                 Debug.Log($"Initialize {toolCategory} - {state}");
 
@@ -45,14 +48,38 @@ namespace CEMSIM
             public override void DigestStateMessage(Packet _remainderPacket)
             {
                 int _specId = _remainderPacket.ReadInt32();
-                if (!Enum.IsDefined(typeof(StateList), _specId))
+                if (!Enum.IsDefined(typeof(CatheterStateList), _specId))
                 {
                     Debug.LogWarning($"{toolCategory} does't have state {_specId}. State ignored");
                     return;
                 }
 
-                state = (StateList)_specId;
+                UpdateState((CatheterStateList)_specId);
             }
+
+            /// <summary>
+            /// Update state
+            /// </summary>
+            public void UpdateState(CatheterStateList _newState)
+            {
+                state = _newState;
+                if (ClientItemManager.instance != null)
+                {
+                    ItemStateUpdateTrigger(itemId, state, ClientInstance.instance.myId);
+                }
+                else
+                    ItemStateUpdateTrigger(itemId, state, GameConstants.SINGLE_PLAYER_CLIENTID);
+
+            }
+
+            #region Event System
+            public static void ItemStateUpdateTrigger(int _itemId, CatheterStateList _state, int _clientId)
+            {
+                //Debug.LogError($"lalalalala,onPlayerEnterTrigger {onPlayerEnterTrigger}");
+                if (onCatheterStateUpdateTrigger != null)
+                    onCatheterStateUpdateTrigger(_itemId, _state, _clientId);
+            }
+            #endregion
         }
     }
 }
