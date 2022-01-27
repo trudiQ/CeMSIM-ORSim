@@ -23,7 +23,7 @@ public class InstructionDonDoffRSIController : MonoBehaviour
     {
         foreach (InstructionUI panel in instructionPanels)
         {
-            panel.DisplayNextText();
+            panel.TransitionToNextInstruction();
         }
     }
 
