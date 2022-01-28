@@ -206,8 +206,9 @@ public class TestAPI : MonoBehaviour
         // Apply filtered position data
         trackerData[0].UpdateFilter();
         trackerData[1].UpdateFilter();
-        if (globalOperators.m_bSimStart)
+        if (globalOperators.m_bSimStart && LinearStaplerTool.instance.simStates < 2) // If sim started and is not in last phase
         {
+            ConstraintStaplerAngleWhenInserting();
             KeepStaplerAboveTable();
         }
         trackerMarker0.position = trackerData[0].filteredPosition;
@@ -218,6 +219,58 @@ public class TestAPI : MonoBehaviour
         //trackers[0].angles = new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
         //trackers[1].positions = tracker1OriginPosition.position + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
         //trackers[1].angles = new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
+    }
+
+    public void ConstraintStaplerAngleWhenInserting()
+    {
+        for (int c = 0; c < 2; c++)
+        {
+            if (globalOperators.m_bInsert[c] != 0)
+            {
+                int insertDepthLayer = Mathf.CeilToInt(Mathf.Clamp(globalOperators.m_insertDepth[c], 0, 1) * 20f); // Get stapler insert depth layer
+
+                if (insertDepthLayer < 3)
+                {
+                    continue;
+                }
+
+                Vector3 colonDirection = LinearStaplerTool.instance.GetColonDirection(c, 0, insertDepthLayer);
+
+                if (globalOperators.m_bInsert[c] == 1) // If top part inserted
+                {
+                    ConstraintAngle(colonDirection, 15f, trackerMarker1);
+                }
+                else if (globalOperators.m_bInsert[c] == 2) // Bottom part
+                {
+                    ConstraintAngle(colonDirection, 15f, trackerMarker0);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="targetDirection"></param>
+    /// <param name="angleRange"></param> Angle range in one direction (so full range is double this)
+    /// <param name="toConstraint"></param>
+    public void ConstraintAngle(Vector3 targetDirection, float angleRange, Transform toConstraint)
+    {
+        float yAngle = Mathf.Atan(targetDirection.x / targetDirection.z) * Mathf.Rad2Deg;
+        if (Mathf.Abs(yAngle) > 90)
+        {
+            yAngle += Mathf.Sign(yAngle) * (-90f);
+        }
+        float xAngle = Mathf.Atan(targetDirection.y / targetDirection.z) * Mathf.Rad2Deg;
+        if (Mathf.Abs(xAngle) > 90)
+        {
+            xAngle += Mathf.Sign(xAngle) * (-90f);
+        }
+
+        Vector3 targetConstrainedAngle = toConstraint.eulerAngles;
+        targetConstrainedAngle.x = Mathf.Clamp(targetConstrainedAngle.x, xAngle - angleRange, xAngle + angleRange);
+        targetConstrainedAngle.y = Mathf.Clamp(targetConstrainedAngle.y, yAngle - angleRange, yAngle + angleRange);
+        toConstraint.eulerAngles = targetConstrainedAngle;
     }
 
     public void KeepStaplerAboveTable()

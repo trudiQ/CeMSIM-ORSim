@@ -1084,7 +1084,7 @@ public class HapticSurgTools : MonoBehaviour
         int layer = globalOperators.GetSphereLayer(body.gameObject.name);
         //if (!LinearStaplerTool.instance.usingRawSensorControl) // Temp, disable forceps lifting if testing using raw stapler input
         {
-            if (gOperators.m_LRCornerCutIdices[colon][1 - colon]) 
+            if (gOperators.m_LRCornerCutIdices[colon][1 - colon])
             {
                 // If grabbing first 2 layers
                 if (LinearStaplerTool.instance.simStates < 2 && body.gameObject.name.Contains("sphere_"))
@@ -1112,7 +1112,7 @@ public class HapticSurgTools : MonoBehaviour
         if (!isLifting)
         {
             // Don't move grabbed sphere if the colon is joined and the grabbed sphere is the supported sphere
-            if (LinearStaplerTool.instance.simStates < 1 || !gOperators.supportedColonSpheresAfterJoining.Contains(grabbing.transform))
+            if (LinearStaplerTool.instance.simStates < 1 || !gOperators.supportedColonSpheresAfterJoining.Exists(sl => sl.Contains(grabbing.transform)))
             {
                 //grabbing.transform.position = collidingTip.position;
                 grabbing.transform.position = grabbingSphereAnchor.position;

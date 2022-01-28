@@ -108,8 +108,8 @@ public class globalOperators : MonoBehaviour
     public LS_UIcontroller uiController;
 
     // Colon joining
-    public List<Transform> supportedColonSpheresAfterJoining; // Colon spheres that's been connected with extra fixedjoints to support mesh after joining
-    public List<FixedJoint> supportingJointsForJoining;
+    public List<List<Transform>> supportedColonSpheresAfterJoining; // Colon spheres that's been connected with extra fixedjoints to support mesh after joining
+    public List<List<FixedJoint>> supportingJointsForJoining;
 
     public static globalOperators instance;
 
@@ -222,8 +222,8 @@ public class globalOperators : MonoBehaviour
         MetricsScoringManager = FindObjectOfType<globalOperators>().GetComponent<LSMetricsScoring>();
 
         // List initialization
-        supportedColonSpheresAfterJoining = new List<Transform>();
-        supportingJointsForJoining = new List<FixedJoint>();
+        supportedColonSpheresAfterJoining = new List<List<Transform>>();
+        supportingJointsForJoining = new List<List<FixedJoint>>();
     }
 
     /// <summary>
@@ -325,6 +325,10 @@ public class globalOperators : MonoBehaviour
 
         for (int l = 0; l < numLayer2Join; l++)
         {
+            // Add new list for supported spheres and new fixed joints
+            supportedColonSpheresAfterJoining.Add(new List<Transform>());
+            supportingJointsForJoining.Add(new List<FixedJoint>());
+
             // connect sphereA of object0 to sphereB of object1
             GameObject sphere0A = m_sphereJointObjects.Find(g => g.name == "sphere_" + objIdx[0].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + m_sphereIdx2Split[0].ToString());
             GameObject sphere1B = m_sphereJointObjects.Find(g => g.name == "sphere_" + objIdx[1].ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + sphereIdxB[1].ToString());
@@ -342,6 +346,8 @@ public class globalOperators : MonoBehaviour
                 // add a fixed joint
                 FixedJoint joint0A1B = sphere0A.AddComponent<FixedJoint>();
                 joint0A1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
+                // Save modified spheres and joints
+                supportingJointsForJoining[l].Add(joint0A1B);
                 // reconfigure the joint
                 //joint0A1B.linearLimitSpring = new SoftJointLimitSpring() { spring = 50.0f, damper = 50.0f };
                 //joint0A1B.linearLimit = new SoftJointLimit() { limit = 0.01f };
@@ -374,10 +380,12 @@ public class globalOperators : MonoBehaviour
                 joint1A0B.connectedBody = sphere0B.GetComponent<Rigidbody>();
 
                 // Save modified spheres and joints
-                supportedColonSpheresAfterJoining.Add(sphere0A.transform);
-                supportedColonSpheresAfterJoining.Add(sphere0B.transform);
-                supportedColonSpheresAfterJoining.Add(sphere1A.transform);
-                supportedColonSpheresAfterJoining.Add(sphere1B.transform);
+                supportedColonSpheresAfterJoining[l].Add(sphere0A.transform);
+                supportedColonSpheresAfterJoining[l].Add(sphere0B.transform);
+                supportedColonSpheresAfterJoining[l].Add(sphere1A.transform);
+                supportedColonSpheresAfterJoining[l].Add(sphere1B.transform);
+                // Save modified spheres and joints
+                supportingJointsForJoining[l].Add(joint1A0B);
 
                 // move the upper spheres up a bit
                 sphere1A.transform.position = new Vector3(sphere1A.transform.position.x, BetterRandom.betterRandom(18500, 19500) / 10000f, sphere1A.transform.position.z);
@@ -389,8 +397,8 @@ public class globalOperators : MonoBehaviour
                 joint1A1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
 
                 // Save modified spheres and joints
-                supportingJointsForJoining.Add(joint0A0B);
-                supportingJointsForJoining.Add(joint1A1B);
+                supportingJointsForJoining[l].Add(joint0A0B);
+                supportingJointsForJoining[l].Add(joint1A1B);
 
                 // Move more spheres up and add vertical supportive joints
                 GameObject sphere0C = m_sphereJointObjects.Find(g => g.name == "sphere_" + 0.ToString() + "_" + (m_layers2Split[0] + l).ToString() + "_" + 5.ToString());
@@ -413,15 +421,16 @@ public class globalOperators : MonoBehaviour
                 joint1D1B.connectedBody = sphere1B.GetComponent<Rigidbody>();
 
                 // Save modified spheres and joints
-                supportedColonSpheresAfterJoining.Add(sphere0C.transform);
-                supportedColonSpheresAfterJoining.Add(sphere1C.transform);
-                supportedColonSpheresAfterJoining.Add(sphere1D.transform);
-                supportingJointsForJoining.Add(joint0C0B);
-                supportingJointsForJoining.Add(joint0C1B);
-                supportingJointsForJoining.Add(joint1C0B);
-                supportingJointsForJoining.Add(joint1C1B);
-                supportingJointsForJoining.Add(joint1D0B);
-                supportingJointsForJoining.Add(joint1D1B);
+                supportedColonSpheresAfterJoining[l].Add(sphere0C.transform);
+                supportedColonSpheresAfterJoining[l].Add(sphere1C.transform);
+                supportedColonSpheresAfterJoining[l].Add(sphere1D.transform);
+                supportingJointsForJoining[l].Add(joint0C0B);
+                supportingJointsForJoining[l].Add(joint0C1B);
+                supportingJointsForJoining[l].Add(joint1C0B);
+                supportingJointsForJoining[l].Add(joint1C1B);
+                supportingJointsForJoining[l].Add(joint1D0B);
+                supportingJointsForJoining[l].Add(joint1D1B);
+
 
                 // reconfigure neighbor joints
                 List<ConfigurableJoint> joints0 = sphere0B.GetComponents<ConfigurableJoint>().ToList();
@@ -431,6 +440,9 @@ public class globalOperators : MonoBehaviour
                     Destroy(j);
                     FixedJoint newJ = sphere0B.AddComponent<FixedJoint>();
                     newJ.connectedBody = sphere;
+
+                    // Save modified spheres and joints
+                    supportingJointsForJoining[GetSphereLayer(sphere.name)].Add(newJ);
                 }
                 for (int i = 0; i < 20; i++)
                 {
@@ -475,6 +487,8 @@ public class globalOperators : MonoBehaviour
                     //    }
                     //}
                 }
+
+
                 // reconfigure the joint
                 //joint1A0B.linearLimitSpring = new SoftJointLimitSpring() { spring = 50.0f, damper = 50.0f };
                 //joint1A0B.linearLimit = new SoftJointLimit() { limit = 0.01f };
@@ -709,11 +723,11 @@ public class globalOperators : MonoBehaviour
         {
             return false;
         }
-        if (!CheckAngleDifference(Mathf.Abs(Mathf.Atan(scissorsValidator.forward.x / scissorsValidator.forward.z) * Mathf.Rad2Deg), forwardDirectionAngle, forwardDirectionThreshold, true))
+        if (!CheckAngleDifference(Mathf.Atan(Mathf.Abs(scissorsValidator.forward.x / scissorsValidator.forward.z)) * Mathf.Rad2Deg, forwardDirectionAngle, forwardDirectionThreshold, true))
         {
             return false;
         }
-        if (!CheckAngleDifference(Mathf.Abs(Mathf.Atan(scissorsValidator.up.y / Mathf.Sqrt(Mathf.Pow(scissorsValidator.up.z, 2) + Mathf.Pow(scissorsValidator.up.x, 2))) * Mathf.Rad2Deg),
+        if (!CheckAngleDifference(Mathf.Atan(Mathf.Abs(scissorsValidator.up.y / Mathf.Sqrt(Mathf.Pow(scissorsValidator.up.z, 2) + Mathf.Pow(scissorsValidator.up.x, 2)))) * Mathf.Rad2Deg,
             rightDirectionAngle, rightDirectionThreshold, true))
         {
             return false;
@@ -853,6 +867,17 @@ public class globalOperators : MonoBehaviour
         {
             Debug.Log("Error(finalClosure): no models to conduct finalClosure!");
             return false;
+        }
+
+        // Remove fixed joints for closed layers
+        for (int layer = 0; layer < layerIdx + 1; layer++)
+        {
+            if (layer > supportingJointsForJoining.Count - 1)
+            {
+                break;
+            }
+
+            supportingJointsForJoining[layer].ForEach(j => Destroy(j));
         }
 
         // conduct final-closure for both models at the same time
@@ -1368,6 +1393,9 @@ public class globalOperators : MonoBehaviour
         TestScissorCutConditions();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void UpdateLayerPosition()
     {
         for (int l = 0; l < colonLayerAveragePosition[0].Count; l++)

@@ -361,6 +361,10 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             {
                 LinearStaplerColonInsertionCollisionInteraction();
             }
+            else if (simStates >= 2)
+            {
+                CheckStaplerMovementDuringLastStep(bottomHalf.transform, joinedColonFirstLayerLowerSpheresPosition, joinedColonFifthLayerLowerSpheresPosition);
+            }
 
             return;
         }
@@ -413,6 +417,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
             joinedColonFifthLayerLowerSpheresPosition += lastPhaseToolBottomMovingAxisDifference * Vector3.up;
             joinedColonSixthLayerLowerSpheresPosition += lastPhaseToolBottomMovingAxisDifference * Vector3.up;
             LockToolMovementInPlaneDuringLastStep(bottomHalf.transform, joinedColonFirstLayerLowerSpheresPosition, joinedColonFifthLayerLowerSpheresPosition);
+
         }
         //if (isTopHalfMovingInCuttingPlane)
         //{
@@ -768,6 +773,55 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         // Rotate the LS tool to align it with the colon
         controlledObject.LookAt(controlledObject.position + Vector3.down, Vector3.forward);
         //controlledObject.Rotate(0, -90 * Mathf.Sign(rotateUpDir.y), 0, Space.Self);
+
+        // Check which layer of sphere is the LS tool closest to
+        lastPhaseLockedLayer = 0;
+        float closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonFirstLayerLowerSpheresPosition.z);
+        bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonFirstLayerLowerSpheresPosition.x;
+        if (Mathf.Abs(controlledObject.position.z - joinedColonSecondLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonSecondLayerLowerSpheresPosition.z);
+            lastPhaseLockedLayer = 1;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonSecondLayerLowerSpheresPosition.x;
+        }
+        if (Mathf.Abs(controlledObject.position.z - joinedColonThirdLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonThirdLayerLowerSpheresPosition.z);
+            lastPhaseLockedLayer = 2;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonThirdLayerLowerSpheresPosition.x;
+        }
+        if (Mathf.Abs(controlledObject.position.z - joinedColonForthLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonForthLayerLowerSpheresPosition.z);
+            lastPhaseLockedLayer = 3;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonForthLayerLowerSpheresPosition.x;
+        }
+        if (Mathf.Abs(controlledObject.position.z - joinedColonFifthLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonFifthLayerLowerSpheresPosition.z);
+            lastPhaseLockedLayer = 4;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonFifthLayerLowerSpheresPosition.x;
+        }
+        if (Mathf.Abs(controlledObject.position.z - joinedColonSixthLayerLowerSpheresPosition.z) < closestLayerDist)
+        {
+            closestLayerDist = Mathf.Abs(controlledObject.position.z - joinedColonSixthLayerLowerSpheresPosition.z);
+            lastPhaseLockedLayer = 5;
+            bottomLastPhaseX = bottomHalfFrontTip.position.x - joinedColonSixthLayerLowerSpheresPosition.x;
+        }
+
+        return depth;
+        //return objectNormalToStartDistance / movementRange;
+    }
+
+    public float CheckStaplerMovementDuringLastStep(Transform controlledObject, Vector3 startPosition, Vector3 endPosition)
+    {
+        //Debug.DrawLine(startPosition, endPosition, Color.red, 3f);
+        Vector3 objectOriginalPosition = controlledObject.position;
+
+        float depth = Mathf.Clamp((controlledObject.position.z - startPosition.z) / (endPosition.z - startPosition.z), -10, 1);
+        //controlledObject.position = Vector3.LerpUnclamped(startPosition, endPosition, depth);
+
+
 
         // Check which layer of sphere is the LS tool closest to
         lastPhaseLockedLayer = 0;
@@ -1499,6 +1553,21 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         positions.ForEach(t => sum += t.position);
 
         return sum / positions.Count;
+    }
+
+    /// <summary>
+    /// Return vector is not unit
+    /// </summary>
+    /// <param name="colon"></param>
+    /// <param name="startLayer"></param>
+    /// <param name="endLayer"></param>
+    /// <returns></returns>
+    public Vector3 GetColonDirection(int colon, int startLayer, int endLayer)
+    {
+        Vector3 startPoint = globalOperators.instance.colonLayerAveragePosition[colon][startLayer];
+        Vector3 endPoint = globalOperators.instance.colonLayerAveragePosition[colon][endLayer];
+
+        return endPoint - startPoint;
     }
 
     /// <summary>
