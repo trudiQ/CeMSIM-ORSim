@@ -1,0 +1,38 @@
+1.95
+
+Fixes:
+-Fixed HVRTriggerGrabbableBag not removing grabbables when using HVRSettings(UseAttachedRigidBody / ComponentInParentFallback)
+-sockets whose objects aren't allowed to be removed by the hand will no longer cause another socket to be unhovered 
+	(example: holstered pistol with a mag socket holding a magazine)
+-Fixed editor build error introduced in 1.94 in HVRSettings
+-Fixed an issue where grabs might not execute when update and fixed update are out of sync
+
+Grab Detection Updates:
+-Grab Input Checks moved to Update
+-Line of sight checks that might fail because the ray origin is inside a collider will try and detect this case and return true
+-Added support for non convex meshes in the grab detection system (could be useful for climbing the environment)
+-HVRGrabbable : Add 'UseColliderClosestPoint' (Default true), used by line of sight and grabbable detection distance check
+-Line of sight check updated to ray cast at the collider closest point instead of collider bounds if grabbable
+	 doesn't have concave colliders. Concave colliders will aim at the collider bound center.
+	 Should help with distance grabbing objects with larger colliders.
+-HVRGrabbable : Added 'GrabColliders', if populated only these colliders will be used to detect a grab.
+
+HVRCollisionEvents : Added ImpulseOrVelocity option that triggers the threshold met event.
+HVRHandAnimator : now updates poses in LateUpdate instead of Update
+HVRHandGrabber : updates physics pose in LateUpdate
+HVRRayCastGun : added 'Hit' event
+HVRCameraRig : organized the inspector fields and added tooltips, set CameraYOffset default to 0
+
+The bow is finally here!
+HVRBowBase : base class for common bow functionality
+HVRPhysicsBow : physics based bow setup 
+
+Interactable Additions: Manages creation of joints for you 
+HVRPhysicsDial - create objects that rotate about an axis with optional rotation limits.
+HVRPhysicsButton - easily create buttons along an axis with joints setup for you 
+HVRPhysicsDoor - create physics doors that optionally require a door handle to be rotated to open
+HVRPhysicsDrawer - easily create drawers that are joint limited based on start / end position
+HVRRotationTracker - used to generically track rotation differences on an axis of rotation.
+HVRRotationLimiter - used to limit rotations beyond 180 degrees.
+HVRPhysicsLever - subclass of HVRPhysicsDial, no additional fields as of yet.
+HVRPhysicsLeverCreator - component that will create a lever for you adding the necessary components.
