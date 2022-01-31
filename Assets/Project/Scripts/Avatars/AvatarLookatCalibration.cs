@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using CEMSIM;
 
 public class AvatarLookatCalibration : MonoBehaviour
 {
