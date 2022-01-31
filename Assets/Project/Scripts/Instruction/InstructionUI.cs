@@ -10,6 +10,10 @@ public class InstructionUI : MonoBehaviour
     public Text textDisplay;
     public InstructionText[] instructions;
     public Animator animator;
+    public bool openAtStart = true;
+    public bool isOpen { get; private set; }
+    public bool stayOpen { get; private set; }
+    public bool stayClosed { get; private set; }
 
     private string currentRole = "[role]";
     private string currentProcedure = "[procedure]";
@@ -20,6 +24,36 @@ public class InstructionUI : MonoBehaviour
     public void Start()
     {
         DisplayText(0);
+
+        isOpen = openAtStart;
+
+        animator.SetBool("IsOpen", openAtStart);
+        animator.SetBool("StayOpen", stayOpen);
+        animator.SetBool("StayClosed", stayClosed);
+    }
+
+    public void Open()
+    {
+        isOpen = true;
+        animator.SetBool("IsOpen", isOpen);
+    }
+
+    public void Close()
+    {
+        isOpen = false;
+        animator.SetBool("IsOpen", isOpen);
+    }
+
+    public void SetStayOpen(bool state)
+    {
+        stayOpen = state;
+        animator.SetBool("StayOpen", state);
+    }
+
+    public void SetStayClosed(bool state)
+    {
+        stayClosed = state;
+        animator.SetBool("StayClosed", state);
     }
 
     public void UpdateRole(string role)
@@ -63,15 +97,22 @@ public class InstructionUI : MonoBehaviour
         isTransitioning = true;
         animator.SetTrigger("NewInstruction");
 
-        yield return null; // Wait until animator updates transition state
-        yield return null;
-        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        if (!stayOpen && !stayClosed)
+        {
+            yield return null; // Wait until animator updates transition state
+            yield return null;
+            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        }
 
         DisplayNextText();
 
-        yield return null; // Wait until animator updates transition state
-        yield return null;
-        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        if (!stayOpen && !stayClosed)
+        {
+            yield return null; // Wait until animator updates transition state
+            yield return null;
+            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        }
+
         isTransitioning = false;
 
         if (transitionQueue.Count > 0)
@@ -83,15 +124,22 @@ public class InstructionUI : MonoBehaviour
         isTransitioning = true;
         animator.SetTrigger("NewInstruction");
 
-        yield return null; // Wait until animator updates transition state
-        yield return null;
-        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        if (!stayOpen && !stayClosed)
+        {
+            yield return null; // Wait until animator updates transition state
+            yield return null;
+            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        }
 
         DisplayText(index);
 
-        yield return null; // Wait until animator updates transition state
-        yield return null;
-        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        if (!stayOpen && !stayClosed)
+        {
+            yield return null; // Wait until animator updates transition state
+            yield return null;
+            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        }
+
         isTransitioning = false;
 
         if (transitionQueue.Count > 0)
@@ -103,15 +151,22 @@ public class InstructionUI : MonoBehaviour
         isTransitioning = true;
         animator.SetTrigger("NewInstruction");
 
-        yield return null; // Wait until animator updates transition state
-        yield return null;
-        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        if (!stayOpen && !stayClosed)
+        {
+            yield return null; // Wait until animator updates transition state
+            yield return null;
+            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        }
 
         DisplayText(index, role, procedure);
 
-        yield return null; // Wait until animator updates transition state
-        yield return null;
-        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        if (!stayOpen && !stayClosed)
+        {
+            yield return null; // Wait until animator updates transition state
+            yield return null;
+            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        }
+
         isTransitioning = false;
 
         if (transitionQueue.Count > 0)
