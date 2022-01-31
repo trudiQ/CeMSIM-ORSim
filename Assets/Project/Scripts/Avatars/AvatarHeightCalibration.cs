@@ -1,64 +1,52 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using RootMotion.FinalIK;
 using UnityEngine.Events;
+using HurricaneVR.Framework.Core.Player;
 
-// Sets the scale of the avatar based on the standing height of the user
-[RequireComponent(typeof(AvatarPrefabHeightUtility))]
-public class AvatarHeightCalibration : MonoBehaviour
+namespace CEMSIM
 {
-    public VRIK ik;
-    public AvatarPrefabHeightUtility avatarHeightUtility;
-
-    [Tooltip("A multiplier to the scale of the avatar. Used if the avatar is too short or tall after calibration.")]
-    [Range(0.8f, 1.2f)] public float heightAdjustmentMultiplier = 1f;
-
-    [HideInInspector] public UserHeightUtility userHeightUtility;
-    private float calibrationScaleMultiplier = 1;
-    private Vector3 startingScale;
-    private float startingFootDistance;
-    private float startingStepThreshold;
-
-    public UnityEvent<float> onAvatarHeightChanged; // Sends new avatar scale, foot distance, and step threshold 
-                                                    // as a single multiplier when calibrated. Made to send client data to server
-
-    void Start()
+    // Sets the scale of the avatar based on the standing height of the user
+    [RequireComponent(typeof(AvatarPrefabHeightUtility))]
+    public class AvatarHeightCalibration : MonoBehaviour
     {
-        if (!avatarHeightUtility)
-            avatarHeightUtility = GetComponentInChildren<AvatarPrefabHeightUtility>();
+        public AvatarPrefabHeightUtility avatarHeightUtility;
+        public HVRCameraRig cameraRig;
 
-        // Store the initial data for later use
-        startingScale = transform.localScale;
-        startingFootDistance = ik.solver.locomotion.footDistance;
-        startingStepThreshold = ik.solver.locomotion.stepThreshold;
+        [Tooltip("A multiplier to the scale of the avatar. Used if the avatar is too short or tall after calibration.")]
+        [Range(0.9f, 1.0f)] public float heightAdjustmentMultiplier = 0.98f;
 
-        if (avatarHeightUtility)
-            Calibrate();
-    }
+        [HideInInspector] public UserHeightUtility userHeightUtility;
 
-    public void Calibrate()
-    {
-        if(userHeightUtility && avatarHeightUtility)
+        public UnityEvent<float> onAvatarHeightChanged; // Sends new avatar scale, foot distance, and step threshold 
+                                                        // as a single multiplier when calibrated. Made to send client data to server
+
+        void Start()
         {
-            // New scale is based on the height difference between the user height and avatar height
-            float newScale = userHeightUtility.height / avatarHeightUtility.height;
+            if (!avatarHeightUtility)
+                avatarHeightUtility = GetComponentInChildren<AvatarPrefabHeightUtility>();
 
-            calibrationScaleMultiplier = newScale;
-            Calibrate(calibrationScaleMultiplier);
-
-            onAvatarHeightChanged.Invoke(calibrationScaleMultiplier);
+            if (avatarHeightUtility)
+                Calibrate();
         }
-    }
 
-    // Use a given height scale to resize the avatar, used for resizing avatar on server/non-local client
-    public void Calibrate(float scaleMultiplier)
-    {
-        calibrationScaleMultiplier = scaleMultiplier;
-        float totalMultiplier = calibrationScaleMultiplier * heightAdjustmentMultiplier;
+        public void Calibrate()
+        {
+            if (userHeightUtility && avatarHeightUtility)
+            {
+                // New height is based on the height difference between the user height and avatar height
+                float heightDifference = avatarHeightUtility.height * heightAdjustmentMultiplier - userHeightUtility.height;
 
-        transform.localScale = startingScale * totalMultiplier;
-        ik.solver.locomotion.footDistance = startingFootDistance * totalMultiplier;
-        ik.solver.locomotion.stepThreshold = startingStepThreshold * totalMultiplier;
+                Calibrate(heightDifference);
+
+                onAvatarHeightChanged.Invoke(heightDifference);
+            }
+        }
+
+        // Use a given height scale to resize the avatar, used for resizing avatar on server/non-local client
+        public void Calibrate(float heightDifference)
+        {
+            cameraRig.CameraYOffset = heightDifference;
+        }
     }
 }
