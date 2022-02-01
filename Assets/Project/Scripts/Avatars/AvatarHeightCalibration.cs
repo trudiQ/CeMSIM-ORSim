@@ -26,7 +26,7 @@ namespace CEMSIM
             if (!avatarHeightUtility)
                 avatarHeightUtility = GetComponentInChildren<AvatarPrefabHeightUtility>();
 
-            if (avatarHeightUtility)
+            if (avatarHeightUtility && userHeightUtility.calibrated)
                 Calibrate();
         }
 
