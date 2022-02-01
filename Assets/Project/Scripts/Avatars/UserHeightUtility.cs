@@ -16,7 +16,8 @@ namespace CEMSIM
         public HVRCameraRig cameraRig;
         public AvatarHeightCalibration avatarHeightCalibration;
 
-        public float height;
+        public float height = 1.5f;
+        [HideInInspector] public bool calibrated = false;
 
         public void CalculateUserHeight()
         {
@@ -27,7 +28,10 @@ namespace CEMSIM
 
 
             if (avatarHeightCalibration)
+            {
                 avatarHeightCalibration.Calibrate();
+                calibrated = true;
+            }
             else
                 Debug.LogWarning("Avatar Height Calibration missing in UserHeightUtility.");
         }
