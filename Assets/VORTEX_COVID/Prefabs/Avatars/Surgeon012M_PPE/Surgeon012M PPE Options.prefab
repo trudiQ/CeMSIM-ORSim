@@ -1344,9 +1344,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 846e931ca7075954fb4fc58005db1ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ik: {fileID: 7587493484071665611}
   avatarHeightUtility: {fileID: 3122272213985006572}
-  heightAdjustmentMultiplier: 1.05
+  cameraRig: {fileID: 0}
+  heightAdjustmentMultiplier: 0.98
   userHeightUtility: {fileID: 0}
   onAvatarHeightChanged:
     m_PersistentCalls:
@@ -1732,10 +1732,34 @@ MonoBehaviour:
           m_CallState: 2
     OnAttemptedEquip:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 5845204490367049247}
+          m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
+          m_MethodName: CheckBouffantEquip
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     OnAttemptedUnequip:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 5845204490367049247}
+          m_TargetAssemblyTypeName: HeadPPEController, Assembly-CSharp
+          m_MethodName: CheckBouffantUnequip
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   - clothName: Gown
     modelCloth: {fileID: 7717378517735677323}
     distanceThreshold: 0.2

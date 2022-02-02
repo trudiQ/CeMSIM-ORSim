@@ -41,7 +41,7 @@ public class GrabPointHover : MonoBehaviour
 
     public void OnHandUnhovered(HVRGrabberBase grabber, HVRGrabbable grabbable)
     {
-        closestHoverPoint.OnUnhovered.Invoke();
+        closestHoverPoint?.OnUnhovered.Invoke();
 
         closestHoverPoint = null;
         currentGrabber = null;
