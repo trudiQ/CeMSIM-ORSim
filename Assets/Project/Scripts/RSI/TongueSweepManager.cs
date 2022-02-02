@@ -14,9 +14,9 @@ public class TongueSweepManager : MonoBehaviour {
 
 	}
 
-	public void SweepTongue() {
+	public void SweepTongue(float time) {
 		foreach (RestorableTransform restorableTransform in transforms) {
-			LerpTransform(restorableTransform.transform, restorableTransform.desiredTransform, Time.deltaTime);
+			LerpTransform(restorableTransform.transform, restorableTransform.desiredTransform, time);
 		}
 	}
 

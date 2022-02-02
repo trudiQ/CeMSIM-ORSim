@@ -3006,6 +3006,7 @@ GameObject:
   - component: {fileID: 392337970201666420}
   - component: {fileID: 392337970201665674}
   - component: {fileID: 392337970201666421}
+  - component: {fileID: 8978424151831076730}
   m_Layer: 0
   m_Name: CC_Base_Tongue02
   m_TagString: Untagged
@@ -3084,6 +3085,237 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 392337970733200725}
+  isETInserted: 0
+  bladeAnchor: {fileID: 1449464161858225728}
+  etCollisionDetection: {fileID: 2220079574412907944}
+--- !u!114 &8978424151831076730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3788413081789720053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd07f8606d5a2184ca2bab0e57b64ef7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LeftGripActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftGripDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightGripActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightGripDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTriggerActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTriggerDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTriggerActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTriggerDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftPrimaryActivated:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 392337970201666421}
+        m_TargetAssemblyTypeName: TongueBladeInteractions, Assembly-CSharp
+        m_MethodName: FreezeBladeOnButtonPress
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  LeftPrimaryDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightPrimaryActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightPrimaryDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftSecondaryActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftSecondaryDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightSecondaryActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightSecondaryDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftMenuActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftMenuDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightMenuActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightMenuDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftPrimaryTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftPrimaryTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightPrimaryTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightPrimaryTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftSecondaryTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftSecondaryTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightSecondaryTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightSecondaryTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftJoystickActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftJoystickDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightJoystickActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightJoystickDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackpadActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackpadDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackpadActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackpadDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftJoystickTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftJoystickTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightJoystickTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightJoystickTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTriggerTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTriggerTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTriggerTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTriggerTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftThumbTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftThumbTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightThumbTouchActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightThumbTouchDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadUpActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadUpDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadUpActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadUpDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadLeftActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadLeftDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadLeftActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadLeftDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadRightActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadRightDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadRightActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadRightDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadDownActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftTrackPadDownDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadDownActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  RightTrackPadDownDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3913303622170059804
 GameObject:
   m_ObjectHideFlags: 0
@@ -5010,6 +5242,66 @@ Transform:
   m_Father: {fileID: 6495688058993376877}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4855849925685010201
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1449464161858225728}
+  m_Layer: 0
+  m_Name: BladeAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1449464161858225728
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4855849925685010201}
+  m_LocalRotation: {x: 0.3762831, y: -0.07123116, z: -0.21634313, w: -0.89807177}
+  m_LocalPosition: {x: -0.24132754, y: -0.0950435, z: 0.031193692}
+  m_LocalScale: {x: 0.65143526, y: 0.512076, z: 0.4057016}
+  m_Children: []
+  m_Father: {fileID: 2434166211019933899}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: -44.965, y: -2.825, z: 28.258}
+--- !u!1 &4885620247925646256
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6763465586709444117}
+  m_Layer: 0
+  m_Name: ETInsertionAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6763465586709444117
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4885620247925646256}
+  m_LocalRotation: {x: 0.094258554, y: -0.03796761, z: 0.6267198, w: 0.7725906}
+  m_LocalPosition: {x: -0.17736304, y: 0.15644495, z: 0.049504377}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2434166211019933899}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 176.593, y: 168.849, z: -192.215}
 --- !u!1 &4918518733031471714
 GameObject:
   m_ObjectHideFlags: 0
@@ -7854,6 +8146,8 @@ GameObject:
   - component: {fileID: 6315924675394735118}
   - component: {fileID: 6315924675394735112}
   - component: {fileID: 6315924675394735113}
+  - component: {fileID: 2220079574412907944}
+  - component: {fileID: 7241000129044944247}
   m_Layer: 0
   m_Name: CC_Base_JawRoot
   m_TagString: Untagged
@@ -7876,6 +8170,8 @@ Transform:
   - {fileID: 429259728891966198}
   - {fileID: 5292035498284673976}
   - {fileID: 930046560}
+  - {fileID: 6763465586709444117}
+  - {fileID: 1449464161858225728}
   m_Father: {fileID: 6888713365157331571}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8134,6 +8430,34 @@ MonoBehaviour:
   HandGrabbers: []
   Stabbers: []
   Stabbable: {fileID: 0}
+--- !u!114 &2220079574412907944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7195149474709077054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 013ab0219a897174194e875ba0005e7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anchor: {fileID: 6763465586709444117}
+  jawDesiredPos: {x: 0.019399676, y: 0.025499785, z: 0.01339993}
+  jawDesiredRot: {x: 356.7798, y: 140.76082, z: 240.15973}
+--- !u!65 &7241000129044944247
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7195149474709077054}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.047984798, y: 0.0327037, z: 0.048248887}
+  m_Center: {x: -0.04226404, y: -0.0034259146, z: -0.013214906}
 --- !u!1 &7201669466942780068
 GameObject:
   m_ObjectHideFlags: 0

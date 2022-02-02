@@ -53,6 +53,5 @@ public class StyletInteraction : MonoBehaviour {
 
 	public void RemoveJoint() {
 		Destroy(GetComponent<HingeJoint>());
-		tubeRigidbody.constraints = RigidbodyConstraints.None;
 	}
 }
