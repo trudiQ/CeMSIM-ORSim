@@ -11,6 +11,8 @@ public class InstructionUI : MonoBehaviour
     public InstructionText[] instructions;
     public Animator animator;
     public bool openAtStart = true;
+    public bool closeAfterDelay = false;
+    public float closeDelay = 5f;
     public bool isOpen { get; private set; }
     public bool stayOpen { get; private set; }
     public bool stayClosed { get; private set; }
@@ -21,27 +23,45 @@ public class InstructionUI : MonoBehaviour
     private bool isTransitioning = false;
     private Queue<IEnumerator> transitionQueue = new Queue<IEnumerator>();
 
-    public void Start()
+    public void Awake()
     {
         DisplayText(0);
 
-        isOpen = openAtStart;
-
-        animator.SetBool("IsOpen", openAtStart);
         animator.SetBool("StayOpen", stayOpen);
         animator.SetBool("StayClosed", stayClosed);
+
+        if (openAtStart)
+            Open();
     }
 
     public void Open()
     {
-        isOpen = true;
-        animator.SetBool("IsOpen", isOpen);
+        if (!isOpen && !stayOpen && !stayClosed)
+        {
+            if (closeAfterDelay)
+            {
+                if (!isTransitioning)
+                    StartCoroutine(CoroutineOpenAndDelayClose());
+                else
+                    transitionQueue.Enqueue(CoroutineOpenAndDelayClose());
+            }
+            else
+            {
+                if (!isTransitioning)
+                    StartCoroutine(CoroutineOpen());
+                else
+                    transitionQueue.Enqueue(CoroutineOpen());
+            }
+        }
     }
 
     public void Close()
     {
-        isOpen = false;
-        animator.SetBool("IsOpen", isOpen);
+        if (isOpen && !stayOpen && !stayClosed)
+        {
+            isOpen = false;
+            animator.SetBool("IsOpen", isOpen);
+        }
     }
 
     public void SetStayOpen(bool state)
@@ -68,6 +88,7 @@ public class InstructionUI : MonoBehaviour
         UpdateText();
     }
 
+    // Start the transition or add it to the queue if there's already a transition
     public void TransitionToNextInstruction()
     {
         if (!isTransitioning)
@@ -92,10 +113,50 @@ public class InstructionUI : MonoBehaviour
             transitionQueue.Enqueue(CoroutineTransitionToCustomText(index, role, procedure));
     }
 
-    private IEnumerator CoroutineTransitionToNextInstruction()
+    // Open function but queueable
+    private IEnumerator CoroutineOpen()
     {
         isTransitioning = true;
-        animator.SetTrigger("NewInstruction");
+        isOpen = true;
+
+        animator.SetBool("IsOpen", isOpen);
+
+        yield return null; // Wait until animator updates transition state
+        yield return null;
+        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+
+        isTransitioning = false;
+    }
+
+    private IEnumerator CoroutineOpenAndDelayClose()
+    {
+        yield return new WaitUntil(() => isTransitioning == false); // Extra protection for race conditions
+
+        isTransitioning = true;
+        isOpen = true;
+
+        animator.SetBool("IsOpen", isOpen);
+
+        // Wait for the transition to finish before starting delay
+        yield return null; // Wait until animator updates transition state
+        yield return null;
+        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+
+        yield return new WaitForSeconds(closeDelay); // Wait for delay
+
+        Close();
+
+        isTransitioning = false;
+    }
+
+    private IEnumerator CoroutineTransitionToNextInstruction()
+    {
+        yield return new WaitUntil(() => isTransitioning == false); // Extra protection for race conditions
+
+        isTransitioning = true;
+
+        if (isOpen)
+            animator.SetTrigger("NewInstruction");
 
         if (!stayOpen && !stayClosed)
         {
@@ -121,6 +182,8 @@ public class InstructionUI : MonoBehaviour
 
     private IEnumerator CoroutineTransitionToInstructionIndex(int index)
     {
+        yield return new WaitUntil(() => isTransitioning == false); // Extra protection for race conditions
+
         isTransitioning = true;
         animator.SetTrigger("NewInstruction");
 
@@ -148,6 +211,8 @@ public class InstructionUI : MonoBehaviour
 
     private IEnumerator CoroutineTransitionToCustomText(int index, string role, string procedure)
     {
+        yield return new WaitUntil(() => isTransitioning == false); // Extra protection for race conditions
+
         isTransitioning = true;
         animator.SetTrigger("NewInstruction");
 
