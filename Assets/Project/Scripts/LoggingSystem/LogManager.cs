@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using CEMSIM.GameLogic;
 using CEMSIM.Network;
+using CEMSIM.Tools;
 using CEMSIM.VoiceChat;
 using Dissonance.Audio.Playback;
 using UnityEngine;
@@ -251,14 +252,14 @@ namespace CEMSIM
                     ItemController.onItemPickupTrigger += ItemBaseEvent.GenItemPickup;
                     ItemController.onItemDropoffTrigger += ItemBaseEvent.GenItemDropdown;
                     // Item Specific State Update
-                    ScalpelStateManager.onScalpelStateUpdateTrigger += ScalpelEvent.GenScalpelStateUpdate;
-                    CatheterStateManager.onCatheterStateUpdateTrigger += CatheterEvent.GenCatheterStateUpdate;
-                    N95MaskStateManager.onN95MaskStateUpdateTrigger += N95MaskEvent.GenN95MaskStateUpdate;
-                    BoufantStateManager.onN95MaskStateUpdateTrigger += BouffantEvent.GenBoufantStateUpdate;
-                    VisorStateManager.onVisorStateUpdateTrigger += VisorEvent.GenVisorStateUpdate;
-                    ShoeCoverStateManager.onShoeCoverOnUpdateTrigger += ShoeCoverEvent.GenShoeCoverStateUpdate;
-                    GownStateManager.onGownStateUpdateTrigger += GownEvent.GenGownStateUpdate;
-                    GloveStateManager.onGloveWearStateTrigger += GloveEvent.GenGloveWearStateUpdate;
+                    //ScalpelStateManager.onScalpelStateUpdateTrigger += ScalpelEvent.GenScalpelStateUpdate;
+                    //CatheterStateManager.onCatheterStateUpdateTrigger += CatheterEvent.GenCatheterStateUpdate;
+                    //N95MaskStateManager.onN95MaskStateUpdateTrigger += N95MaskEvent.GenN95MaskStateUpdate;
+                    //BoufantStateManager.onN95MaskStateUpdateTrigger += BouffantEvent.GenBoufantStateUpdate;
+                    //VisorStateManager.onVisorStateUpdateTrigger += VisorEvent.GenVisorStateUpdate;
+                    //ShoeCoverStateManager.onShoeCoverOnUpdateTrigger += ShoeCoverEvent.GenShoeCoverStateUpdate;
+                    //GownStateManager.onGownStateUpdateTrigger += GownEvent.GenGownStateUpdate;
+                    //GloveStateManager.onGloveWearStateTrigger += GloveEvent.GenGloveWearStateUpdate;
                 }
                 else
                 {

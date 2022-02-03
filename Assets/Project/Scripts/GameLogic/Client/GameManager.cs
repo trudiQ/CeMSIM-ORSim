@@ -13,6 +13,7 @@ namespace CEMSIM
         public class GameManager : MonoBehaviour
         {
             public static GameManager instance;
+            public bool isSinglePlayerMode = false;
 
             // store all information about all players in game
             public static Dictionary<int, PlayerManager> players = new Dictionary<int, PlayerManager>();

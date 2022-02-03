@@ -168,8 +168,9 @@ GameObject:
   - component: {fileID: 7577139787204249143}
   - component: {fileID: 7577139787204249144}
   - component: {fileID: 7577139787204249142}
+  - component: {fileID: 5420949835932881650}
   m_Layer: 0
-  m_Name: Syringe
+  m_Name: Disposable_Syringe_2ml
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -524,7 +525,11 @@ MonoBehaviour:
   plunger: {fileID: 7577139788383700003}
   plungerStartPos: {x: -0.0001, y: 0.0001, z: 0.082}
   plungerEndPos: {x: 0, y: 0, z: 0.0152}
-  speed: 10
+  syringeCapacity: 2
+  injectSpeed: 16
+  injectDrug: 1
+  refillDrug: 0
+  volume: 2
   poser: {fileID: 7577139786705715953}
   balloon: {fileID: 0}
   balloonInflatedSize: {x: 1.14301, y: 1.1, z: 1.1}
@@ -634,6 +639,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 5420949835932881650}
+        m_TargetAssemblyTypeName: CEMSIM.GameLogic.ItemController, Assembly-CSharp
+        m_MethodName: GainOwnership
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
       m_Calls:
@@ -641,6 +658,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: SyringeInteractions, Assembly-CSharp
         m_MethodName: set_isGrabbed
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5420949835932881650}
+        m_TargetAssemblyTypeName: CEMSIM.GameLogic.ItemController, Assembly-CSharp
+        m_MethodName: DropOwnership
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -698,6 +727,21 @@ CapsuleCollider:
   m_Height: 0.024689777
   m_Direction: 2
   m_Center: {x: 0.0000000038115013, y: 0.000114750655, z: -0.097344786}
+--- !u!114 &5420949835932881650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577139787204249150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67c6afe863156074bbfca5a6745c4b7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toolType: 9
+  itemId: 0
+  ownerId: 0
 --- !u!1 &7577139788383700003
 GameObject:
   m_ObjectHideFlags: 0

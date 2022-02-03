@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using CEMSIM.GameLogic;
 using CEMSIM.Network;
 
 namespace CEMSIM
@@ -11,6 +10,8 @@ namespace CEMSIM
     {
         /// <summary>
         /// This class is the base class that manage the state of each interactable items.
+        ///
+        /// Will be deprecated and replaced by ItemBaseStateManager
         /// </summary>
         public class ItemStateManager
         {

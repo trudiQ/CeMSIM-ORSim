@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using CEMSIM;
+﻿using UnityEngine;
 using CEMSIM.GameLogic;
 using CEMSIM.Network;
 using System;
+using CEMSIM.Tools;
 
 namespace CEMSIM
 {
@@ -19,7 +17,10 @@ namespace CEMSIM
             [HideInInspector]
             public int ownerId;
 
-            private ItemStateManager itemStateManager; // pointed to the specific controller
+
+            //private ItemStateManager itemStateManager; // pointed to the specific controller
+            private ToolBaseInteraction itemStateManager;
+
 
             // event system
             public static event Action<ToolType, int, int> onItemPickupTrigger;
@@ -30,6 +31,8 @@ namespace CEMSIM
             {
                 switch (toolType)
                 {
+                    // deprecated
+                    /*
                     case ToolType.scalpel:
                         itemStateManager = new ScalpelStateManager();
                         break;
@@ -57,7 +60,22 @@ namespace CEMSIM
                     default:
                         itemStateManager = new ItemStateManager();
                         break;
+                    //*/
+                    case ToolType.scalpel:
+                        itemStateManager = new ScalpelInteraction();
+                        break;
+                    case ToolType.catheter:
+                        itemStateManager = new CatheterInteraction();
+                        break;
+                    case ToolType.syringe:
+                        itemStateManager = new SyringeInteraction();
+                        break;
+                    default:
+                        itemStateManager = new SimpleObjectInteraction();
+                        break;
+
                 }
+                
             }
 
 
@@ -65,12 +83,12 @@ namespace CEMSIM
             {
                 itemId = _id;
                 ownerId = _ownerId;
-                itemStateManager.initializeItem(_id);
+                itemStateManager.InitializeItem(_id);
             }
 
             public byte[] GetItemState()
             {
-                return itemStateManager.GetItemState();
+                return itemStateManager.GenStateBytes();
             }
 
 
@@ -81,7 +99,7 @@ namespace CEMSIM
             public void DigestStateMessage(Packet _remainderPacket)
             {
                 if(_remainderPacket.UnreadLength() > 0)
-                    itemStateManager.DigestStateMessage(_remainderPacket);
+                    itemStateManager.DigestStateBytes(_remainderPacket);
             }
 
 

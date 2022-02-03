@@ -28,6 +28,7 @@ namespace CEMSIM
             shoeCover,
             gown,
             glove,
+            syringe,
         }
         public class GameConstants
         {

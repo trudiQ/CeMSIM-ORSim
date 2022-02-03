@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CEMSIM.GameLogic;
+using CEMSIM.Network;
 
 namespace CEMSIM
 {
@@ -9,21 +12,104 @@ namespace CEMSIM
         /// <summary>
         /// This is the base class for all tool interactions.
         /// </summary>
-        public abstract class ToolBaseInteraction<State> : MonoBehaviour
+        public abstract class ToolBaseInteraction: MonoBehaviour
         {
-            /// <summary>
-            /// Set the state of the binded gameobject.  This function may be called by the player's HVR components or the network components.
-            /// </summary>
-            /// <typeparam name="State"></typeparam>
-            /// <param name="curState"></param>
-            public abstract void SetState(State curState);
+            protected int itemId; // unique id of the tool
+            protected ToolType toolType; // category of the tool
+            public NetworkBaseState toolState;
+
+            public static event Action<int, NetworkBaseState, int> onToolStateUpdateTrigger;
+
+            public ToolBaseInteraction(ToolType _toolType)
+            {
+                //itemId = _itemId; // itemId is assigned by system, so it will be initialized later via Initialization function
+                toolType = _toolType;
+            }
+
+            public virtual void InitializeItem(int _itemId)
+            {
+                itemId = _itemId;
+            }
 
             /// <summary>
-            /// Get the current state of the binded gameobject. This function is called when requiring to synchronizing the object status or logging the state.
+            /// Set the state of the binded gameobject by a given state.
             /// </summary>
-            /// <typeparam name="State"></typeparam>
+            /// <typeparam name="ToolState"></typeparam>
+            /// <param name="curState"></param>
+            public virtual void SetState(NetworkBaseState curState)
+            {
+                toolState = curState;
+                UpdateState();
+                StateUpdateEvent();
+            }
+
+            /// <summary>
+            /// Update the model of the gameobject based on the current state.
+            /// </summary>
+            public abstract void UpdateState();
+
+            /// <summary>
+            /// Get the current state of the binded gameobject. This function may be called by HVR components to set the state of a tool
+            /// </summary>
+            /// <typeparam name="ToolState"></typeparam>
             /// <returns></returns>
-            public abstract State GetState();
+            public virtual NetworkBaseState GetState() { return toolState; }
+
+
+            /// <summary>
+            /// Return a byte array that abstract the current state of the attached item
+            /// </summary>
+            /// <returns></returns>
+            public virtual byte[] GenStateBytes()
+            {
+                if (toolState == null)
+                {
+                    Debug.Log($"{toolType} state is null");
+                }
+                else
+                {
+                    Debug.Log($"{toolType} state is good!!!!!");
+                }
+                return toolState.ToPacketPayload();
+            }
+
+            
+
+
+            /// <summary>
+            /// Digest the payload of the _packet to extract additional information of the attached item
+            /// </summary>
+            /// <param name="_packet"></param>
+            public virtual void DigestStateBytes(Packet _remainderPacket)
+            {
+                if (toolState.FromPacketPayload(_remainderPacket))
+                    UpdateState();
+            }
+
+            
+
+
+
+            /// <summary>
+            /// Triggered when the tool state has been changed
+            /// </summary>
+            public void StateUpdateEvent()
+            {
+                if(GameManager.instance.isSinglePlayerMode)
+                    ItemStateUpdateTrigger(itemId, toolState, GameConstants.SINGLE_PLAYER_CLIENTID);
+                else
+                    if (ClientItemManager.instance != null)
+                        ItemStateUpdateTrigger(itemId, toolState, ClientInstance.instance.myId);
+            }
+
+            #region Event System
+            public static void ItemStateUpdateTrigger(int _itemId, NetworkBaseState _state, int _clientId)
+            {
+                if (onToolStateUpdateTrigger != null)
+                    onToolStateUpdateTrigger(_itemId, _state, _clientId);
+            }
+
+            #endregion
 
         }
     }
