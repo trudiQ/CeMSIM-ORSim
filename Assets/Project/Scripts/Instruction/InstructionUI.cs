@@ -23,6 +23,8 @@ public class InstructionUI : MonoBehaviour
     private bool isTransitioning = false;
     private Queue<IEnumerator> transitionQueue = new Queue<IEnumerator>();
 
+    private bool ShouldWaitForAnimator { get { return isOpen && !stayOpen && !stayClosed; } }
+
     public void Awake()
     {
         DisplayText(0);
@@ -121,9 +123,7 @@ public class InstructionUI : MonoBehaviour
 
         animator.SetBool("IsOpen", isOpen);
 
-        yield return null; // Wait until animator updates transition state
-        yield return null;
-        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        yield return StartCoroutine(WaitForAnimatorUpdate());
 
         isTransitioning = false;
     }
@@ -138,9 +138,7 @@ public class InstructionUI : MonoBehaviour
         animator.SetBool("IsOpen", isOpen);
 
         // Wait for the transition to finish before starting delay
-        yield return null; // Wait until animator updates transition state
-        yield return null;
-        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
+        yield return StartCoroutine(WaitForAnimatorUpdate());
 
         yield return new WaitForSeconds(closeDelay); // Wait for delay
 
@@ -158,21 +156,13 @@ public class InstructionUI : MonoBehaviour
         if (isOpen)
             animator.SetTrigger("NewInstruction");
 
-        if (!stayOpen && !stayClosed)
-        {
-            yield return null; // Wait until animator updates transition state
-            yield return null;
-            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
-        }
+        if (ShouldWaitForAnimator)
+            yield return StartCoroutine(WaitForAnimatorUpdate());
 
         DisplayNextText();
 
-        if (!stayOpen && !stayClosed)
-        {
-            yield return null; // Wait until animator updates transition state
-            yield return null;
-            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
-        }
+        if (ShouldWaitForAnimator)
+            yield return StartCoroutine(WaitForAnimatorUpdate());
 
         isTransitioning = false;
 
@@ -185,23 +175,17 @@ public class InstructionUI : MonoBehaviour
         yield return new WaitUntil(() => isTransitioning == false); // Extra protection for race conditions
 
         isTransitioning = true;
-        animator.SetTrigger("NewInstruction");
 
-        if (!stayOpen && !stayClosed)
-        {
-            yield return null; // Wait until animator updates transition state
-            yield return null;
-            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
-        }
+        if (isOpen)
+            animator.SetTrigger("NewInstruction");
+
+        if (ShouldWaitForAnimator)
+            yield return StartCoroutine(WaitForAnimatorUpdate());
 
         DisplayText(index);
 
-        if (!stayOpen && !stayClosed)
-        {
-            yield return null; // Wait until animator updates transition state
-            yield return null;
-            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
-        }
+        if (ShouldWaitForAnimator)
+            yield return StartCoroutine(WaitForAnimatorUpdate());
 
         isTransitioning = false;
 
@@ -214,28 +198,30 @@ public class InstructionUI : MonoBehaviour
         yield return new WaitUntil(() => isTransitioning == false); // Extra protection for race conditions
 
         isTransitioning = true;
-        animator.SetTrigger("NewInstruction");
 
-        if (!stayOpen && !stayClosed)
-        {
-            yield return null; // Wait until animator updates transition state
-            yield return null;
-            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
-        }
+        if (isOpen)
+            animator.SetTrigger("NewInstruction");
+
+        if (ShouldWaitForAnimator)
+            yield return StartCoroutine(WaitForAnimatorUpdate());
 
         DisplayText(index, role, procedure);
 
-        if (!stayOpen && !stayClosed)
-        {
-            yield return null; // Wait until animator updates transition state
-            yield return null;
-            yield return new WaitUntil(() => animator.IsInTransition(0) == false);
-        }
+        if (ShouldWaitForAnimator)
+            yield return StartCoroutine(WaitForAnimatorUpdate());
 
         isTransitioning = false;
 
         if (transitionQueue.Count > 0)
             StartCoroutine(transitionQueue.Dequeue());
+    }
+
+    // Wait until animator updates transition state
+    private IEnumerator WaitForAnimatorUpdate()
+    {
+        yield return null; 
+        yield return null;
+        yield return new WaitUntil(() => animator.IsInTransition(0) == false);
     }
 
     private void DisplayText(int index, string role, string procedure)
