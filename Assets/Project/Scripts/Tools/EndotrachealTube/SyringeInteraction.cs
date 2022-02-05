@@ -110,6 +110,7 @@ namespace CEMSIM
             public override void UpdateState()
             {
 				float curVolume = ((SyringeState)toolState).drugContent.volume;
+				Debug.Log($"syringe curVolume {curVolume}");
 				// set plunger position
 				plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, curVolume / plungerLength* syringeCapacity);
 				// TODO: may still have other states to be configured
@@ -120,8 +121,10 @@ namespace CEMSIM
 			{
 				if (isGrabbed)
 				{
+
 					if (isRightPrimaryButtonPressed) // inject
 					{
+						Debug.LogError("primary key pressed");
 						CheckBalloonStatus();
 						poser.PrimaryPose.Type = BlendType.BooleanParameter;
 						plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, Time.deltaTime * speed);
@@ -130,6 +133,9 @@ namespace CEMSIM
 					}
 					if (isRightSecondaryButtonPressed) // refill
 					{
+						Debug.LogError("secondary key pressed");
+						CheckBalloonStatus();
+						poser.PrimaryPose.Type = BlendType.BooleanParameter;
 						plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerStartPos, Time.deltaTime * speed);
 						((SyringeState)toolState).Refill(refillDrug, Time.deltaTime * injectSpeed);
 					}

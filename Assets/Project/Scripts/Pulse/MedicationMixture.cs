@@ -273,18 +273,19 @@ namespace CEMSIM
 
                 Dictionary<Medication.Drugs, float> tgtMixture = new Dictionary<Medication.Drugs, float>(); // the mixture to be split out
                 float componentVolumn = 0;
-                foreach (KeyValuePair<Medication.Drugs, float> kvp in mixture)
+                foreach (Medication.Drugs drug in mixture.Keys.ToList())
                 {
-                    componentVolumn = kvp.Value / volume * tgtVolume;
+                    componentVolumn = mixture[drug] / volume * tgtVolume;
 
-                    mixture[kvp.Key] -= componentVolumn;
-                    tgtMixture[kvp.Key] = componentVolumn;
+                    mixture[drug] -= componentVolumn;
+                    tgtMixture[drug] = componentVolumn;
 
-                    if (delta.ContainsKey(kvp.Key))
-                        delta[kvp.Key] -= componentVolumn;
+                    if (delta.ContainsKey(drug))
+                        delta[drug] -= componentVolumn;
                     else
-                        delta[kvp.Key] = -componentVolumn;
+                        delta[drug] = -componentVolumn;
                 }
+
                 // we cannot modify volume inside the for-loop, because it is used in the calculation of componentVolume
                 volume -= tgtVolume;
                 return new MedicineMixture(tgtMixture, tgtVolume);
