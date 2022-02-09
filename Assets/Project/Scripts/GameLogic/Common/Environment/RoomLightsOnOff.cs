@@ -61,10 +61,20 @@ namespace CEMSIM
                 //its being called on update atm
 
                 //Change visual by using post-processing and switching materials
-                vignetteLayer.intensity.value = 0.3f;
-                vignetteLayer.smoothness.value = 0.2f;
-                vignetteLayer.rounded.value = false;
-                colorAdjustmentLayer.saturation.value = 0f;
+                if (vignetteLayer)
+                {
+                    vignetteLayer.intensity.value = 0.3f;
+                    vignetteLayer.smoothness.value = 0.2f;
+                    vignetteLayer.rounded.value = false;
+                }
+                else
+                    Debug.Log("Variable vignetteLayer is empty in RoomLightsOnOff script.");
+
+                if (colorAdjustmentLayer)
+                    colorAdjustmentLayer.saturation.value = 0f;
+                else
+                    Debug.Log("Variable colorAdjustmentLayer is empty in RoomLightsOnOff script.");
+
                 //Debug.Log("Lights On");
                 ceilingAreaLights.SetActive(true);
                 ceilingPointLights.SetActive(true);
@@ -81,10 +91,20 @@ namespace CEMSIM
                 //To do (9/29/20): This should only be called when switching the light, seems like
                 //its being called on update atm
 
-                vignetteLayer.intensity.value = 1.00f;
-                vignetteLayer.smoothness.value = 1.00f;
-                vignetteLayer.rounded.value = true;
-                colorAdjustmentLayer.saturation.value = -100f;
+                if (vignetteLayer)
+                {
+                    vignetteLayer.intensity.value = 1.00f;
+                    vignetteLayer.smoothness.value = 1.00f;
+                    vignetteLayer.rounded.value = true;
+                }
+                else
+                    Debug.Log("Variable vignetteLayer is empty in RoomLightsOnOff script.");
+                
+                if (colorAdjustmentLayer)
+                    colorAdjustmentLayer.saturation.value = -100f;
+                else
+                    Debug.Log("Variable colorAdjustmentLayer is empty in RoomLightsOnOff script.");
+                
                 //Debug.Log("Lights Off");
                 ceilingAreaLights.SetActive(false);
                 ceilingPointLights.SetActive(false);
@@ -126,7 +146,10 @@ namespace CEMSIM
 
                 // This function should ONLY exists in the client's side
                 // You need to unregister the handling function in the server's scene.
-                GameManager.SendRoomLightState(isLightsOn);
+
+                if (GameManager.instance)
+                    if (!GameManager.instance.isSinglePlayerMode)
+                        GameManager.SendRoomLightState(isLightsOn);
             }
         }
     }
