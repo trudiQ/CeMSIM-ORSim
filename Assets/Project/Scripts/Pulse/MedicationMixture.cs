@@ -276,7 +276,10 @@ namespace CEMSIM
                 float componentVolumn = 0;
                 foreach (Medication.Drugs drug in mixture.Keys.ToList())
                 {
-                    componentVolumn = mixture[drug] / volume * tgtVolume;
+                    if (volume > 0.0f)
+                        componentVolumn = mixture[drug] / volume * tgtVolume;
+                    else
+                        componentVolumn = 0;
 
                     mixture[drug] -= componentVolumn;
                     tgtMixture[drug] = componentVolumn;
@@ -300,9 +303,11 @@ namespace CEMSIM
             public string ToJson()
             {
                 string msg = "";
+                bool isFirstElement = true;
                 foreach (KeyValuePair<Medication.Drugs, float> kvp in mixture)
                 {
-                    msg += BaseEvent.JsonAddElement(kvp.Key.ToString(), kvp.Value.ToString());
+                    msg += BaseEvent.JsonAddElement(kvp.Key.ToString(), kvp.Value.ToString(), isFirstElement);
+                    isFirstElement = false;
                 }
 
                 return msg;

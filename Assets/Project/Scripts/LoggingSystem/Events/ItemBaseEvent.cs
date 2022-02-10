@@ -24,9 +24,9 @@ namespace CEMSIM
             protected ToolType toolType;
             protected int itemId;
             protected int clientId;
-            protected ToolBaseState toolState;
+            protected string toolStateJson;
 
-            public ItemBaseEvent(ToolType _toolType, int _itemId, ItemEventType _action, int _clientId, ToolBaseState _toolState = null)
+            public ItemBaseEvent(ToolType _toolType, int _itemId, ItemEventType _action, int _clientId, string _toolStateJson = "")
             {
                 toolType = _toolType;
                 itemId = _itemId;
@@ -36,11 +36,10 @@ namespace CEMSIM
                 switch (_action) {
                     case ItemEventType.Pickup:
                     case ItemEventType.Dropdown:
-                        toolState = null; // no need for these two item event
+                        toolStateJson = ""; // no need for these two item event
                         break;
                     case ItemEventType.StateUpdate:
-                        toolState = _toolState;
-                        Debug.Assert(toolState != null);
+                        toolStateJson = _toolStateJson;
                         break;
                 }
             }
@@ -58,7 +57,7 @@ namespace CEMSIM
                         break;
                     case ItemEventType.StateUpdate:
                         msg += $"{eventTime}: {clientId}, {toolType}, {itemId}, {action}";
-                        msg += toolState.ToString();
+                        msg += toolStateJson;
                         break;
                 }
                 return msg;
@@ -78,7 +77,7 @@ namespace CEMSIM
                         break;
                     case ItemEventType.StateUpdate:
                         msg += JsonAddElement("Action", action.ToString());
-                        msg += JsonAddSubElement("State", toolState.ToJson());
+                        msg += JsonAddSubElement("State", toolStateJson);
                         break;
                 }
                 msg += JsonSuffix();
@@ -111,7 +110,7 @@ namespace CEMSIM
 
             public static void GenItemStateUpdate(ToolType _toolType, int _itemId, ToolBaseState _state, int _clientId)
             {
-                using (ItemBaseEvent e = new ItemBaseEvent(_toolType, _itemId, ItemEventType.StateUpdate, _clientId, _state))
+                using (ItemBaseEvent e = new ItemBaseEvent(_toolType, _itemId, ItemEventType.StateUpdate, _clientId, _state.ToJson()))
                 {
                     e.AddToGeneralEventQueue();
                     e.AddToJsonEventQueue();

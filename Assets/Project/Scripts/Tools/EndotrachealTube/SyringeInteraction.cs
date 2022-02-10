@@ -67,8 +67,8 @@ namespace CEMSIM
 
 				// simple tool has no state changes
 				string msg = "";
-				msg += BaseEvent.JsonAddElement("capacity", capacity.ToString());
-				msg += BaseEvent.JsonAddSubElement("content", drugContent.ToJson(), true);
+				msg += BaseEvent.JsonAddElement("capacity", capacity.ToString(), true);
+				msg += BaseEvent.JsonAddSubElement("content", drugContent.ToJson());
 				return msg;
 			}
         }
@@ -92,10 +92,10 @@ namespace CEMSIM
 			private float speed; // # of moving distance of the plunger per second, speed = injectSpeed / syringeCapacity * (plungerEndPos-plungerStartPos)
 
 			[Tooltip("Contained Medication")]
-            public Drugs injectDrug=Drugs.empty;
+            public Drugs injectDrug;
 
 			[Tooltip("Refill Component")]
-			public Drugs refillDrug = Drugs.empty;
+			public Drugs refillDrug;
 
 
 			[Tooltip("Medication Volume (ml)")]
@@ -114,12 +114,10 @@ namespace CEMSIM
 
 			public SyringeInteraction() : base(ToolType.syringe)
 			{
-				base.toolState = new SyringeState(syringeCapacity, volume, injectDrug); // initialize state 
-
-				plungerLength = Vector3.Distance(plungerStartPos, plungerEndPos); // the length of the plunger measured by the model
-				speed = injectSpeed / syringeCapacity * plungerLength;
+				
 			}
 
+   
 
             public override void UpdateState()
             {
@@ -130,6 +128,16 @@ namespace CEMSIM
 				// TODO: may still have other states to be configured
 			}
 
+
+            private void Awake()
+            {
+				toolState = new SyringeState(syringeCapacity, volume, injectDrug); // initialize state 
+
+				plungerLength = Vector3.Distance(plungerStartPos, plungerEndPos); // the length of the plunger measured by the model
+				speed = injectSpeed / syringeCapacity * plungerLength;
+
+				Debug.Log($" syringe initial state {toolState.ToJson()} with inject drug {injectDrug} refill drug {refillDrug}, speed{speed}");
+			}
             // Update is called once per frame
             void Update()
 			{
