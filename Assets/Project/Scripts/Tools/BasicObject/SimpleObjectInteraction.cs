@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using CEMSIM.Network;
 using CEMSIM.GameLogic;
 using UnityEngine;
-
+using CEMSIM.Logger;
 
 namespace CEMSIM
 {
@@ -12,7 +12,7 @@ namespace CEMSIM
     {
         public class SimpleObjectState : ToolBaseState
         {
-            // State of scalpel, e.g. no blood
+            // State of scalpel, e.g. no blood, etc.
             public enum SimpleObjectStateList
             {
                 defaultState = 0,
@@ -41,6 +41,14 @@ namespace CEMSIM
                 message.AddRange(BitConverter.GetBytes((int)state));
 
                 return message.ToArray();
+            }
+
+            public override string ToJson()
+            {
+                // simple tool has no state changes
+                string msg = "";
+                msg += BaseEvent.JsonAddElement("SimpleObjectState", state.ToString());
+                return msg;
             }
         }
 

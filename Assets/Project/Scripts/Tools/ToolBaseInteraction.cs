@@ -18,7 +18,7 @@ namespace CEMSIM
             protected ToolType toolType; // category of the tool
             public ToolBaseState toolState;
 
-            public static event Action<ToolType, int, NetworkStateInterface, int> onToolStateUpdateTrigger;
+            public static event Action<ToolType, int, ToolBaseState, int> onToolStateUpdateTrigger;
 
             public ToolBaseInteraction(ToolType _toolType)
             {
@@ -103,7 +103,7 @@ namespace CEMSIM
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(ToolType toolType, int _itemId, NetworkStateInterface _state, int _clientId)
+            public static void ItemStateUpdateTrigger(ToolType toolType, int _itemId, ToolBaseState _state, int _clientId)
             {
                 if (onToolStateUpdateTrigger != null)
                     onToolStateUpdateTrigger(toolType, _itemId, _state, _clientId);

@@ -251,6 +251,7 @@ namespace CEMSIM
                 {
                     ItemController.onItemPickupTrigger += ItemBaseEvent.GenItemPickup;
                     ItemController.onItemDropoffTrigger += ItemBaseEvent.GenItemDropdown;
+                    ToolBaseInteraction.onToolStateUpdateTrigger += ItemBaseEvent.GenItemStateUpdate;
                     // Item Specific State Update
                     //ScalpelStateManager.onScalpelStateUpdateTrigger += ScalpelEvent.GenScalpelStateUpdate;
                     //CatheterStateManager.onCatheterStateUpdateTrigger += CatheterEvent.GenCatheterStateUpdate;

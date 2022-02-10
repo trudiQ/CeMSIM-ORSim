@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using CEMSIM.GameLogic;
+using CEMSIM.Tools;
 using UnityEngine;
 
 namespace CEMSIM
@@ -23,14 +24,29 @@ namespace CEMSIM
             protected ToolType toolType;
             protected int itemId;
             protected int clientId;
+            protected ToolBaseState toolState;
 
-            public ItemBaseEvent(ToolType _toolType, int _itemId, ItemEventType _action, int _clientId)
+            public ItemBaseEvent(ToolType _toolType, int _itemId, ItemEventType _action, int _clientId, ToolBaseState _toolState = null)
             {
                 toolType = _toolType;
                 itemId = _itemId;
                 action = (ItemEventType)_action;
                 clientId = _clientId;
+
+                switch (_action) {
+                    case ItemEventType.Pickup:
+                    case ItemEventType.Dropdown:
+                        toolState = null; // no need for these two item event
+                        break;
+                    case ItemEventType.StateUpdate:
+                        toolState = _toolState;
+                        Debug.Assert(toolState != null);
+                        break;
+                }
             }
+
+
+
             public override string ToString()
             {
                 string msg = "";
@@ -41,7 +57,8 @@ namespace CEMSIM
                         msg += $"{eventTime}: {clientId}, {toolType}, {itemId}, {action}";
                         break;
                     case ItemEventType.StateUpdate:
-                        msg += "";
+                        msg += $"{eventTime}: {clientId}, {toolType}, {itemId}, {action}";
+                        msg += toolState.ToString();
                         break;
                 }
                 return msg;
@@ -60,7 +77,8 @@ namespace CEMSIM
                         msg += JsonAddElement("Action", action.ToString());
                         break;
                     case ItemEventType.StateUpdate:
-                        //msg += JsonAddSubElement("State")
+                        msg += JsonAddElement("Action", action.ToString());
+                        msg += JsonAddSubElement("State", toolState.ToJson());
                         break;
                 }
                 msg += JsonSuffix();
@@ -87,6 +105,17 @@ namespace CEMSIM
                     e.AddToJsonEventQueue();
                 }
 
+            }
+
+            //public static event Action<ToolType, int, NetworkStateInterface, int> onToolStateUpdateTrigger;
+
+            public static void GenItemStateUpdate(ToolType _toolType, int _itemId, ToolBaseState _state, int _clientId)
+            {
+                using (ItemBaseEvent e = new ItemBaseEvent(_toolType, _itemId, ItemEventType.StateUpdate, _clientId, _state))
+                {
+                    e.AddToGeneralEventQueue();
+                    e.AddToJsonEventQueue();
+                }
             }
 
             #endregion

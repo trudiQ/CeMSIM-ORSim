@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CEMSIM.Network;
 using CEMSIM.Tools;
+using CEMSIM.Logger;
 using UnityEngine;
 
 namespace CEMSIM
@@ -15,7 +16,7 @@ namespace CEMSIM
         /// Current implementation use a dictionary to store contained drug and its volume.
         /// If the type of drugs won't be too much, using an array of # of drugs may be more efficient.
         /// </summary>
-        public class MedicineMixture : NetworkStateInterface
+        public class MedicineMixture : NetworkStateInterface, LoggingEventInterface
         {
             public Dictionary<Medication.Drugs, float> mixture; // type of medication and its volume
 
@@ -291,6 +292,21 @@ namespace CEMSIM
                 return new MedicineMixture(tgtMixture, tgtVolume);
             }
 
+            public string ToCSV()
+            {
+                return "";
+            }
+
+            public string ToJson()
+            {
+                string msg = "";
+                foreach (KeyValuePair<Medication.Drugs, float> kvp in mixture)
+                {
+                    msg += BaseEvent.JsonAddElement(kvp.Key.ToString(), kvp.Value.ToString());
+                }
+
+                return msg;
+            }
         }
     }
 }

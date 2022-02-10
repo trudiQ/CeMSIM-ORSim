@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using CEMSIM.Network;
 using CEMSIM.GameLogic;
 using UnityEngine;
-
+using CEMSIM.Logger;
 
 namespace CEMSIM
 {
@@ -42,6 +42,13 @@ namespace CEMSIM
 
                 return message.ToArray();
             }
+
+            public override string ToJson()
+            {
+                string msg = "";
+                msg += BaseEvent.JsonAddElement("CatheterState", state.ToString());
+                return msg;
+;            }
         }
 
 

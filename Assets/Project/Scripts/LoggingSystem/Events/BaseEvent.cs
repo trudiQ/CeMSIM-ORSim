@@ -7,7 +7,7 @@ namespace CEMSIM
 {
     namespace Logger
     {
-        public class BaseEvent : IDisposable
+        public class BaseEvent : IDisposable, LoggingEventInterface
         {
             protected TimeSpan eventTime;
             protected string eventName;

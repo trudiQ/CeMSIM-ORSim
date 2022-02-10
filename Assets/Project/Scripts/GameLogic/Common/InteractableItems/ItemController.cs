@@ -18,8 +18,7 @@ namespace CEMSIM
             public int ownerId;
 
 
-            //private ItemStateManager itemStateManager; // pointed to the specific controller
-            private ToolBaseInteraction itemStateManager;
+            private ToolBaseInteraction itemInteractionManager;
 
 
             // event system
@@ -29,53 +28,12 @@ namespace CEMSIM
 
             private void Awake()
             {
-                switch (toolType)
-                {
-                    // deprecated
-                    /*
-                    case ToolType.scalpel:
-                        itemStateManager = new ScalpelStateManager();
-                        break;
-                    case ToolType.catheter:
-                        itemStateManager = new CatheterStateManager();
-                        break;
-                    case ToolType.N95Mask:
-                        itemStateManager = new N95MaskStateManager();
-                        break;
-                    case ToolType.boufant:
-                        itemStateManager = new BoufantStateManager();
-                        break;
-                    case ToolType.visor:
-                        itemStateManager = new VisorStateManager();
-                        break;
-                    case ToolType.shoeCover:
-                        itemStateManager = new ShoeCoverStateManager();
-                        break;
-                    case ToolType.gown:
-                        itemStateManager = new GownStateManager();
-                        break;
-                    case ToolType.glove:
-                        itemStateManager = new GloveStateManager();
-                        break;
-                    default:
-                        itemStateManager = new ItemStateManager();
-                        break;
-                    //*/
-                    case ToolType.scalpel:
-                        itemStateManager = new ScalpelInteraction();
-                        break;
-                    case ToolType.catheter:
-                        itemStateManager = new CatheterInteraction();
-                        break;
-                    case ToolType.syringe:
-                        itemStateManager = new SyringeInteraction();
-                        break;
-                    default:
-                        itemStateManager = new SimpleObjectInteraction();
-                        break;
 
+                itemInteractionManager = gameObject.GetComponent<ToolBaseInteraction>();
+                if (itemInteractionManager == null)
+                {
+                    Debug.LogError("Could not find an attached ToolBaseInteraction script");
                 }
-                
             }
 
 
@@ -83,12 +41,12 @@ namespace CEMSIM
             {
                 itemId = _id;
                 ownerId = _ownerId;
-                itemStateManager.InitializeItem(_id);
+                itemInteractionManager.InitializeItem(_id);
             }
 
             public byte[] GetItemState()
             {
-                return itemStateManager.GenStateBytes();
+                return itemInteractionManager.GenStateBytes();
             }
 
 
@@ -99,7 +57,7 @@ namespace CEMSIM
             public void DigestStateMessage(Packet _remainderPacket)
             {
                 if(_remainderPacket.UnreadLength() > 0)
-                    itemStateManager.DigestStateBytes(_remainderPacket);
+                    itemInteractionManager.DigestStateBytes(_remainderPacket);
             }
 
 

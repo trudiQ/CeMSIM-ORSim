@@ -4,6 +4,7 @@ using CEMSIM.Medication;
 using CEMSIM.GameLogic;
 using CEMSIM.Network;
 using static CEMSIM.Medication.Medication;
+using CEMSIM.Logger;
 
 namespace CEMSIM
 {
@@ -60,6 +61,16 @@ namespace CEMSIM
             {
 				return drugContent.ToPacketPayload();
             }
+
+            public override string ToJson()
+            {
+
+				// simple tool has no state changes
+				string msg = "";
+				msg += BaseEvent.JsonAddElement("capacity", capacity.ToString());
+				msg += BaseEvent.JsonAddSubElement("content", drugContent.ToJson(), true);
+				return msg;
+			}
         }
 
 
