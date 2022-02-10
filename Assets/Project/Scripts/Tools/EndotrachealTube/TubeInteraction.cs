@@ -53,14 +53,12 @@ public class TubeInteraction : MonoBehaviour {
 	}
 
 	private void SetTubeTransform(Transform anchor) {
-		transform.parent.localPosition = anchor.localPosition;
-		transform.parent.localRotation = anchor.localRotation;
-		transform.localPosition = Vector3.zero;
-		transform.localRotation = Quaternion.identity;
+		transform.localPosition = anchor.localPosition;
+		transform.localRotation = anchor.localRotation;
 	}
 
 	public void OnInsertionAnimationCompleted() {
-		GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+		GetComponent<Rigidbody>().isKinematic = true;
 	}
 
 

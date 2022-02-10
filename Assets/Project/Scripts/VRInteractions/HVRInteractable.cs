@@ -39,9 +39,11 @@ public class HVRInteractable : HVRGrabbable
     }
 
     private void SwithCollider(bool enabled) {
-        foreach (Collider col in switchColliders) {
-            col.enabled = enabled;
-        }
+		if (shouldSwitchColliders) {
+            foreach (Collider col in switchColliders) {
+                col.enabled = enabled;
+            }
+        }   
     }
 }
 

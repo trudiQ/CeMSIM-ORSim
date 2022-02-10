@@ -25,7 +25,7 @@ public class ETCollisionDetection : MonoBehaviour {
 		if (tubeInteraction) {
 			SetJawTransform();
 			GetComponentInChildren<TongueBladeInteractions>().isETInserted = true;
-			other.transform.parent.parent = this.transform;
+			other.transform.parent = this.transform;
 			tubeInteraction.StartInsertionAnimation(anchor);
 		}
 	}
