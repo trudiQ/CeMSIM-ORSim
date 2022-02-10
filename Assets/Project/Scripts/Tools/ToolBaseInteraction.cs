@@ -16,9 +16,9 @@ namespace CEMSIM
         {
             protected int itemId; // unique id of the tool
             protected ToolType toolType; // category of the tool
-            public NetworkBaseState toolState;
+            public ToolBaseState toolState;
 
-            public static event Action<int, NetworkBaseState, int> onToolStateUpdateTrigger;
+            public static event Action<ToolType, int, NetworkStateInterface, int> onToolStateUpdateTrigger;
 
             public ToolBaseInteraction(ToolType _toolType)
             {
@@ -36,7 +36,7 @@ namespace CEMSIM
             /// </summary>
             /// <typeparam name="ToolState"></typeparam>
             /// <param name="curState"></param>
-            public virtual void SetState(NetworkBaseState curState)
+            public virtual void SetState(ToolBaseState curState)
             {
                 toolState = curState;
                 UpdateState();
@@ -53,7 +53,7 @@ namespace CEMSIM
             /// </summary>
             /// <typeparam name="ToolState"></typeparam>
             /// <returns></returns>
-            public virtual NetworkBaseState GetState() { return toolState; }
+            public virtual ToolBaseState GetState() { return toolState; }
 
 
             /// <summary>
@@ -96,17 +96,17 @@ namespace CEMSIM
             public void StateUpdateEvent()
             {
                 if(GameManager.instance.isSinglePlayerMode)
-                    ItemStateUpdateTrigger(itemId, toolState, GameConstants.SINGLE_PLAYER_CLIENTID);
+                    ItemStateUpdateTrigger(toolType, itemId, toolState, GameConstants.SINGLE_PLAYER_CLIENTID);
                 else
                     if (ClientItemManager.instance != null)
-                        ItemStateUpdateTrigger(itemId, toolState, ClientInstance.instance.myId);
+                        ItemStateUpdateTrigger(toolType, itemId, toolState, ClientInstance.instance.myId);
             }
 
             #region Event System
-            public static void ItemStateUpdateTrigger(int _itemId, NetworkBaseState _state, int _clientId)
+            public static void ItemStateUpdateTrigger(ToolType toolType, int _itemId, NetworkStateInterface _state, int _clientId)
             {
                 if (onToolStateUpdateTrigger != null)
-                    onToolStateUpdateTrigger(_itemId, _state, _clientId);
+                    onToolStateUpdateTrigger(toolType, _itemId, _state, _clientId);
             }
 
             #endregion

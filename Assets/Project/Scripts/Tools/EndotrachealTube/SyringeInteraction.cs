@@ -12,8 +12,8 @@ namespace CEMSIM
 		/// <summary>
         /// This class defines the state of the current gameobject.
         /// </summary>
-		public class SyringeState: NetworkBaseState
-        {
+		public class SyringeState: ToolBaseState
+		{
             public MedicineMixture drugContent;
             public float capacity { get; } // capacity of the syringe (ml)
 
@@ -98,6 +98,9 @@ namespace CEMSIM
 			public bool isRightPrimaryButtonPressed { get; set; } = false;
 			public bool isRightSecondaryButtonPressed { get; set; } = false;
 
+			private bool isButtonPressedBefore = false; // use to check whether the button is pressed in the last update, which is used to indicate whethere is a state change
+			private bool isButtonPressedNow = false;
+
 			public SyringeInteraction() : base(ToolType.syringe)
 			{
 				base.toolState = new SyringeState(syringeCapacity, volume, injectDrug); // initialize state 
@@ -121,29 +124,44 @@ namespace CEMSIM
 			{
 				if (isGrabbed)
 				{
-
-					if (isRightPrimaryButtonPressed) // inject
+					isButtonPressedBefore = isButtonPressedNow;
+					if (isRightPrimaryButtonPressed || isRightSecondaryButtonPressed) // button pressed
 					{
-						Debug.LogError("primary key pressed");
-						CheckBalloonStatus();
-						poser.PrimaryPose.Type = BlendType.BooleanParameter;
-						plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, Time.deltaTime * speed);
+						if (isRightPrimaryButtonPressed) // inject
+						{
+							CheckBalloonStatus();
+							poser.PrimaryPose.Type = BlendType.BooleanParameter;
+							plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, Time.deltaTime * speed);
 
-						((SyringeState)toolState).Injection(Time.deltaTime * injectSpeed);
+							((SyringeState)toolState).Injection(Time.deltaTime * injectSpeed);
+							isButtonPressedNow = true;
+						}
+						else if (isRightSecondaryButtonPressed) // refill
+						{
+							CheckBalloonStatus();
+							poser.PrimaryPose.Type = BlendType.BooleanParameter;
+							plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerStartPos, Time.deltaTime * speed);
+							((SyringeState)toolState).Refill(refillDrug, Time.deltaTime * injectSpeed);
+							isButtonPressedNow = true;
+						}
 					}
-					if (isRightSecondaryButtonPressed) // refill
-					{
-						Debug.LogError("secondary key pressed");
-						CheckBalloonStatus();
-						poser.PrimaryPose.Type = BlendType.BooleanParameter;
-						plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerStartPos, Time.deltaTime * speed);
-						((SyringeState)toolState).Refill(refillDrug, Time.deltaTime * injectSpeed);
+                    else // no button pressed
+                    {
+						isButtonPressedNow = false;
+					}
+
+
+					if (isButtonPressedBefore != isButtonPressedNow) // one the transition time when the player presses the button or release the button
+                    {
+						StateUpdateEvent();
 					}
 
 				}
 				else
 				{
 					poser.PrimaryPose.Type = BlendType.Immediate;
+
+					isButtonPressedBefore = false;
 				}
 			}
 

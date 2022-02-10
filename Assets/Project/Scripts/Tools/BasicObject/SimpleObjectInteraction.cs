@@ -10,7 +10,7 @@ namespace CEMSIM
 {
     namespace Tools
     {
-        public class SimpleObjectState : NetworkBaseState
+        public class SimpleObjectState : ToolBaseState
         {
             // State of scalpel, e.g. no blood
             public enum SimpleObjectStateList

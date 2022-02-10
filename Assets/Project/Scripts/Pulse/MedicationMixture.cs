@@ -15,7 +15,7 @@ namespace CEMSIM
         /// Current implementation use a dictionary to store contained drug and its volume.
         /// If the type of drugs won't be too much, using an array of # of drugs may be more efficient.
         /// </summary>
-        public class MedicineMixture : NetworkBaseState
+        public class MedicineMixture : NetworkStateInterface
         {
             public Dictionary<Medication.Drugs, float> mixture; // type of medication and its volume
 
@@ -57,7 +57,7 @@ namespace CEMSIM
                 volume = _volume;
             }
 
-            public override bool FromPacketPayload(Packet _remainderPacket)
+            public bool FromPacketPayload(Packet _remainderPacket)
             {
                 bool isChanges = false;
                 bool isDelta = _remainderPacket.ReadBool(); // whether this packet stores the delta of changes, or a full state broadcast
@@ -149,7 +149,7 @@ namespace CEMSIM
             /// By default, this function returns the delta changes of mixture
             /// </summary>
             /// <returns></returns>
-            public override byte[] ToPacketPayload()
+            public byte[] ToPacketPayload()
             {
                 return ToPacketPayload(true);
             }
