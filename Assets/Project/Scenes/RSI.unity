@@ -1064,25 +1064,6 @@ MonoBehaviour:
     JustActivated: 0
     JustDeactivated: 0
     Value: 0
---- !u!1 &357339285 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7195149474709077054, guid: dc973a2e38e8c9d4284a8953e0755801,
-    type: 3}
-  m_PrefabInstance: {fileID: 1927614377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &357339293
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 357339285}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62359d80fdc0e4315ab6331b78ec5b90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  kinematicForParticles: 0
 --- !u!4 &372207870 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 179c831442156684c897d8c05d39dbe3,
@@ -1546,12 +1527,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8786012086672635593, guid: 951c1eaf7b829874fb89bc7b016bd697,
     type: 3}
   m_PrefabInstance: {fileID: 8786012087249555066}
-  m_PrefabAsset: {fileID: 0}
---- !u!54 &670110148 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 4701379295292444791, guid: e30cd4503024f3c45839dd62f7815859,
-    type: 3}
-  m_PrefabInstance: {fileID: 4701379294416937923}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &690880993 stripped
 GameObject:
@@ -3596,6 +3571,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1166093982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &1189490737
 GameObject:
   m_ObjectHideFlags: 0
@@ -4917,48 +4934,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 8.047573, y: 2.9852316, z: 0.21447253}
   m_Center: {x: 0.11636257, y: 0.09276307, z: 0.029475093}
---- !u!114 &1913347363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1001 &1927614377
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5025,21 +5000,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: AdultAfricanMale_01_Heavy_Patient_Rigged_RSI
-      objectReference: {fileID: 0}
-    - target: {fileID: 6315924675394735112, guid: dc973a2e38e8c9d4284a8953e0755801,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.x
-      value: 0.00040191913
-      objectReference: {fileID: 0}
-    - target: {fileID: 6315924675394735112, guid: dc973a2e38e8c9d4284a8953e0755801,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.y
-      value: 0.023574388
-      objectReference: {fileID: 0}
-    - target: {fileID: 6315924675394735112, guid: dc973a2e38e8c9d4284a8953e0755801,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: 0.0255004
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc973a2e38e8c9d4284a8953e0755801, type: 3}
@@ -6121,105 +6081,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EndotrachealTube
       objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: bla
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: dummy
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: connectorDesiredPos.x
-      value: -0.0085
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: connectorDesiredPos.y
-      value: 0.0488
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: connectorDesiredPos.z
-      value: 0.0215
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: connectorDesiredRot.x
-      value: 334.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: connectorDesiredRot.y
-      value: 351.839
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: connectorDesiredRot.z
-      value: 7.746004
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: connectorGrabbedTransform
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444785, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: connectorInsertedTransform2
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444786, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: HandReleased.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444786, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: HandReleased.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 670110148}
-    - target: {fileID: 4701379295292444786, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: HandReleased.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444786, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: HandReleased.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: set_isKinematic
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444786, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: HandReleased.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.Rigidbody, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444786, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: HandReleased.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444786, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: HandReleased.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
@@ -6270,10 +6135,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -277.746
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e30cd4503024f3c45839dd62f7815859, type: 3}
