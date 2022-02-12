@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 
 public class ETCollisionDetection : MonoBehaviour {
+	public Collider etTriggerCollider;
+	public Collider cheekCollider;
+
 	public Transform anchor;
-	public Vector3 jawDesiredPos;
-	public Vector3 jawDesiredRot;
+
+	public TransformHolder jawETInsertionTransform;
 
 	// Start is called before the first frame update
 	void Start() {
@@ -16,13 +19,15 @@ public class ETCollisionDetection : MonoBehaviour {
 	}
 
 	public void SetJawTransform() {
-		transform.localPosition = jawDesiredPos;
-		transform.localEulerAngles = jawDesiredRot;
+		transform.localPosition = jawETInsertionTransform.position;
+		transform.localEulerAngles = jawETInsertionTransform.rotation;
 	}
 
 	private void OnTriggerEnter(Collider other) {
 		TubeInteraction tubeInteraction = other.GetComponent<TubeInteraction>();
 		if (tubeInteraction) {
+			etTriggerCollider.enabled = false;
+			cheekCollider.enabled = false;
 			SetJawTransform();
 			GetComponentInChildren<TongueBladeInteractions>().isETInserted = true;
 			other.transform.parent = this.transform;

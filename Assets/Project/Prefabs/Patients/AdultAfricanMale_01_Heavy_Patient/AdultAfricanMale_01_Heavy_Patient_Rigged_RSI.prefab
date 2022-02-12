@@ -3006,7 +3006,7 @@ GameObject:
   - component: {fileID: 392337970201666420}
   - component: {fileID: 392337970201665674}
   - component: {fileID: 392337970201666421}
-  - component: {fileID: 7529018522515931093}
+  - component: {fileID: 2289684765003825455}
   m_Layer: 0
   m_Name: CC_Base_Tongue02
   m_TagString: Untagged
@@ -3088,7 +3088,7 @@ MonoBehaviour:
   isETInserted: 0
   bladeAnchor: {fileID: 1449464161858225728}
   etCollisionDetection: {fileID: 2220079574412907944}
---- !u!114 &7529018522515931093
+--- !u!114 &2289684765003825455
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8149,6 +8149,7 @@ GameObject:
   - component: {fileID: 2220079574412907944}
   - component: {fileID: 7241000129044944247}
   - component: {fileID: 5099189421581850811}
+  - component: {fileID: 5464991199922856909}
   m_Layer: 0
   m_Name: CC_Base_JawRoot
   m_TagString: Untagged
@@ -8443,9 +8444,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 013ab0219a897174194e875ba0005e7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  etTriggerCollider: {fileID: 7241000129044944247}
+  cheekCollider: {fileID: 5099189421581850811}
   anchor: {fileID: 6763465586709444117}
-  jawDesiredPos: {x: 0.019399676, y: 0.025499785, z: 0.01339993}
-  jawDesiredRot: {x: 356.7798, y: 140.76082, z: 240.15973}
+  jawETInsertionTransform: {fileID: 5464991199922856909}
 --- !u!65 &7241000129044944247
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8472,6 +8474,21 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.14157465, y: 0.11879485, z: 0.047835235}
   m_Center: {x: -0.029616142, y: -0.019859811, z: -0.06131613}
+--- !u!114 &5464991199922856909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7195149474709077054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec2949dd1bda5b54599b01d2e89a6560, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {x: 0.019399676, y: 0.025499785, z: 0.01339993}
+  rotation: {x: 356.7798, y: 140.76082, z: 240.15973}
+  scale: {x: 0, y: 0, z: 0}
 --- !u!1 &7201669466942780068
 GameObject:
   m_ObjectHideFlags: 0

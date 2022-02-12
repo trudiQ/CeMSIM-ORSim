@@ -6,21 +6,25 @@ public class TubeInteraction : MonoBehaviour {
 	public Collider tubeIgnoreCollider;
 	public Collider styletIgnoreCollider;
 	public Collider tubeInsertCollider;
-
-	public Vector3 insertionStartPos;
-	public Vector3 insertionStartRot;
+	public Transform connector;
+	public TransformHolder connectorInsertedTransform;
 
 	private HVRGrabbable grabbable;
 	private HVRHandGrabber grabber;
 
 	private Animator animator;
+	private Rigidbody rigidBody;
+
+	public bool isEtInserted = false;
 
 	// Start is called before the first frame update
 	void Start() {
 		grabbable = GetComponent<HVRGrabbable>();
 		grabbable.HandGrabbed.AddListener(OnGrabbed);
+		grabbable.HandReleased.AddListener(OnReleased);
 
 		animator = GetComponent<Animator>();
+		rigidBody = GetComponent<Rigidbody>();
 
 		Physics.IgnoreCollision(tubeIgnoreCollider, styletIgnoreCollider);
 	}
@@ -45,25 +49,41 @@ public class TubeInteraction : MonoBehaviour {
 		grabber.TryGrab(grabbable, true);
 	}
 
-	public void StartInsertionAnimation(Transform anchor) {
+	public void StartInsertionAnimation(Transform etInsertionStartTransform) {
 		tubeInsertCollider.enabled = false;
-		SetTubeTransform(anchor);
+		SetTubeTransform(etInsertionStartTransform);
 		animator.enabled = true;
 		animator.Play("ETInsertionAnim");
 	}
 
-	private void SetTubeTransform(Transform anchor) {
-		transform.localPosition = anchor.localPosition;
-		transform.localRotation = anchor.localRotation;
+	private void SetTubeTransform(Transform etInsertionStartTransform) {
+		transform.localPosition = etInsertionStartTransform.localPosition;
+		transform.localRotation = etInsertionStartTransform.localRotation;
+	}
+
+	private void SetConnectorTransform() {
+		connector.localPosition = connectorInsertedTransform.position;
+		connector.localEulerAngles = connectorInsertedTransform.rotation;
 	}
 
 	public void OnInsertionAnimationCompleted() {
-		GetComponent<Rigidbody>().isKinematic = true;
+		SetConnectorTransform();
+		isEtInserted = true;
+		foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>()) {
+			rb.isKinematic = true;
+		}
+		animator.enabled = false;
 	}
 
 
 	private void OnGrabbed(HVRHandGrabber grabber, HVRGrabbable grabbable) {
 		this.grabber = grabber;
+	}
+
+	private void OnReleased(HVRHandGrabber grabber, HVRGrabbable grabbable) {
+		if (isEtInserted) {
+			rigidBody.isKinematic = true;
+		}
 	}
 
 }
