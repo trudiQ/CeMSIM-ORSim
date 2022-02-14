@@ -36,7 +36,7 @@ public class PPESpawner : MonoBehaviour
         if (ppePrefab)
         {
             currentlyTrackedObject = Instantiate(ppePrefab, transform.position + spawnOffsetPosition, transform.rotation * Quaternion.Euler(spawnOffsetRotation));
-            clothController.AddSceneCloth(currentlyTrackedObject.GetComponent<InteractableCloth>());
+            clothController?.AddSceneCloth(currentlyTrackedObject.GetComponent<InteractableCloth>());
         }
         else
             Debug.LogWarning("No prefab specified for " + gameObject.name);
