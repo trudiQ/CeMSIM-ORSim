@@ -72,7 +72,7 @@ namespace CEMSIM
                 {
                     //Debug.Log($"Acquire ownership of {toolType} - {itemId}");
                     ClientItemManager.instance.GainOwnership(itemId);
-                    ItemDropoffTrigger(toolType, itemId, ClientInstance.instance.myId);
+                    ItemPickupTrigger(toolType, itemId, ClientInstance.instance.myId);
 
                 }
                 else
