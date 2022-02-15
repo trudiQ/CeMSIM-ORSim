@@ -113,7 +113,6 @@ namespace CEMSIM
             /// <returns></returns>
             public byte[] ToPacketPayload(bool sendDelta)
             {
-                Debug.Log("in medicine class");
                 List<byte> message = new List<byte>();
                 
                 message.AddRange(BitConverter.GetBytes(sendDelta));

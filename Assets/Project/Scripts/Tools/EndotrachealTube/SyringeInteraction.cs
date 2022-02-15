@@ -122,7 +122,7 @@ namespace CEMSIM
             public override void UpdateState()
             {
 				float curVolume = ((SyringeState)toolState).drugContent.volume;
-				Debug.Log($"syringe curVolume {curVolume}");
+				//Debug.Log($"syringe curVolume {curVolume}");
 				// set plunger position
 				plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, curVolume / plungerLength* syringeCapacity);
 				// TODO: may still have other states to be configured

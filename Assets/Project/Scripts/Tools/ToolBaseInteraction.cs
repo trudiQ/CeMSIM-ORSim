@@ -62,14 +62,14 @@ namespace CEMSIM
             /// <returns></returns>
             public virtual byte[] GenStateBytes()
             {
-                if (toolState == null)
-                {
-                    Debug.Log($"{toolType} state is null");
-                }
-                else
-                {
-                    Debug.Log($"{toolType} state is good!!!!!");
-                }
+                //if (toolState == null)
+                //{
+                //    Debug.Log($"{toolType} state is null");
+                //}
+                //else
+                //{
+                //    Debug.Log($"{toolType} state is good!!!!!");
+                //}
                 return toolState.ToPacketPayload();
             }
 

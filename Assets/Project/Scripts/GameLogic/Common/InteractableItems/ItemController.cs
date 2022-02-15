@@ -70,12 +70,14 @@ namespace CEMSIM
             {
                 if (ClientItemManager.instance != null)
                 {
+                    //Debug.Log($"Acquire ownership of {toolType} - {itemId}");
                     ClientItemManager.instance.GainOwnership(itemId);
-                    ItemPickupTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
+                    ItemDropoffTrigger(toolType, itemId, ClientInstance.instance.myId);
+
                 }
                 else
                 {
-                    ItemPickupTrigger(toolType, itemId, ownerId);
+                    ItemPickupTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
                 }
             }
 
@@ -83,12 +85,13 @@ namespace CEMSIM
             {
                 if (ClientItemManager.instance != null)
                 {
+                    Debug.Log($"Drop {toolType} - {itemId}");
                     ClientItemManager.instance.DropOwnership(itemId, true);
                     ItemDropoffTrigger(toolType, itemId, ClientInstance.instance.myId);
                 }
                 else
                 {
-                    ItemDropoffTrigger(toolType, itemId, ownerId);
+                    ItemDropoffTrigger(toolType, itemId, GameConstants.SINGLE_PLAYER_CLIENTID);
                 }
             }
 
