@@ -172,7 +172,7 @@ public class HapticPlugin : MonoBehaviour  {
 	Matrix4x4 stylusMatrixWorld;
 	public Vector3 stylusPositionWorld;
 	Vector3 stylusVelocityWorld;
-	public Quaternion stylusRotationWorld;
+    public Quaternion stylusRotationWorld;
 
 	private GameObject[] touchableObjects;
 
@@ -519,7 +519,7 @@ public class HapticPlugin : MonoBehaviour  {
 
 		if (PhysicsManipulationEnabled == false || hapticManipulator != previousManipulator)
 		{ // No physics, just move it.
-			hapticManipulator.transform.rotation = stylusRotationWorld;
+            hapticManipulator.transform.rotation = stylusRotationWorld;
 			hapticManipulator.transform.position = stylusPositionWorld;
 			setSpringStiffness(configName, 0.0, 0.0);
 			previousManipulator = hapticManipulator;

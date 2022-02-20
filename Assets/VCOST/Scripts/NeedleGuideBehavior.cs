@@ -8,19 +8,23 @@ using Obi;
 
 public class NeedleGuideBehavior : MonoBehaviour
 {
-    int needleInside = 0;
-    
+    public bool _debug = true;
+    public float rodDistance = 0.15f;
+
     public NeedleBehavior needle;
     public float shrinkMult = 1.75f;
-    public UnityEvent onNeedleExit = new UnityEvent();
+    public UnityEvent e_onSuccessfulPassthrough = new UnityEvent();
+    public UnityEvent e_onSelfDestruct = new UnityEvent();
     private bool needleContained = true;
     private bool holeShrunk = false;
 
     private bool needleGrabbed = false;
     private Vector3 positionOffset;
     private Quaternion rotationOffset;
-
+    
     private List<Collider> colliders;
+    private List<GameObject> currentNeedleParts = new List<GameObject>();
+    private Collider trigger;
 
     private void GrabNeedle()
     {
@@ -48,6 +52,16 @@ public class NeedleGuideBehavior : MonoBehaviour
         needle.e_needleRelease.AddListener(GrabNeedle);
         needle.e_needleGrab.AddListener(ReleaseNeedle);
 
+        Collider[] selfColliders = gameObject.GetComponents<Collider>();
+        foreach(Collider c in selfColliders)
+        {
+            if(c.isTrigger == true)
+            {
+                trigger = c;
+                break;
+            }
+        }
+
         Collider[] unfilteredColliders = gameObject.GetComponentsInChildren<Collider>();
         foreach(Collider c in unfilteredColliders)
         {
@@ -57,111 +71,42 @@ public class NeedleGuideBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!needleContained) return;
+
+        if (_debug)
+        {
+            Debug.DrawRay(transform.position, transform.right * -1 * rodDistance, Color.cyan);
+        }
+
         if (needleGrabbed)
         {
             needle.transform.position = transform.position + positionOffset;
         }
 
-        if(!needleContained && !holeShrunk)
+        bool anyCollision = false;
+        foreach(ObiCollider c in needle.needleColliders)
         {
-            //StartCoroutine(WaitAFrame());
-            //MoveAndShrink();
-            holeShrunk = true;
-        }
-    }
-
-    //Moves the guide and shrinks it in a single step, teleports to closest rod position
-    private void MoveAndShrink()
-    {
-        ObiParticleAttachment particleAttachment = GetComponent<StaticHoleColliderBehavior>().heldAttachment;
-        particleAttachment.enabled = false;
-
-        Vector3 closestParticlePosition = needle.rod.GetAveragePositionOfClosestParticlesToPosition(transform.position, 2);
-        transform.position = closestParticlePosition;
-        
-
-        float currentDist = Vector3.Distance(colliders[0].transform.position, transform.position);
-        float desiredDist = currentDist / shrinkMult;
-
-        foreach (Collider c in colliders)
-        {
-            Vector3 translateVector = (transform.position - c.transform.position).normalized * (currentDist-desiredDist);
-            c.transform.Translate(translateVector, Space.World);
-        }
-
-        particleAttachment.enabled = true;
-    }
-
-    private IEnumerator WaitAFrame()
-    {
-        Vector3 colliderOffset = colliders[0].transform.position - transform.position;
-        Vector3 closestParticlePosition = needle.rod.GetAveragePositionOfClosestParticlesToPosition(transform.position, 5);
-        transform.position = closestParticlePosition - colliderOffset;
-
-        yield return null;
-
-        float currentDist = Vector3.Distance(colliders[0].transform.position, transform.position);
-        float desiredDist = currentDist / shrinkMult;
-
-        foreach (Collider c in colliders)
-        {
-            Vector3 translateVector = (transform.position - c.transform.position).normalized * (currentDist - desiredDist);
-            c.transform.Translate(translateVector, Space.World);
-        }
-    }
-
-    //Shrinks the guide over several steps, may move rod
-    private IEnumerator ShrinkHole()
-    {
-        float currentDist = Vector3.Distance(colliders[0].transform.position, transform.position);
-        float desiredDist = currentDist / shrinkMult;
-        float moveIncrement = desiredDist / 20f;
-
-        int closestParticleInt = needle.rod.GetClosestParticleToPosition(transform.position);
-        Vector3 closestParticlePosition = needle.rod.WorldPositionOfParticle(closestParticleInt);
-
-        while (true)
-        {
-            bool allStopped = true;
-            foreach (Collider c in colliders)
+            if (c.sourceCollider.bounds.Intersects(trigger.bounds))
             {
-                if (Vector3.Distance(c.transform.position, transform.position) >= desiredDist)
-                {
-                    Vector3 translateVector = (transform.position - c.transform.position).normalized;
-                    c.transform.Translate(translateVector * moveIncrement, Space.World);
-                    allStopped = false;
-                }
+                anyCollision = true;
             }
-            if (allStopped)
+        }
+
+        if (!anyCollision)
+        {
+            needle.GuideExited();
+            needleContained = false;
+
+            Vector3 needleDir = transform.position - needle.transform.position;
+
+            if (Vector3.Dot(needleDir, transform.up) < 0)
             {
-                yield break;
+                e_onSelfDestruct.Invoke();
+                Destroy(gameObject);
             }
-            yield return new WaitForFixedUpdate();
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!needleContained) return;
-
-        if(other.tag == "Needle" || other.tag == "NeedleExit")
-        {
-            needleInside++;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (!needleContained) return;
-
-        if(other.tag == "Needle" || other.tag == "NeedleExit")
-        {
-            needleInside--;
-            if (needleInside == 0)
+            else
             {
-                needle.GuideExited();
-                onNeedleExit.Invoke();
-                needleContained = false;
+                e_onSuccessfulPassthrough.Invoke();
             }
         }
     }

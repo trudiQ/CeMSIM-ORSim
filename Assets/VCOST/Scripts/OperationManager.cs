@@ -8,20 +8,25 @@ public class OperationManager : MonoBehaviour
 {
     public static OperationManager instance = null;
 
+    static Mesh s_anvilColonMesh;
+
     [Header("Prefabs")]
     public StaticHoleColliderBehavior p_attachObject;
     public StaticHoleColliderManager p_staticHoleColliderManager;
     public GameObject p_sutureRodNeedlePrefab;
     public GameObject p_anvil;
-    public GameObject p_pseudoColonCollider;
+    public ObiCollider p_pseudoColonCollider;
+    public ForcepBehavior p_needleHolder;
 
     [Header("Managers")]
     public HapticColonGrabbersBehavior grabberControl;
     private StaticHoleColliderManager anvilColonHoleColliderManager = null;
 
     [Header("Scene References")]
+    public HapticPlugin hapticPlugin;
     public Transform spawnEquipmentAt;
     public BlueprintParticleIndividualizer anvilColon;
+    public SkinnedMeshRenderer anvilColonSkin;
     public NeedleBehavior anvilNeedle;
     public RodBlueprintParticleIndividualizer anvilRod;
     public GameObject CircularStaplerPair;
@@ -31,7 +36,7 @@ public class OperationManager : MonoBehaviour
 
     private int _currentPhase = 0;
 
-    private List<GameObject> pseudoColonColliders = new List<GameObject>();
+    private GameObject activePseudoColonCollider;
 
     int mod(int x, int m)
     {
@@ -103,6 +108,7 @@ public class OperationManager : MonoBehaviour
         //Haptic device gameobject may be disabled when debugging
         if (grabberControl.gameObject.activeSelf)
         {
+            grabberControl.SwitchGrabberObject(p_needleHolder);
             grabberControl.SetForcepSpawning(false);
             grabberControl.activeForceps.doObi = false;
         }
@@ -137,54 +143,8 @@ public class OperationManager : MonoBehaviour
         anvilNeedle.suturable = anvilColon;
         anvilNeedle.rod = anvilRod;
 
-        //Set up the pseudo colon collider
-        //Get particles from outer most ring on suture side
-        foundParticles =
-            anvilColon.GetClosestRestingSliceOfParticles(
-                Vector3.back * 999f,
-                0.1f,
-                true);
-
-        //Get direction of colon
-        int stride = foundParticles.Count / 3;
-        int a = foundParticles[0];
-        int b = foundParticles[stride];
-        int c = foundParticles[stride * 2];
-
-        Vector3 aPos = anvilColon.WorldPositionOfParticle(a);
-        Vector3 bPos = anvilColon.WorldPositionOfParticle(b);
-        Vector3 cPos = anvilColon.WorldPositionOfParticle(c);
-
-        Vector3 particleNormal = Vector3.Cross(
-            bPos - aPos,
-            cPos - aPos
-            );
-
-        for (int i = 0; i < foundParticles.Count; i++)
-        {
-            int totalForAverage = 0;
-            Vector3 addAverage = Vector3.zero;
-            for(int j = i-6; j<=i+6; j++)
-            {
-                addAverage += anvilColon.WorldPositionOfParticle(
-                    foundParticles[
-                    mod(j, foundParticles.Count)]);
-                totalForAverage++;
-            }
-            addAverage /= totalForAverage;
-
-            Vector3 particlePos = anvilColon.WorldPositionOfParticle(foundParticles[i]);
-
-            Vector3 desiredUp = addAverage - particlePos;
-
-            GameObject pcc = Instantiate(
-                p_pseudoColonCollider,
-                particlePos,
-                Quaternion.LookRotation(particleNormal, desiredUp),
-                transform
-                );
-            pseudoColonColliders.Add(pcc);
-        }
+        //Create the pseudo colon collider for rod collisions
+        activePseudoColonCollider = anvilColon.CreateColliderSnapshot(p_pseudoColonCollider);
     }
 
     //Place anvil
@@ -206,11 +166,8 @@ public class OperationManager : MonoBehaviour
     //Begin Closing of the colon
     public void PhaseFourStart()
     {
-        //Destroy pseudo colon colliders
-        foreach(GameObject g in pseudoColonColliders)
-        {
-            Destroy(g);
-        }
+        //Destroy pseudo colon collider
+        Destroy(activePseudoColonCollider);
 
         if(grabberControl.gameObject.activeSelf)
             grabberControl.activeForceps.doObi = false;
@@ -231,6 +188,13 @@ public class OperationManager : MonoBehaviour
             Destroy(staticHoleCollider.heldAttachment);
         }
 
+
+        foundParticles =
+            anvilColon.GetClosestRestingSliceOfParticles(
+                Vector3.back * 999f,
+                0.2f,
+                true);
+
         foreach (int i in foundParticles)
         {
             StaticHoleColliderBehavior outerPart = Instantiate(
@@ -245,6 +209,7 @@ public class OperationManager : MonoBehaviour
         anvilColonHoleColliderManager.StartPullingBehaviour();
 
         //Enable rod normalizer so stretching artifacts are minimized
+        /*
         ObiParticleAttachment[] rodAttachments = anvilRod.GetComponents<ObiParticleAttachment>();
         ObiParticleAttachment needleAttachment = null;
         foreach (ObiParticleAttachment p in rodAttachments)
@@ -258,10 +223,20 @@ public class OperationManager : MonoBehaviour
         lastHoleCollider = anvilColonHoleColliderManager.rodAttachments[anvilColonHoleColliderManager.rodAttachments.Count - 1];
 
         if (needleAttachment == null || lastHoleCollider == null) Debug.LogError("OperationManager - Getting rod strech range failed!");
-        Debug.LogWarning("There");
+        
         anvilRod.GetComponent<RodStretchNormalizer>().EnableAndLimitBetweenExclusively(
             lastHoleCollider.particleGroup.particleIndices[0],
             needleAttachment.particleGroup.particleIndices[0]);
+            */
+
+        //Disable rod smoothing if it is present as it can cause weird behavior when combined with the buncher
+        ObiPathSmoother pathSmoother = anvilRod.GetComponent<ObiPathSmoother>();
+        if (pathSmoother)
+        {
+            pathSmoother.decimation = 0;
+            pathSmoother.smoothing = 0;
+            pathSmoother.twist = 0;
+        }
 
         //Enable rod bunching to eliminate extra rod slack between suture points
         anvilRod.GetComponent<RodBuncher>().EnableAndDoScanFrom(anvilColonHoleColliderManager.rodAttachments);
@@ -272,17 +247,13 @@ public class OperationManager : MonoBehaviour
     {
         CircularStaplerPair.SetActive(true);
 
-        HapticGrabber grabber = Instantiate(
-            p_grabber,
-            Vector3.zero,
-            Quaternion.identity);
+        //This will need to be removed at some point
+        MeshRenderer[] meshes = grabberControl.activeForceps.GetComponentsInChildren<MeshRenderer>();
+        foreach(MeshRenderer m in meshes)
+        {
+            m.enabled = false;
+        }
 
-        grabberControl.SwitchToObject(grabber.gameObject);
-        grabberControl.SetForcepSpawning(true);
-    }
-
-    private void SetCameraActive(Camera c)
-    {
-        
+        grabberControl.enabled = false;
     }
 }

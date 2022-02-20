@@ -7,7 +7,6 @@ using Obi;
 
 public class NeedleBehavior : MonoBehaviour
 {
-
     private bool currentlySuturing = false;
     public int categoryColon = 15;
     private int collideWithColonFilter = 0;
@@ -16,12 +15,14 @@ public class NeedleBehavior : MonoBehaviour
     public bool spawnAnimation = true;
     public int animationAttach = 1;
     public int animationRing = 4;
-    public float animationBreakDistance = 0.35f;
+    public float animationBreakDistance = 0.25f;
     public Transform pointTransform;
     public Transform exitTransform;
     public bool attachHoleColliderToParticle = false;
+    public int holeColliderParticles = 2;
     public StaticHoleColliderManager holeManager;
     public StaticHoleColliderBehavior p_HoleCollider;
+    public RodGuideBehavior p_lineGuide;
     public BlueprintParticleIndividualizer suturable;
     public RodBlueprintParticleIndividualizer rod;
     public bool debug = false;
@@ -34,7 +35,7 @@ public class NeedleBehavior : MonoBehaviour
 
     private ObiColliderWorld colliderWorld;
     public Transform needleColliderParent;
-    private List<ObiCollider> needleColliders;
+    public List<ObiCollider> needleColliders;
     private void SetCollideWithColon(bool collide)
     {
         int decision = collide ? collideWithColonFilter : noCollideWithColonFilter;
@@ -107,7 +108,7 @@ public class NeedleBehavior : MonoBehaviour
         Vector3 desiredHeading = (suturable.WorldPositionOfParticle(contact.bodyA) - owner.position).normalized;
 
         float d = Vector3.Dot(-owner.up.normalized, desiredHeading);
-        if (d < 0.25f) return;
+        //if (d < 0.25f) return;
 
         if (spawnAnimation)
         {
@@ -116,22 +117,49 @@ public class NeedleBehavior : MonoBehaviour
         }
         SetCollideWithColon(false);
 
-        Vector3 modifiedNeedleEnterPosition = pointTransform.position + (pointTransform.up * -0.2f);
-        StaticHoleColliderBehavior holeCollider = Instantiate(p_HoleCollider, modifiedNeedleEnterPosition, pointTransform.rotation);
+        Vector3 holeColliderPosition = pointTransform.position + (pointTransform.up * -0.2f);
+        Quaternion holeColliderRotation = pointTransform.rotation;
+
+        int layerMask = 1 << 13;
+        Ray ray = new Ray(pointTransform.position + (pointTransform.up * 0.5f), pointTransform.up * -1);
+        RaycastHit raycastHit;
+        if(Physics.Raycast(ray, out raycastHit, 2f, layerMask))
+        {
+            holeColliderPosition = raycastHit.point;
+            //holeColliderRotation = Quaternion.LookRotation(Vector3.forward, raycastHit.normal);
+        }
+        
+        StaticHoleColliderBehavior holeCollider = Instantiate(p_HoleCollider, holeColliderPosition, holeColliderRotation);
+        RodGuideBehavior lineGuide = Instantiate(p_lineGuide, holeColliderPosition, holeColliderRotation, holeManager.transform);
+
+        NeedleGuideBehavior needleGuide = holeCollider.GetComponent<NeedleGuideBehavior>();
+        if (needleGuide)
+        {
+            needleGuide.needle = this;
+            needleGuide.e_onSelfDestruct.AddListener(lineGuide.DestroySelf);
+            needleGuide.e_onSelfDestruct.AddListener(holeCollider.SafeDestroySelf);
+            needleGuide.e_onSuccessfulPassthrough.AddListener(lineGuide.StopTracking);
+        }
+        
+        lineGuide.Init(this, rod);
+        
         ParticleTriggerField[] particleTriggerFields = holeCollider.GetComponentsInChildren<ParticleTriggerField>();
         foreach(ParticleTriggerField particleTriggerField in particleTriggerFields)
         {
             particleTriggerField.solver = rod.solver;
         }
+        particleTriggerFields = lineGuide.GetComponentsInChildren<ParticleTriggerField>();
+        foreach (ParticleTriggerField particleTriggerField in particleTriggerFields)
+        {
+            particleTriggerField.solver = rod.solver;
+        }
         holeCollider.AddToManager(holeManager);
+        holeManager._E_OnPullStart.AddListener(lineGuide.DestroySelf);
 
         if (attachHoleColliderToParticle)
         {
-            holeCollider.heldAttachment = suturable.CreateNewDynamicParticleAttachmentClosestTo(holeCollider.transform);
+            holeCollider.heldAttachment = suturable.CreateNewDynamicParticleAttachmentClosestTo(holeCollider.transform, holeColliderParticles);
         }
-
-        NeedleGuideBehavior needleGuide = holeCollider.GetComponent<NeedleGuideBehavior>();
-        needleGuide.needle = this;
         currentlySuturing = true;
     }
 

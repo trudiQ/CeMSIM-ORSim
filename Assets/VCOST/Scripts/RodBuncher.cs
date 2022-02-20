@@ -43,31 +43,6 @@ public class RodBuncher : MonoBehaviour
     {
         for(int i = 0; i < bunches.Count - 1; i++)
         {
-            /*
-            float currentDistance = Vector3.Distance(bunches[i].target.position, bunches[i + 1].target.position);
-            float currentSlack = (initialBunchParticles[i + 1] - currentCrawlingBuncher[i]) / currentDistance;
-            float currentExcess = currentSlack / particlesPerDistanceUnit;
-
-            //Debug.Log(currentSlack);
-
-            if (currentExcess > 1)
-            {
-                if (currentCrawlingBuncher[i] + 1 > initialBunchParticles[i + 1]) continue;
-
-                currentCrawlingBuncher[i] += 1;
-                int particleToAdd = currentCrawlingBuncher[i];
-
-                solver.positions[particleToAdd] = solver.positions[initialBunchParticles[i]];
-                solver.invMasses[particleToAdd] = -1;
-
-                bunches[i].particleGroup.particleIndices.Add(particleToAdd);
-
-                currentDistance = Vector3.Distance(bunches[i].transform.position, bunches[i + 1].transform.position);
-                currentSlack = (initialBunchParticles[i + 1] - currentCrawlingBuncher[i]) / particlesPerDistanceUnit;
-            }
-            */
-            
-            //Set non-bunched particles to be in a line
             int lineFrom = currentCrawlingBuncher[i] + 1;
             int lineTo = initialBunchParticles[i + 1] - 1;
             for(int x = lineFrom; x <= lineTo; x++)

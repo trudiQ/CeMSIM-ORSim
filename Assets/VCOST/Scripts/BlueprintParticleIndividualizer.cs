@@ -7,6 +7,8 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
 {
     public ObiSolver solver;
     public ObiSoftbody instance;
+    public ObiSoftbodySkinner softbodySkinner;
+    public ObiCollider activeColliderSnapshot;
     ObiSoftbodyBlueprintBase blueprint;
     public bool doDebugPrintout = false;
 
@@ -146,9 +148,10 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
         return group;
     }
 
-    public ObiParticleAttachment CreateNewDynamicParticleAttachmentClosestTo(Transform t) { return ParticleAttachmentCreator(t, true); }
-    public ObiParticleAttachment CreateNewParticleAttachmentClosestTo(Transform t) { return ParticleAttachmentCreator(t, false); }
-    private ObiParticleAttachment ParticleAttachmentCreator(Transform t, bool dynamic)
+    public ObiParticleAttachment CreateNewDynamicParticleAttachmentClosestTo(Transform t, int amountOfParticles) { return ParticleAttachmentCreator(t, amountOfParticles, true); }
+    public ObiParticleAttachment CreateNewDynamicParticleAttachmentClosestTo(Transform t) { return ParticleAttachmentCreator(t, 1, true); }
+    public ObiParticleAttachment CreateNewParticleAttachmentClosestTo(Transform t) { return ParticleAttachmentCreator(t, 1, false); }
+    private ObiParticleAttachment ParticleAttachmentCreator(Transform t, int amount, bool dynamic)
     {
         //Important, other scripts may add particle attachments!
         UpdateCurrentlyUsedParticles();
@@ -160,7 +163,7 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
         particleAttachment.compliance = 0;
         particleAttachment.breakThreshold = Mathf.Infinity;
 
-        particleAttachment.particleGroup = CreateGroupOfUnusedParticlesClosestTo(t.position, 1);
+        particleAttachment.particleGroup = CreateGroupOfUnusedParticlesClosestTo(t.position, amount);
         particleAttachment.enabled = true;
 
         return particleAttachment;
@@ -254,5 +257,29 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
         obiParticleAttachments.Add(particleAttachment);
 
         return obiParticleAttachments;
+    }
+
+    public GameObject CreateColliderSnapshot(ObiCollider colliderReference)
+    {
+        GameObject colliderSnapshot = Instantiate(
+                colliderReference.gameObject,
+                Vector3.zero,
+                Quaternion.identity,
+                transform
+                );
+
+        ObiCollider obiCollider = colliderSnapshot.GetComponent<ObiCollider>();
+        MeshCollider meshCollider = colliderSnapshot.GetComponent<MeshCollider>();
+        SkinnedMeshRenderer meshRenderer = softbodySkinner.GetComponent<SkinnedMeshRenderer>();
+        Mesh sMesh = new Mesh();
+        meshRenderer.BakeMesh(sMesh);
+        meshCollider.sharedMesh = sMesh;
+        obiCollider.sourceCollider = meshCollider;
+        colliderSnapshot.transform.position = meshRenderer.transform.position;
+        colliderSnapshot.transform.rotation = meshRenderer.transform.rotation;
+
+        activeColliderSnapshot = obiCollider;
+
+        return colliderSnapshot;
     }
 }

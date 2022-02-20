@@ -8,9 +8,8 @@ public class RodStretchNormalizer : MonoBehaviour
 {
     private ObiSolver solver;
     private ObiRod rod;
-
-    private int total;
-    private float stretchFactor = 1.5f;
+    
+    private float minimumStretchFactor = 1.5f;
 
     private ObiNativeFloatList oldInvMasses;
 
@@ -20,20 +19,14 @@ public class RodStretchNormalizer : MonoBehaviour
     public void EnableAndLimitBetweenExclusively(int lower, int higher)
     {
         this.enabled = true;
-        lowerParticleLimit = lower + 1;
-        higherParticleLimit = higher - 1;
-    }
+        lowerParticleLimit = lower;
+        higherParticleLimit = higher;
 
-    // Start is called before the first frame update
-    void Start()
-    {
         solver = GetComponentInParent<ObiSolver>();
         rod = GetComponent<ObiRod>();
 
-        total = solver.restPositions.count;
-
         oldInvMasses = new ObiNativeFloatList();
-        foreach(float f in solver.invMasses)
+        foreach (float f in solver.invMasses)
         {
             oldInvMasses.Add(f);
         }
@@ -41,9 +34,9 @@ public class RodStretchNormalizer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        for(int i = lowerParticleLimit+1; i < higherParticleLimit-1; i++)
+        for(int i = lowerParticleLimit+2; i < higherParticleLimit-2; i++)
         {
-            float rDistDiff =
+            float rightStretchFactor =
                 Vector3.Distance(
                         solver.positions[i],
                         solver.positions[i + 1])
@@ -51,7 +44,7 @@ public class RodStretchNormalizer : MonoBehaviour
                 Vector3.Distance(
                     solver.restPositions[i],
                     solver.restPositions[i + 1]);
-            float lDistDiff =
+            float leftStretchFactor =
                 Vector3.Distance(
                         solver.positions[i],
                         solver.positions[i - 1])
@@ -59,7 +52,9 @@ public class RodStretchNormalizer : MonoBehaviour
                 Vector3.Distance(
                     solver.restPositions[i],
                     solver.restPositions[i - 1]);
-            if (rDistDiff > stretchFactor || lDistDiff > stretchFactor && solver.invMasses[i]!=0)
+            if (rightStretchFactor > minimumStretchFactor || 
+                leftStretchFactor > minimumStretchFactor && 
+                solver.invMasses[i]!=0)
             {
                 solver.invMasses[i] = 0;
                 solver.velocities[i] = Vector4.zero;

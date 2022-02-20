@@ -52,6 +52,17 @@ public class HapticColonGrabbersBehavior : MonoBehaviour
 
     public void SetForcepSpawning(bool canSpawn) { }
     
+    public void SwitchGrabberObject(ForcepBehavior grabber)
+    {
+        if(activeForceps != null)
+        {
+            Destroy(activeForceps.gameObject);
+            activeForceps = null;
+        }
+        p_grabber = grabber.gameObject;
+        AddNewGrabber();
+    }
+
     public void SwitchToObject(GameObject obj)
     {
         Destroy(activeForceps.gameObject);

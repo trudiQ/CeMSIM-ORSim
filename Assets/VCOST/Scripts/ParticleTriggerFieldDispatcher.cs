@@ -33,15 +33,18 @@ public class ParticleTriggerFieldDispatcher : MonoBehaviour
 
                 if (particleTriggerField != null)
                 {
-                    int particleIndex = solver.simplices[contact.bodyA];
-
-                    if (triggerFields.ContainsKey(particleTriggerField))
+                    int simplexStart = solver.simplexCounts.GetSimplexStartAndSize(contact.bodyA, out int simplexSize);
+                    for (int i = 0; i < simplexSize; ++i)
                     {
-                        triggerFields[particleTriggerField].Add(particleIndex);
-                    }
-                    else
-                    {
-                        triggerFields.Add(particleTriggerField, new List<int>() { particleIndex });
+                        int particleIndex = solver.simplices[simplexStart + i];
+                        if (triggerFields.ContainsKey(particleTriggerField))
+                        {
+                            triggerFields[particleTriggerField].Add(particleIndex);
+                        }
+                        else
+                        {
+                            triggerFields.Add(particleTriggerField, new List<int>() { particleIndex });
+                        }
                     }
                 }
             }

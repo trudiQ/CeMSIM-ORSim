@@ -21,6 +21,12 @@ public class StaticHoleColliderBehavior : MonoBehaviour
         }
     }
 
+    public void SafeDestroySelf()
+    {
+        heldAttachment.enabled = false;
+        parentManager.RemoveFromManager(this, inner);
+        Destroy(this);
+    }
     // Start is called before the first frame update
     /* No.
     void Start()

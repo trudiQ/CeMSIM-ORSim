@@ -11,6 +11,8 @@ public class RodBlueprintParticleIndividualizer : MonoBehaviour
     private ObiRodBlueprint blueprint;
     public bool doDebugPrintout = false;
 
+    public int particleCount;
+
     private List<ObiParticleAttachment> activeParticleAttachments = new List<ObiParticleAttachment>();
 
     private Matrix4x4 solver2World;
@@ -23,6 +25,8 @@ public class RodBlueprintParticleIndividualizer : MonoBehaviour
         if (solver == null) solver = GetComponentInParent<ObiSolver>();
         if(instance == null) instance = GetComponent<ObiRod>();
         blueprint = (ObiRodBlueprint)instance.blueprint;
+
+        particleCount = solver.positions.count;
 
         solver2World = solver.transform.localToWorldMatrix;
 
@@ -73,14 +77,17 @@ public class RodBlueprintParticleIndividualizer : MonoBehaviour
         g.SetSourceBlueprint(blueprint);
         g.particleIndices = new List<int>() { GetClosestParticleToPosition(t.position) };
 
-        Debug.Log(g.particleIndices[0]);
-
         particleAttachment.particleGroup = g;
         particleAttachment.enabled = true;
 
         activeParticleAttachments.Add(particleAttachment);
 
         return particleAttachment;
+    }
+
+    public float ShortestDistanceToAnyParticle(Vector3 position)
+    {
+        return Vector3.Distance(WorldPositionOfParticle(GetClosestParticleToPosition(position)), position);
     }
 
     public int GetClosestParticleToPosition(Vector3 position)
