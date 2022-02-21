@@ -255,48 +255,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 674bcb87cc7b49b43825cf4676b96f3d, type: 3}
---- !u!114 &116179986
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1001 &120810005
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -696,21 +654,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4090342196501905996, guid: dd368468aa0d3d44c856e36a2653dbb8,
         type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.65143526
-      objectReference: {fileID: 0}
-    - target: {fileID: 4090342196501905996, guid: dd368468aa0d3d44c856e36a2653dbb8,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.512076
-      objectReference: {fileID: 0}
-    - target: {fileID: 4090342196501905996, guid: dd368468aa0d3d44c856e36a2653dbb8,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.40570164
-      objectReference: {fileID: 0}
-    - target: {fileID: 4090342196501905996, guid: dd368468aa0d3d44c856e36a2653dbb8,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.5111873
       objectReference: {fileID: 0}
@@ -764,21 +707,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4560292590956136824, guid: dd368468aa0d3d44c856e36a2653dbb8,
+    - target: {fileID: 4560292590606673315, guid: dd368468aa0d3d44c856e36a2653dbb8,
         type: 3}
-      propertyPath: m_Range
-      value: 0.12
-      objectReference: {fileID: 0}
-    - target: {fileID: 4560292590956136824, guid: dd368468aa0d3d44c856e36a2653dbb8,
-        type: 3}
-      propertyPath: m_Intensity
-      value: 18727.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4560292590956136831, guid: dd368468aa0d3d44c856e36a2653dbb8,
-        type: 3}
-      propertyPath: m_LuxAtDistance
-      value: 3.06
-      objectReference: {fileID: 0}
+      propertyPath: manager
+      value: 
+      objectReference: {fileID: 1706612822}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dd368468aa0d3d44c856e36a2653dbb8, type: 3}
 --- !u!1001 &328145698
@@ -4830,6 +4763,18 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &1706612822 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5053983779526005576, guid: 674bcb87cc7b49b43825cf4676b96f3d,
+    type: 3}
+  m_PrefabInstance: {fileID: 100507990}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1cafba7b8e5f2e4bbb0f34362b004e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1778457216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7249079917464839126, guid: e41f440177961014782f6f88e40b8883,
@@ -5009,6 +4954,48 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1927614377}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1930928490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!114 &1933195295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6076,15 +6063,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1494293397}
     m_Modifications:
-    - target: {fileID: 4701379294565755993, guid: e30cd4503024f3c45839dd62f7815859,
+    - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
-      propertyPath: BodyPreview
-      value: 
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.016600018
       objectReference: {fileID: 0}
-    - target: {fileID: 4701379294565755993, guid: e30cd4503024f3c45839dd62f7815859,
+    - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
-      propertyPath: PreviewRight
-      value: 0
+      propertyPath: m_ConnectedAnchor.y
+      value: 0.02349992
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: -0.007100069
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444780, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
@@ -6099,52 +6091,52 @@ PrefabInstance:
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.831
+      value: 0.8179
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.5396647
+      value: -3.512
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.5471
+      value: 0.5415
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.5118979
+      value: -0.44989088
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.48846915
+      value: -0.5158943
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.4840142
+      value: -0.52148604
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.5148676
+      value: 0.5094151
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 93.13901
+      value: 95.438995
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 172.169
+      value: 396.504
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -277.746
+      value: -57.231995
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e30cd4503024f3c45839dd62f7815859, type: 3}
@@ -6160,6 +6152,16 @@ PrefabInstance:
       propertyPath: data
       value: 
       objectReference: {fileID: 1933195295}
+    - target: {fileID: 4708510559259554783, guid: cc2f7ea8c4adb7c47a2a8dfc0b384906,
+        type: 3}
+      propertyPath: m_Positions.Array.data[0].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4708510559259554783, guid: cc2f7ea8c4adb7c47a2a8dfc0b384906,
+        type: 3}
+      propertyPath: m_Positions.Array.data[1].y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5426451866478946331, guid: cc2f7ea8c4adb7c47a2a8dfc0b384906,
         type: 3}
       propertyPath: m_Name
