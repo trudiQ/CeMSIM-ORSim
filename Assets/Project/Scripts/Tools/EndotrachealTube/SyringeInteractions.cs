@@ -14,6 +14,8 @@ public class SyringeInteractions : MonoBehaviour {
 	public bool isGrabbed { get; set; } = false;
 	public bool isPrimaryButtonPressed { get; set; } = false;
 
+	private bool shouldAnimate = true;
+
 	// Start is called before the first frame update
 	void Start() {
 
@@ -21,7 +23,13 @@ public class SyringeInteractions : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		if (isGrabbed) {
+		if (isGrabbed && shouldAnimate) {
+
+			if (Vector3.Distance(plunger.transform.localPosition, plungerEndPos) < 0.001) {
+				plunger.transform.localPosition = plungerEndPos;
+				shouldAnimate = false;
+			}
+
 			if (isPrimaryButtonPressed) {
 				poser.PrimaryPose.Type = BlendType.BooleanParameter;
 				plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, Time.deltaTime * speed);

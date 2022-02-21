@@ -1,4 +1,5 @@
 ﻿using HurricaneVR.Framework.Core;
+using System;
 using UnityEngine;
 
 public class ETCollisionDetection : MonoBehaviour {
@@ -6,7 +7,9 @@ public class ETCollisionDetection : MonoBehaviour {
 	public Collider cheekCollider;
 	public Transform anchor;
 	public TransformHolder jawETInsertionTransform;
-	public HVRGrabbable grabbable;
+	public HVRGrabbable jawGrabbable;
+	public GameObject jawGrabPoints;
+	public HVRGrabbable headGrabbable;
 
 	// Start is called before the first frame update
 	void Start() {
@@ -26,9 +29,7 @@ public class ETCollisionDetection : MonoBehaviour {
 	private void OnTriggerEnter(Collider other) {
 		TubeInteraction tubeInteraction = other.GetComponent<TubeInteraction>();
 		if (tubeInteraction) {
-			etTriggerCollider.enabled = false;
-			cheekCollider.enabled = false;
-			grabbable.enabled = false;
+			DisableComponents();
 			SetJawTransform();
 			GetComponentInChildren<TongueBladeInteractions>().isETInserted = true;
 			other.transform.parent = this.transform;
@@ -36,8 +37,16 @@ public class ETCollisionDetection : MonoBehaviour {
 		}
 	}
 
+	private void DisableComponents() {
+		etTriggerCollider.enabled = false;
+		cheekCollider.enabled = false;
+		jawGrabbable.enabled = false;
+		headGrabbable.enabled = false;
+		jawGrabPoints.SetActive(false);
+	}
+
 	public void ReleaseJaw() {
-		grabbable.ForceRelease();
-		grabbable.CanBeGrabbed = false;
+		jawGrabbable.ForceRelease();
+		jawGrabbable.CanBeGrabbed = false;
 	}
 }
