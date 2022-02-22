@@ -173,9 +173,9 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
     /// Moves transform to the closest particle and creates a static particle attachment to that particle.
     /// </summary>
     /// <param name="t"></param>
-    public void MoveAndCreateParticleAttachmentTo(Transform t)
+    public ObiParticleAttachment MoveAndCreateParticleAttachmentTo(Transform t)
     {
-        MoveAndCreateParticleAttachmentTo(t, -1);
+        return MoveAndCreateParticleAttachmentTo(t, -1);
     }
 
     /// <summary>
@@ -183,7 +183,7 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
     /// </summary>
     /// <param name="t"></param>
     /// <param name="particle"></param>
-    public void MoveAndCreateParticleAttachmentTo(Transform t, int particle)
+    public ObiParticleAttachment MoveAndCreateParticleAttachmentTo(Transform t, int particle)
     {
         //Important, other scripts may add particle attachments!
         UpdateCurrentlyUsedParticles();
@@ -202,7 +202,7 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
             if (currentlyUsedParticles.Contains(particle))
             {
                 Debug.LogError("Tried to move&create particle attachment to particle " + particle + " but it is already in use!");
-                return;
+                return null;
             }
             group = ScriptableObject.CreateInstance<ObiParticleGroup>();
             group.SetSourceBlueprint(blueprint);
@@ -218,6 +218,8 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
         particleAttachment.compliance = 0;
         particleAttachment.breakThreshold = Mathf.Infinity;
         particleAttachment.enabled = true;
+
+        return particleAttachment;
     }
 
     public List<ObiParticleAttachment> CreateRingAttachment(Transform center, Transform ring, int centerAmount, int ringAmount)

@@ -27,5 +27,14 @@ namespace Utility
 
             return (oldValue - oldBottom) / (oldTop - oldBottom);
         }
+
+        //https://forum.unity.com/threads/how-do-i-find-the-closest-point-on-a-line.340058/
+        public static Vector3 NearestPointOnLine(Vector3 pointOnLine, Vector3 lineDirection, Vector3 pointToFindFor)
+        {
+            lineDirection.Normalize();//this needs to be a unit vector
+            var v = pointToFindFor - pointOnLine;
+            var d = Vector3.Dot(v, lineDirection);
+            return pointOnLine + lineDirection * d;
+        }
     }
 }

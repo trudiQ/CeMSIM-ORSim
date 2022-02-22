@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Obi;
 using Utility;
 
@@ -23,13 +24,16 @@ public class OperationManager : MonoBehaviour
     private StaticHoleColliderManager anvilColonHoleColliderManager = null;
 
     [Header("Scene References")]
-    public HapticPlugin hapticPlugin;
-    public Transform spawnEquipmentAt;
     public BlueprintParticleIndividualizer anvilColon;
     public SkinnedMeshRenderer anvilColonSkin;
     public NeedleBehavior anvilNeedle;
     public RodBlueprintParticleIndividualizer anvilRod;
     public GameObject CircularStaplerPair;
+    public CircularStaplerBehavior circularStapler;
+    public Transform alignReference;
+
+    [Header("Created During Simulation")]
+    public GameObject anvil;
 
     [Header("Demo Objects - To be removed")]
     public HapticGrabber p_grabber;
@@ -61,6 +65,10 @@ public class OperationManager : MonoBehaviour
         {
             Debug.Log("Advancing to phase " + (_currentPhase + 1));
             AdvancePhase();
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 
@@ -108,9 +116,9 @@ public class OperationManager : MonoBehaviour
         //Haptic device gameobject may be disabled when debugging
         if (grabberControl.gameObject.activeSelf)
         {
-            grabberControl.SwitchGrabberObject(p_needleHolder);
             grabberControl.SetForcepSpawning(false);
-            grabberControl.activeForceps.doObi = false;
+            grabberControl.canGrabObi = false;
+            grabberControl.SwitchGrabberObject(p_needleHolder);
         }
 
         //Disable forcep colliders to prevent explosions AND
@@ -150,7 +158,7 @@ public class OperationManager : MonoBehaviour
     //Place anvil
     public void PhaseThreeStart()
     {
-        GameObject anvil = Instantiate(
+        anvil = Instantiate(
             p_anvil,
             Vector3.zero,
             Quaternion.identity);
@@ -168,9 +176,6 @@ public class OperationManager : MonoBehaviour
     {
         //Destroy pseudo colon collider
         Destroy(activePseudoColonCollider);
-
-        if(grabberControl.gameObject.activeSelf)
-            grabberControl.activeForceps.doObi = false;
 
         //Remove rod attachment to end-of-line gameobject
         Destroy(anvilRod.GetComponent<ParticleAttachmentReference>().reference);
@@ -195,6 +200,7 @@ public class OperationManager : MonoBehaviour
                 0.2f,
                 true);
 
+        List<GameObject> createdOuterRing = new List<GameObject>();
         foreach (int i in foundParticles)
         {
             StaticHoleColliderBehavior outerPart = Instantiate(
@@ -203,6 +209,7 @@ public class OperationManager : MonoBehaviour
                 Quaternion.identity, 
                 anvilColonHoleColliderManager.transform);
             anvilColonHoleColliderManager.AddOuter(outerPart);
+            createdOuterRing.Add(outerPart.gameObject);
         }
 
         //Done, tell collider manager to start closing
@@ -245,13 +252,65 @@ public class OperationManager : MonoBehaviour
     //Use circular stapler
     private void PhaseFiveStart()
     {
+        //Switch colon attachment to anvil
+        foreach(StaticHoleColliderBehavior staticHoleCollider in anvilColonHoleColliderManager.outerHoles)
+        {
+            if (staticHoleCollider == null) continue;
+            staticHoleCollider.heldAttachment.enabled = false;
+            Destroy(staticHoleCollider.heldAttachment.target.gameObject);
+            staticHoleCollider.heldAttachment.target = anvil.transform;
+            staticHoleCollider.heldAttachment.enabled = true;
+        }
+
         CircularStaplerPair.SetActive(true);
+
+        //Align anvil
+        //As the anvil is going to be moving, there is a chance the edges might pop through the colon.
+        //Switch the material the largest part of the anvil uses for a transparent one.
+        MaterialSwitcher switcher = anvil.GetComponentInChildren<MaterialSwitcher>();
+        if (switcher)
+            switcher.SwitchMaterials();
+        else
+            Debug.LogWarning("Switcher not found!");
+
+        //Reassign parent of the rodguides to the anvil as it will be moving
+        foreach(StaticHoleColliderBehavior hole in anvilColonHoleColliderManager.inner)
+        {
+            hole.transform.SetParent(anvil.transform);
+        }
+
+        //Find nearest point on circular stapler colon's normal to place the anvil on
+        Vector3 anvilNewPosition = MathHelper.NearestPointOnLine(
+            alignReference.transform.position,
+            alignReference.transform.forward,
+            anvil.transform.position);
+
+        //Orient it to be aligned 
+        Quaternion anvilNewOrientation = Quaternion.LookRotation(
+            alignReference.transform.forward * -1,
+            alignReference.transform.up);
+
+        //Finally, align the anvil over two seconds.
+        GameObjectManipulator manipulator = anvil.GetComponent<GameObjectManipulator>();
+        if (manipulator)
+            manipulator.AlignOverTime(anvilNewPosition, anvilNewOrientation, 2f);
+
+        //Circular stapler needs to lock on to the anvil once it is done aligning
+        manipulator.e_OnCoroutineFinish.AddListener(circularStapler.StartLockOn);
+        circularStapler.lockTargetPoint = anvil.transform;
 
         //This will need to be removed at some point
         MeshRenderer[] meshes = grabberControl.activeForceps.GetComponentsInChildren<MeshRenderer>();
         foreach(MeshRenderer m in meshes)
         {
             m.enabled = false;
+        }
+
+        //This, too.
+        ObiCollider[] colliders = grabberControl.activeForceps.GetComponentsInChildren<ObiCollider>();
+        foreach (ObiCollider c in colliders)
+        {
+            c.enabled = false;
         }
 
         grabberControl.enabled = false;

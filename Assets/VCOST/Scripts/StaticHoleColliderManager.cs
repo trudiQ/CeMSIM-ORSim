@@ -100,7 +100,7 @@ public class StaticHoleColliderManager : MonoBehaviour
         {
             foreach (StaticHoleColliderBehavior outerHole in outerHoles)
             {
-                softbody.MoveAndCreateParticleAttachmentTo(outerHole.transform);
+                outerHole.heldAttachment = softbody.MoveAndCreateParticleAttachmentTo(outerHole.transform);
             }
         }
         StartCoroutine(DoPull(outerHoles, outerHaltDistance, outerSpeedMultiplier));

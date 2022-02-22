@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Obi;
+using Utility;
 
 public class CircularStaplerBehavior : MonoBehaviour
 {
     public HapticInputEventDispatcher hapticDevice;
     public ObiSoftbody softbody;
+
+    public Transform lockSourcePoint;
+    public Transform lockTargetPoint;
+    public bool lockingOn = false;
+    public float lockonDistance;
+    public float lockonMaxAngle = 2f;
+    public AnimationCurve lockonDistanceFalloff;
 
     private ObiParticleAttachment worldAttachment;
     private ObiParticleAttachment staplerAttachment;
@@ -50,6 +58,11 @@ public class CircularStaplerBehavior : MonoBehaviour
         }
     }
 
+    public void StartLockOn()
+    {
+        lockingOn = true;
+    }
+
     Vector3 originalHapticPosition;
     Vector3 originalHapticRotation;
     void PrimaryButtonPress()
@@ -68,33 +81,22 @@ public class CircularStaplerBehavior : MonoBehaviour
     private ObiParticleAttachment particleAttachment;
     void SecondaryButtonPress()
     {
-        worldAttachment.enabled = false;
-        staplerAttachment.enabled = false;
+        //worldAttachment.enabled = false;
+        //staplerAttachment.enabled = false;
 
         if (attachmentActive)
         {
             Destroy(particleAttachment);
-            particleAttachment = softbody.gameObject.AddComponent<ObiParticleAttachment>();
-            particleAttachment.target = worldAttachment.target;
-            particleAttachment.particleGroup = sutureAttachment.particleGroup;
-            particleAttachment.attachmentType = ObiParticleAttachment.AttachmentType.Static;
-            particleAttachment.constrainOrientation = false;
-            particleAttachment.enabled = true;
         }
         else
         {
             Destroy(particleAttachment);
             particleAttachment = softbody.gameObject.AddComponent<ObiParticleAttachment>();
             particleAttachment.target = transform;
-            particleAttachment.particleGroup = staplerAttachment.particleGroup;
+            particleAttachment.particleGroup = sutureAttachment.particleGroup;
             particleAttachment.attachmentType = ObiParticleAttachment.AttachmentType.Static;
             particleAttachment.constrainOrientation = false;
             particleAttachment.enabled = true;
-        }
-        ObiCollider[] circularStaplerColliders = GetComponentsInChildren<ObiCollider>();
-        foreach (ObiCollider c in circularStaplerColliders)
-        {
-            c.enabled = attachmentActive;
         }
         attachmentActive = !attachmentActive;
     }
@@ -104,10 +106,29 @@ public class CircularStaplerBehavior : MonoBehaviour
     {
         if (moveTool)
         {
-            transform.Translate(hapticPlugin.hapticManipulator.transform.position - originalHapticPosition);
+            Vector3 rawMoveVector = hapticPlugin.hapticManipulator.transform.position - originalHapticPosition;
+
+            Vector3 moveVector = rawMoveVector;
+
+            if (lockingOn)
+            {
+                float lockonInfluence = lockonDistanceFalloff.Evaluate(
+                    MathHelper.Map01(
+                        Vector3.Distance(lockSourcePoint.position, lockTargetPoint.position), 0, lockonDistance));
+
+                float offset = Vector3.Angle((lockTargetPoint.position - lockSourcePoint.position), lockTargetPoint.forward);
+
+                float angleInfluence = lockonDistanceFalloff.Evaluate(
+                    MathHelper.Map01(
+                        offset, 0, lockonMaxAngle));
+
+                Vector3 angleCorrectionVector = (lockTargetPoint.position - lockSourcePoint.position).normalized * rawMoveVector.magnitude;
+
+                moveVector = Vector3.Lerp(angleCorrectionVector, rawMoveVector, lockonInfluence);
+            }
+
+            transform.Translate(moveVector);
             originalHapticPosition = hapticPlugin.hapticManipulator.transform.position;
-            //transform.rotation = Quaternion.FromToRotation(originalHapticRotation, hapticPlugin.hapticManipulator.transform.forward) * transform.rotation;
-            //originalHapticRotation = hapticPlugin.hapticManipulator.transform.forward;
         }
     }
 }

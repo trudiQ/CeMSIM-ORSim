@@ -232,6 +232,7 @@ GameObject:
   - component: {fileID: 2827713367915220710}
   - component: {fileID: 1193970425885540675}
   - component: {fileID: 3996138242627483017}
+  - component: {fileID: 752733153242905999}
   m_Layer: 0
   m_Name: anvil
   m_TagString: Untagged
@@ -306,6 +307,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &752733153242905999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3203711897270850652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44f733c0c0b181649aabec6e973baf6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  materialIndex: 4
+  materialToSwitchTo: {fileID: 2100000, guid: 00713edc9fc2f494d8936ad3d02e3ce8, type: 2}
 --- !u!1 &3681318478698025894
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,6 +333,7 @@ GameObject:
   - component: {fileID: 5051737592657972981}
   - component: {fileID: 3022717608291076266}
   - component: {fileID: 7401918287435115964}
+  - component: {fileID: 8208800705036114645}
   m_Layer: 0
   m_Name: Anvil
   m_TagString: Untagged
@@ -383,6 +399,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reference: {fileID: 2184623961885140171}
+--- !u!114 &8208800705036114645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3681318478698025894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8934982cca0ff54f8eaf219d2b815ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  e_OnCoroutineFinish:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5206723821139520179
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,7 +440,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5206723821139520179}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6, y: 0, z: 0}
+  m_LocalPosition: {x: 0.6, y: 0, z: -0.078}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3666531998737134289}
@@ -426,7 +457,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.93
+  m_Radius: 1.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4006863738274336195
 MonoBehaviour:

@@ -16,6 +16,7 @@ public class HapticColonGrabbersBehavior : MonoBehaviour
     
     public List<ForcepBehavior> attachedForceps = new List<ForcepBehavior>();
     public ForcepBehavior activeForceps;
+    public bool canGrabObi = true;
     private bool canSpawnForceps = false;
 
     public UnityEvent _E_PlacedGrabber = new UnityEvent();
@@ -84,12 +85,13 @@ public class HapticColonGrabbersBehavior : MonoBehaviour
         //Add new grabber to control
         activeForceps = Instantiate(
             p_grabber, 
-            Vector3.zero, 
+            Vector3.up*-100f, 
             Quaternion.identity, 
             grabberParent).
             GetComponentInChildren<ForcepBehavior>();
         activeForceps.obiObject = colon;
         hapticPlugin.hapticManipulator = activeForceps.gameObject;
+        activeForceps.doObi = canGrabObi;
     }
 
     private bool FreezeGrabber(Transform grabber)
