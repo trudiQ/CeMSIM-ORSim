@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using System.Linq;
 
 /// <summary>
 /// Simulation logic & steps
@@ -1436,6 +1437,13 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         }
 
                         ColonStaplerJointBehavior anchor = ColonStaplerJointManager.instance.colonJointAnchors[colon * 20 * 20 + layer * 20 + sphere];
+
+                        // Skip the sphere if it is grabbed by forceps
+                        if (globalOperators.instance.m_hapticSurgTools.Values.ToList().Exists(s => s.grabbing == colonSpheres[colon][layer][sphere].gameObject))
+                        {
+                            continue;
+                        }
+
                         if (MathUtil.DistancePointToLine(partRay, colonSpheres[colon][layer][sphere].position) < staplerInsertionCollisionThreshold)
                         {
                             if (!anchor.gameObject.activeInHierarchy)
@@ -1553,21 +1561,6 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
         positions.ForEach(t => sum += t.position);
 
         return sum / positions.Count;
-    }
-
-    /// <summary>
-    /// Return vector is not unit
-    /// </summary>
-    /// <param name="colon"></param>
-    /// <param name="startLayer"></param>
-    /// <param name="endLayer"></param>
-    /// <returns></returns>
-    public Vector3 GetColonDirection(int colon, int startLayer, int endLayer)
-    {
-        Vector3 startPoint = globalOperators.instance.colonLayerAveragePosition[colon][startLayer];
-        Vector3 endPoint = globalOperators.instance.colonLayerAveragePosition[colon][endLayer];
-
-        return endPoint - startPoint;
     }
 
     /// <summary>

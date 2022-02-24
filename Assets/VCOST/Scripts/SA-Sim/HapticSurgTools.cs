@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 //using HapticPlugin;
 
 
@@ -1123,12 +1124,17 @@ public class HapticSurgTools : MonoBehaviour
             if (layer > 1)
             {
                 List<Transform> neighborSpheres = GetNeighborColonSphere(grabbing.transform);
-                foreach (Transform s in neighborSpheres)
+
+                // Don't grab neighbor if neighbor has supported sphere after joining
+                if (LinearStaplerTool.instance.simStates < 1 || !gOperators.supportedColonSpheresAfterJoining.Exists(sl => sl.Intersect(neighborSpheres).Any()))
                 {
-                    //s.position = s.position + (grabbing.transform.position - s.position) * 0.75f; // Bring neighbor sphere closer to the forceps
-                    Joint joint = (SpringJoint)gameObject.AddComponent(typeof(SpringJoint));
-                    joint.connectedBody = s.GetComponent<Rigidbody>();
-                    neighborSphereJoints.Add(joint);
+                    foreach (Transform s in neighborSpheres)
+                    {
+                        //s.position = s.position + (grabbing.transform.position - s.position) * 0.75f; // Bring neighbor sphere closer to the forceps
+                        Joint joint = (SpringJoint)gameObject.AddComponent(typeof(SpringJoint));
+                        joint.connectedBody = s.GetComponent<Rigidbody>();
+                        neighborSphereJoints.Add(joint);
+                    }
                 }
             }
         }

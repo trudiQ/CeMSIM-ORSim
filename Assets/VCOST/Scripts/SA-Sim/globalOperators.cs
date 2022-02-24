@@ -611,6 +611,10 @@ public class globalOperators : MonoBehaviour
             }
         }
 
+        // ### Easier testing
+        m_LRCornerCutIdices[0][1] = true;
+        m_LRCornerCutIdices[1][0] = true;
+
         return true;
     }
 

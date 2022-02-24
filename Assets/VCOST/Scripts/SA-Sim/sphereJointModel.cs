@@ -214,6 +214,8 @@ public class sphereJointModel : MonoBehaviour
                 oppositeObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + layerIdx.ToString() + "_" + oppositeObjIdx.ToString());
                 if (tmpObj && oppositeObj)
                 {
+                    //// Move top sphere to bottom sphere position
+                    //tmpObj.transform.position = oppositeObj.transform.position;
                     // move the two spheres to the middle point
                     vecBottom2Top = tmpObj.transform.position - oppositeObj.transform.position; // bottom -> top
                     vecBottom2Top.Normalize();
@@ -255,43 +257,46 @@ public class sphereJointModel : MonoBehaviour
         GameObject tmpObj, oppositeObj;
         sphereJointsInfo objJointsInfo;
 
-        for (int j = 0; j < m_numSpheres; j++)
+        for (int l = 0; l < layerIdx + 1; l++)
         {
-            tmpObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + layerIdx.ToString() + "_" + j.ToString());
-            objJointsInfo = tmpObj.GetComponent<sphereJointsInfo>();
-
-            // in-layer fixed joints to connect opposite sphere of the first layer (ADD DURING RUNTIME, AFTER BINDING IS DONE!!)
-            if (j >= 6 && j <= 13) // spheres on the top
+            for (int j = 0; j < m_numSpheres; j++)
             {
-                if (bHalfCloseup == true && j >= 10)
-                    continue;
+                tmpObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + l.ToString() + "_" + j.ToString());
+                objJointsInfo = tmpObj.GetComponent<sphereJointsInfo>();
 
-                oppositeObjIdx = 9 - j; // spheres on the bottom
-                if (oppositeObjIdx < 0)
-                    oppositeObjIdx += m_numSpheres;
-                oppositeObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + layerIdx.ToString() + "_" + oppositeObjIdx.ToString());
-                if (tmpObj && oppositeObj)
+                // in-layer fixed joints to connect opposite sphere of the first layer (ADD DURING RUNTIME, AFTER BINDING IS DONE!!)
+                if (j >= 5 && j <= 13) // spheres on the top
                 {
-                    // move the two spheres to the middle point
-                    vecBottom2Top = tmpObj.transform.position - oppositeObj.transform.position; // bottom -> top
-                    vecBottom2Top.Normalize();
-                    distBottom2Top = Vector3.Distance(tmpObj.transform.position, oppositeObj.transform.position);
-                    tmpObj.transform.position = tmpObj.transform.position - 0.5f * distBottom2Top * vecBottom2Top;
-                    oppositeObj.transform.position = oppositeObj.transform.position + 0.5f * distBottom2Top * vecBottom2Top;
-                    // add fixed joint
-                    FixedJoint joint = tmpObj.AddComponent<FixedJoint>();
-                    joint.connectedBody = oppositeObj.GetComponent<Rigidbody>();
-                    // fill out joint info.
-                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 0] = objJointsInfo.m_inLayerJointNum;
-                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 1] = m_objIndex;
-                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 2] = layerIdx;
-                    objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 3] = oppositeObjIdx;
-                    objJointsInfo.m_inLayerJointNum += 1;
-                }
-                else
-                {
-                    Debug.Log("Error in 'closeupLayers'");
-                    return false;
+                    //if (bHalfCloseup == true && j >= 10)
+                    oppositeObjIdx = 9 - j; // spheres on the bottom
+                    if (oppositeObjIdx < 0)
+                        oppositeObjIdx += m_numSpheres;
+                    oppositeObj = GameObject.Find("sphere_" + m_objIndex.ToString() + "_" + l.ToString() + "_" + oppositeObjIdx.ToString());
+                    if (tmpObj && oppositeObj)
+                    {
+                        //// Move top sphere to bottom sphere position
+                        //tmpObj.transform.position = oppositeObj.transform.position;
+                        // move the two spheres to the middle point
+                        vecBottom2Top = tmpObj.transform.position - oppositeObj.transform.position; // bottom -> top
+                        vecBottom2Top.Normalize();
+                        distBottom2Top = Vector3.Distance(tmpObj.transform.position, oppositeObj.transform.position);
+                        tmpObj.transform.position = tmpObj.transform.position - 0.5f * distBottom2Top * vecBottom2Top;
+                        oppositeObj.transform.position = oppositeObj.transform.position + 0.5f * distBottom2Top * vecBottom2Top;
+                        // add fixed joint
+                        FixedJoint joint = tmpObj.AddComponent<FixedJoint>();
+                        joint.connectedBody = oppositeObj.GetComponent<Rigidbody>();
+                        // fill out joint info.
+                        objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 0] = objJointsInfo.m_inLayerJointNum;
+                        objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 1] = m_objIndex;
+                        objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 2] = layerIdx;
+                        objJointsInfo.m_inLayerJointList[objJointsInfo.m_inLayerJointNum, 3] = oppositeObjIdx;
+                        objJointsInfo.m_inLayerJointNum += 1;
+                    }
+                    else
+                    {
+                        Debug.Log("Error in 'closeupLayers'");
+                        return false;
+                    }
                 }
             }
         }

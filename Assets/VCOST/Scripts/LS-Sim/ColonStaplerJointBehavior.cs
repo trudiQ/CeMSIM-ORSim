@@ -14,6 +14,10 @@ public class ColonStaplerJointBehavior : MonoBehaviour
     public List<Transform> anchorForNeighborSpheres;
     public int targetSphereLayer;
     public int targetSphereColon;
+    public bool isStaticCollisionJoint; // Is this a staticCollisionJoint
+    public Vector3 staticAnchorLocalStaplerPosition;
+    public Transform followedStapler;
+    public ColonStaplerJointBehavior createdStaticJoint;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +33,15 @@ public class ColonStaplerJointBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
-        UpdateAnchorPosition();
+        if (!isStaticCollisionJoint) // Normal update for regular joint object
+        {
+            UpdateAnchorPosition();
+            CheckSphereStatusForStaticJoint();
+        }
+        else
+        {
+            UpdateAnchorPositionForStaticJoint();
+        }
     }
 
     public void AttachColonSphere()
@@ -63,7 +75,8 @@ public class ColonStaplerJointBehavior : MonoBehaviour
             DetachColonSphere();
         }
 
-        if (transform.position.z - followedStaplerStart.position.z > ColonStaplerJointManager.instance.insertionDepthDetatch)
+        if (transform.position.z - followedStaplerStart.position.z > ColonStaplerJointManager.instance.insertionDepthDetatch &&
+            Vector3.Distance(transform.position, followedStaplerStart.position) > ColonStaplerJointManager.instance.insertionDepthDetatch)
         {
             DetachColonSphere();
         }
@@ -74,5 +87,32 @@ public class ColonStaplerJointBehavior : MonoBehaviour
         }
 
         //if ()
+    }
+
+    /// <summary>
+    /// Check if this anchor's target sphere need to have static joint created connecting stapler
+    /// </summary>
+    public void CheckSphereStatusForStaticJoint()
+    {
+        // If this anchor's sphere is too far away from any of its neighbor
+        if (anchorForNeighborSpheres.Exists(a =>
+        Vector3.Distance(a.GetComponent<ColonStaplerJointBehavior>().targetSphere.transform.position, targetSphere.transform.position) > ColonStaplerJointManager.instance.staticAnchorEnableDistance))
+        {
+            isStaticCollisionJoint = true;
+            ColonStaplerJointManager.instance.staticCollisionJoints.Add(this);
+        }
+    }
+
+    public void UpdateAnchorPositionForStaticJoint()
+    {
+        transform.position = followedStapler.TransformPoint(staticAnchorLocalStaplerPosition);
+
+        // If this anchor's sphere is not too far away from any of its neighbor
+        if (!anchorForNeighborSpheres.Exists(a =>
+        Vector3.Distance(a.GetComponent<ColonStaplerJointBehavior>().targetSphere.transform.position, targetSphere.transform.position) > ColonStaplerJointManager.instance.staticAnchorDisableDistance))
+        {
+            isStaticCollisionJoint = false;
+            ColonStaplerJointManager.instance.staticCollisionJoints.Remove(this);
+        }
     }
 }

@@ -16,11 +16,13 @@ public class TestAPI : MonoBehaviour
     [DllImport("ATC3DG64", EntryPoint = "GetAsynchronousRecord")]
     public static extern unsafe int GetAsynchronousRecord(ushort sensorID, void* pRecord, int recordSize);
 
-    public Transform trackerMarker0;
-    public Transform trackerMarker1;
+    public Transform trackerMarker0; // bottom stapler
+    public Transform trackerMarker1; // top stapler
     public Transform tracker0OriginPosition;
     public Transform tracker1OriginPosition;
     public float staplerLowestPoint = 0.5211259f;
+    public Transform bottomStaplerForward;
+    public Transform topStaplerForward;
 
     public Vector3 trackerMarkerStartPosition0;
     public Vector3 trackerMarkerStartEuler0;
@@ -39,6 +41,10 @@ public class TestAPI : MonoBehaviour
     public List<Transform> copyees;
     public List<Transform> rotaters;
     public List<TrackerController> trackerData;
+
+    // ### Testing
+    public int colonDirectionLayer;
+    public Transform staplerDummy;
 
     // Start is called before the first frame update
     void Start()
@@ -206,23 +212,38 @@ public class TestAPI : MonoBehaviour
         // Apply filtered position data
         trackerData[0].UpdateFilter();
         trackerData[1].UpdateFilter();
-        if (globalOperators.m_bSimStart && LinearStaplerTool.instance.simStates < 2) // If sim started and is not in last phase
-        {
-            ConstraintStaplerAngleWhenInserting();
-            KeepStaplerAboveTable();
-        }
-        trackerMarker0.position = trackerData[0].filteredPosition;
-        trackerMarker1.position = trackerData[1].filteredPosition;
+
 
         ////Update the position and orientation of Trackers
         //trackers[0].positions = tracker0OriginPosition.position + new Vector3((float)record0.x, -(float)record0.z, -(float)record0.y);
         //trackers[0].angles = new Vector3(-(float)record0.r, (float)record0.a, (float)record0.e);
         //trackers[1].positions = tracker1OriginPosition.position + new Vector3((float)record1.x, -(float)record1.z, -(float)record1.y);
         //trackers[1].angles = new Vector3(-(float)record1.r, (float)record1.a, (float)record1.e);
+
+        //// ### Testing
+        //ConstraintStaplerAngleWhenInserting(); 
+    }
+
+    private void LateUpdate()
+    {
+        if (globalOperators.m_bSimStart && LinearStaplerTool.instance.simStates < 2) // If sim started and is not in last phase
+        {
+            //ConstraintStaplerAngleWhenInserting();
+            KeepStaplerAboveTable();
+        }
+        trackerMarker0.position = trackerData[0].filteredPosition;
+        trackerMarker1.position = trackerData[1].filteredPosition;
     }
 
     public void ConstraintStaplerAngleWhenInserting()
     {
+        //// ### Testing
+
+        //Vector3 colonDirectionTest = LinearStaplerTool.instance.GetColonDirection(0, 0, colonDirectionLayer);
+        //ConstraintAngle(colonDirectionTest, 15f, staplerDummy);
+
+        //return;
+
         for (int c = 0; c < 2; c++)
         {
             if (globalOperators.m_bInsert[c] != 0)
@@ -234,15 +255,15 @@ public class TestAPI : MonoBehaviour
                     continue;
                 }
 
-                Vector3 colonDirection = LinearStaplerTool.instance.GetColonDirection(c, 0, insertDepthLayer);
+                Vector3 colonDirection = GetColonDirection(c, 0, insertDepthLayer);
 
                 if (globalOperators.m_bInsert[c] == 1) // If top part inserted
                 {
-                    ConstraintAngle(colonDirection, 15f, trackerMarker1);
+                    ConstraintAngle(colonDirection, 2f, 5f, trackerMarker1);
                 }
                 else if (globalOperators.m_bInsert[c] == 2) // Bottom part
                 {
-                    ConstraintAngle(colonDirection, 15f, trackerMarker0);
+                    ConstraintAngle(colonDirection, 2f, 5f, trackerMarker0);
                 }
             }
         }
@@ -252,25 +273,64 @@ public class TestAPI : MonoBehaviour
     /// 
     /// </summary>
     /// <param name="targetDirection"></param>
-    /// <param name="angleRange"></param> Angle range in one direction (so full range is double this)
+    /// <param name="angleRangeX"></param> Angle range in X direction (so full range is double this)
+    /// <param name="angleRangeY"></param> Angle range in Y direction (so full range is double this)
     /// <param name="toConstraint"></param>
-    public void ConstraintAngle(Vector3 targetDirection, float angleRange, Transform toConstraint)
+    public void ConstraintAngle(Vector3 targetDirection, float angleRangeX, float angleRangeY, Transform toConstraint)
     {
-        float yAngle = Mathf.Atan(targetDirection.x / targetDirection.z) * Mathf.Rad2Deg;
+        float yAngle = Mathf.Atan(targetDirection.x / -targetDirection.z) * Mathf.Rad2Deg;
         if (Mathf.Abs(yAngle) > 90)
         {
             yAngle += Mathf.Sign(yAngle) * (-90f);
         }
-        float xAngle = Mathf.Atan(targetDirection.y / targetDirection.z) * Mathf.Rad2Deg;
+        float xAngle = Mathf.Atan(targetDirection.y / -targetDirection.z) * Mathf.Rad2Deg;
         if (Mathf.Abs(xAngle) > 90)
         {
             xAngle += Mathf.Sign(xAngle) * (-90f);
         }
 
-        Vector3 targetConstrainedAngle = toConstraint.eulerAngles;
-        targetConstrainedAngle.x = Mathf.Clamp(targetConstrainedAngle.x, xAngle - angleRange, xAngle + angleRange);
-        targetConstrainedAngle.y = Mathf.Clamp(targetConstrainedAngle.y, yAngle - angleRange, yAngle + angleRange);
-        toConstraint.eulerAngles = targetConstrainedAngle;
+        // Get target tracker object angle based on stapler angle
+        Vector3 currentStaplerAngle = Vector3.zero;
+        if (toConstraint == trackerMarker0)
+        {
+            currentStaplerAngle = bottomStaplerForward.eulerAngles;
+        }
+        else if (toConstraint == trackerMarker1)
+        {
+            currentStaplerAngle = topStaplerForward.eulerAngles;
+        }
+        if (Mathf.Abs(currentStaplerAngle.x) > 180)
+        {
+            currentStaplerAngle.x += Mathf.Sign(currentStaplerAngle.x) * (-360);
+        }
+        if (Mathf.Abs(currentStaplerAngle.y) > 180)
+        {
+            currentStaplerAngle.y += Mathf.Sign(currentStaplerAngle.y) * (-360);
+        }
+        Vector3 targetStaplerAngle = currentStaplerAngle;
+        targetStaplerAngle.x = Mathf.Clamp(currentStaplerAngle.x, xAngle - angleRangeX, xAngle + angleRangeX);
+        targetStaplerAngle.y = Mathf.Clamp(currentStaplerAngle.y, yAngle - angleRangeY, yAngle + angleRangeY);
+
+        Vector3 targetConstraintAngle = toConstraint.eulerAngles;
+
+        // Make sure tracker angle not exceed -180 ~ 180
+        targetConstraintAngle.x += (targetStaplerAngle.x - currentStaplerAngle.x);
+        if (Mathf.Abs(targetConstraintAngle.x) > 180)
+        {
+            targetConstraintAngle.x += Mathf.Sign(targetConstraintAngle.x) * (-360);
+        }
+        targetConstraintAngle.y += (targetStaplerAngle.y - currentStaplerAngle.y);
+        if (Mathf.Abs(targetConstraintAngle.y) > 180)
+        {
+            targetConstraintAngle.y += Mathf.Sign(targetConstraintAngle.y) * (-360);
+        }
+
+        //// ### Test
+        //staplerDummy.eulerAngles = targetStaplerAngle;
+
+        //return;
+
+        toConstraint.eulerAngles = targetConstraintAngle;
     }
 
     public void KeepStaplerAboveTable()
@@ -318,6 +378,21 @@ public class TestAPI : MonoBehaviour
         targetTracker.rotation = copyees[deviceID].rotation;
 
         //Destroy(trackerObject);
+    }
+
+    /// <summary>
+    /// Return vector is not unit
+    /// </summary>
+    /// <param name="colon"></param>
+    /// <param name="startLayer"></param>
+    /// <param name="endLayer"></param>
+    /// <returns></returns>
+    public Vector3 GetColonDirection(int colon, int startLayer, int endLayer)
+    {
+        Vector3 startPoint = globalOperators.instance.colonLayerAveragePosition[colon][startLayer];
+        Vector3 endPoint = globalOperators.instance.colonLayerAveragePosition[colon][endLayer];
+
+        return endPoint - startPoint;
     }
 
     /// <summary>
