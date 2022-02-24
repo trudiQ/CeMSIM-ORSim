@@ -28,11 +28,8 @@ public class ForcepBehavior : MonoBehaviour
     private bool open = false;
     private bool close = false;
 
-    public void SignalOpen() { open = true; }
-    public void SignalStopOpen() { open = false; }
-
-    public void SignalClose() { close = true; }
-    public void SignalStopClose() { close = false; }
+    public void SignalOpen(bool signal) { open = signal; }
+    public void SignalClose(bool signal) { close = signal; }
 
     private GameObject grabbing;
     private FixedJoint joint;
@@ -55,6 +52,7 @@ public class ForcepBehavior : MonoBehaviour
         }
     }
 
+    //Grab an Obi Particle
     void ObiPhysicsGrab()
     {
         if (open)
@@ -109,6 +107,7 @@ public class ForcepBehavior : MonoBehaviour
         }
     }
 
+    //Grab a unity object
     void UnityPhysicsGrab()
     {
         if (open)
@@ -188,8 +187,7 @@ public class ForcepBehavior : MonoBehaviour
         joint = (FixedJoint)gameObject.AddComponent(typeof(FixedJoint));
         joint.connectedBody = body;
     }
-
-    //Good. Let the pasta flow through you
+    
     void release()
     {
         if (grabbing == null) //Nothing to release

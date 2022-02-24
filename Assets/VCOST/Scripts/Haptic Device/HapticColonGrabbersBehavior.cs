@@ -35,20 +35,14 @@ public class HapticColonGrabbersBehavior : MonoBehaviour
         }
     }
 
-    public void SendOpenSignal(bool start)
+    public void SendOpenSignal(bool signal)
     {
-        if (start)
-            activeForceps.SignalOpen();
-        else
-            activeForceps.SignalStopOpen();
+        activeForceps.SignalOpen(signal);
     }
 
-    public void SendCloseSignal(bool start)
+    public void SendCloseSignal(bool signal)
     {
-        if (start)
-            activeForceps.SignalClose();
-        else
-            activeForceps.SignalStopClose();
+        activeForceps.SignalClose(signal);
     }
 
     public void SetForcepSpawning(bool canSpawn) { }
