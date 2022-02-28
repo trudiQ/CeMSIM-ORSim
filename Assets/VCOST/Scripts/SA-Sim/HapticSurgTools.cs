@@ -41,7 +41,7 @@ public class HapticSurgTools : MonoBehaviour
     public int[] cutSphereIdx = new int[] { -1, -1, -1 }; //[objIdx, layerIdx, sphereIdx]
     public GameObject toolTipSphere; // forceps only
     private GameObject touching = null;         //!< Reference to the object currently touched
-    private GameObject grabbing = null;         //!< Reference to the object currently grabbed
+    public GameObject grabbing = null;         //!< Reference to the object currently grabbed
     private Joint joint = null;            //!< The Unity physics joint created between the stylus and the object being grabbed.
     private FixedJoint holdJoint = null;        //!< Attach the tool to the sphere being held (forceps only)
     public enum PhysicsToggleStyle { none, onTouch, onGrab };

@@ -96,7 +96,7 @@ public class ColonStaplerJointManager : MonoBehaviour
 
         // Get neighbor anchors
         colonJointAnchors.ForEach(
-            a => a.anchorForNeighborSpheres = HapticSurgTools.GetNeighborColonSphere(a.targetSphere.transform).Select(s => colonJointAnchors.Find(j => j.targetSphere.transform == s).transform).ToList());
+            a => a.anchorForNeighborSpheres = HapticSurgTools.GetNeighborColonSphere(a.targetSphere.transform).Select(s => colonJointAnchors.Find(j => j.targetSphere.transform == s)).ToList());
 
         // Get target sphere layer
         colonJointAnchors.ForEach(a => a.targetSphereLayer = globalOperators.GetSphereLayer(a.targetSphere.name));

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class ColonStaplerJointBehavior : MonoBehaviour
 {
@@ -11,7 +12,8 @@ public class ColonStaplerJointBehavior : MonoBehaviour
     public Transform followedStaplerEnd;
     public float detachDistance;
     public Ray followedRay;
-    public List<Transform> anchorForNeighborSpheres;
+    public List<ColonStaplerJointBehavior> anchorForNeighborSpheres;
+    public List<Transform> neighborSpheres;
     public int targetSphereLayer;
     public int targetSphereColon;
     public bool isStaticCollisionJoint; // Is this a staticCollisionJoint
@@ -95,8 +97,10 @@ public class ColonStaplerJointBehavior : MonoBehaviour
     public void CheckSphereStatusForStaticJoint()
     {
         // If this anchor's sphere is too far away from any of its neighbor
-        if (anchorForNeighborSpheres.Exists(a =>
-        Vector3.Distance(a.GetComponent<ColonStaplerJointBehavior>().targetSphere.transform.position, targetSphere.transform.position) > ColonStaplerJointManager.instance.staticAnchorEnableDistance))
+        List<ColonStaplerJointBehavior> distantNeighbors = anchorForNeighborSpheres.FindAll(a =>
+        Vector3.Distance(a.targetSphere.transform.position, targetSphere.transform.position) > ColonStaplerJointManager.instance.staticAnchorEnableDistance).ToList();
+
+        if (distantNeighbors.Count > 0 && distantNeighbors.Exists(a => !globalOperators.instance.IsSphereGrabbedByForceps(a.targetSphere.gameObject)))
         {
             isStaticCollisionJoint = true;
             ColonStaplerJointManager.instance.staticCollisionJoints.Add(this);

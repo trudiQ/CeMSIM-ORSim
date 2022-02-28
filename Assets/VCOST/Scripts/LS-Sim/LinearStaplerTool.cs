@@ -1439,7 +1439,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         ColonStaplerJointBehavior anchor = ColonStaplerJointManager.instance.colonJointAnchors[colon * 20 * 20 + layer * 20 + sphere];
 
                         // Skip the sphere if it is grabbed by forceps
-                        if (globalOperators.instance.m_hapticSurgTools.Values.ToList().Exists(s => s.grabbing == colonSpheres[colon][layer][sphere].gameObject))
+                        if (globalOperators.instance.IsSphereGrabbedByForceps(colonSpheres[colon][layer][sphere].gameObject))
                         {
                             continue;
                         }

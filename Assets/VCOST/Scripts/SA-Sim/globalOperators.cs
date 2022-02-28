@@ -1434,4 +1434,9 @@ public class globalOperators : MonoBehaviour
             return int.Parse(sphereName[9].ToString() + sphereName[10].ToString());
         }
     }
+
+    public bool IsSphereGrabbedByForceps(GameObject sphere)
+    {
+        return m_hapticSurgTools.Values.ToList().Exists(s => s.grabbing == sphere);
+    }
 }
