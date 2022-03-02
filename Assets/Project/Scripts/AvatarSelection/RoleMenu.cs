@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using CEMSIM.GameLogic;
 using CEMSIM.Network;
+using CEMSIM;
 
 public class RoleMenu : MonoBehaviour
 {
@@ -23,7 +24,12 @@ public class RoleMenu : MonoBehaviour
     public InputField ipHostnameField;
     public InputField portField;
     public UnityEngine.UI.Button connectButton;
-    
+
+
+    [Header("Single/Multi-player Switching")]
+    public GameObject optionPanel;
+    public GameObject singleplayerPanel;
+    public GameObject multiplayerPanel;
 
     private List<Dropdown> avatarDropdowns = new List<Dropdown>();
     private GameObject activeAvatarDropdownObject;
@@ -33,20 +39,15 @@ public class RoleMenu : MonoBehaviour
     public UnityEvent<string> onNameChanged;
     public UnityEvent<string> onIpHostnameChanged;
     public UnityEvent<string> onPortChanged;
-    public UnityEvent onConnect;
+    public UnityEvent onConnectButtonPressed;
 
     private bool connectionCheck = false;
     private bool isPlayerSpawned = false;
 
     void Start()
     {
-        if(!isSinglePlayer)
-        {
-            // Set initial values to each field 
-            nameField.text = ClientInstance.instance.myUsername;
-            ipHostnameField.text = ClientInstance.instance.ip;
-            portField.text = ClientInstance.instance.port.ToString();
-        }
+        if (GameManager.instance)
+            GameManager.instance.isSinglePlayerMode = isSinglePlayer;
 
         // Subscribe to events when values change or buttons are pressed
         nameField.onValueChanged.AddListener(onNameChanged.Invoke);             // Name change
@@ -59,7 +60,7 @@ public class RoleMenu : MonoBehaviour
 
         ipHostnameField.onValueChanged.AddListener(onIpHostnameChanged.Invoke); // IP / Hostname change
         portField.onValueChanged.AddListener(onPortChanged.Invoke);             // Port change
-        connectButton.onClick.AddListener(onConnect.Invoke);                    // Connect pressed
+        connectButton.onClick.AddListener(onConnectButtonPressed.Invoke);                    // Connect pressed
 
         // Initialize each role dropdown
         foreach(RoleAvatarList list in avatarSwapper.avatarLists)
@@ -99,7 +100,7 @@ public class RoleMenu : MonoBehaviour
         if (connectionCheck && !isSinglePlayer)
         {
             // the connect button has been pressed
-            if(ClientInstance.instance.CheckConnection())
+            if (ClientInstance.instance.CheckConnection())
             {
                 if (!isPlayerSpawned)
                 {
@@ -178,20 +179,64 @@ public class RoleMenu : MonoBehaviour
         preview.Preview(previewPrefab);
     }
 
+    public void BackToConnectOptions()
+    {
+        optionPanel.SetActive(true);
+        singleplayerPanel.SetActive(false);
+        multiplayerPanel.SetActive(false);
+    }
+
+    public void SwapToSingleplayer()
+    {
+        optionPanel.SetActive(false);
+        singleplayerPanel.SetActive(true);
+
+        isSinglePlayer = true;
+
+        if (GameManager.instance)
+            GameManager.instance.isSinglePlayerMode = isSinglePlayer;
+    }
+
+    public void SwapToMultiplayer()
+    {
+        optionPanel.SetActive(false);
+        multiplayerPanel.SetActive(true);
+
+        isSinglePlayer = false;
+
+        if (GameManager.instance)
+            GameManager.instance.isSinglePlayerMode = isSinglePlayer;
+
+        if (ClientInstance.instance)
+        {
+            // Set initial values to each field 
+            if (nameField.text == "")
+                nameField.text = ClientInstance.instance.myUsername;
+
+            if (ipHostnameField.text == "")
+                ipHostnameField.text = ClientInstance.instance.ip;
+
+            if (portField.text == "")
+                portField.text = ClientInstance.instance.port.ToString();
+        }
+        else
+            Debug.LogWarning("No ClientInstance found. Default values will not be loaded.");
+    }
+
     public void OnConnectClick()
     {
-
         connectButton.GetComponentInChildren<Text>().text = "Connecting";
         //connectButton.GetComponent<Selectable>().interactable = !ClientInstance.instance.isConnected;
         connectButton.GetComponent<Selectable>().interactable = false;
         string _ip = ipHostnameField.text;
         int _port = int.Parse(portField.text);
 
-        if(!isSinglePlayer)
+        if (ClientInstance.instance)
         {
             ClientInstance.instance.SetUsername(nameField.text);
             ClientInstance.instance.ConnectToServer(_ip, _port);
         }
+
         connectionCheck = true;
     }
 

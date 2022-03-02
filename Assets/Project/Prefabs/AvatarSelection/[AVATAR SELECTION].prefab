@@ -109,6 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f95c8dd74c9f06e42abc816b66c21a37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSinglePlayer: 0
   manager: {fileID: 0}
   uiInputModule: {fileID: 1889406348426847532}
   userHeightUtility: {fileID: 1889406349521924435}
@@ -139,7 +140,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floor: {fileID: 0}
   camera: {fileID: 0}
-  height: 0
+  cameraRig: {fileID: 0}
+  avatarHeightCalibration: {fileID: 0}
+  height: 1.5
 --- !u!114 &1889406349521924436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,7 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4898417194049980148}
   m_Layer: 0
-  m_Name: AvatarSelectionAndSpawning
+  m_Name: '[AVATAR SELECTION]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
