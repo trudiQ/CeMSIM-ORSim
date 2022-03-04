@@ -20,6 +20,8 @@ public class ColonStaplerJointManager : MonoBehaviour
     public static ColonStaplerJointManager instance;
     public List<ColonStaplerJointBehavior> activeAnchors;
     public List<ColonStaplerJointBehavior> staticCollisionJoints; // Fixedjoints created between the stapler and the colon sphere that's been pushed further away to prevent stapler penetration
+    public StaplerColonSphereTrigger colon0StaplerTrigger;
+    public StaplerColonSphereTrigger colon1StaplerTrigger;
 
     private void Start()
     {
@@ -96,13 +98,10 @@ public class ColonStaplerJointManager : MonoBehaviour
 
         // Get neighbor anchors
         colonJointAnchors.ForEach(
-            a => a.anchorForNeighborSpheres = HapticSurgTools.GetNeighborColonSphere(a.targetSphere.transform).Select(s => colonJointAnchors.Find(j => j.targetSphere.transform == s)).ToList());
+            a => a.anchorForNeighborSpheres = HapticSurgTools.GetNeighborColonSphere(a.targetSphere.transform).Select(s => GetSphereAnchor(s)).ToList());
 
-        // Get target sphere layer
-        colonJointAnchors.ForEach(a => a.targetSphereLayer = globalOperators.GetSphereLayer(a.targetSphere.name));
-
-        // Get target sphere colon
-        colonJointAnchors.ForEach(a => a.targetSphereColon = int.Parse(a.targetSphere.name[7].ToString()));
+        // Set other values
+        colonJointAnchors.ForEach(a => a.InitializeAnchor());
     }
 
     ///// <summary>
@@ -131,5 +130,33 @@ public class ColonStaplerJointManager : MonoBehaviour
 
     //}
 
-    //public void 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="collidingStapler"></param>
+    /// <returns></returns>
+    public List<ColonStaplerJointBehavior> SwitchJointAnchorStatic(StaplerColonSphereTrigger collidingStapler, bool isStatic)
+    {
+        List<ColonStaplerJointBehavior> updatedSphereAnchors = new List<ColonStaplerJointBehavior>();
+
+        if (isStatic)
+        {
+            updatedSphereAnchors = collidingStapler.touchingSpheres.Select(s => GetSphereAnchor(s)).ToList();
+            collidingStapler.staticAnchors = updatedSphereAnchors;
+        }
+        else
+        {
+            updatedSphereAnchors = collidingStapler.staticAnchors;
+            collidingStapler.staticAnchors.Clear();
+        }
+
+        updatedSphereAnchors.ForEach(a => a.isStaticCollisionJoint = isStatic);
+
+        return updatedSphereAnchors;
+    }
+
+    public ColonStaplerJointBehavior GetSphereAnchor(Transform sphere)
+    {
+        return colonJointAnchors.Find(j => j.targetSphere.transform == sphere);
+    }
 }

@@ -1415,17 +1415,20 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     Ray partRay;
                     Transform anchorFollowedStart;
                     Transform anchorFollowedEnd;
+                    Transform anchorFollowedStapler;
                     if (globalOperators.m_bInsert[colon] == 1)
                     {
                         partRay = topRay;
                         anchorFollowedStart = topLineStart;
                         anchorFollowedEnd = topLineEnd;
+                        anchorFollowedStapler = topHalf.transform;
                     }
                     else// if (globalOperators.m_bInsert[colon] == 2)
                     {
                         partRay = bottomRay;
                         anchorFollowedStart = bottomLineStart;
                         anchorFollowedEnd = bottomLineEnd;
+                        anchorFollowedStapler = bottomHalf.transform;
                     }
 
                     for (int sphere = 0; sphere < 20; sphere++)
@@ -1450,6 +1453,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                             {
                                 anchor.followedStaplerStart = anchorFollowedStart;
                                 anchor.followedStaplerEnd = anchorFollowedEnd;
+                                anchor.followedStapler = anchorFollowedStapler;
                                 anchor.transform.position = MathUtil.ProjectionPointOnLine(partRay, colonSpheres[colon][layer][sphere].position);
                                 anchor.detachDistance = staplerInsertionCollisionThreshold;
                                 anchor.gameObject.SetActive(true);

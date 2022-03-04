@@ -10,10 +10,13 @@ public class ColonStaplerJointBehavior : MonoBehaviour
     public FixedJoint jointToSphere;
     public Transform followedStaplerStart;
     public Transform followedStaplerEnd;
+    public Transform belongedColumnStart; // The first sphere of the column which this anchor's sphere belongs to
+    public Transform belongedColumnEnd; // The last sphere of the column which this anchor's sphere belongs to
     public float detachDistance;
     public Ray followedRay;
     public List<ColonStaplerJointBehavior> anchorForNeighborSpheres;
     public List<Transform> neighborSpheres;
+    public int targetSphereInLayerIndex;
     public int targetSphereLayer;
     public int targetSphereColon;
     public bool isStaticCollisionJoint; // Is this a staticCollisionJoint
@@ -103,6 +106,7 @@ public class ColonStaplerJointBehavior : MonoBehaviour
         if (distantNeighbors.Count > 0 && distantNeighbors.Exists(a => !globalOperators.instance.IsSphereGrabbedByForceps(a.targetSphere.gameObject)))
         {
             isStaticCollisionJoint = true;
+            staticAnchorLocalStaplerPosition = followedStapler.InverseTransformPoint(transform.position);
             ColonStaplerJointManager.instance.staticCollisionJoints.Add(this);
         }
     }
@@ -117,6 +121,33 @@ public class ColonStaplerJointBehavior : MonoBehaviour
         {
             isStaticCollisionJoint = false;
             ColonStaplerJointManager.instance.staticCollisionJoints.Remove(this);
+        }
+    }
+
+    public void InitializeAnchor()
+    {
+        // Get target sphere layer
+        targetSphereLayer = globalOperators.GetSphereLayer(targetSphere.name);
+
+        // Get target sphere colon
+        targetSphereColon = int.Parse(targetSphere.name[7].ToString());
+
+        // Get belonged column info
+        if (targetSphereColon == 0)
+        {
+            // Get target sphere's index in its layer
+            targetSphereInLayerIndex = globalOperators.instance.colon0Spheres[targetSphereLayer].IndexOf(targetSphere.transform);
+
+            belongedColumnStart = globalOperators.instance.colon0Spheres[0][targetSphereInLayerIndex];
+            belongedColumnEnd = globalOperators.instance.colon0Spheres[19][targetSphereInLayerIndex];
+        }
+        else
+        {
+            // Get target sphere's index in its layer
+            targetSphereInLayerIndex = globalOperators.instance.colon1Spheres[targetSphereLayer].IndexOf(targetSphere.transform);
+
+            belongedColumnStart = globalOperators.instance.colon1Spheres[0][targetSphereInLayerIndex];
+            belongedColumnEnd = globalOperators.instance.colon1Spheres[19][targetSphereInLayerIndex];
         }
     }
 }
