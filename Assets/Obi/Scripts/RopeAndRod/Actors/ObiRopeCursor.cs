@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace Obi
 {
-    [AddComponentMenu("Physics/Obi/Obi Rope Cursor", 882)]
+    [AddComponentMenu("Physics/Obi/Obi Rope Cursor", 883)]
     [RequireComponent(typeof(ObiRope))]
     public class ObiRopeCursor : MonoBehaviour
     {
@@ -61,7 +61,7 @@ namespace Obi
             }
         }
 
-        private void Awake()
+        private void OnEnable()
         {
             rope = GetComponent<ObiRope>();
 
@@ -70,15 +70,15 @@ namespace Obi
                 Actor_OnElementsGenerated(rope);
         }
 
+        private void OnDisable()
+        {
+            rope.OnElementsGenerated -= Actor_OnElementsGenerated;
+        }
+
         private void Actor_OnElementsGenerated(ObiActor actor)
         {
             UpdateCursor();
             UpdateSource();
-        }
-
-        private void OnDestroy()
-        {
-            rope.OnElementsGenerated -= Actor_OnElementsGenerated;
         }
 
         public void UpdateCursor()

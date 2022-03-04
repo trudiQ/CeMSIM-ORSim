@@ -275,23 +275,7 @@ namespace Obi
 
         public IEnumerator Generate()
         {
-            m_Empty = true;
-
-            m_ActiveParticleCount = 0;
-            distanceConstraintsData = null;
-            bendConstraintsData = null;
-            skinConstraintsData = null;
-            tetherConstraintsData = null;
-            bendTwistConstraintsData = null;
-            stretchShearConstraintsData = null;
-            shapeMatchingConstraintsData = null;
-            aerodynamicConstraintsData = null;
-            chainConstraintsData = null;
-            volumeConstraintsData = null;
-
-            points = null;
-            edges = null;
-            triangles = null;
+            Clear();
 
             IEnumerator g = Initialize();
 
@@ -315,7 +299,42 @@ namespace Obi
                 OnBlueprintGenerate(this);
         }
 
-        public ObiParticleGroup InsertNewParticleGroup(string name, int index)
+        public void Clear()
+        {
+            m_Empty = true;
+
+            m_ActiveParticleCount = 0;
+            positions = null;
+            restPositions = null;
+            orientations = null;
+            restOrientations = null;
+            velocities = null;
+            angularVelocities = null;
+            invMasses = null;
+            invRotationalMasses = null;
+            filters = null;
+            //phases = null;
+            principalRadii = null;
+            colors = null;
+
+            points = null;
+            edges = null;
+            triangles = null;
+
+            distanceConstraintsData = null;
+            bendConstraintsData = null;
+            skinConstraintsData = null;
+            tetherConstraintsData = null;
+            bendTwistConstraintsData = null;
+            stretchShearConstraintsData = null;
+            shapeMatchingConstraintsData = null;
+            aerodynamicConstraintsData = null;
+            chainConstraintsData = null;
+            volumeConstraintsData = null;
+
+        }
+
+        public ObiParticleGroup InsertNewParticleGroup(string name, int index, bool saveImmediately = true)
         {
             if (index >= 0 && index <= groups.Count)
             {
@@ -335,7 +354,8 @@ namespace Obi
                     if (EditorUtility.IsPersistent(this))
                     {
                         EditorUtility.SetDirty(this);
-                        AssetDatabase.SaveAssets();
+                        if (saveImmediately)
+                            AssetDatabase.SaveAssets();
                     }
                 }
                 else
@@ -349,12 +369,12 @@ namespace Obi
             return null;
         }
 
-        public ObiParticleGroup AppendNewParticleGroup(string name)
+        public ObiParticleGroup AppendNewParticleGroup(string name, bool saveImmediately = true)
         {
-            return InsertNewParticleGroup(name, groups.Count);
+            return InsertNewParticleGroup(name, groups.Count, saveImmediately);
         }
 
-        public bool RemoveParticleGroupAt(int index)
+        public bool RemoveParticleGroupAt(int index, bool saveImmediately = true)
         {
             if (index >= 0 && index < groups.Count)
             {
@@ -372,7 +392,8 @@ namespace Obi
                     if (EditorUtility.IsPersistent(this))
                     {
                         EditorUtility.SetDirty(this);
-                        AssetDatabase.SaveAssets();
+                        if (saveImmediately)
+                            AssetDatabase.SaveAssets();
                     }
                 }
                 else
@@ -390,7 +411,7 @@ namespace Obi
             return false;
         }
 
-        public bool SetParticleGroupName(int index, string name)
+        public bool SetParticleGroupName(int index, string name, bool saveImmediately = true)
         {
             if (index >= 0 && index < groups.Count)
             {
@@ -403,7 +424,8 @@ namespace Obi
                     if (EditorUtility.IsPersistent(this))
                     {
                         EditorUtility.SetDirty(this);
-                        AssetDatabase.SaveAssets();
+                        if (saveImmediately)
+                            AssetDatabase.SaveAssets();
                     }
                 }
                 else
@@ -417,7 +439,7 @@ namespace Obi
             return false;
         }
 
-        public void ClearParticleGroups()
+        public void ClearParticleGroups(bool saveImmediately = true)
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying)
@@ -430,7 +452,8 @@ namespace Obi
                 if (EditorUtility.IsPersistent(this))
                 {
                     EditorUtility.SetDirty(this);
-                    AssetDatabase.SaveAssets();
+                    if (saveImmediately)
+                        AssetDatabase.SaveAssets();
                 }
             }
             else

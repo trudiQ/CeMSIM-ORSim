@@ -281,7 +281,7 @@ namespace Obi
 
                 // get all colliders overlapped by the cell bounds, in all grid levels:
                 BurstAabb simplexBoundsWS = simplexBoundsSS.Transformed(solverToWorld);
-                NativeList<int> candidates = new NativeList<int>(Allocator.Temp);
+                NativeList<int> candidates = new NativeList<int>(16,Allocator.Temp);
 
                 // max size of the particle bounds in cells:
                 int3 maxSize = new int3(10);

@@ -19,21 +19,30 @@ public class HapticCameraController : MonoBehaviour
 
     private Vector3 hapticOffset = Vector3.zero;
     private Transform hapticManipulator;
-    private void FixedUpdate()
+    private bool firstObserved = true;
+    private void Update()
     {
         hapticManipulator = haptic.hapticManipulator.transform;
         if (hapticManipulator == null) return;
 
-        if (Input.GetKeyDown(activationKey))
-        {
-            originalHapticPosition = hapticManipulator.position;
-            originalCameraPosition = transform.position;
-        }
-
         if (Input.GetKey(activationKey))
         {
-            hapticOffset = hapticManipulator.position - originalHapticPosition;
-            transform.position = Vector3.Lerp(transform.position, originalCameraPosition + hapticOffset, Time.fixedDeltaTime);
+            if (firstObserved)
+            {
+                originalHapticPosition = hapticManipulator.position;
+                originalCameraPosition = transform.position;
+                firstObserved = false;
+            }
+            else
+            {
+                hapticOffset = hapticManipulator.position - originalHapticPosition;
+                transform.position = Vector3.Lerp(transform.position, originalCameraPosition + hapticOffset, Time.deltaTime);
+            }
+        }
+
+        if (Input.GetKeyUp(activationKey))
+        {
+            firstObserved = true;
         }
     }
 }

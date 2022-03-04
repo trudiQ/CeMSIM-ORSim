@@ -63,6 +63,32 @@ namespace Obi
             outTangent = newTangent;
         }
 
+        public void SetInTangent(Vector3 value)
+        {
+            Vector3 newTangent = value;
+
+            switch (tangentMode)
+            {
+                case TangentMode.Mirrored: outTangent = -newTangent; break;
+                case TangentMode.Aligned: outTangent = -newTangent.normalized * outTangent.magnitude; break;
+            }
+
+            inTangent = newTangent;
+        }
+
+        public void SetOutTangent(Vector3 value)
+        {
+            Vector3 newTangent = value;
+
+            switch (tangentMode)
+            {
+                case TangentMode.Mirrored: inTangent = -newTangent; break;
+                case TangentMode.Aligned: inTangent = -newTangent.normalized * inTangent.magnitude; break;
+            }
+
+            outTangent = newTangent;
+        }
+
         public void Transform(Vector3 translation, Quaternion rotation, Vector3 scale)
         {
             position += translation;

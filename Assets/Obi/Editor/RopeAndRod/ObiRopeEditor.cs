@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEditor.EditorTools;
 using UnityEditorInternal;
 using UnityEngine;
 using System;
@@ -21,7 +22,6 @@ namespace Obi
         }
 
         ObiRope actor;
-        ObiPathEditor pathEditor;
 
         SerializedProperty ropeBlueprint;
 
@@ -43,8 +43,6 @@ namespace Obi
         SerializedProperty tearingEnabled;
         SerializedProperty tearResistanceMultiplier;
         SerializedProperty tearRate;
-
-        protected bool editMode = false;
 
         GUIStyle editLabelStyle;
 
@@ -75,25 +73,22 @@ namespace Obi
 
         }
 
-        public void OnDisable()
-        {
-            Tools.hidden = false;
-        }
-
         private void DoEditButton()
         {
             using (new EditorGUI.DisabledScope(actor.ropeBlueprint == null))
             {
-                if (!GUI.enabled)
-                    Tools.hidden = editMode = false;
-
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.Space(EditorGUIUtility.labelWidth);
                 EditorGUI.BeginChangeCheck();
-                Tools.hidden = editMode = GUILayout.Toggle(editMode, new GUIContent(Resources.Load<Texture2D>("EditCurves")), "Button", GUILayout.MaxWidth(36), GUILayout.MaxHeight(24));
+                bool edit = GUILayout.Toggle(EditorTools.activeToolType == typeof(ObiPathEditor), new GUIContent(Resources.Load<Texture2D>("EditCurves")), "Button", GUILayout.MaxWidth(36), GUILayout.MaxHeight(24));
                 EditorGUILayout.LabelField("Edit path", editLabelStyle, GUILayout.ExpandHeight(true), GUILayout.MaxHeight(24));
                 if (EditorGUI.EndChangeCheck())
                 {
+                    if (edit)
+                        EditorTools.SetActiveTool<ObiPathEditor>();
+                    else
+                        EditorTools.RestorePreviousPersistentTool();
+
                     SceneView.RepaintAll();
                 }
                 EditorGUILayout.EndHorizontal();
@@ -102,10 +97,6 @@ namespace Obi
 
         public override void OnInspectorGUI()
         {
-
-            if (actor.ropeBlueprint != null && pathEditor == null)
-                pathEditor = new ObiPathEditor(actor.ropeBlueprint, actor.ropeBlueprint.path, false);
-
             if (editLabelStyle == null)
             {
                 editLabelStyle = new GUIStyle(GUI.skin.label);
@@ -114,10 +105,12 @@ namespace Obi
 
             serializedObject.UpdateIfRequiredOrScript();
 
-            if (pathEditor != null)
-                pathEditor.ResizeCPArrays();
+            if (actor.sourceBlueprint != null && actor.ropeBlueprint.path.ControlPointCount < 2)
+            {
+                actor.ropeBlueprint.GenerateImmediate();
+            }
 
-            using (new EditorGUI.DisabledScope(editMode))
+            using (new EditorGUI.DisabledScope(EditorTools.activeToolType == typeof(ObiPathEditor)))
             {
                 EditorGUI.BeginChangeCheck();
                 EditorGUILayout.PropertyField(ropeBlueprint, new GUIContent("Blueprint"));
@@ -135,12 +128,6 @@ namespace Obi
             }
 
             DoEditButton();
-
-
-            if (actor.sourceBlueprint != null && actor.ropeBlueprint.path.ControlPointCount < 2)
-            {
-                actor.ropeBlueprint.GenerateImmediate();
-            }
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Collisions", EditorStyles.boldLabel);
@@ -176,18 +163,6 @@ namespace Obi
             if (GUI.changed)
                 serializedObject.ApplyModifiedProperties();
 
-        }
-
-        public void OnSceneGUI()
-        {
-            if (!editMode || actor.ropeBlueprint == null || actor.ropeBlueprint.path.ControlPointCount < 2)
-                return;
-
-            if (pathEditor != null && pathEditor.OnSceneGUI(actor.ropeBlueprint.thickness, actor.transform.localToWorldMatrix))
-            {
-                Repaint();
-                pathEditor.needsRepaint = false;
-            }
         }
 
         [DrawGizmo(GizmoType.Selected)]

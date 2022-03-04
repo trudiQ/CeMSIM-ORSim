@@ -119,5 +119,10 @@ namespace Obi
         public void SpatialQuery(ObiNativeQueryShapeList shapes, ObiNativeAffineTransformList transforms, ObiNativeQueryResultList results)
         {
         }
+
+        public void ReleaseJobHandles()
+        {
+
+        }
     }
 }

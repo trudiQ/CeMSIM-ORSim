@@ -7,6 +7,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Burst;
 using System.Runtime.CompilerServices;
+using Unity.Collections.LowLevel.Unsafe;
 
 namespace Obi
 {
@@ -675,6 +676,29 @@ namespace Obi
             for (int i = 0; i < simplexSize; ++i)
                 center[i] = value;
             return center;
+        }
+
+        public static unsafe void RemoveRangeBurst<T>(this NativeList<T> list, int index, int count)
+            where T : unmanaged
+        {
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+            if ((uint)index >= (uint)list.Length)
+            {
+                throw new IndexOutOfRangeException(
+                    $"Index {index} is out of range in NativeList of '{list.Length}' Length.");
+            }
+#endif
+
+            int elemSize = UnsafeUtility.SizeOf<T>();
+            byte* basePtr = (byte*)list.GetUnsafePtr();
+
+            UnsafeUtility.MemMove(basePtr + (index * elemSize), basePtr + ((index + count) * elemSize), elemSize * (list.Length - count - index));
+
+            // No easy way to change length so we just loop this unfortunately.
+            for (var i = 0; i < count; i++)
+            {
+                list.RemoveAtSwapBack(list.Length - 1);
+            }
         }
     }
 }

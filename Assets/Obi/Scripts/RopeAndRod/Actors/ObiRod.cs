@@ -179,6 +179,7 @@ namespace Obi
         protected override void OnValidate()
         {
             base.OnValidate();
+            SetConstraintsDirty(Oni.ConstraintType.BendTwist);
             SetupRuntimeConstraints();
         }
 
@@ -192,11 +193,26 @@ namespace Obi
         private void SetupRuntimeConstraints()
         {
             SetConstraintsDirty(Oni.ConstraintType.StretchShear);
-            SetConstraintsDirty(Oni.ConstraintType.BendTwist);
+            //SetConstraintsDirty(Oni.ConstraintType.BendTwist);
             SetConstraintsDirty(Oni.ConstraintType.Chain);
             SetSelfCollisions(selfCollisions);
             RecalculateRestLength();
             SetSimplicesDirty();
+        }
+
+        public Vector3 GetBendTwistCompliance(ObiBendTwistConstraintsBatch batch, int constraintIndex)
+        {
+            return new Vector3(bend1Compliance, bend2Compliance, torsionCompliance);
+        }
+
+        public Vector2 GetBendTwistPlasticity(ObiBendTwistConstraintsBatch batch, int constraintIndex)
+        {
+            return new Vector2(plasticYield, plasticCreep);
+        }
+
+        public Vector3 GetStretchShearCompliance(ObiStretchShearConstraintsBatch batch, int constraintIndex)
+        {
+            return new Vector3(shear1Compliance, shear2Compliance, stretchCompliance);
         }
 
         protected override void RebuildElementsFromConstraintsInternal()

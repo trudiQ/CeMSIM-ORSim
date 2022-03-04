@@ -1,9 +1,9 @@
 #ifndef OBILIGHTINGBUILTURP_INCLUDED
 #define OBILIGHTINGBUILTURP_INCLUDED
 
-//#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-//#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-//#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
 
 half3 SampleSphereAmbient(float3 eyeNormal)
 {

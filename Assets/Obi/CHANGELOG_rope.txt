@@ -1,6 +1,37 @@
 # Change Log
 All notable changes to “Obi - Advanced ropes for Unity” will be documented in this file.
 
+## [6.4]
+
+### Added
+- Support for configurable enter play mode (domain and scene reload disabling).
+- Support for in-editor hot reloading.
+- Numerical fields to edit control point position and tangents added to the path editor.
+
+### Changed
+- Better path editor integration using Unity's editor custom tool API.
+- GrapplingHook sample scene now features a hook rope that extends over time, instead of extending instantly.
+- Reduced memory allocation in ObiPathSmoother Decimate() method.
+- Introduced a job handle pool to avoid runtime allocation of handles by both Burst and Oni backends.
+- Constraint padding array in Burst solver has been turned into a member variable instead of allocating anew it every frame.
+- Collision and friction batches are pooled instead of allocated every frame.
+
+### Fixed
+- InvalidOperationException when performing certain spatial queries with jobs debugger enabled in the Burst backend.
+- ObiBone collision category was internally resetting to zero upon pressing play.
+- Particle render mode in blueprint editor wasn't updated every frame under specific circumstances.
+
+## [6.3]
+
+### Added
+- New ObiBone actor, creates a particle-based representation of a bone hierarchy and simulates it using rod constraints.
+- Built-in support for applying solver gravity in world-space.
+
+### Fixed
+- Bug in attachments: prefab modifications were not being applied to the component.
+- Slight reduction in solver memory allocation.
+- Object disposed exception when using contact callbacks with a non-visible solver.
+
 ## [6.2]
 
 #IMPORTANT: If updating from an older version, you’ll need to readjust collision filtering in your scenes.

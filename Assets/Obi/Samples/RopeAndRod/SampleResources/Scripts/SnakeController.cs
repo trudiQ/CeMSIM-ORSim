@@ -57,11 +57,14 @@ public class SnakeController : MonoBehaviour
                 int simplexIndex = solver.simplices[contact.bodyA];
                 var particleInActor = solver.particleToActor[simplexIndex];
 
-                // using 1 here, could calculate a traction value based on the type of terrain, friction, etc.
-                traction[particleInActor.indexInActor] = 1;
+                if (particleInActor.actor == rope)
+                {
+                    // using 1 here, could calculate a traction value based on the type of terrain, friction, etc.
+                    traction[particleInActor.indexInActor] = 1;
 
-                // accumulate surface normal:
-                surfaceNormal[particleInActor.indexInActor] += (Vector3)contact.normal;
+                    // accumulate surface normal:
+                    surfaceNormal[particleInActor.indexInActor] += (Vector3)contact.normal;
+                }
             }
         }
     }

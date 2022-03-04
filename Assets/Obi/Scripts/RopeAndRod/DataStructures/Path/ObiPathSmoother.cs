@@ -35,6 +35,7 @@ namespace Obi
         [HideInInspector] public ObiList<ObiList<ObiPathFrame>> rawChunks = new ObiList<ObiList<ObiPathFrame>>();
         [HideInInspector] public ObiList<ObiList<ObiPathFrame>> smoothChunks = new ObiList<ObiList<ObiPathFrame>>();
         private Stack<Vector2Int> stack = new Stack<Vector2Int>();
+        private BitArray decimateBitArray = new BitArray(0);
 
         public float SmoothLength
         {
@@ -230,7 +231,7 @@ namespace Obi
                     Chaikin(rawChunks[i], smoothChunks[i], smoothingLevels);
 
                     // count total curve sections and total curve length:
-                    smoothSections += smoothChunks[i].Count - 1;
+                    smoothSections += smoothChunks[i].Count;
                     smoothLength += CalculateChunkLength(smoothChunks[i]);
                 }
             }
@@ -238,7 +239,7 @@ namespace Obi
 
         public ObiPathFrame GetSectionAt(float mu)
         {
-            float edgeMu = smoothSections * Mathf.Clamp01(mu);
+            float edgeMu = smoothSections * Mathf.Clamp(mu,0,0.9999f);
             int index = (int)edgeMu;
             float sectionMu = edgeMu - index;
 
@@ -251,6 +252,7 @@ namespace Obi
                 {
                     chunkIndex = i;
                     indexInChunk = index - counter;
+                    break;
                 }
                 counter += smoothChunks[i].Count;
             }
@@ -274,7 +276,9 @@ namespace Obi
             float scaledThreshold = threshold * threshold * 0.01f;
 
             stack.Push(new Vector2Int(0, input.Count - 1));
-            var bitArray = new BitArray(input.Count, true);
+
+            decimateBitArray.Length = Mathf.Max(decimateBitArray.Length, input.Count);
+            decimateBitArray.SetAll(true);
 
             while (stack.Count > 0)
             {
@@ -282,11 +286,11 @@ namespace Obi
 
                 float dmax = 0;
                 int index = range.x;
-                float mu = 0;
+                float mu;
 
                 for (int i = index + 1; i < range.y; ++i)
                 {
-                    if (bitArray[i])
+                    if (decimateBitArray[i])
                     {
                         float d = Vector3.SqrMagnitude(ObiUtils.ProjectPointLine(input[i].position, input[range.x].position, input[range.y].position, out mu) - input[i].position);
 
@@ -306,13 +310,13 @@ namespace Obi
                 else
                 {
                     for (int i = range.x + 1; i < range.y; ++i)
-                        bitArray[i] = false;
+                        decimateBitArray[i] = false;
                 }
             }
 
             output.Clear();
-            for (int i = 0; i < bitArray.Count; ++i)
-                if (bitArray[i])
+            for (int i = 0; i < input.Count; ++i)
+                if (decimateBitArray[i])
                     output.Add(input[i]);
 
             return true;

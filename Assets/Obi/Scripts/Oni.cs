@@ -145,7 +145,7 @@ public static class Oni
             surfaceCollisionTolerance = 0.005f;
             maxAnisotropy = 3;
             maxDepenetration = 10;
-            sleepThreshold = 0.001f;
+            sleepThreshold = 0.0005f;
             collisionMargin = 0.02f;
             continuousCollisionDetection = 1;
         }

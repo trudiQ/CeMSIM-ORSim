@@ -39,7 +39,7 @@ public class GrapplingHook : MonoBehaviour
         rope = gameObject.AddComponent<ObiRope>();
         ropeRenderer = gameObject.AddComponent<ObiRopeExtrudedRenderer>();
         ropeRenderer.section = section;
-        ropeRenderer.uvScale = new Vector2(1, 5);
+        ropeRenderer.uvScale = new Vector2(1, 4);
         ropeRenderer.normalizeV = false;
         ropeRenderer.uvAnchor = 1;
         rope.GetComponent<MeshRenderer>().material = material;
@@ -79,7 +79,6 @@ public class GrapplingHook : MonoBehaviour
         // Raycast to see what we hit:
         if (Physics.Raycast(ray, out hookAttachment))
         {
-
             // We actually hit something, so attach the hook!
             StartCoroutine(AttachHook());
         }

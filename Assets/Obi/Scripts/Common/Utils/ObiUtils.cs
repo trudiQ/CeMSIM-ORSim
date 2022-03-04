@@ -16,6 +16,8 @@ namespace Obi
     {
 
         public const float epsilon = 0.0000001f;
+        public const float sqrt3 = 1.73205080f;
+        public const float sqrt2 = 1.41421356f; 
 
         public const int FilterMaskBitmask = unchecked((int)0xffff0000);
         public const int FilterCategoryBitmask = 0x0000ffff;
@@ -520,13 +522,14 @@ namespace Obi
         public static Quaternion RestDarboux(Quaternion q1, Quaternion q2)
         {
             Quaternion darboux = Quaternion.Inverse(q1) * q2;
+
             Vector4 omega_plus, omega_minus;
-            omega_plus = new Vector4(darboux.w, darboux.x, darboux.y, darboux.z) + new Vector4(1, 0, 0, 0);
-            omega_minus = new Vector4(darboux.w, darboux.x, darboux.y, darboux.z) - new Vector4(1, 0, 0, 0);
+            omega_plus = new Vector4(darboux.x, darboux.y, darboux.z, darboux.w + 1);
+            omega_minus = new Vector4(darboux.x, darboux.y, darboux.z, darboux.w - 1);
+
             if (omega_minus.sqrMagnitude > omega_plus.sqrMagnitude)
-            {
                 darboux = new Quaternion(darboux.x * -1, darboux.y * -1, darboux.z * -1, darboux.w * -1);
-            }
+
             return darboux;
         }
 
@@ -850,10 +853,10 @@ namespace Obi
             return centroid / points.Count;
         }
 
-        public static void GetPointCloudAnisotropy(List<Vector3> points, float max_anisotropy, float radius, ref Vector3 hint_normal, ref Vector3 centroid, ref Quaternion orientation, ref Vector3 principal_radii)
+        public static void GetPointCloudAnisotropy(List<Vector3> points, float max_anisotropy, float radius, in Vector3 hint_normal, ref Vector3 centroid, ref Quaternion orientation, ref Vector3 principal_radii)
         {
             int count = points.Count;
-            if (count == 0|| radius <= 0 || max_anisotropy <= 0)
+            if (count < 2 || radius <= 0 || max_anisotropy <= 0)
             {
                 principal_radii = Vector3.one * radius;
                 orientation = Quaternion.identity;

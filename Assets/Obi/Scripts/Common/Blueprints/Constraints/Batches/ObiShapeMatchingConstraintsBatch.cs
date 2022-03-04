@@ -100,6 +100,29 @@ namespace Obi
                 particles.Add(particleIndices[i]);
         }
 
+        public void RemoveParticleFromConstraint(int constraintIndex, int particleIndex)
+        {
+            int first = firstIndex[constraintIndex];
+            int num = numIndices[constraintIndex];
+
+            int found = 0;
+            for (int i = first + num - 1; i >= first; --i)
+            {
+                if (particleIndices[i] == particleIndex)
+                {
+                    found++;
+                    particleIndices.RemoveAt(i);
+                }
+            }
+
+            // update num indices of the current constraint:
+            numIndices[constraintIndex] -= found;
+
+            // update firstIndex of following constraints:
+            for (int i = constraintIndex + 1; i < constraintCount; ++i)
+                firstIndex[i] -= found;
+        }
+
         protected override void SwapConstraints(int sourceIndex, int destIndex)
         {
             firstIndex.Swap(sourceIndex, destIndex);
@@ -158,11 +181,11 @@ namespace Obi
                 for (int i = 0; i < batch.activeConstraintCount; ++i)
                 {
                     firstIndex[m_ActiveConstraintCount + i] = batch.firstIndex[i] + initialIndexCount;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5] = user.deformationResistance;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 1] = user.plasticYield;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 2] = user.plasticCreep;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 3] = user.plasticRecovery;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 4] = user.maxDeformation;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5] = batch.materialParameters[i * 5] * user.deformationResistance;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 1] = batch.materialParameters[i * 5 + 1] * user.plasticYield;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 2] = batch.materialParameters[i * 5 + 2] * user.plasticCreep;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 3] = batch.materialParameters[i * 5 + 3] * user.plasticRecovery;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 4] = batch.materialParameters[i * 5 + 4] * user.maxDeformation;
                 }
 
                 base.Merge(actor, other);

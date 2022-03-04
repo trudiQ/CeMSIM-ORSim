@@ -42,6 +42,8 @@ namespace Obi
         SerializedProperty backend;
         SerializedProperty simulateWhenInvisible;
         SerializedProperty parameters;
+        SerializedProperty gravity;
+        SerializedProperty gravitySpace;
         SerializedProperty worldLinearInertiaScale;
         SerializedProperty worldAngularInertiaScale;
 
@@ -62,7 +64,10 @@ namespace Obi
         SerializedProperty bendTwistConstraintParameters;
         SerializedProperty chainConstraintParameters;
 
-        bool constraintsFoldout = false;
+        BooleanPreference solverFoldout;
+        BooleanPreference simulationFoldout;
+        BooleanPreference collisionsFoldout;
+        BooleanPreference constraintsFoldout;
 
         GUIContent constraintLabelContent;
 
@@ -71,9 +76,16 @@ namespace Obi
             solver = (ObiSolver)target;
             constraintLabelContent = new GUIContent();
 
+            solverFoldout = new BooleanPreference($"{target.GetType()}.solverFoldout", true);
+            simulationFoldout = new BooleanPreference($"{target.GetType()}.simulationFoldout", false);
+            collisionsFoldout = new BooleanPreference($"{target.GetType()}.collisionsFoldout", false);
+            constraintsFoldout = new BooleanPreference($"{target.GetType()}.constraintsFoldout", false);
+
             backend = serializedObject.FindProperty("m_Backend");
             simulateWhenInvisible = serializedObject.FindProperty("simulateWhenInvisible");
             parameters = serializedObject.FindProperty("parameters");
+            gravity = serializedObject.FindProperty("gravity");
+            gravitySpace = serializedObject.FindProperty("gravitySpace");
             worldLinearInertiaScale = serializedObject.FindProperty("worldLinearInertiaScale");
             worldAngularInertiaScale = serializedObject.FindProperty("worldAngularInertiaScale");
 
@@ -99,15 +111,16 @@ namespace Obi
         {
 
             serializedObject.UpdateIfRequiredOrScript();
-            EditorGUILayout.HelpBox("Used particles:" + solver.allocParticleCount +"\n"+
-                                    "Points:" + solver.pointCount + "\n" +
-                                    "Edges:" + solver.edgeCount + "\n" +
-                                    "Triangles:" + solver.triCount + "\n" +
+            EditorGUILayout.HelpBox("Particles:" + solver.allocParticleCount +"\n"+
+                                    "Simplices:" + solver.simplexCounts.simplexCount+"\n" +
                                     "Contacts:" + solver.contactCount + "\n" +
-                                    "Particle contacts:" + solver.particleContactCount, MessageType.None);
+                                    "Simplex contacts:" + solver.particleContactCount, MessageType.None);
 
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(backend);
+            solverFoldout.value = EditorGUILayout.BeginFoldoutHeaderGroup(solverFoldout, "Solver settings");
+            if (solverFoldout)
+            {
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(backend);
 
 #if !(OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
             if (backend.enumValueIndex == (int)ObiSolver.BackendType.Burst)
@@ -118,19 +131,46 @@ namespace Obi
                 EditorGUILayout.HelpBox("The Oni backend is not compatible with the target platform. Please switch to a compatible platform, or use the Burst backend instead.", MessageType.Warning);
 #endif
 
-            if (EditorGUI.EndChangeCheck())
-            {
-                serializedObject.ApplyModifiedProperties();
-                foreach (var t in targets)
-                    (t as ObiSolver).UpdateBackend();
+                if (EditorGUI.EndChangeCheck())
+                {
+                    serializedObject.ApplyModifiedProperties();
+                    foreach (var t in targets)
+                        (t as ObiSolver).UpdateBackend();
+                }
+
+
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("mode"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("interpolation"));
             }
+            EditorGUILayout.EndFoldoutHeaderGroup();
 
-            EditorGUILayout.PropertyField(parameters);
-            EditorGUILayout.PropertyField(worldLinearInertiaScale);
-            EditorGUILayout.PropertyField(worldAngularInertiaScale);
-            EditorGUILayout.PropertyField(simulateWhenInvisible);
+            simulationFoldout.value = EditorGUILayout.BeginFoldoutHeaderGroup(simulationFoldout, "Simulation settings");
+            if (simulationFoldout)
+            {
+                EditorGUILayout.PropertyField(gravitySpace);
+                EditorGUILayout.PropertyField(gravity);
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("sleepThreshold"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("damping"));
+                EditorGUILayout.PropertyField(worldLinearInertiaScale);
+                EditorGUILayout.PropertyField(worldAngularInertiaScale);
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("maxAnisotropy"));
+                EditorGUILayout.PropertyField(simulateWhenInvisible);
+            }
+            EditorGUILayout.EndFoldoutHeaderGroup();
 
-            constraintsFoldout = EditorGUILayout.Foldout(constraintsFoldout, "Constraints");
+            collisionsFoldout.value = EditorGUILayout.BeginFoldoutHeaderGroup(collisionsFoldout, "Collision settings");
+            if (collisionsFoldout)
+            {
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("continuousCollisionDetection"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("collisionMargin"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("maxDepenetration"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("shockPropagation"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("surfaceCollisionIterations"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("surfaceCollisionTolerance"));
+            }
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            constraintsFoldout.value = EditorGUILayout.BeginFoldoutHeaderGroup(constraintsFoldout, "Constraint settings");
             if (constraintsFoldout)
             {
                 constraintLabelContent.text = "Distance";
@@ -181,6 +221,7 @@ namespace Obi
                 constraintLabelContent.text = "Chain";
                 EditorGUILayout.PropertyField(chainConstraintParameters, constraintLabelContent);
             }
+            EditorGUILayout.EndFoldoutHeaderGroup();
 
             // Apply changes to the serializedProperty
             if (GUI.changed)

@@ -369,6 +369,10 @@ namespace Obi
         {
             for (int i = ControlPointCount-1; i >= 0; --i)
                 RemoveControlPoint(i);
+
+            m_TotalSplineLenght = 0.0f;
+            m_ArcLengthTable.Clear();
+            m_ArcLengthTable.Add(0);
         }
 
         public void RemoveControlPoint(int index)

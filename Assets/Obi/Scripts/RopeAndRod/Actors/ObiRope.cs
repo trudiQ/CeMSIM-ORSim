@@ -34,6 +34,8 @@ namespace Obi
         [SerializeField] [Range(0, 0.1f)] protected float _plasticYield = 0;
         [SerializeField] protected float _plasticCreep = 0;
 
+        List<ObiStructuralElement> tornElements = new List<ObiStructuralElement>();
+
         /// <summary>  
         /// Whether particles in this actor colide with particles using the same phase value.
         /// </summary>
@@ -221,7 +223,7 @@ namespace Obi
 
             float sqrTime = substepTime * substepTime;
 
-            List<ObiStructuralElement> tornElements = new List<ObiStructuralElement>();
+            tornElements.Clear();
 
             var dc = GetConstraintsByType(Oni.ConstraintType.Distance) as ObiConstraints<ObiDistanceConstraintsBatch>;
             var sc = this.solver.GetConstraintsByType(Oni.ConstraintType.Distance) as ObiConstraints<ObiDistanceConstraintsBatch>;

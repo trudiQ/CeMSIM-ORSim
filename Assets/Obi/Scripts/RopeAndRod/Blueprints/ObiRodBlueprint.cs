@@ -34,7 +34,7 @@ namespace Obi
             List<float> particleThicknesses = new List<float>();
             List<float> particleInvMasses = new List<float>();
             List<float> particleInvRotationalMasses = new List<float>();
-            List<int> particlePhases = new List<int>();
+            List<int> particleFilters = new List<int>();
             List<Color> particleColors = new List<Color>();
 
             // In case the path is open, add a first particle. In closed paths, the last particle is also the first one.
@@ -45,7 +45,7 @@ namespace Obi
                 particleThicknesses.Add(path.thicknesses.GetAtMu(path.Closed, 0));
                 particleInvMasses.Add(ObiUtils.MassToInvMass(path.masses.GetAtMu(path.Closed, 0)));
                 particleInvRotationalMasses.Add(ObiUtils.MassToInvMass(path.rotationalMasses.GetAtMu(path.Closed, 0)));
-                particlePhases.Add(path.filters.GetAtMu(path.Closed, 0));
+                particleFilters.Add(path.filters.GetAtMu(path.Closed, 0));
                 particleColors.Add(path.colors.GetAtMu(path.Closed, 0));
             }
 
@@ -75,7 +75,7 @@ namespace Obi
                     particleThicknesses.Add(path.thicknesses.GetAtMu(path.Closed, mu));
                     particleInvMasses.Add(ObiUtils.MassToInvMass(path.masses.GetAtMu(path.Closed, mu)));
                     particleInvRotationalMasses.Add(ObiUtils.MassToInvMass(path.rotationalMasses.GetAtMu(path.Closed, mu)));
-                    particlePhases.Add(path.filters.GetAtMu(path.Closed, mu));
+                    particleFilters.Add(path.filters.GetAtMu(path.Closed, mu));
                     particleColors.Add(path.colors.GetAtMu(path.Closed, mu));
                 }
 
@@ -120,7 +120,7 @@ namespace Obi
                 restPositions[i] = positions[i];
                 restPositions[i][3] = 1; // activate rest position.
                 principalRadii[i] = Vector3.one * particleThicknesses[i] * thickness;
-                filters[i] = ObiUtils.MakePhase(particlePhases[i], 0);
+                filters[i] = particleFilters[i];
                 colors[i] = particleColors[i];
 
                 if (i % 100 == 0)

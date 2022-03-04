@@ -1,6 +1,41 @@
 # Change Log
 All notable changes to “Obi - Advanced softbodies for Unity” will be documented in this file.
 
+## [6.4]
+
+### Added
+- Support for configurable enter play mode (domain and scene reload disabling).
+- Support for in-editor hot reloading.
+- Paint brush mirroring in x,y,z axis for blueprint editor.
+- New "Copy" paint brush mode in the blueprint editor allows you to selectively copy values between particle property channels.
+
+### Changed
+- Introduced a job handle pool to avoid runtime allocation of handles by both Burst and Oni backends.
+- Constraint padding array in Burst solver has been turned into a member variable instead of allocating anew it every frame.
+- Collision and friction batches are pooled instead of allocated every frame.
+
+### Fixed
+- IndexOutOfRangeException when enabling mesh rendering in a softbody blueprint using voxel surface generation.
+- InvalidOperationException when performing certain spatial queries with jobs debugger enabled in the Burst backend.
+- Particle render mode in blueprint editor wasn't updated every frame under specific circumstances.
+
+## [6.3]
+
+### Added
+- Redone softbody blueprints generation from scratch: surface and volume particle generation can be combined, with automatic cluster placement.
+- Full-body volumetric softbodies: a character's skeleton can be used to drive softbody particle movement.
+- ObiSoftbodySkinner now supports up to 255 bones per vertex, and supports per-vertex blending between the original skinning and particle skinning.
+- ObiSoftbodySkinner can be enabled/disabled.
+- Built-in support for applying solver gravity in world-space.
+
+### Fixed
+- Bug in attachments: prefab modifications were not being applied to the component.
+- Slight reduction in solver memory allocation.
+- Object disposed exception when using contact callbacks with a non-visible solver.
+
+### Removed
+- ObiSoftbodyVolumeBlueprint has been removed.
+
 ## [6.2]
 
 #IMPORTANT: If updating from an older version, you’ll need to readjust collision filtering in your scenes.

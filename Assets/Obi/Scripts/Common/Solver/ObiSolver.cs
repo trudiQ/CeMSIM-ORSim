@@ -79,6 +79,7 @@ namespace Obi
         public event CollisionCallback OnParticleCollision;
         public event SolverCallback OnUpdateParameters;
 
+        public event SolverCallback OnPrepareFrame;
         public event SolverStepCallback OnPrepareStep;
         public event SolverStepCallback OnBeginStep;
         public event SolverStepCallback OnSubstep;
@@ -101,9 +102,11 @@ namespace Obi
 
         [SerializeField] private BackendType m_Backend = BackendType.Burst;
 
-        [ChildrenOnly]
         public Oni.SolverParameters parameters = new Oni.SolverParameters(Oni.SolverParameters.Interpolation.None,
                                                                           new Vector4(0, -9.81f, 0, 0));
+
+        public Vector3 gravity = new Vector3(0, -9.81f, 0);
+        public Space gravitySpace = Space.Self;
 
         [Range(0, 1)]
         public float worldLinearInertiaScale = 0;           /**< how much does world-space linear inertia affect the actor. This only applies when the solver has "simulateInLocalSpace" enabled.*/
@@ -124,9 +127,9 @@ namespace Obi
         private List<int> triangles = new List<int>();      /**< 2-simplices*/
         private SimplexCounts m_SimplexCounts;
 
-        [HideInInspector] [NonSerialized] public bool dirtyActiveParticles = true;
-        [HideInInspector] [NonSerialized] public bool dirtySimplices = true;
-        [HideInInspector] [NonSerialized] public int dirtyConstraints = 0;
+        [HideInInspector][NonSerialized] public bool dirtyActiveParticles = true;
+        [HideInInspector][NonSerialized] public bool dirtySimplices = true;
+        [HideInInspector][NonSerialized] public int dirtyConstraints = 0;
 
         private ObiCollisionEventArgs collisionArgs = new ObiCollisionEventArgs();
         private ObiCollisionEventArgs particleCollisionArgs = new ObiCollisionEventArgs();
@@ -279,21 +282,6 @@ namespace Obi
         public int allocParticleCount
         {
             get { return particleToActor.Count(s => s != null && s.actor != null); }
-        }
-
-        public int pointCount
-        {
-            get { return points.Count; }
-        }
-
-        public int edgeCount
-        {
-            get { return edges.Count / 2; }
-        }
-
-        public int triCount
-        {
-            get { return triangles.Count / 3; }
         }
 
         public int contactCount
@@ -800,7 +788,8 @@ namespace Obi
 
         void Update()
         {
-            m_MaxScale = Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
+            var scale = transform.lossyScale;
+            m_MaxScale = Mathf.Max(Mathf.Max(scale.x, scale.y), scale.z);
         }
 
         private void OnDestroy()
@@ -1486,6 +1475,15 @@ namespace Obi
             m_SolverImpl.ApplyFrame(worldLinearInertiaScale, worldAngularInertiaScale, dt);
         }
 
+        public void PrepareFrame()
+        {
+            if (OnPrepareFrame != null)
+                OnPrepareFrame(this);
+
+            foreach (ObiActor actor in actors)
+                actor.PrepareFrame();
+        }
+
         /// <summary>
         /// Signals the start of a new time step.
         /// </summary>
@@ -1521,6 +1519,11 @@ namespace Obi
 
             // Update inertial frame:
             UpdateTransformFrame(stepTime);
+
+            // Update gravity:
+            parameters.gravity = gravitySpace == Space.World ? transform.InverseTransformVector(gravity) : gravity;
+            if (initialized)
+                m_SolverImpl.SetParameters(parameters);
 
             // Copy positions / orientations at the start of the step, for interpolation:
             startPositions.CopyFrom(positions);
@@ -1637,6 +1640,14 @@ namespace Obi
             foreach (ObiActor actor in actors)
                 actor.Interpolate();
 
+        }
+
+        public void ReleaseJobHandles()
+        {
+            if (!initialized)
+                return;
+
+            m_SolverImpl.ReleaseJobHandles();
         }
 
         /// <summary>

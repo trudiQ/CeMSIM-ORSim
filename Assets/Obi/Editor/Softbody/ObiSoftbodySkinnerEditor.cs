@@ -1,49 +1,61 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using UnityEditor.SceneManagement;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Obi{
 	
-	/**
-	 * Custom inspector for ObiRope components.
-	 * Allows particle selection and constraint edition. 
-	 * 
-	 * Selection:
-	 * 
-	 * - To select a particle, left-click on it. 
-	 * - You can select multiple particles by holding shift while clicking.
-	 * - To deselect all particles, click anywhere on the object except a particle.
-	 * 
-	 * Constraints:
-	 * 
-	 * - To edit particle constraints, select the particles you wish to edit.
-	 * - Constraints affecting any of the selected particles will appear in the inspector.
-	 * - To add a new pin constraint to the selected particle(s), click on "Add Pin Constraint".
-	 * 
-	 */
 	[CustomEditor(typeof(ObiSoftbodySkinner)), CanEditMultipleObjects] 
 	public class ObiSoftbodySkinnerEditor : Editor
 	{
 		
-		ObiSoftbodySkinner skinner;
+		public ObiSoftbodySkinner skinner;
 		protected IEnumerator routine;
-		
-		public void OnEnable(){
-			skinner = (ObiSoftbodySkinner)target;
-		}
-		
-		public void OnDisable(){
-			EditorUtility.ClearProgressBar();
-		}
 
-		private void BakeMesh(){
+        private ObiRaycastBrush paintBrush;
+        private ObiSoftbodyInfluenceChannel currentProperty = null;
+        private Material paintMaterial;
+
+        private bool editInfluences = false;
+		
+		public void OnEnable()
+        {
+			skinner = (ObiSoftbodySkinner)target;
+
+            paintBrush = new ObiRaycastBrush(null,
+                                                         () =>
+                                                         {
+                                                             // As RecordObject diffs with the end of the current frame,
+                                                             // and this is a multi-frame operation, we need to use RegisterCompleteObjectUndo instead.
+                                                             Undo.RegisterCompleteObjectUndo(target, "Paint influences");
+                                                         },
+                                                         () =>
+                                                         {
+                                                             SceneView.RepaintAll();
+                                                         },
+                                                         () =>
+                                                         {
+                                                             EditorUtility.SetDirty(target);
+                                                         });
+
+            currentProperty = new ObiSoftbodyInfluenceChannel(this);
+
+            if (paintMaterial == null)
+                paintMaterial = Resources.Load<Material>("PropertyGradientMaterial");
+        }
+		
+		public void OnDisable()
+        {
+			EditorUtility.ClearProgressBar();
+        }
+
+		private void BakeMesh()
+        {
 
 			SkinnedMeshRenderer skin = skinner.GetComponent<SkinnedMeshRenderer>();
 
-			if (skin != null && skin.sharedMesh != null){
+			if (skin != null && skin.sharedMesh != null)
+            {
 
 				Mesh baked = new Mesh();
 				skin.BakeMesh(baked);
@@ -107,6 +119,24 @@ namespace Obi{
 			if (GUILayout.Button("Bake Mesh")){
 				BakeMesh();
 			}
+
+            EditorGUI.BeginChangeCheck();
+            editInfluences = GUILayout.Toggle(editInfluences,new GUIContent("Paint Influence"),"Button");
+            if (EditorGUI.EndChangeCheck())
+                SceneView.RepaintAll();
+
+            if (editInfluences && paintBrush != null)
+            {
+                currentProperty.BrushModes(paintBrush);
+
+                if (paintBrush.brushMode.needsInputValue)
+                    currentProperty.PropertyField();
+
+                paintBrush.radius = EditorGUILayout.Slider("Brush size", paintBrush.radius, 0.0001f, 0.5f);
+                paintBrush.innerRadius = EditorGUILayout.Slider("Brush inner size", paintBrush.innerRadius, 0, 1);
+                paintBrush.opacity = EditorGUILayout.Slider("Brush opacity", paintBrush.opacity, 0, 1);
+            }
+
 			GUI.enabled = true;
 
 			if (skinner.Source == null){
@@ -121,8 +151,72 @@ namespace Obi{
 			if (GUI.changed){
 				serializedObject.ApplyModifiedProperties();
 			}
-			
 		}
+
+        public void OnSceneGUI()
+        {
+            if (editInfluences)
+            {
+                skinner.InitializeInfluences();
+
+                SkinnedMeshRenderer skin = skinner.GetComponent<SkinnedMeshRenderer>();
+
+                if (skin != null && skin.sharedMesh != null)
+                {
+                    var bakedMesh = new Mesh();
+                    skin.BakeMesh(bakedMesh);
+
+                    if (Event.current.type == EventType.Repaint)
+                        DrawMesh(bakedMesh);
+
+                    if (Camera.current != null)
+                    {
+                        paintBrush.raycastTarget = bakedMesh; 
+                        paintBrush.raycastTransform = skin.transform.localToWorldMatrix;
+
+                        // TODO: do better.
+                        var v = bakedMesh.vertices;
+                        Vector3[] worldSpace = new Vector3[v.Length];
+                        for (int i = 0; i < worldSpace.Length; ++i)
+                            worldSpace[i] = paintBrush.raycastTransform.MultiplyPoint3x4(v[i]);
+
+                        paintBrush.DoBrush(worldSpace);
+                    }
+
+                    DestroyImmediate(bakedMesh);
+                }
+
+            }
+        }
+
+        private void DrawMesh(Mesh mesh)
+        {
+            if (paintMaterial.SetPass(0))
+            {
+                Color[] colors = new Color[mesh.vertexCount];
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    colors[i] = new Color(skinner.m_softbodyInfluences[i], skinner.m_softbodyInfluences[i], skinner.m_softbodyInfluences[i]);
+                }
+
+                mesh.colors = colors;
+                Graphics.DrawMeshNow(mesh, paintBrush.raycastTransform);
+
+                if (paintMaterial.SetPass(1))
+                {
+                    Color wireColor = ObiEditorSettings.GetOrCreateSettings().brushWireframeColor;
+                    for (int i = 0; i < paintBrush.weights.Length; i++)
+                    {
+                        colors[i] = wireColor * paintBrush.weights[i];
+                    }
+
+                    mesh.colors = colors;
+                    GL.wireframe = true;
+                    Graphics.DrawMeshNow(mesh, paintBrush.raycastTransform);
+                    GL.wireframe = false;
+                }
+            }
+        }
 	}
 }
 
