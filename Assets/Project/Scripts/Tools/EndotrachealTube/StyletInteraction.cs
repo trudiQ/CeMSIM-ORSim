@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using HurricaneVR.Framework.Core;
+using HurricaneVR.Framework.Core.Grabbers;
+using UnityEngine;
 
 public class StyletInteraction : MonoBehaviour {
 	[HideInInspector]
@@ -11,10 +13,17 @@ public class StyletInteraction : MonoBehaviour {
 
 	private Rigidbody tubeRigidbody;
 	private Rigidbody styletRigidbody;
+	private TubeInteraction tubeInteractions;
+	private HVRInteractable interactable;
+
 	// Start is called before the first frame update
 	void Start() {
 		tubeRigidbody = tube.GetComponent<Rigidbody>();
 		styletRigidbody = GetComponent<Rigidbody>();
+		tubeInteractions = tube.GetComponent<TubeInteraction>();
+		interactable = GetComponent<HVRInteractable>();
+		interactable.HandGrabbed.AddListener(OnGrabbed);
+		interactable.HandReleased.AddListener(OnReleased);
 	}
 
 	// Update is called once per frame
@@ -22,7 +31,11 @@ public class StyletInteraction : MonoBehaviour {
 
 	}
 
-	public void OnStyletGrabbed() {
+	private void OnGrabbed(HVRHandGrabber grabber, HVRGrabbable grabbable) {
+		if (!tubeInteractions.isGrabbed) {
+			grabbable.ForceRelease();
+			return;
+		}
 		if (!isDetached) {
 			tubeRigidbody.constraints = RigidbodyConstraints.FreezeAll;
 			HingeJoint joint = gameObject.AddComponent<HingeJoint>();
@@ -39,9 +52,9 @@ public class StyletInteraction : MonoBehaviour {
 		}
 	}
 
-	public void OnStyletReleased() {
+	private void OnReleased(HVRHandGrabber grabber, HVRGrabbable grabbable) {
 		if (!isDetached) {
-			tube.GetComponent<TubeInteraction>().Regrab();
+			tubeInteractions.Regrab();
 			styletRigidbody.isKinematic = true;
 			RemoveJoint();
 		} else {

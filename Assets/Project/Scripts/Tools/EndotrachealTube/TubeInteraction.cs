@@ -14,8 +14,11 @@ public class TubeInteraction : MonoBehaviour {
 
 	private Animator animator;
 	private Rigidbody rigidBody;
-
+	
+	[HideInInspector]
 	public bool isEtInserted = false;
+	[HideInInspector]
+	public bool isGrabbed;
 
 	// Start is called before the first frame update
 	void Start() {
@@ -45,8 +48,10 @@ public class TubeInteraction : MonoBehaviour {
 	}
 
 	public void Regrab() {
-		grabber.ForceRelease();
-		grabber.TryGrab(grabbable, true);
+		if (grabber) {
+			grabber.ForceRelease();
+			grabber.TryGrab(grabbable, true);
+		}	
 	}
 
 	public void StartInsertionAnimation(Transform etInsertionStartTransform) {
@@ -78,12 +83,14 @@ public class TubeInteraction : MonoBehaviour {
 
 	private void OnGrabbed(HVRHandGrabber grabber, HVRGrabbable grabbable) {
 		this.grabber = grabber;
+		isGrabbed = true;
 	}
 
 	private void OnReleased(HVRHandGrabber grabber, HVRGrabbable grabbable) {
 		if (isEtInserted) {
 			rigidBody.isKinematic = true;
 		}
+		isGrabbed = false;
 	}
 
 }
