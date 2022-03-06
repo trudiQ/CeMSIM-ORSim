@@ -10,6 +10,7 @@ public class SyringeInteractions : MonoBehaviour {
 	public HVRHandPoser poser;
 	public Transform balloon;
 	public Vector3 balloonInflatedSize;
+	public SkinnedMeshRenderer pilotBalloonRenderer;
 
 	public bool isGrabbed { get; set; } = false;
 	public bool isPrimaryButtonPressed { get; set; } = false;
@@ -28,11 +29,14 @@ public class SyringeInteractions : MonoBehaviour {
 			if (Vector3.Distance(plunger.transform.localPosition, plungerEndPos) < 0.001) {
 				plunger.transform.localPosition = plungerEndPos;
 				shouldAnimate = false;
+				pilotBalloonRenderer.SetBlendShapeWeight(0, 100f);
 			}
 
 			if (isPrimaryButtonPressed) {
 				poser.PrimaryPose.Type = BlendType.BooleanParameter;
 				plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerEndPos, Time.deltaTime * speed);
+				float shapeValue = Mathf.Clamp(pilotBalloonRenderer.GetBlendShapeWeight(0) + Time.deltaTime * speed * 100, 0, 100);
+				pilotBalloonRenderer.SetBlendShapeWeight(0, shapeValue);
 			} else {
 				plunger.transform.localPosition = Vector3.Lerp(plunger.transform.localPosition, plungerStartPos, Time.deltaTime * speed);
 			}
