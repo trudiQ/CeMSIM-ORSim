@@ -11,6 +11,7 @@ public class SyringeInteractions : MonoBehaviour {
 	public Transform balloon;
 	public Vector3 balloonInflatedSize;
 	public SkinnedMeshRenderer pilotBalloonRenderer;
+	public ConnectorSyringeAnimations connectorSyringeAnimations;
 
 	public bool isGrabbed { get; set; } = false;
 	public bool isPrimaryButtonPressed { get; set; } = false;
@@ -25,11 +26,11 @@ public class SyringeInteractions : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		if (isGrabbed && shouldAnimate) {
-
-			if (Vector3.Distance(plunger.transform.localPosition, plungerEndPos) < 0.001) {
+			if (Vector3.Distance(plunger.transform.localPosition, plungerEndPos) < 0.003) {
 				plunger.transform.localPosition = plungerEndPos;
 				shouldAnimate = false;
 				pilotBalloonRenderer.SetBlendShapeWeight(0, 100f);
+				connectorSyringeAnimations.DetachSyringe();
 			}
 
 			if (isPrimaryButtonPressed) {
