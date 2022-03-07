@@ -20,8 +20,6 @@ public class ColonStaplerJointManager : MonoBehaviour
     public static ColonStaplerJointManager instance;
     public List<ColonStaplerJointBehavior> activeAnchors;
     public List<ColonStaplerJointBehavior> staticCollisionJoints; // Fixedjoints created between the stapler and the colon sphere that's been pushed further away to prevent stapler penetration
-    public StaplerColonSphereTrigger colon0StaplerTrigger;
-    public StaplerColonSphereTrigger colon1StaplerTrigger;
 
     private void Start()
     {
@@ -130,18 +128,38 @@ public class ColonStaplerJointManager : MonoBehaviour
 
     //}
 
+    public void EnableAnchor(ColonStaplerJointBehavior anchor, Transform staplerStart, Transform staplerEnd, Transform stapler, StaplerColonSphereTrigger staplerTrigger, Vector3 anchorInitialPos, float detachDist)
+    {
+        anchor.followedStaplerStart = staplerStart;
+        anchor.followedStaplerEnd = staplerEnd;
+        anchor.followedStapler = stapler;
+        anchor.followedStaplerCollisionTrigger = staplerTrigger;
+        anchor.transform.position = anchorInitialPos;
+        anchor.detachDistance = detachDist;
+        anchor.gameObject.SetActive(true);
+        activeAnchors.Add(anchor);
+        anchor.AttachColonSphere();
+    }
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="collidingStapler"></param>
     /// <returns></returns>
-    public List<ColonStaplerJointBehavior> SwitchJointAnchorStatic(StaplerColonSphereTrigger collidingStapler, bool isStatic)
+    public List<ColonStaplerJointBehavior> SwitchJointAnchorStatic(ColonStaplerJointBehavior leadAnchor, StaplerColonSphereTrigger collidingStapler, bool isStatic)
     {
         List<ColonStaplerJointBehavior> updatedSphereAnchors = new List<ColonStaplerJointBehavior>();
 
         if (isStatic)
         {
             updatedSphereAnchors = collidingStapler.touchingSpheres.Select(s => GetSphereAnchor(s)).ToList();
+            foreach (ColonStaplerJointBehavior a in updatedSphereAnchors)
+            {
+                if (!a.gameObject.activeInHierarchy)
+                {
+                    EnableAnchor(a, leadAnchor.followedStaplerStart, leadAnchor.followedStaplerEnd, leadAnchor.followedStapler, leadAnchor.followedStaplerCollisionTrigger, a.transform.position, leadAnchor.detachDistance);
+                }
+            }
             collidingStapler.staticAnchors = updatedSphereAnchors;
         }
         else
@@ -150,7 +168,8 @@ public class ColonStaplerJointManager : MonoBehaviour
             collidingStapler.staticAnchors.Clear();
         }
 
-        updatedSphereAnchors.ForEach(a => a.isStaticCollisionJoint = isStatic);
+        collidingStapler.isConnectingColon = isStatic;
+        updatedSphereAnchors.ForEach(a => a.SwitchStatic(isStatic));
 
         return updatedSphereAnchors;
     }

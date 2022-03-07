@@ -97,6 +97,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
     public Transform bottomLineStart; // Start point of the collision line of the bottom LS part
     public Transform bottomLineEnd; // End point of the collision line of the bottom LS part
     public float staplerInsertionCollisionThreshold; // Distance from any sphere to the LS to be pushed back
+    public StaplerColonSphereTrigger topStaplerTrigger;
+    public StaplerColonSphereTrigger bottomStaplerTrigger;
 
     public Transform currentCalibratingHalf; // Which half of the tool is being calibrated;
     public Vector3 currentCalibratingDirection; // Which direction (local position or local eulerangles) is being calibrated
@@ -1416,12 +1418,14 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                     Transform anchorFollowedStart;
                     Transform anchorFollowedEnd;
                     Transform anchorFollowedStapler;
+                    StaplerColonSphereTrigger staplerTrigger;
                     if (globalOperators.m_bInsert[colon] == 1)
                     {
                         partRay = topRay;
                         anchorFollowedStart = topLineStart;
                         anchorFollowedEnd = topLineEnd;
                         anchorFollowedStapler = topHalf.transform;
+                        staplerTrigger = topStaplerTrigger;
                     }
                     else// if (globalOperators.m_bInsert[colon] == 2)
                     {
@@ -1429,6 +1433,7 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         anchorFollowedStart = bottomLineStart;
                         anchorFollowedEnd = bottomLineEnd;
                         anchorFollowedStapler = bottomHalf.transform;
+                        staplerTrigger = bottomStaplerTrigger;
                     }
 
                     for (int sphere = 0; sphere < 20; sphere++)
@@ -1451,14 +1456,8 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
                         {
                             if (!anchor.gameObject.activeInHierarchy)
                             {
-                                anchor.followedStaplerStart = anchorFollowedStart;
-                                anchor.followedStaplerEnd = anchorFollowedEnd;
-                                anchor.followedStapler = anchorFollowedStapler;
-                                anchor.transform.position = MathUtil.ProjectionPointOnLine(partRay, colonSpheres[colon][layer][sphere].position);
-                                anchor.detachDistance = staplerInsertionCollisionThreshold;
-                                anchor.gameObject.SetActive(true);
-                                ColonStaplerJointManager.instance.activeAnchors.Add(anchor);
-                                anchor.AttachColonSphere();
+                                ColonStaplerJointManager.instance.EnableAnchor(anchor, anchorFollowedStart, anchorFollowedEnd, anchorFollowedStapler, staplerTrigger,
+                                    MathUtil.ProjectionPointOnLine(partRay, colonSpheres[colon][layer][sphere].position), staplerInsertionCollisionThreshold);
                             }
 
                             //Vector3 proj = MathUtil.ProjectionPointOnLine(partRay, sphere.position);
