@@ -13,8 +13,13 @@ public class ColonStaplerJointManager : MonoBehaviour
     public globalOperators gOperator;
     public float insertionDepthDetatch;
     public float layerDisplacementDetatch;
-    public float staticAnchorEnableDistance; // How far the sphere of an anchor away from main colon for static anchor to be active
-    public float staticAnchorDisableDistance; // How close the sphere of an anchor to main colon for static anchor to be inactive
+    public float staticAnchorEnableDistance; // How far the sphere of an anchor away from belonged column line for static anchors to be active
+    public float staticAnchorDisableDistance; // How close the sphere of an anchor to belonged column line for static anchors to be inactive
+    public float staplerTiltEnableDistance; // How much higher the stapler tip compare to stapler end for static anchors to be active
+    public float staplerTiltDisableDistance; // How much less higher the stapler tip compare to stapler end for static anchors to be active
+    public float anchorRigidBodyMass;
+    public float anchorJointMassScale;
+    public float staticAnchorConnectingForce;
 
     public List<ColonStaplerJointBehavior> colonJointAnchors;
     public static ColonStaplerJointManager instance;
@@ -153,23 +158,39 @@ public class ColonStaplerJointManager : MonoBehaviour
         if (isStatic)
         {
             updatedSphereAnchors = collidingStapler.touchingSpheres.Select(s => GetSphereAnchor(s)).ToList();
+
+            List<ColonStaplerJointBehavior> activeAnchorsCopy = new List<ColonStaplerJointBehavior>(activeAnchors);
+            // Detach other anchors to avoid physics glitch
+            foreach (ColonStaplerJointBehavior a in activeAnchorsCopy)
+            {
+                if (a.targetSphereColon == leadAnchor.targetSphereColon && !updatedSphereAnchors.Contains(a))
+                {
+                    a.DetachColonSphere();
+                }
+            }
+
             foreach (ColonStaplerJointBehavior a in updatedSphereAnchors)
             {
                 if (!a.gameObject.activeInHierarchy)
                 {
-                    EnableAnchor(a, leadAnchor.followedStaplerStart, leadAnchor.followedStaplerEnd, leadAnchor.followedStapler, leadAnchor.followedStaplerCollisionTrigger, a.transform.position, leadAnchor.detachDistance);
+                    //EnableAnchor(a, leadAnchor.followedStaplerStart, leadAnchor.followedStaplerEnd, leadAnchor.followedStapler, leadAnchor.followedStaplerCollisionTrigger, a.transform.position, leadAnchor.detachDistance);
                 }
             }
             collidingStapler.staticAnchors = updatedSphereAnchors;
+            updatedSphereAnchors.ForEach(a => a.SwitchStatic(isStatic));
         }
         else
         {
             updatedSphereAnchors = collidingStapler.staticAnchors;
-            collidingStapler.staticAnchors.Clear();
-        }
+            updatedSphereAnchors.ForEach(a => a.SwitchStatic(isStatic));
+            // Detach other anchors to avoid physics glitch
+            updatedSphereAnchors.ForEach(a => a.DetachColonSphere());
 
-        collidingStapler.isConnectingColon = isStatic;
-        updatedSphereAnchors.ForEach(a => a.SwitchStatic(isStatic));
+            collidingStapler.staticAnchors.Clear();
+
+            // ### TEST
+            print("switch static to false");
+        }
 
         return updatedSphereAnchors;
     }
@@ -177,5 +198,17 @@ public class ColonStaplerJointManager : MonoBehaviour
     public ColonStaplerJointBehavior GetSphereAnchor(Transform sphere)
     {
         return colonJointAnchors.Find(j => j.targetSphere.transform == sphere);
+    }
+
+    [ShowInInspector]
+    public void AdjustAnchorPhysics()
+    {
+        foreach (ColonStaplerJointBehavior a in colonJointAnchors)
+        {
+            Rigidbody aR = a.GetComponent<Rigidbody>();
+            FixedJoint aJ = a.GetComponent<FixedJoint>();
+            aR.mass = anchorRigidBodyMass;
+            aJ.massScale = anchorJointMassScale;
+        }
     }
 }

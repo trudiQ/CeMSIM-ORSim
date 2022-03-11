@@ -6,6 +6,7 @@ using System.Linq;
 public class ColonStaplerJointBehavior : MonoBehaviour
 {
 
+    public Rigidbody selfRigidBody;
     public Rigidbody targetSphere;
     public FixedJoint jointToSphere;
     public Transform followedStaplerStart;
@@ -25,11 +26,12 @@ public class ColonStaplerJointBehavior : MonoBehaviour
     public Transform followedStapler;
     public StaplerColonSphereTrigger followedStaplerCollisionTrigger;
     public ColonStaplerJointBehavior createdStaticJoint;
+    public bool isLeadStatic; // Is this the sphere that triggers the static collision
 
     // Start is called before the first frame update
     void Start()
     {
-
+        selfRigidBody = this.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -47,6 +49,20 @@ public class ColonStaplerJointBehavior : MonoBehaviour
             UpdateAnchorPosition();
         }
         else
+        {
+            //UpdateAnchorPositionForStaticJoint();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        // ###Test
+        if (!isStaticCollisionJoint)
+        {
+            staticAnchorLocalStaplerPosition = followedStapler.InverseTransformPoint(transform.position);
+        }
+
+        if (isStaticCollisionJoint)
         {
             UpdateAnchorPositionForStaticJoint();
         }
@@ -103,7 +119,7 @@ public class ColonStaplerJointBehavior : MonoBehaviour
 
         if (isStatic)
         {
-            staticAnchorLocalStaplerPosition = followedStapler.InverseTransformPoint(transform.position);
+            //staticAnchorLocalStaplerPosition = followedStapler.InverseTransformPoint(transform.position);
         }
         else
         {
@@ -133,14 +149,17 @@ public class ColonStaplerJointBehavior : MonoBehaviour
             bool byTilt = false;
             Vector3 staplerTriggerLookTarget = Vector3.zero;
             // Check stapler tilt
-            if (followedStaplerStart.position.y - followedStaplerEnd.position.y >)
+            if (followedStaplerStart.position.y - followedStaplerEnd.position.y > ColonStaplerJointManager.instance.staplerTiltEnableDistance)
             {
                 connect = true;
                 byTilt = true;
                 staplerTriggerLookTarget = followedStaplerCollisionTrigger.transform.position + Vector3.up;
+
+                // ### TEST
+                print("switch static to true from tilt");
             }
 
-            // Check sphere position
+            // Check stapler tip position
             Transform columnEndSphere;
             if (ColonMovementController.instance.updateMode[targetSphereColon] == 1)
             {
@@ -151,19 +170,27 @@ public class ColonStaplerJointBehavior : MonoBehaviour
                 columnEndSphere = belongedColumnEnd;
             }
             Ray column = new Ray(belongedColumnStart.position, columnEndSphere.position - belongedColumnStart.position);
-            float sphereToColumnDistance = MathUtil.DistancePointToLine(column, targetSphere.position);
+            float sphereToColumnDistance = MathUtil.DistancePointToLine(column, followedStaplerStart.position);
 
-            if (sphereToColumnDistance >)
+            if (sphereToColumnDistance > ColonStaplerJointManager.instance.staticAnchorEnableDistance)
             {
+                return; // Disable for now
                 connect = true;
                 byTilt = false;
                 staplerTriggerLookTarget = targetSphere.position;
+                isLeadStatic = true;
+
+                // ### TEST
+                print("switch static to true from poke");
             }
 
             if (connect)
             {
+                followedStaplerCollisionTrigger.isConnectingColon = true;
+                followedStaplerCollisionTrigger.gameObject.SetActive(true);
                 followedStaplerCollisionTrigger.connectedByTilt = byTilt;
                 followedStaplerCollisionTrigger.RotateToward(staplerTriggerLookTarget); // Rotate the trigger to capture target spheres to turn related anchor to static
+                StartCoroutine(ConnectStapler());
             }
         }
         else
@@ -171,29 +198,35 @@ public class ColonStaplerJointBehavior : MonoBehaviour
             if (followedStaplerCollisionTrigger.connectedByTilt)
             {
                 // Check stapler tilt
-                if (followedStaplerStart.position.y - followedStaplerEnd.position.y <)
+                if (followedStaplerStart.position.y - followedStaplerEnd.position.y < ColonStaplerJointManager.instance.staplerTiltDisableDistance)
                 {
+                    followedStaplerCollisionTrigger.isConnectingColon = false;
                     ColonStaplerJointManager.instance.SwitchJointAnchorStatic(this, followedStaplerCollisionTrigger, false);
                 }
             }
             else
             {
-                // Check sphere position
-                Transform columnEndSphere;
-                if (ColonMovementController.instance.updateMode[targetSphereColon] == 1)
+                if (isLeadStatic)
                 {
-                    columnEndSphere = belongedColumnTiltingEnd;
-                }
-                else
-                {
-                    columnEndSphere = belongedColumnEnd;
-                }
-                Ray column = new Ray(belongedColumnStart.position, columnEndSphere.position - belongedColumnStart.position);
-                float sphereToColumnDistance = MathUtil.DistancePointToLine(column, targetSphere.position);
+                    // Check sphere position
+                    Transform columnEndSphere;
+                    if (ColonMovementController.instance.updateMode[targetSphereColon] == 1)
+                    {
+                        columnEndSphere = belongedColumnTiltingEnd;
+                    }
+                    else
+                    {
+                        columnEndSphere = belongedColumnEnd;
+                    }
+                    Ray column = new Ray(belongedColumnStart.position, columnEndSphere.position - belongedColumnStart.position);
+                    float sphereToColumnDistance = MathUtil.DistancePointToLine(column, followedStaplerStart.position);
 
-                if (sphereToColumnDistance <)
-                {
-                    ColonStaplerJointManager.instance.SwitchJointAnchorStatic(this, followedStaplerCollisionTrigger, false);
+                    if (sphereToColumnDistance < ColonStaplerJointManager.instance.staticAnchorDisableDistance)
+                    {
+                        followedStaplerCollisionTrigger.isConnectingColon = false;
+                        ColonStaplerJointManager.instance.SwitchJointAnchorStatic(this, followedStaplerCollisionTrigger, false);
+                        isLeadStatic = false;
+                    }
                 }
             }
         }
@@ -208,10 +241,12 @@ public class ColonStaplerJointBehavior : MonoBehaviour
         yield return null;
 
         ColonStaplerJointManager.instance.SwitchJointAnchorStatic(this, followedStaplerCollisionTrigger, true);
+        followedStaplerCollisionTrigger.gameObject.SetActive(false);
     }
 
     public void UpdateAnchorPositionForStaticJoint()
     {
+        selfRigidBody.AddForce((followedStapler.TransformPoint(staticAnchorLocalStaplerPosition) - transform.position).normalized * ColonStaplerJointManager.instance.staticAnchorConnectingForce, ForceMode.Force);
         transform.position = followedStapler.TransformPoint(staticAnchorLocalStaplerPosition);
 
         //// If this anchor's sphere is not too far away from any of its neighbor

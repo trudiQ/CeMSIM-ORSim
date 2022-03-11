@@ -1409,6 +1409,12 @@ public class LinearStaplerTool : MonoBehaviour //inherits Tool class
 
         for (int colon = 0; colon < colonSpheres.Count; colon++)
         {
+            if ((globalOperators.m_bInsert[colon] == 1 && topStaplerTrigger.isConnectingColon) ||
+                (globalOperators.m_bInsert[colon] == 2 && bottomStaplerTrigger.isConnectingColon)) // Skip colon if it is attached to stapler with static anchor
+            {
+                continue;
+            }
+
             for (int layer = 0; layer < colonSpheres[colon].Count; layer++)
             {
                 // If LS reached this layer

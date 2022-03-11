@@ -25,12 +25,34 @@ public class StaplerColonSphereTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!globalOperators.m_bSimStart)
+        {
+            return;
+        }
 
+        if (other.name.Contains("sphere_"))
+        {
+            int colon = int.Parse(other.name[7].ToString());
+
+            if ((globalOperators.m_bInsert[colon] == 1 && belongedStapler == LinearStaplerTool.instance.topHalf.transform) ||
+                (globalOperators.m_bInsert[colon] == 2 && belongedStapler == LinearStaplerTool.instance.bottomHalf.transform))
+            {
+                touchingSpheres.Add(other.transform);
+            }
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (!globalOperators.m_bSimStart)
+        {
+            return;
+        }
 
+        if (other.name.Contains("sphere_"))
+        {
+            touchingSpheres.Remove(other.transform);
+        }
     }
 
     /// <summary>
@@ -39,6 +61,9 @@ public class StaplerColonSphereTrigger : MonoBehaviour
     /// <param name="target"></param>
     public void RotateToward(Vector3 target)
     {
+        // ###Test
+        print("rotate trigger");
+
         Ray staplerRay = new Ray(belongedStapler.position, belongedStapler.right);
         Vector3 targetProjectionOnStapler = MathUtil.ProjectionPointOnLine(staplerRay, target);
         Vector3 lookPos = target - targetProjectionOnStapler + transform.position;
