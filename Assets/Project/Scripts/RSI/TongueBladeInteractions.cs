@@ -8,6 +8,8 @@ public class TongueBladeInteractions : MonoBehaviour {
 	public Transform bladeAnchor;
 	public ETCollisionDetection etCollisionDetection;
 	public Animator jawAnimator;
+	public Animator EtAnimator;
+	public TubeInteraction tube;
 
 	private bool staying = false;
 	private GameObject blade;
@@ -34,8 +36,14 @@ public class TongueBladeInteractions : MonoBehaviour {
 			manager.SweepTongue(1f);
 		} else if (blade && bladeLocked) {
 			bladeLocked = false;
+			blade.transform.SetParent(null);
 			Rigidbody rb = blade.GetComponent<Rigidbody>();
 			rb.isKinematic = !rb.isKinematic;
+			if (isETInserted) {
+				EtAnimator.enabled = true;
+				EtAnimator.Play("ETMouthClosingAnim");
+				jawAnimator.Play("JawRestoreAnim");
+			}
 		}
 	}
 
@@ -48,6 +56,7 @@ public class TongueBladeInteractions : MonoBehaviour {
 				from.localRotation = to.localRotation;
 				from.localScale = to.localScale;
 				jawAnimator.enabled = true;
+				jawAnimator.Play("JawAnim");
 				yield break;
 			} else {
 				from.localPosition = Vector3.Lerp(from.localPosition, to.localPosition, timeElapsed / 2);
