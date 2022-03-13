@@ -5,6 +5,7 @@ using UnityEngine;
 public class ConnectorSyringeAnimations : MonoBehaviour {
     public TubeInteraction tubeInteraction;
     public Animator animator;
+    public Collider syringeCollider;
 
     private HVRInteractable interactable;
     private Rigidbody rb;
@@ -25,6 +26,7 @@ public class ConnectorSyringeAnimations : MonoBehaviour {
     public void DetachSyringe() {
         rb.isKinematic = false;
         isSyringeDetached = true;
+        syringeCollider.isTrigger = false;
         transform.SetParent(null);
         interactable.ForceRelease();
         grabber.TryGrab(interactable, true);

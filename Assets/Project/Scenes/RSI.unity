@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12809429, g: 0.15871584, b: 0.21006814, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -743,6 +743,16 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4560292590606673314, guid: dd368468aa0d3d44c856e36a2653dbb8,
+        type: 3}
+      propertyPath: ShowBoundingBox
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4560292590606673314, guid: dd368468aa0d3d44c856e36a2653dbb8,
+        type: 3}
+      propertyPath: DrawCenterOfMass
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4560292590606673315, guid: dd368468aa0d3d44c856e36a2653dbb8,
         type: 3}
       propertyPath: manager
@@ -1433,48 +1443,6 @@ MonoBehaviour:
   colliders: []
   player: {fileID: 0}
   otherHVRGrabbableGO: {fileID: 0}
---- !u!114 &766482219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1001 &847230001
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3790,6 +3758,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1205680024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!1 &1210083623
 GameObject:
   m_ObjectHideFlags: 1
@@ -5146,7 +5156,7 @@ PrefabInstance:
     - target: {fileID: 99916365224189680, guid: dc973a2e38e8c9d4284a8953e0755801,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.5229998
+      value: -3.559
       objectReference: {fileID: 0}
     - target: {fileID: 99916365224189680, guid: dc973a2e38e8c9d4284a8953e0755801,
         type: 3}
@@ -5212,21 +5222,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6315924675394735112, guid: dc973a2e38e8c9d4284a8953e0755801,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.x
-      value: 0.00040180914
-      objectReference: {fileID: 0}
-    - target: {fileID: 6315924675394735112, guid: dc973a2e38e8c9d4284a8953e0755801,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.y
-      value: 0.023574302
-      objectReference: {fileID: 0}
-    - target: {fileID: 6315924675394735112, guid: dc973a2e38e8c9d4284a8953e0755801,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: 0.025500422
       objectReference: {fileID: 0}
     - target: {fileID: 6714615944880590319, guid: dc973a2e38e8c9d4284a8953e0755801,
         type: 3}
@@ -6357,6 +6352,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3970201441787235003, guid: 70cc2ca338c1b1f44a829005e459a064,
         type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3970201441787235003, guid: 70cc2ca338c1b1f44a829005e459a064,
+        type: 3}
       propertyPath: HandGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 703508270}
@@ -6443,17 +6443,22 @@ PrefabInstance:
     - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_ConnectedAnchor.x
-      value: -0.01660003
+      value: -0.016599981
       objectReference: {fileID: 0}
     - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_ConnectedAnchor.y
-      value: 0.023500081
+      value: 0.023499954
       objectReference: {fileID: 0}
     - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_ConnectedAnchor.z
-      value: -0.007100141
+      value: -0.0071001183
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
+        type: 3}
+      propertyPath: m_AngularZLimit.limit
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444780, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
@@ -6468,52 +6473,52 @@ PrefabInstance:
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.849
+      value: 0.88975585
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.5206704
+      value: -3.4737
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.5428
+      value: 0.55152947
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.4806087
+      value: -0.4985497
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.4962633
+      value: -0.49144074
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.4999054
+      value: -0.56079775
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.5223339
+      value: 0.44208622
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 92.216
+      value: 99.64801
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -258.614
+      value: -48.056
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -351.214
+      value: -498.798
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e30cd4503024f3c45839dd62f7815859, type: 3}

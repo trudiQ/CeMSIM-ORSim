@@ -14,7 +14,7 @@ public class TubeInteraction : MonoBehaviour {
 
 	private Animator animator;
 	private Rigidbody rigidBody;
-	
+
 	[HideInInspector]
 	public bool isEtInserted = false;
 	[HideInInspector]
@@ -51,7 +51,7 @@ public class TubeInteraction : MonoBehaviour {
 		if (grabber) {
 			grabber.ForceRelease();
 			grabber.TryGrab(grabbable, true);
-		}	
+		}
 	}
 
 	public void StartInsertionAnimation(Transform etInsertionStartTransform) {
@@ -71,15 +71,16 @@ public class TubeInteraction : MonoBehaviour {
 		connector.localEulerAngles = connectorInsertedTransform.rotation;
 	}
 
-	public void OnInsertionAnimationCompleted() {
-		SetConnectorTransform();
-		isEtInserted = true;
-		foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>()) {
-			rb.isKinematic = true;
+	public void OnAnimationCompleted() {
+		if (!isEtInserted) {
+			SetConnectorTransform();
+			isEtInserted = true;
+			foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>()) {
+				rb.isKinematic = true;
+			}
 		}
 		animator.enabled = false;
 	}
-
 
 	private void OnGrabbed(HVRHandGrabber grabber, HVRGrabbable grabbable) {
 		this.grabber = grabber;
