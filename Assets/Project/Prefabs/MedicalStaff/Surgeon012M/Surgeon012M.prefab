@@ -56,6 +56,36 @@ MonoBehaviour:
     weight: 1
     parentChildCrossfade: 0.5
     twistAngleOffset: 0
+--- !u!1 &2221188693261389850
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9015153277833369804}
+  m_Layer: 0
+  m_Name: Palm.L
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9015153277833369804
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2221188693261389850}
+  m_LocalRotation: {x: 0.6151416, y: -0.6694503, z: -0.35728523, w: 0.21397279}
+  m_LocalPosition: {x: -0.0184, y: 0.0689, z: -0.0119}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 98982386731288080}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: -12.423, y: -131.973, z: -90.71}
 --- !u!1 &4793956473566993433
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,7 +397,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 846e931ca7075954fb4fc58005db1ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ik: {fileID: 3585309525256310504}
   avatarHeightUtility: {fileID: 8347755142249095887}
   cameraRig: {fileID: 0}
   heightAdjustmentMultiplier: 0.98
@@ -428,7 +457,7 @@ MonoBehaviour:
   Hand: {fileID: 5359592898834830456}
   OpenPose: {fileID: 0}
   ClosedPose: {fileID: 0}
-  Palm: {fileID: 4664992629706962283}
+  Palm: {fileID: 9015153277833369804}
   DrawSpheres: 0
   DrawTips: 0
   DrawCollisionPoints: 0
@@ -577,36 +606,6 @@ MonoBehaviour:
     PinkyStart: 0
   ReferencePose: {fileID: 0}
   MirrorAxis: 0
---- !u!1 &4904551973845982256
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4664992629706962283}
-  m_Layer: 0
-  m_Name: Palm.L
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4664992629706962283
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4904551973845982256}
-  m_LocalRotation: {x: -0.15262185, y: -0.6821256, z: -0.379392, w: 0.6061955}
-  m_LocalPosition: {x: -0.0205, y: 0.0684, z: -0.0085}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 98982386731288080}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: -44.638, y: -88.162, z: -20.72}
 --- !u!114 &6963669504294274494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -668,7 +667,7 @@ MonoBehaviour:
   Hand: {fileID: 3356837489756998786}
   OpenPose: {fileID: 0}
   ClosedPose: {fileID: 0}
-  Palm: {fileID: 2905103757692185845}
+  Palm: {fileID: 4949816628993180957}
   DrawSpheres: 0
   DrawTips: 0
   DrawCollisionPoints: 0
@@ -835,7 +834,7 @@ MonoBehaviour:
     PinkyStart: 0
   ReferencePose: {fileID: 0}
   MirrorAxis: 0
---- !u!1 &6514543673082347477
+--- !u!1 &6294357157456585677
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -843,7 +842,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2905103757692185845}
+  - component: {fileID: 4949816628993180957}
   m_Layer: 0
   m_Name: Palm.R
   m_TagString: Untagged
@@ -851,20 +850,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2905103757692185845
+--- !u!4 &4949816628993180957
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6514543673082347477}
-  m_LocalRotation: {x: 0.25745124, y: 0.67144287, z: 0.17235337, w: 0.6731848}
-  m_LocalPosition: {x: 0.0264, y: 0.0512, z: -0.004}
+  m_GameObject: {fileID: 6294357157456585677}
+  m_LocalRotation: {x: 0.5633382, y: 0.627509, z: 0.4385865, w: 0.31068388}
+  m_LocalPosition: {x: 0.024, y: 0.0579, z: -0.0052}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1127614053397412065}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 6.614, y: 91.975, z: 35.567}
+  m_LocalEulerAnglesHint: {x: -11.56, y: 115.53, z: 91.136}
 --- !u!1001 &3511190578431150104
 PrefabInstance:
   m_ObjectHideFlags: 0

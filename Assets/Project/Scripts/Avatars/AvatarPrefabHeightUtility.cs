@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 // Finds the height of the avatar's prefab for height calibration
 public class AvatarPrefabHeightUtility : MonoBehaviour
@@ -19,6 +22,7 @@ public class AvatarPrefabHeightUtility : MonoBehaviour
     }
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(AvatarPrefabHeightUtility))]
 public class AvatarPrefabHeightUtilityEditor : Editor
 {
@@ -36,3 +40,4 @@ public class AvatarPrefabHeightUtilityEditor : Editor
         }
     }
 }
+#endif

@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using RootMotion.FinalIK;
 using HurricaneVR.Framework.Core.Player;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace CEMSIM
 {
@@ -37,6 +40,7 @@ namespace CEMSIM
         }
     }
 
+#if UNITY_EDITOR
     [CustomEditor(typeof(UserHeightUtility))]
     public class UserHeightUtilityEditor : Editor
     {
@@ -50,4 +54,5 @@ namespace CEMSIM
                 (target as UserHeightUtility).CalculateUserHeight();
         }
     }
+#endif
 }
