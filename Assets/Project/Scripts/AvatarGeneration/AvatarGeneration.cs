@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using HurricaneVR.Framework.Shared.HandPoser;
 using HurricaneVR.Framework.Core.Grabbers;
-using UnityEditor;
 using RootMotion.FinalIK;
+
+#if UNITY_EDITOR
+using UnityEditor;
 
 namespace CEMSIM
 {
@@ -414,3 +416,4 @@ namespace CEMSIM
         }
     }
 }
+#endif
