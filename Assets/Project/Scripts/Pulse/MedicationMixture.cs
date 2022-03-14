@@ -6,6 +6,8 @@ using CEMSIM.Network;
 using CEMSIM.Tools;
 using CEMSIM.Logger;
 using UnityEngine;
+using CEMSIM.GameLogic;
+using Newtonsoft.Json.Linq;
 
 namespace CEMSIM
 {
@@ -16,7 +18,7 @@ namespace CEMSIM
         /// Current implementation use a dictionary to store contained drug and its volume.
         /// If the type of drugs won't be too much, using an array of # of drugs may be more efficient.
         /// </summary>
-        public class MedicineMixture : NetworkStateInterface, LoggingEventInterface
+        public class MedicineMixture : NetworkStateInterface, LoggingEventInterface, ItemJsonLoadInterface
         {
             public Dictionary<Medication.Drugs, float> mixture; // type of medication and its volume
 
@@ -43,6 +45,7 @@ namespace CEMSIM
 
             public MedicineMixture(Dictionary<Medication.Drugs, float> _mixture)
             {
+                volume = 0;
                 mixture = new Dictionary<Medication.Drugs, float>(_mixture);
                 delta = new Dictionary<Medication.Drugs, float>(_mixture);
                 foreach (KeyValuePair<Medication.Drugs, float> kvp in mixture)
@@ -310,6 +313,19 @@ namespace CEMSIM
                 }
 
                 return msg;
+            }
+
+            public void DigestJsonObject(JObject jObject)
+            {
+                Dictionary<Medication.Drugs, float> _mixture = jObject.ToObject<Dictionary<Medication.Drugs, float>>();
+
+                volume = 0;
+                mixture = new Dictionary<Medication.Drugs, float>(_mixture);
+                delta = new Dictionary<Medication.Drugs, float>(_mixture);
+                foreach (KeyValuePair<Medication.Drugs, float> kvp in mixture)
+                {
+                    volume += kvp.Value;
+                }
             }
         }
     }

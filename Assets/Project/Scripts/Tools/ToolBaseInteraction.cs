@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CEMSIM.GameLogic;
 using CEMSIM.Network;
+using Newtonsoft.Json.Linq;
 
 namespace CEMSIM
 {
@@ -30,6 +31,24 @@ namespace CEMSIM
             {
                 itemId = _itemId;
             }
+
+            ///// <summary>
+            ///// This function will set the initial state of the item based on the input json Jobject
+            ///// Each tool should serialize the  
+            ///// </summary>
+            ///// <param name="jobject"></param>
+            //public virtual void DigestJsonObject(JObject item)
+            //{
+            //    if (item.ContainsKey("State")){
+            //        DigestToolStateFromJsonObject(item["State"]);
+            //    }
+            //}
+
+            ///// <summary>
+            ///// This function will use a json object which is serialized from a ToolState.
+            ///// </summary>
+            ///// <param name="jobject_state"></param>
+            //public abstract void DigestToolStateFromJsonObject(JToken jtoken_state);
 
             /// <summary>
             /// Set the state of the binded gameobject by a given state.
@@ -108,6 +127,8 @@ namespace CEMSIM
                 if (onToolStateUpdateTrigger != null)
                     onToolStateUpdateTrigger(toolType, _itemId, _state, _clientId);
             }
+
+            
 
             #endregion
 

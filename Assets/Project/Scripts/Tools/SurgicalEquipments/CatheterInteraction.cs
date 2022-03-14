@@ -5,6 +5,7 @@ using CEMSIM.Network;
 using CEMSIM.GameLogic;
 using UnityEngine;
 using CEMSIM.Logger;
+using Newtonsoft.Json.Linq;
 
 namespace CEMSIM
 {
@@ -49,6 +50,14 @@ namespace CEMSIM
                 msg += BaseEvent.JsonAddElement("CatheterState", state.ToString());
                 return msg;
 ;            }
+
+            public override void DigestJsonObject(JObject jobject)
+            {
+                if (jobject.ContainsKey("State"))
+                {
+                    Enum.TryParse((string)jobject["State"], true, out state);
+                }
+            }
         }
 
 

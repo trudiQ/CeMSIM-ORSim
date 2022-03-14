@@ -3,6 +3,7 @@ using CEMSIM.GameLogic;
 using CEMSIM.Network;
 using System;
 using CEMSIM.Tools;
+using Newtonsoft.Json.Linq;
 
 namespace CEMSIM
 {
@@ -58,6 +59,11 @@ namespace CEMSIM
             {
                 if(_remainderPacket.UnreadLength() > 0)
                     itemInteractionManager.DigestStateBytes(_remainderPacket);
+            }
+
+            public void DigestJsonObject(JObject jObject)
+            {
+                itemInteractionManager.toolState.DigestJsonObject(jObject);
             }
 
 

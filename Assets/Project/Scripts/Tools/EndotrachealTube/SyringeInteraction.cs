@@ -5,6 +5,8 @@ using CEMSIM.GameLogic;
 using CEMSIM.Network;
 using static CEMSIM.Medication.Medication;
 using CEMSIM.Logger;
+using Newtonsoft.Json.Linq;
+using System;
 
 namespace CEMSIM
 {
@@ -16,7 +18,7 @@ namespace CEMSIM
 		public class SyringeState: ToolBaseState
 		{
             public MedicineMixture drugContent;
-            public float capacity { get; } // capacity of the syringe (ml)
+            public float capacity { get; set; } // capacity of the syringe (ml)
 
 			public SyringeState(float _capacity, float _volume=0, Drugs drug=Drugs.empty)
             {
@@ -70,6 +72,28 @@ namespace CEMSIM
 				msg += BaseEvent.JsonAddElement("capacity", capacity.ToString(), true);
 				msg += BaseEvent.JsonAddSubElement("content", drugContent.ToJson());
 				return msg;
+			}
+
+            public override void DigestJsonObject(JObject jObject)
+            {
+				JToken state_json;
+				if (!jObject.ContainsKey("State"))
+				{
+					Debug.LogWarning("No initial state found in the input json file");
+					return;
+				}
+				state_json = jObject["State"];
+
+				if(jObject.ContainsKey("Capacity"))
+				{
+					capacity = float.Parse((string)state_json["Capacity"]);
+				}
+
+				if (jObject.ContainsKey("DrugContent"))
+                {
+					drugContent.DigestJsonObject((JObject)jObject["DrugContent"]);
+                }
+
 			}
         }
 

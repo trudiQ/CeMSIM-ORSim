@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using CEMSIM.Network;
 using UnityEngine;
 using CEMSIM.Logger;
+using CEMSIM.GameLogic;
+using Newtonsoft.Json.Linq;
 
 namespace CEMSIM {
     namespace Tools
     {
-        public abstract class ToolBaseState : NetworkStateInterface, LoggingEventInterface
+        public abstract class ToolBaseState : NetworkStateInterface, LoggingEventInterface, ItemJsonLoadInterface
         {
+            public abstract void DigestJsonObject(JObject jObject);
+            
+
             public virtual bool FromPacketPayload(Packet _remainderPacket)
             {
                 // do nothing
@@ -28,6 +33,8 @@ namespace CEMSIM {
             {
                 return new byte[0];
             }
+
+
         }
     }
 }
