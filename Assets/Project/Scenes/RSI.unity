@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.12809429, g: 0.15871584, b: 0.21006814, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1037,6 +1037,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &481222188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields:
+  - Simulation Time(s)
+  - Lead3ElectricPotential(mV)
+  - "HeartRate(1\u2215min)"
+  - ArterialPressure(mmHg)
+  - MeanArterialPressure(mmHg)
+  - SystolicArterialPressure(mmHg)
+  - DiastolicArterialPressure(mmHg)
+  - OxygenSaturation()
+  - EndTidalCarbonDioxidePressure(mmHg)
+  - "RespirationRate(1\u2215min)"
+  - SkinTemperature(degC)
+  - Carina-CarbonDioxide-PartialPressure(mmHg)
+  - BloodVolume(mL)
+  timeStampList:
+    list: []
+  valuesTable:
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
+  - list: []
 --- !u!54 &488709892 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: 488709892, guid: e30cd4503024f3c45839dd62f7815859,
@@ -3758,48 +3800,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1205680024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b542d476b1044fe5a410c288650ba2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fields:
-  - Simulation Time(s)
-  - Lead3ElectricPotential(mV)
-  - "HeartRate(1\u2215min)"
-  - ArterialPressure(mmHg)
-  - MeanArterialPressure(mmHg)
-  - SystolicArterialPressure(mmHg)
-  - DiastolicArterialPressure(mmHg)
-  - OxygenSaturation()
-  - EndTidalCarbonDioxidePressure(mmHg)
-  - "RespirationRate(1\u2215min)"
-  - SkinTemperature(degC)
-  - Carina-CarbonDioxide-PartialPressure(mmHg)
-  - BloodVolume(mL)
-  timeStampList:
-    list: []
-  valuesTable:
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
-  - list: []
 --- !u!1 &1210083623
 GameObject:
   m_ObjectHideFlags: 1
@@ -5223,6 +5223,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6315924675623275447, guid: dc973a2e38e8c9d4284a8953e0755801,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 1.0642872
+      objectReference: {fileID: 0}
     - target: {fileID: 6714615944880590319, guid: dc973a2e38e8c9d4284a8953e0755801,
         type: 3}
       propertyPath: m_RootOrder
@@ -6443,22 +6448,17 @@ PrefabInstance:
     - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_ConnectedAnchor.x
-      value: -0.016599981
+      value: 0.00059998967
       objectReference: {fileID: 0}
     - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_ConnectedAnchor.y
-      value: 0.023499954
+      value: 0.07520002
       objectReference: {fileID: 0}
     - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_ConnectedAnchor.z
-      value: -0.0071001183
-      objectReference: {fileID: 0}
-    - target: {fileID: 4701379294414632233, guid: e30cd4503024f3c45839dd62f7815859,
-        type: 3}
-      propertyPath: m_AngularZLimit.limit
-      value: 14
+      value: -0.04680004
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444780, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
@@ -6473,52 +6473,52 @@ PrefabInstance:
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.88975585
+      value: 0.8636
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.4737
+      value: -3.5408692
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.55152947
+      value: 0.5637
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.4985497
+      value: -0.5512151
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.49144074
+      value: -0.5198815
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.56079775
+      value: -0.42903855
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.44208622
+      value: 0.49174297
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 99.64801
+      value: 84.318
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -48.056
+      value: -22.764
       objectReference: {fileID: 0}
     - target: {fileID: 4701379295292444787, guid: e30cd4503024f3c45839dd62f7815859,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -498.798
+      value: -104.133
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e30cd4503024f3c45839dd62f7815859, type: 3}
