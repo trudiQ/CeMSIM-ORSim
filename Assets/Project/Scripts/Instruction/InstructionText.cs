@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 
 [CreateAssetMenu(fileName = "Instruction Text", menuName = "CeMSIM/Instruction Text", order = 1)]
 public class InstructionText : ScriptableObject

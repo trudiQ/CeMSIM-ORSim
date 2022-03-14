@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using UnityEngine.Animations;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class InstructionUI : MonoBehaviour
 {
@@ -255,6 +258,7 @@ public class InstructionUI : MonoBehaviour
     }
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(InstructionUI))]
 public class InstructionUIEditor : Editor
 {
@@ -269,3 +273,4 @@ public class InstructionUIEditor : Editor
             }
     }
 }
+#endif

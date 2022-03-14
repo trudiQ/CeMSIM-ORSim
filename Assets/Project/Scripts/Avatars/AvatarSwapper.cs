@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.UI;
-using UnityEditor;
 using UnityEngine.Events;
 using CEMSIM.GameLogic;
 using CEMSIM.Network;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace CEMSIM
 {
@@ -119,6 +122,7 @@ namespace CEMSIM
         }
     }
 
+#if UNITY_EDITOR
     [CustomEditor(typeof(AvatarSwapper))]
     public class AvatarSwapperEditor : Editor
     {
@@ -144,3 +148,4 @@ namespace CEMSIM
         }
     }
 }
+#endif
