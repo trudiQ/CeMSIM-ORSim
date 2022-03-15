@@ -6,6 +6,7 @@ public class TubeInteraction : MonoBehaviour {
 	public Collider tubeIgnoreCollider;
 	public Collider styletIgnoreCollider;
 	public Collider tubeInsertCollider;
+	public Collider ventilatorCollider;
 	public Transform connector;
 	public TransformHolder connectorInsertedTransform;
 
@@ -44,6 +45,7 @@ public class TubeInteraction : MonoBehaviour {
 
 		styletInteraction.RemoveJoint();
 		styletInteraction.isDetached = true;
+		ventilatorCollider.enabled = true;
 		Regrab();
 	}
 

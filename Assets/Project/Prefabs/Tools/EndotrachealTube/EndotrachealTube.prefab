@@ -1785,6 +1785,7 @@ GameObject:
   - component: {fileID: 4701379295292444790}
   - component: {fileID: 6397173134243526886}
   - component: {fileID: 5903063200533664013}
+  - component: {fileID: 1948260524}
   m_Layer: 0
   m_Name: EndotrachealTube
   m_TagString: Untagged
@@ -1855,6 +1856,7 @@ MonoBehaviour:
   tubeIgnoreCollider: {fileID: 4701379295292444790}
   styletIgnoreCollider: {fileID: 4701379294034052871}
   tubeInsertCollider: {fileID: 6397173134243526886}
+  ventilatorCollider: {fileID: 1948260524}
   connector: {fileID: 4701379294414632234}
   connectorInsertedTransform: {fileID: 3043284973134521603}
   isEtInserted: 0
@@ -2067,6 +2069,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!135 &1948260524
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4701379295292444780}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.01
+  m_Center: {x: -0.1427, y: 0.05913, z: -0.0163}
 --- !u!1 &4701379295527645151
 GameObject:
   m_ObjectHideFlags: 0
