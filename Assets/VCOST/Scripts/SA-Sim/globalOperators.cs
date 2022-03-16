@@ -437,6 +437,10 @@ public class globalOperators : MonoBehaviour
                 foreach (ConfigurableJoint j in joints0)
                 {
                     Rigidbody sphere = j.connectedBody;
+                    if (GetSphereLayer(sphere.name) != GetSphereLayer(sphere0B.name))
+                    {
+                        continue;
+                    }
                     Destroy(j);
                     FixedJoint newJ = sphere0B.AddComponent<FixedJoint>();
                     newJ.connectedBody = sphere;
@@ -488,6 +492,8 @@ public class globalOperators : MonoBehaviour
                     //}
                 }
 
+                // Modify every supporting fixed joints
+                supportingJointsForJoining.ForEach(jl => jl.ForEach(j => j.breakForce = 10));
 
                 // reconfigure the joint
                 //joint1A0B.linearLimitSpring = new SoftJointLimitSpring() { spring = 50.0f, damper = 50.0f };

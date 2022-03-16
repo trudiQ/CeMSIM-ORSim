@@ -210,7 +210,7 @@ public class ColonStaplerJointBehavior : MonoBehaviour
                 {
                     // Check sphere position
                     Transform columnEndSphere;
-                    if (ColonMovementController.instance.updateMode[targetSphereColon] == 1)
+                    if (ColonMovementController.instance.updateMode[targetSphereColon] == 1) 
                     {
                         columnEndSphere = belongedColumnTiltingEnd;
                     }
