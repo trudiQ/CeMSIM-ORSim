@@ -51,7 +51,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 94bde3584e8537f45b2300bcaa3234c7, type: 2}
+  - {fileID: 2100000, guid: 04963e6f71f65f842a4e33538f47cf2c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -313,6 +313,7 @@ GameObject:
   - component: {fileID: 488709891}
   - component: {fileID: 488709893}
   - component: {fileID: 488709894}
+  - component: {fileID: 200265990}
   m_Layer: 0
   m_Name: Syringe
   m_TagString: Untagged
@@ -394,7 +395,7 @@ BoxCollider:
   m_GameObject: {fileID: 4701379293957392971}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 0.030732824, y: 0.018597828, z: 0.2455534}
   m_Center: {x: 4.7780924e-10, y: -0.000000261718, z: 0.050405707}
@@ -449,7 +450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tubeInteraction: {fileID: 4701379295292444785}
   animator: {fileID: 2654175110993504868}
-  syringeCollider: {fileID: 4701379293957392972}
+  syringeCollider: {fileID: 200265990}
   tapingAnimator: {fileID: 6473635891145312447}
 --- !u!114 &488709893
 MonoBehaviour:
@@ -829,6 +830,20 @@ MonoBehaviour:
   RightTrackPadDownDeactivated:
     m_PersistentCalls:
       m_Calls: []
+--- !u!64 &200265990
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4701379293957392971}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 3346168432286702358, guid: 77f8adb222259ee41be91883fb62d463, type: 3}
 --- !u!1 &4701379294034052867
 GameObject:
   m_ObjectHideFlags: 0
@@ -1103,7 +1118,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.0005998863, y: 0.075200155, z: -0.046799928}
+  m_ConnectedAnchor: {x: 0.00059987605, y: 0.07520005, z: -0.04679988}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -2177,7 +2192,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 94bde3584e8537f45b2300bcaa3234c7, type: 2}
+  - {fileID: 2100000, guid: 04963e6f71f65f842a4e33538f47cf2c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
