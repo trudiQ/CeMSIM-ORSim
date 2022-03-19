@@ -1,16 +1,23 @@
-﻿using UnityEngine;
+﻿using HurricaneVR.Framework.Core;
+using HurricaneVR.Framework.Core.Grabbers;
+using UnityEngine;
 
 public class VentilatorETConnection : MonoBehaviour {
 	public TransformHolder connectedTransform;
 	public HVRInteractable interactable;
 
 	[HideInInspector]
-	public bool isAttached;
+	public bool isMaskAttached;
 
 	private Rigidbody rb;
+	private bool isGrabbed;
+	private MountableMask mask;
+
 	// Start is called before the first frame update
 	void Start() {
 		rb = GetComponent<Rigidbody>();
+		interactable.Grabbed.AddListener(OnGrabbed);
+		interactable.Released.AddListener(OnReleased);
 	}
 
 	// Update is called once per frame
@@ -24,13 +31,19 @@ public class VentilatorETConnection : MonoBehaviour {
 
 		if (tubeInteraction) {
 			AttachTube(tubeInteraction, other.gameObject.transform);
-		} else if (mountableMask && !isAttached) {
+		} else if (mountableMask && !isMaskAttached) {
 			AttachMask(mountableMask, other.gameObject);
 		}
 	}
 
+	public void OnLeftPrimaryButtonPressed() {
+		if(isMaskAttached && isGrabbed && mask) {
+			mask.DetachMaskFromPatient();
+		}
+	}
+
 	private void AttachMask(MountableMask mountableMask, GameObject otherGameObject) {
-		TransformHolder transformHolder = otherGameObject.GetComponent<TransformHolder>();
+		TransformHolder transformHolder = mountableMask.ventilatorAttachmentTransform;
 		Transform otherTransform = otherGameObject.transform;
 		otherTransform.parent = transform;
 		otherTransform.localPosition = transformHolder.position;
@@ -41,16 +54,17 @@ public class VentilatorETConnection : MonoBehaviour {
 		joint.connectedBody = rb;
 		mountableMask.mounted = true;
 		mountableMask.grabbable.Stationary = true;
-		isAttached = true;
+		isMaskAttached = true;
+		mask = mountableMask;
 	}
 
-	private void AttachTube(TubeInteraction tubeInteraction, Transform transform) {
+	private void AttachTube(TubeInteraction tubeInteraction, Transform tubeTransform) {
 		foreach (Collider c in GetComponents<Collider>()) {
 			c.enabled = false;
 		}
 
 		var parent = transform.parent;
-		transform.SetParent(transform);
+		transform.SetParent(tubeTransform);
 		transform.localPosition = connectedTransform.position;
 		transform.localEulerAngles = connectedTransform.rotation;
 		transform.parent = parent;
@@ -59,5 +73,13 @@ public class VentilatorETConnection : MonoBehaviour {
 		interactable.grabbable = false;
 
 		rb.isKinematic = true;
+	}
+
+	private void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable) {
+		isGrabbed = true;
+	}
+
+	private void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable) {
+		isGrabbed = false;
 	}
 }
