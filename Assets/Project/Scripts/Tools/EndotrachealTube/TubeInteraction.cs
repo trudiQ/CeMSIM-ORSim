@@ -10,6 +10,7 @@ public class TubeInteraction : MonoBehaviour {
 	public Collider ventilatorCollider;
 	public Transform connector;
 	public TransformHolder connectorInsertedTransform;
+	public GameObject tape;
 
 	private HVRGrabbable grabbable;
 	private HVRHandGrabber grabber;
@@ -54,6 +55,7 @@ public class TubeInteraction : MonoBehaviour {
 		if (isGrabbed && isEtInserted) {
 			animator.enabled = true;
 			animator.Play("ETExtubationAnim");
+			tape.SetActive(false);
 		}
 	}
 
@@ -93,7 +95,9 @@ public class TubeInteraction : MonoBehaviour {
 	}
 
 	public void OnExtubationCompleted() {
-		animator.enabled = false;
+		foreach(Animator anim in GetComponentsInChildren<Animator>()) {
+			anim.enabled = false;
+		}
 		isEtInserted = false;
 		StartCoroutine(CompleteExtubation());
 	}

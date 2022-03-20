@@ -5,6 +5,7 @@ using UnityEngine;
 public class VentilatorETConnection : MonoBehaviour {
 	public TransformHolder connectedTransform;
 	public HVRInteractable interactable;
+	public Collider etConnectionCollider;
 
 	[HideInInspector]
 	public bool isMaskAttached;
@@ -12,6 +13,7 @@ public class VentilatorETConnection : MonoBehaviour {
 	private Rigidbody rb;
 	private bool isGrabbed;
 	private MountableMask mask;
+	private bool isETAttached;
 
 	// Start is called before the first frame update
 	void Start() {
@@ -30,14 +32,14 @@ public class VentilatorETConnection : MonoBehaviour {
 		TubeInteraction tubeInteraction = other.gameObject.GetComponent<TubeInteraction>();
 
 		if (tubeInteraction) {
-			AttachTube(tubeInteraction, other.gameObject.transform);
+			AttachTube(tubeInteraction, other.gameObject);
 		} else if (mountableMask && !isMaskAttached) {
 			AttachMask(mountableMask, other.gameObject);
 		}
 	}
 
 	public void OnLeftPrimaryButtonPressed() {
-		if(isMaskAttached && isGrabbed && mask) {
+		if (isMaskAttached && isGrabbed && mask) {
 			mask.DetachMaskFromPatient();
 		}
 	}
@@ -57,29 +59,38 @@ public class VentilatorETConnection : MonoBehaviour {
 		isMaskAttached = true;
 		mask = mountableMask;
 	}
-
-	private void AttachTube(TubeInteraction tubeInteraction, Transform tubeTransform) {
-		foreach (Collider c in GetComponents<Collider>()) {
-			c.enabled = false;
-		}
+	private void AttachTube(TubeInteraction tubeInteraction, GameObject tube) {
+		etConnectionCollider.enabled = false;
 
 		var parent = transform.parent;
-		transform.SetParent(tubeTransform);
+		transform.SetParent(tube.transform);
 		transform.localPosition = connectedTransform.position;
 		transform.localEulerAngles = connectedTransform.rotation;
 		transform.parent = parent;
 
 		interactable.ForceRelease();
-		interactable.grabbable = false;
-
 		rb.isKinematic = true;
+		isETAttached = true;
 	}
 
 	private void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable) {
+		rb.isKinematic = false;
+		isETAttached = false;
 		isGrabbed = true;
+		if (isETAttached) {
+			Invoke(nameof(EnableCollider), 1f);
+		}
 	}
 
 	private void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable) {
 		isGrabbed = false;
+		if (!isETAttached) {
+			rb.isKinematic = false;
+		}
 	}
+
+	private void EnableCollider() {
+		etConnectionCollider.enabled = true;
+	}
+
 }

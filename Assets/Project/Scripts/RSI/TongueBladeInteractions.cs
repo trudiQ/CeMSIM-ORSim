@@ -80,6 +80,7 @@ public class TongueBladeInteractions : MonoBehaviour {
 	private void OnTriggerExit(Collider other) {
 		if (other.gameObject.GetComponent<MountableBlade>()) {
 			staying = false;
+			blade = null;
 		}
 	}
 
