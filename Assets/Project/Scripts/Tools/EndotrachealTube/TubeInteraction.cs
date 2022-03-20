@@ -1,5 +1,6 @@
 ﻿using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
+using System.Collections;
 using UnityEngine;
 
 public class TubeInteraction : MonoBehaviour {
@@ -49,6 +50,13 @@ public class TubeInteraction : MonoBehaviour {
 		Regrab();
 	}
 
+	public void OnRightPrimaryButtonPressed() {
+		if (isGrabbed && isEtInserted) {
+			animator.enabled = true;
+			animator.Play("ETExtubationAnim");
+		}
+	}
+
 	public void Regrab() {
 		if (grabber) {
 			grabber.ForceRelease();
@@ -84,15 +92,30 @@ public class TubeInteraction : MonoBehaviour {
 		animator.enabled = false;
 	}
 
+	public void OnExtubationCompleted() {
+		animator.enabled = false;
+		isEtInserted = false;
+		StartCoroutine(CompleteExtubation());
+	}
+
+	public IEnumerator CompleteExtubation() {
+		yield return null;
+		rigidBody.constraints = RigidbodyConstraints.None;
+		foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>()) {
+			rb.isKinematic = false;
+		}
+
+		transform.SetParent(null, true);
+		grabber.TryGrab(grabbable, true);
+	}
+
 	private void OnGrabbed(HVRHandGrabber grabber, HVRGrabbable grabbable) {
 		this.grabber = grabber;
 		isGrabbed = true;
 	}
 
 	private void OnReleased(HVRHandGrabber grabber, HVRGrabbable grabbable) {
-		if (isEtInserted) {
-			rigidBody.isKinematic = true;
-		}
+		rigidBody.isKinematic = isEtInserted;
 		isGrabbed = false;
 	}
 
