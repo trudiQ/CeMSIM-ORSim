@@ -11,6 +11,7 @@ public class TubeInteraction : MonoBehaviour {
 	public Transform connector;
 	public TransformHolder connectorInsertedTransform;
 	public GameObject tape;
+	public TongueBladeInteractions tongueInteractions;
 
 	private HVRGrabbable grabbable;
 	private HVRHandGrabber grabber;
@@ -95,7 +96,7 @@ public class TubeInteraction : MonoBehaviour {
 	}
 
 	public void OnExtubationCompleted() {
-		foreach(Animator anim in GetComponentsInChildren<Animator>()) {
+		foreach (Animator anim in GetComponentsInChildren<Animator>()) {
 			anim.enabled = false;
 		}
 		isEtInserted = false;
@@ -111,6 +112,7 @@ public class TubeInteraction : MonoBehaviour {
 
 		transform.SetParent(null, true);
 		grabber.TryGrab(grabbable, true);
+		tongueInteractions.isETInserted = false;
 	}
 
 	private void OnGrabbed(HVRHandGrabber grabber, HVRGrabbable grabbable) {

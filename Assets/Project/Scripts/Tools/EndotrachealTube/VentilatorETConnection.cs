@@ -77,9 +77,7 @@ public class VentilatorETConnection : MonoBehaviour {
 		rb.isKinematic = false;
 		isETAttached = false;
 		isGrabbed = true;
-		if (isETAttached) {
-			Invoke(nameof(EnableCollider), 1f);
-		}
+		Invoke(nameof(EnableCollider), 1f);
 	}
 
 	private void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable) {
