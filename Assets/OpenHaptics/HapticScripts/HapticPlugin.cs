@@ -28,6 +28,7 @@ public class HapticPlugin : MonoBehaviour  {
 	public GameObject hapticManipulator = null; //!< Reference to unity gameobject representing the haptic stylus.
 	public bool PhysicsManipulationEnabled = true;  //!< Should the haptic forces interact with the Unity physics simulation?
 
+	public float rotationalLerp = 0.05f;
 
 	[Header("ReadOnly Attributes")]
 
@@ -535,7 +536,7 @@ public class HapticPlugin : MonoBehaviour  {
 		{
 			body.position = stylusPositionWorld;
 			body.velocity = stylusVelocityWorld;
-			body.rotation = stylusRotationWorld;
+			body.rotation = Quaternion.Lerp(body.rotation, stylusRotationWorld, rotationalLerp);
 		}
 		Vector3 springPos = gameObject.transform.InverseTransformPoint(this.hapticManipulator.transform.position);
 		double[] springPosOut = new double[3];
@@ -577,7 +578,7 @@ public class HapticPlugin : MonoBehaviour  {
 			// Apply rotation to this item.
 			Vector3 torque = DetermineTorque(body);
 
-			body.AddTorque(torque, ForceMode.VelocityChange);
+			body.AddTorque(Vector3.Lerp(body.angularVelocity, torque, rotationalLerp), ForceMode.VelocityChange);
 
 			// Apply rotation to anything we're grabbing.
 			FixedJoint[] joints = hapticManipulator.GetComponentsInChildren<FixedJoint>();
@@ -606,6 +607,7 @@ public class HapticPlugin : MonoBehaviour  {
 
 		Vector3 MainRotation = RectifyAngleDifference((AngleDifference).eulerAngles);
 		Vector3 CorrectiveRotation = RectifyAngleDifference((Correction).eulerAngles);
+		//Debug.Log(CorrectiveRotation);
 
 		Vector3 torque = ((MainRotation - CorrectiveRotation / 2) - body.angularVelocity);
 		return torque;

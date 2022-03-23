@@ -88,7 +88,7 @@ public class ForcepBehavior : MonoBehaviour
                 currentGrabberAttachment == null)
             {
                 if (obiObject.GetDistanceToClosestParticle(obiAttachPoint.transform.position) < maxGrabberDistance)
-                    currentGrabberAttachment = obiObject.CreateNewParticleAttachmentClosestTo(obiAttachPoint.transform);
+                    currentGrabberAttachment = obiObject.CreateNewParticleAttachmentClosestTo(obiAttachPoint.transform, false);
             }
 
             if (leftHalf.transform.localRotation.y >= 0)

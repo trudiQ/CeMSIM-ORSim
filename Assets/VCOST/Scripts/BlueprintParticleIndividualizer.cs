@@ -151,6 +151,7 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
     public ObiParticleAttachment CreateNewDynamicParticleAttachmentClosestTo(Transform t, int amountOfParticles) { return ParticleAttachmentCreator(t, amountOfParticles, true); }
     public ObiParticleAttachment CreateNewDynamicParticleAttachmentClosestTo(Transform t) { return ParticleAttachmentCreator(t, 1, true); }
     public ObiParticleAttachment CreateNewParticleAttachmentClosestTo(Transform t) { return ParticleAttachmentCreator(t, 1, false); }
+    public ObiParticleAttachment CreateNewParticleAttachmentClosestTo(Transform t, bool dynamic) { return ParticleAttachmentCreator(t, 1, dynamic); }
     private ObiParticleAttachment ParticleAttachmentCreator(Transform t, int amount, bool dynamic)
     {
         //Important, other scripts may add particle attachments!
@@ -167,6 +168,11 @@ public class BlueprintParticleIndividualizer : MonoBehaviour
         particleAttachment.enabled = true;
 
         return particleAttachment;
+    }
+
+    public ObiParticleGroup GetParticlesWithinCollider(ObiCollider collider)
+    {
+        return null;
     }
 
     /// <summary>
